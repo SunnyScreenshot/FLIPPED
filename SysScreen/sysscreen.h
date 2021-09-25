@@ -16,6 +16,8 @@ class SysScreen
 public:
     SysScreen();
     void display();
+	double getScale();
+	double getScale(QScreen *screen);
 
 private:
     QList<QScreen *> m_screens;
