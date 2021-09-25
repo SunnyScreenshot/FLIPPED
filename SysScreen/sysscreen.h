@@ -5,9 +5,21 @@
 #ifndef PICSHOT_SYSSCREEN_H
 #define PICSHOT_SYSSCREEN_H
 
+#include <QList>
+
+QT_BEGIN_NAMESPACE
+class QScreen;
+QT_END_NAMESPACE
+
 class SysScreen
 {
+public:
+    SysScreen();
+    void display();
 
+private:
+    QList<QScreen *> m_screens;
+    QScreen * m_primaryScreen;
 };
 
 #endif //PICSHOT_SYSSCREEN_H

@@ -22,7 +22,9 @@ find_package(Qt5 COMPONENTS
         REQUIRED)
 
 set(SOURCE_CODE_PATH
-        main.cpp SysScreen/sysscreen.cpp SysScreen/sysscreen.h)
+        main.cpp
+        SysScreen/sysscreen.cpp
+        SysScreen/sysscreen.h)
 
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_PATH})
 target_link_libraries(${PROJECT_NAME}
