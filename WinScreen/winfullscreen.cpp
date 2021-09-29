@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Created by xmuli on 2021/9/29.
 //
 
@@ -22,7 +22,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // È¥µô±êÌâÀ¸ + ÖÃ¶¥
+	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // åŽ»æŽ‰æ ‡é¢˜æ  + ç½®é¡¶
 	setFixedSize(QApplication::desktop()->size());
 }
 
@@ -36,13 +36,13 @@ WinFullScreen::~WinFullScreen()
 	m_basePixmap = nullptr;
 }
 
-// »ñÈ¡ÐéÄâÆÁÄ»½ØÍ¼
+// èŽ·å–è™šæ‹Ÿå±å¹•æˆªå›¾
 void WinFullScreen::getVirtualScreen() 
 {
 	// TODO 2021-09-29:
-	// ÍòÒ»ÐéÄâÆÁÄ»Ã»¿ªÆô£¬ÓÅÏÈ½ØÈ¡µ±Ç°Êó±êËùÔÚµÄÆÁÄ»
+	// ä¸‡ä¸€è™šæ‹Ÿå±å¹•æ²¡å¼€å¯ï¼Œä¼˜å…ˆæˆªå–å½“å‰é¼ æ ‡æ‰€åœ¨çš„å±å¹•
 
-	QDesktopWidget *desktop = QApplication::desktop();  // »ñÈ¡×ÀÃæµÄ´°Ìå¶ÔÏó
+	QDesktopWidget *desktop = QApplication::desktop();  // èŽ·å–æ¡Œé¢çš„çª—ä½“å¯¹è±¡
 	m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
 
 	QTime startTime = QTime::currentTime();
@@ -52,7 +52,7 @@ void WinFullScreen::getVirtualScreen()
 	qDebug() << "save m_currPixmap tim =" << elapsed << "ms";
 }
 
-// »ñÈ¡ÆÁÄ»ÕÚÕÖ
+// èŽ·å–å±å¹•é®ç½©
 QPixmap * WinFullScreen::getblurPixmap(QColor color)
 {
 	if (!m_currPixmap)
@@ -65,7 +65,7 @@ QPixmap * WinFullScreen::getblurPixmap(QColor color)
 	return m_blurPixmap;
 }
 
-// »ñÈ¡µ±Ç°ÆÁÄ»½ØÍ¼ + ÕÚÕÖ
+// èŽ·å–å½“å‰å±å¹•æˆªå›¾ + é®ç½©
 QPixmap * WinFullScreen::getBasePixmap()
 {
 	if (!m_currPixmap)
@@ -82,7 +82,7 @@ QPixmap * WinFullScreen::getBasePixmap()
 	//m_currPixmap->save("m_currPixmap2.png");
 	QTime stopTime = QTime::currentTime();
 	int elapsed = startTime.msecsTo(stopTime);
-	qDebug() << "save m_basePixmap time =" << elapsed << "ms";
+	qDebug() << "save m_basePixmap time æ±‰å­—æµ‹è¯• =" << elapsed << "ms";
 
 	return m_basePixmap;
 }
@@ -101,7 +101,7 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 	}
 }
 
-// ÆÁÄ»ÏêÏ¸²ÎÊý
+// å±å¹•è¯¦ç»†å‚æ•°
 void WinFullScreen::display()
 {
 	for (QScreen* it : m_screens) {

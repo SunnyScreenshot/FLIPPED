@@ -1,4 +1,4 @@
-//
+О╩©//
 // Created by xmuli on 2021/9/29.
 //
 
@@ -33,12 +33,12 @@ protected:
 	virtual void keyReleaseEvent(QKeyEvent *event) override;
 
 private:
-	QList<QScreen *> m_screens;  // кЫспфад╩
-	QScreen* m_primaryScreen;    // жВфад╩
+	QList<QScreen *> m_screens;  // Ф┴─Ф°┴Е╠▐Е╧∙
+	QScreen* m_primaryScreen;    // Д╦╩Е╠▐Е╧∙
 
-	QPixmap* m_currPixmap;       // ╣╠г╟фад╩╫ьм╪
-	QPixmap* m_blurPixmap;       // узуж
-	QPixmap* m_basePixmap;       // ╣╠г╟фад╩╫ьм╪ + узуж
+	QPixmap* m_currPixmap;       // Е╫⌠Е┴█Е╠▐Е╧∙Ф┬╙Е⌡╬
+	QPixmap* m_blurPixmap;       // И│╝Г╫╘
+	QPixmap* m_basePixmap;       // Е╫⌠Е┴█Е╠▐Е╧∙Ф┬╙Е⌡╬ + И│╝Г╫╘
 };
 
 

@@ -1,4 +1,4 @@
-#include <QApplication>
+ï»¿#include <QApplication>
 #include <QPushButton>
 #include "WinScreen/winfullscreen.h"
 
@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
 	WinFullScreen winFullScreen;
 	winFullScreen.display();
 	winFullScreen.getBasePixmap();
-	//winFullScreen.showFullScreen(); //Ö»¶¥¼¶´°¿ÚÓĞĞ§£¬ÇÒ²»ÊÇË«ÆÁÈ«ÆÁ
+	//winFullScreen.showFullScreen(); //åªé¡¶çº§çª—å£æœ‰æ•ˆï¼Œä¸”ä¸æ˜¯åŒå±å…¨å±
 	winFullScreen.show();
 
     return QApplication::exec();
