@@ -16,8 +16,46 @@ QRect RectCalcu::getRect(QPoint pos1, QPoint pos2)
 
 	if (xMin == xMax || yMin == yMax)
 		return QRect();
+	else {
+		m_selRect = QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
+		return  m_selRect;
+	}
+}
+
+
+// 判断当前鼠标所在区域
+const CursorArea RectCalcu::getCursorArea(QPoint pos)
+{
+	if (m_selRect.isEmpty())
+		return CursorArea::CursorOutSize;
+
+	QRect rtOuter = getOuterSelRect();
+	QRect rtInner = getInnerSelRect();
+	int interval = (rtOuter.height() - rtInner.height()) / 2;
+
+	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
+	QRect rtTop(rtInner.left(), rtOuter.top(), rtInner.width(), interval);
+	QRect rtRight(rtInner.right(), rtInner.top(), interval, rtInner.height());
+	QRect rtBottom(rtInner.left(), rtInner.bottom(), rtInner.width(), interval);
+	QRect rtTopLeft(rtOuter.left(), rtOuter.top(), interval, interval);
+	QRect rtTopRight(rtInner.right(), rtOuter.top(), interval, interval);
+	QRect rtBottomLeft(rtOuter.left(), rtInner.bottom(), interval, interval);
+	QRect rtBottomRight(rtInner.right(), rtInner.bottom(), interval, interval);
+
+	if (rtLeft.contains(pos, true) | rtRight.contains(pos, true))
+		return CursorArea::CursorCrossHorizontal;
+	else if (rtTop.contains(pos, true) | rtBottom.contains(pos, true))
+		return CursorArea::CursorCrossVertical;
+	else if (rtTopLeft.contains(pos, true) | rtBottomRight.contains(pos, true))
+		return CursorArea::CursorCrossTL2BR;
+	else if (rtTopRight.contains(pos, true) | rtBottomLeft.contains(pos, true))
+		return CursorArea::CursorCrossTR2BL;
+	else if (rtInner.contains(pos, true))
+		return CursorArea::CursorInner;
+	else if (!rtOuter.contains(pos, false))
+		return CursorArea::CursorOutSize;
 	else
-		return  QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
+		return CursorArea::UnknowCursorArea;
 }
 
 //QRect RectCalcu::getSelRect()
@@ -44,6 +82,7 @@ QRect RectCalcu::getInnerSelRect(int interval)
 	QPoint bottomRight = m_selRect.bottomRight() + QPoint(1, 1);
 	return QRect(QPoint(topLeft.x() + interval, topLeft.y() + interval), QPoint(bottomRight.x() - interval, bottomRight.y() - interval));
 }
+
 void RectCalcu::clear()
 {
 	m_width = 0;

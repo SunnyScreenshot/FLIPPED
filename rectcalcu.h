@@ -33,12 +33,17 @@ enum CursorArea {
 	CursorCrossTop = 0x00000001,
 	CursorCrossRight = 0x00000002,
 	CursorCrossBottom = 0x00000004,
-	CursorCrossBorder = CursorCrossLeft | CursorCrossTop | CursorCrossRight | CursorCrossBottom,
+	CursorCrossHorizontal = CursorCrossLeft | CursorCrossRight,
+	CursorCrossVertical = CursorCrossTop | CursorCrossBottom,
+	CursorCrossBorder = CursorCrossHorizontal | CursorCrossVertical,
+
 	CursorCrossTopLeft = 0x00000010,
 	CursorCrossTopRight = 0x00000020,
 	CursorCrossBottomLeft = 0x00000040,
 	CursorCrossBottomRight = 0x00000080,
-	CursorCrossCorner = CursorCrossTopLeft | CursorCrossTopRight | CursorCrossBottomLeft | CursorCrossBottomRight,
+	CursorCrossTL2BR = CursorCrossTopLeft | CursorCrossBottomRight,
+	CursorCrossTR2BL = CursorCrossTopRight | CursorCrossBottomLeft,
+	CursorCrossCorner = CursorCrossTL2BR | CursorCrossTR2BL,
 	CursorCross = CursorCrossBorder | CursorCrossCorner,
 
 	CursorOutSize = 0x00000100,
@@ -60,6 +65,7 @@ public:
 	void clear();
 	void setClear(bool clear);
 	bool isClear();
+	const CursorArea getCursorArea(QPoint pos);
 
 	//QPoint getSelRectTopLeft();
 	//void setSelRectTopLeft(QPoint topLeft);
