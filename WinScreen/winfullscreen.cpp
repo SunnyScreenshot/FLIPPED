@@ -18,12 +18,17 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_currPixmap(nullptr)
 	, m_blurPixmap(nullptr)
 	, m_basePixmap(nullptr)
+	, m_rectCalcu()
+	, m_cursorType(CursorType::UnknowCursorType)
+	, m_cursorArea(CursorArea::UnknowCursorArea)
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
+	setMouseTracking(true);
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-	setFixedSize(QApplication::desktop()->size());
+	/*setFixedSize(QApplication::desktop()->size());*/
+	setFixedSize(800, 600);
 }
 
 WinFullScreen::~WinFullScreen() 
@@ -53,7 +58,7 @@ void WinFullScreen::getVirtualScreen()
 }
 
 // 获取屏幕遮罩
-QPixmap * WinFullScreen::getblurPixmap(QColor color)
+QPixmap* WinFullScreen::getblurPixmap(QColor color)
 {
 	if (!m_currPixmap)
 		return nullptr;
@@ -66,7 +71,7 @@ QPixmap * WinFullScreen::getblurPixmap(QColor color)
 }
 
 // 获取当前屏幕截图 + 遮罩
-QPixmap * WinFullScreen::getBasePixmap()
+QPixmap* WinFullScreen::getBasePixmap()
 {
 	if (!m_currPixmap)
 		getVirtualScreen();
@@ -91,6 +96,16 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 {
 	QPainter pa(this);
 	pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
+
+	pa.setPen(Qt::red);
+	QRect selRect(m_rectCalcu.getSelRect());
+
+	// 注意独立屏幕缩放比（eg: mac = 2）
+	pa.drawPixmap(selRect, m_currPixmap->copy(QRect(selRect.topLeft() * getDevicePixelRatio(), selRect.size() * getDevicePixelRatio())));
+	pa.drawRect(m_rectCalcu.getSelRect());
+	qDebug() << "【paintEvent】  :" << m_rectCalcu.getSelRect() << "   " << m_rectCalcu.m_EndPos;
+
+	update();
 }
 
 void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
@@ -100,6 +115,104 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 		qDebug() << "---Key_Escape---";
 	}
 }
+
+void WinFullScreen::mousePressEvent(QMouseEvent *event)
+{
+	m_rectCalcu.clear();
+	m_cursorType = CursorType::Select;
+
+	switch (m_cursorType)
+	{
+	case Select: {
+		m_rectCalcu.m_startPos = event->pos();
+		m_rectCalcu.m_EndPos = event->pos();
+		//m_rectCalcu.setClear(false);
+		qDebug() << "【mousePressEvent】 Select :" << m_rectCalcu.m_startPos << "   " << m_rectCalcu.m_EndPos;
+		break;
+	}
+	case MovePosition:
+		break;
+	case ModifWidth:
+		break;
+	case ModifHeight:
+		break;
+	case ModifSize:
+		break;
+	case Move:
+		break;
+	case Waiting: {
+		break;
+	}
+	case UnknowCursorType:
+		break;
+	default:
+		break;
+	}
+}
+
+void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
+{
+	switch (m_cursorType)
+	{
+	case Select: {
+		m_rectCalcu.m_EndPos = event->pos();
+		qDebug() << "【mouseMoveEvent】 Select :" << m_rectCalcu.m_startPos << "   " << m_rectCalcu.m_EndPos;
+		break;
+	}
+	case MovePosition: {
+		break;
+	}
+	case ModifWidth:
+		break;
+	case ModifHeight:
+		break;
+	case ModifSize:
+		break;
+	case Move:
+		break;
+	case Waiting: {
+		
+		break;
+	}
+	case UnknowCursorType:
+		break;
+	default:
+		break;
+	}
+}
+
+void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
+{
+	switch (m_cursorType)
+	{
+	case Select: {
+		m_rectCalcu.m_EndPos = event->pos();
+		//m_rectCalcu.clear();
+		qDebug() << "【mouseReleaseEvent】 Select :" << m_rectCalcu.m_startPos << "   " << m_rectCalcu.m_EndPos;
+		m_cursorType = CursorType::Waiting;
+		break;
+	}
+	case MovePosition:
+		break;
+	case ModifWidth:
+		break;
+	case ModifHeight:
+		break;
+	case ModifSize:
+		break;
+	case Move:
+		break;
+	case Waiting: {
+		break;
+	}
+	case UnknowCursorType:
+		break;
+	default:
+		break;
+	}
+}
+
+
 
 // 屏幕详细参数
 void WinFullScreen::display()
@@ -112,6 +225,20 @@ void WinFullScreen::display()
 			"Physical DPI:" << it->physicalDotsPerInch() << "  DPIX:" << it->physicalDotsPerInchX() << "  DPIY:" << it->physicalDotsPerInchY() << "\n"
 			<< "Logical DPI:" << it->logicalDotsPerInch() << "  DPIX:" << it->logicalDotsPerInchX() << "  DPIY:" << it->logicalDotsPerInchY() << "\n";
 	}
+}
+
+double WinFullScreen::getDevicePixelRatio()
+{
+	return m_primaryScreen->devicePixelRatio();
+}
+
+double WinFullScreen::getDevicePixelRatio(QScreen * screen)
+{
+	if (!screen)
+		return 0.0;
+	else
+		return screen->devicePixelRatio();
+	
 }
 
 double WinFullScreen::getScale()

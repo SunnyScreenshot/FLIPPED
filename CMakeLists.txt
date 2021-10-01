@@ -38,7 +38,9 @@ set(SOURCE_CODE_PATH
         main.cpp
 
         WinScreen/winfullscreen.cpp
-        WinScreen/winfullscreen.h)
+        WinScreen/winfullscreen.h 
+		rectcalcu.cpp 
+		rectcalcu.h)
 
 add_executable(${PROJECT_NAME} ${SOURCE_CODE_PATH})
 target_link_libraries(${PROJECT_NAME}
