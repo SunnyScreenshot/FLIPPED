@@ -19,9 +19,14 @@ enum CursorType {
 	MovePosition = 0x00000001,
 	ModifWidth = 0x00000002,
 	ModifHeight = 0x00000004,
-	ModifSize = ModifWidth | ModifHeight,
-	Move = 0x00000008,
-	Waiting = 0x00000010,
+	ModifBorderSize = ModifWidth | ModifHeight,
+	ModifyTLAndBR = 0x00000010,
+	ModifyTRAndBL = 0x00000020,
+	ModifyCorner = ModifyTLAndBR | ModifyTRAndBL,
+	ModifySize = ModifBorderSize | ModifyCorner,
+
+	Move = 0x00000100,
+	Waiting = 0x00000200,
 
 	UnknowCursorType
 };
@@ -67,31 +72,28 @@ public:
 	QRect getInnerSelRect(QRect& rect, int interval = HAIF_INTERVAL);
 	int getMoveWidth();
 	int getMoveHeight();
+	int getModifyWidth();
+	int getModifyHeight();
 	void clear();
 	void setClear(bool clear);
 	bool isClear();
-	const CursorArea getCursorArea(QPoint pos);
+	const CursorArea getCursorArea(QPoint pos, bool details = false);
 
-	//QPoint getSelRectTopLeft();
-	//void setSelRectTopLeft(QPoint topLeft);
-	//QPoint getBottomRight();
-	//void setBottomRight(QPoint bottomRight);
 private:
 	QRect& getRect(QPoint pos1, QPoint pos2);
 
 public:
-    //int m_width;
-    //int m_height;
 	QPoint m_startPos;
 	QPoint m_EndPos;
 	QPoint m_moveStartPos;
 	QPoint m_moveEndPos;
+	QPoint m_modifyStartPos;
+	QPoint m_modifyEndPos;
 	QRect m_rtSel;
 	CursorType m_cursorType = CursorType::UnknowCursorType;     // 光标类型（对应此时鼠标的操作类型）
 
 private:
 	bool m_bClear;  // 当前清理状态
-	//QRect m_moveRect;
 };
 
 

@@ -23,8 +23,8 @@ QRect& RectCalcu::getRect(QPoint pos1, QPoint pos2)
 }
 
 
-// 判断当前鼠标所在区域
-const CursorArea RectCalcu::getCursorArea(QPoint pos)
+// 判断当前鼠标所在区域; false 为大概区域（显示光标）; true 为详细区域（修改矩形大小做准备）
+const CursorArea RectCalcu::getCursorArea(QPoint pos, bool details)
 {
 	if (m_rtSel.isEmpty())
 		return CursorArea::CursorOutSize;
@@ -42,26 +42,46 @@ const CursorArea RectCalcu::getCursorArea(QPoint pos)
 	QRect rtBottomLeft(rtOuter.left(), rtInner.bottom(), interval, interval);
 	QRect rtBottomRight(rtInner.right(), rtInner.bottom(), interval, interval);
 
-	if (rtLeft.contains(pos, true) | rtRight.contains(pos, true))
-		return CursorArea::CursorCrossHorizontal;
-	else if (rtTop.contains(pos, true) | rtBottom.contains(pos, true))
-		return CursorArea::CursorCrossVertical;
-	else if (rtTopLeft.contains(pos, true) | rtBottomRight.contains(pos, true))
-		return CursorArea::CursorCrossTL2BR;
-	else if (rtTopRight.contains(pos, true) | rtBottomLeft.contains(pos, true))
-		return CursorArea::CursorCrossTR2BL;
-	else if (rtInner.contains(pos, true))
-		return CursorArea::CursorInner;
-	else if (!rtOuter.contains(pos, false))
-		return CursorArea::CursorOutSize;
-	else
-		return CursorArea::UnknowCursorArea;
+	if (!details) {
+		if (rtLeft.contains(pos, true) | rtRight.contains(pos, true))
+			return CursorArea::CursorCrossHorizontal;
+		else if (rtTop.contains(pos, true) | rtBottom.contains(pos, true))
+			return CursorArea::CursorCrossVertical;
+		else if (rtTopLeft.contains(pos, true) | rtBottomRight.contains(pos, true))
+			return CursorArea::CursorCrossTL2BR;
+		else if (rtTopRight.contains(pos, true) | rtBottomLeft.contains(pos, true))
+			return CursorArea::CursorCrossTR2BL;
+		else if (rtInner.contains(pos, true))
+			return CursorArea::CursorInner;
+		else if (!rtOuter.contains(pos, false))
+			return CursorArea::CursorOutSize;
+		else
+			return CursorArea::UnknowCursorArea;
+	} else {
+		if (rtLeft.contains(pos, true))
+			return CursorArea::CursorCrossLeft;
+		else if (rtRight.contains(pos, true))
+			return CursorArea::CursorCrossRight;
+		else if (rtTop.contains(pos, true))
+			return CursorArea::CursorCrossTop;
+		else if (rtBottom.contains(pos, true))
+			return CursorArea::CursorCrossBottom;
+		else if (rtTopLeft.contains(pos, true))
+			return CursorArea::CursorCrossTopLeft;
+		else if (rtBottomRight.contains(pos, true))
+			return CursorArea::CursorCrossBottomRight;
+		else if (rtTopRight.contains(pos, true))
+			return CursorArea::CursorCrossTopRight;
+		else if (rtBottomLeft.contains(pos, true))
+			return CursorArea::CursorCrossBottomLeft;
+		else if (rtInner.contains(pos, true))
+			return CursorArea::CursorInner;
+		else if (!rtOuter.contains(pos, false))
+			return CursorArea::CursorOutSize;
+		else
+			return CursorArea::UnknowCursorArea;
+	}
 }
-
-//QRect RectCalcu::getSelRect()
-//{
-//	return m_selRect;
-//}
 
 RectCalcu::RectCalcu()
 {
@@ -129,14 +149,25 @@ int RectCalcu::getMoveHeight()
 	return m_moveEndPos.y() - m_moveStartPos.y();
 }
 
+int RectCalcu::getModifyWidth()
+{
+
+	return m_modifyEndPos.x() - m_modifyStartPos.x();
+}
+
+int RectCalcu::getModifyHeight()
+{
+	return m_modifyEndPos.y() - m_modifyStartPos.y();
+}
+
 void RectCalcu::clear()
 {
-	//m_width = 0;
-	//m_height = 0;
 	m_startPos = QPoint();
 	m_EndPos = QPoint();
 	m_moveStartPos = QPoint();
 	m_moveEndPos = QPoint();
+	m_modifyStartPos = QPoint();
+	m_modifyEndPos = QPoint();
 	m_rtSel = QRect();
 	m_cursorType = CursorType::Waiting;
 	m_bClear = true;
@@ -149,24 +180,3 @@ bool RectCalcu::isClear()
 {
 	return m_bClear;
 }
-//
-//
-//QPoint RectCalcu::getSelRectTopLeft()
-//{
-//	return m_selRect.topLeft();
-//}
-//
-//void RectCalcu::setSelRectTopLeft(QPoint topLeft)
-//{
-//	m_selRect.setTopLeft(topLeft);
-//}
-//
-//QPoint RectCalcu::getBottomRight()
-//{
-//	return m_selRect.bottomRight();
-//}
-//
-//void RectCalcu::setBottomRight(QPoint bottomRight)
-//{
-//	m_selRect.setBottomRight(bottomRight);
-//}

@@ -32,6 +32,8 @@ public:
 private:
 	void getVirtualScreen();
 	QPixmap* getblurPixmap(QColor color = QColor(255, 255, 255, 0.2 * 255));
+
+	void modifyRectSize(QRect& rtSel);
 	
 
 

@@ -70,6 +70,33 @@ QPixmap* WinFullScreen::getblurPixmap(QColor color)
 	return m_blurPixmap;
 }
 
+// 修改拉伸选中矩形的大小
+void WinFullScreen::modifyRectSize(QRect& rtSel)
+{
+	QRect rt(rtSel);
+	int width = m_rtCalcu.getModifyWidth();
+	int height = m_rtCalcu.getModifyHeight();
+	if (m_cursorArea == CursorArea::CursorCrossLeft) {
+		rtSel.setTopLeft(rt.topLeft() + QPoint(width, 0));
+	} else if (m_cursorArea == CursorArea::CursorCrossRight) {
+		rtSel.setBottomRight(rt.bottomRight() + QPoint(width, 0));
+	} else if (m_cursorArea == CursorArea::CursorCrossTop) {
+		rtSel.setTopLeft(rt.topLeft() + QPoint(0, height));
+	} else if (m_cursorArea == CursorArea::CursorCrossBottom) {
+		rtSel.setBottomRight(rt.bottomRight() + QPoint(0, height));
+	} else if (m_cursorArea == CursorArea::CursorCrossTopLeft) {
+		rtSel.setTopLeft(rt.topLeft() + QPoint(width, height));
+	} else if (m_cursorArea == CursorArea::CursorCrossTopRight) {
+		rtSel.setTopRight(rt.topRight() + QPoint(width, height));
+	} else if (m_cursorArea == CursorArea::CursorCrossBottomLeft) {
+		rtSel.setBottomLeft(rt.bottomLeft() + QPoint(width, height));
+	} else if (m_cursorArea == CursorArea::CursorCrossBottomRight) {
+		rtSel.setBottomRight(rt.bottomRight() + QPoint(width, height));
+	} else {
+
+	}
+}
+
 // 获取当前屏幕截图 + 遮罩
 QPixmap* WinFullScreen::getBasePixmap()
 {
@@ -100,11 +127,19 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.setPen(Qt::red);
 	QRect rtSel(m_rtCalcu.m_rtSel.translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));
 
+	 //拉伸边框矩形大小
+	modifyRectSize(rtSel);
+
+
+	qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
 	// 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
 		pa.drawPixmap(rtSel, m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio())));
 		pa.drawRect(rtSel);
+
 	}
+
+	qDebug() << "【paintEvent 2】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
 
 	QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel);
 	QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel);
@@ -130,7 +165,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.drawRect(rtBottomLeft);
 	pa.drawRect(rtBottomRight);
 
-	qDebug() << "【paintEvent】  :" << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
+	
+	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
 
 
@@ -154,8 +190,37 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 		m_rtCalcu.clear();
 		m_rtCalcu.m_cursorType = CursorType::Select;
 	} else {  // 可能是添加编辑画图、或者移动等模式
-		if (m_rtCalcu.getCursorArea(event->pos()) == CursorArea::CursorInner && event->button() == Qt::LeftButton) {
-			m_rtCalcu.m_cursorType = CursorType::Move;
+		if (event->button() == Qt::LeftButton)
+		{
+			if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorInner) {
+				m_rtCalcu.m_cursorType = CursorType::Move;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossLeft) {
+				m_rtCalcu.m_cursorType = CursorType::ModifWidth;
+				m_cursorArea = CursorArea::CursorCrossLeft;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossRight) {
+				m_rtCalcu.m_cursorType = CursorType::ModifWidth;
+				m_cursorArea = CursorArea::CursorCrossRight;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTop) {
+				m_rtCalcu.m_cursorType = CursorType::ModifHeight;
+				m_cursorArea = CursorArea::CursorCrossTop;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottom) {
+				m_rtCalcu.m_cursorType = CursorType::ModifHeight;
+				m_cursorArea = CursorArea::CursorCrossBottom;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopLeft) {
+				m_rtCalcu.m_cursorType = CursorType::ModifyTLAndBR;
+				m_cursorArea = CursorArea::CursorCrossTopLeft;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopRight) {
+				m_rtCalcu.m_cursorType = CursorType::ModifyTRAndBL;
+				m_cursorArea = CursorArea::CursorCrossTopRight;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomLeft) {
+				m_rtCalcu.m_cursorType = CursorType::ModifyTRAndBL;
+				m_cursorArea = CursorArea::CursorCrossBottomLeft;
+			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomRight) {
+				m_rtCalcu.m_cursorType = CursorType::ModifyTLAndBR;
+				m_cursorArea = CursorArea::CursorCrossBottomRight;
+			} else {
+
+			}
 		}
 
 	}
@@ -174,11 +239,13 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 	case MovePosition:
 		break;
 	case ModifWidth:
-		break;
 	case ModifHeight:
+	case ModifyTLAndBR:
+	case ModifyTRAndBL: {
+		m_rtCalcu.m_modifyStartPos = event->pos();
+		m_rtCalcu.m_modifyEndPos = event->pos();
 		break;
-	case ModifSize:
-		break;
+	}
 	case Move: {
 		setCursor(Qt::ArrowCursor);
 		m_rtCalcu.m_moveStartPos = event->pos();
@@ -211,11 +278,13 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 		break;
 	}
 	case ModifWidth:
-		break;
 	case ModifHeight:
+	case ModifyTLAndBR:
+	case ModifyTRAndBL: {
+		m_rtCalcu.m_modifyEndPos = event->pos();
+		qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.m_rtSel << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
 		break;
-	case ModifSize:
-		break;
+	}
 	case Move: {
 		m_rtCalcu.m_moveEndPos = event->pos();
 		qDebug() << "【mouseMoveEvent】Move :" << m_rtCalcu.m_rtSel << m_rtCalcu.getSelRect()<< m_rtCalcu.getMoveWidth()<< m_rtCalcu.getMoveHeight();
@@ -268,11 +337,18 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 	case MovePosition:
 		break;
 	case ModifWidth:
-		break;
 	case ModifHeight:
+	case ModifyTLAndBR:
+	case ModifyTRAndBL: {
+		modifyRectSize(m_rtCalcu.m_rtSel);
+
+		m_rtCalcu.m_modifyStartPos = QPoint();
+		m_rtCalcu.m_modifyEndPos = QPoint();
+		m_cursorArea = CursorArea::UnknowCursorArea;
+		qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.m_rtSel << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
 		break;
-	case ModifSize:
 		break;
+	}
 	case Move: {
 		m_rtCalcu.m_rtSel.translate(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight());
 		m_rtCalcu.m_moveStartPos = QPoint();
