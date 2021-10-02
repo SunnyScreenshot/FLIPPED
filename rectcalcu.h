@@ -58,10 +58,15 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(CursorAreas)
 class RectCalcu
 {
 public:
+	RectCalcu();
+	~RectCalcu();
 
-	QRect getSelRect();
-	QRect getOuterSelRect(int interval = HAIF_INTERVAL);
-	QRect getInnerSelRect(int interval = HAIF_INTERVAL);
+
+	QRect& getSelRect();
+	QRect getOuterSelRect(QRect& rect, int interval = HAIF_INTERVAL);
+	QRect getInnerSelRect(QRect& rect, int interval = HAIF_INTERVAL);
+	int getMoveWidth();
+	int getMoveHeight();
 	void clear();
 	void setClear(bool clear);
 	bool isClear();
@@ -72,18 +77,20 @@ public:
 	//QPoint getBottomRight();
 	//void setBottomRight(QPoint bottomRight);
 private:
-	QRect getRect(QPoint pos1, QPoint pos2);
+	QRect& getRect(QPoint pos1, QPoint pos2);
 
 public:
-    int m_width;
-    int m_height;
+    //int m_width;
+    //int m_height;
 	QPoint m_startPos;
-	QPoint m_movePos;
 	QPoint m_EndPos;
-	QRect m_selRect;
+	QPoint m_moveStartPos;
+	QPoint m_moveEndPos;
+	QRect m_rtSel;
+	CursorType m_cursorType = CursorType::UnknowCursorType;     // 光标类型（对应此时鼠标的操作类型）
 
 private:
-	bool m_bClear = true;  // 当前清理状态
+	bool m_bClear;  // 当前清理状态
 	//QRect m_moveRect;
 };
 

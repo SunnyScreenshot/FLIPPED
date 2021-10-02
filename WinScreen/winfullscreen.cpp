@@ -18,15 +18,14 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_currPixmap(nullptr)
 	, m_blurPixmap(nullptr)
 	, m_basePixmap(nullptr)
-	, m_rectCalcu()
-	, m_cursorType(CursorType::UnknowCursorType)
+	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-	setMouseTracking(true);
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+	
+	//setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	//setFixedSize(QApplication::desktop()->size());
 	setFixedSize(1920, 1080);
 }
@@ -98,20 +97,17 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	QPainter pa(this);
 	pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
 
-
 	pa.setPen(Qt::red);
-	QRect selRect(m_rectCalcu.getSelRect());
+	QRect rtSel(m_rtCalcu.m_rtSel.translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));
 
 	// 注意独立屏幕缩放比（eg: macox = 2）
-	if (selRect.width() > 0 && selRect.height() > 0){
-		pa.drawPixmap(selRect, m_currPixmap->copy(QRect(selRect.topLeft() * getDevicePixelRatio(), selRect.size() * getDevicePixelRatio())));
-		pa.drawRect(m_rectCalcu.getSelRect());
+	if (rtSel.width() > 0 && rtSel.height() > 0){
+		pa.drawPixmap(rtSel, m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio())));
+		pa.drawRect(rtSel);
 	}
-	
 
-
-	QRect rtOuter = m_rectCalcu.getOuterSelRect();
-	QRect rtInner = m_rectCalcu.getInnerSelRect();
+	QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel);
+	QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
 
 	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
@@ -123,9 +119,6 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	QRect rtBottomLeft(rtOuter.left(), rtInner.bottom(), interval, interval);
 	QRect rtBottomRight(rtInner.right(), rtInner.bottom(), interval, interval);
 
-	qDebug() << "【paintEvent】  :" << m_rectCalcu.getSelRect() << "   " << m_rectCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect()
-		<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
-
 	pa.setBrush(Qt::blue);
 	pa.drawRect(rtLeft);
 	pa.drawRect(rtTop);
@@ -136,6 +129,9 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.drawRect(rtTopRight);
 	pa.drawRect(rtBottomLeft);
 	pa.drawRect(rtBottomRight);
+
+	qDebug() << "【paintEvent】  :" << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
+	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
 
 
 	update();
@@ -151,18 +147,28 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 
 void WinFullScreen::mousePressEvent(QMouseEvent *event)
 {
-	m_rectCalcu.clear();
-	m_cursorType = CursorType::Select;
+	m_rtCalcu.m_cursorType = CursorType::Waiting;
+	setMouseTracking(false);
+
+	if (m_rtCalcu.getSelRect().isEmpty()) {
+		m_rtCalcu.clear();
+		m_rtCalcu.m_cursorType = CursorType::Select;
+	} else {  // 可能是添加编辑画图、或者移动等模式
+		if (m_rtCalcu.getCursorArea(event->pos()) == CursorArea::CursorInner && event->button() == Qt::LeftButton) {
+			m_rtCalcu.m_cursorType = CursorType::Move;
+		}
+
+	}
 
 	qDebug() << "【mousePressEvent】 :" << event->pos();
 
-	switch (m_cursorType)
+	switch (m_rtCalcu.m_cursorType)
 	{
 	case Select: {
-		m_rectCalcu.m_startPos = event->pos();
-		m_rectCalcu.m_EndPos = event->pos();
+		m_rtCalcu.m_startPos = event->pos();
+		m_rtCalcu.m_EndPos = event->pos();
 		//m_rectCalcu.setClear(false);
-		qDebug() << "【mousePressEvent】 Select :" << m_rectCalcu.m_startPos << "   " << m_rectCalcu.m_EndPos;
+		qDebug() << "【mousePressEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
 		break;
 	}
 	case MovePosition:
@@ -173,8 +179,12 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 		break;
 	case ModifSize:
 		break;
-	case Move:
+	case Move: {
+		setCursor(Qt::ArrowCursor);
+		m_rtCalcu.m_moveStartPos = event->pos();
+		m_rtCalcu.m_moveEndPos = event->pos();
 		break;
+	}
 	case Waiting: {
 		break;
 	}
@@ -189,12 +199,12 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 {
 	qDebug() << "【mouseMoveEvent】 :" << event->pos();
 
-	switch (m_cursorType)
+	switch (m_rtCalcu.m_cursorType)
 	{
 	case Select: {
-		m_rectCalcu.m_EndPos = event->pos();
+		m_rtCalcu.m_EndPos = event->pos();
 		setCursor(Qt::ArrowCursor);
-		qDebug() << "【mouseMoveEvent】 Select :" << m_rectCalcu.m_startPos << "   " << m_rectCalcu.m_EndPos;
+		qDebug() << "【mouseMoveEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
 		break;
 	}
 	case MovePosition: {
@@ -206,14 +216,17 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 		break;
 	case ModifSize:
 		break;
-	case Move:
+	case Move: {
+		m_rtCalcu.m_moveEndPos = event->pos();
+		qDebug() << "【mouseMoveEvent】Move :" << m_rtCalcu.m_rtSel << m_rtCalcu.getSelRect()<< m_rtCalcu.getMoveWidth()<< m_rtCalcu.getMoveHeight();
 		break;
+	}
 	case Waiting: {
-		switch (m_rectCalcu.getCursorArea(event->pos()))
+		switch (m_rtCalcu.getCursorArea(event->pos()))
 		{
 		case CursorCrossHorizontal:
 			setCursor(Qt::SizeHorCursor);
-			//m_cursorType = xxxxx
+			//m_rectCalcu.m_cursorType = xxxxx
 			break;
 		case CursorCrossVertical:
 			setCursor(Qt::SizeVerCursor);
@@ -244,13 +257,12 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 {
 	qDebug() << "【mouseReleaseEvent】 :" << event->pos();
 
-	switch (m_cursorType)
+	switch (m_rtCalcu.m_cursorType)
 	{
 	case Select: {
-		m_rectCalcu.m_EndPos = event->pos();
+		m_rtCalcu.m_EndPos = event->pos();
 		//m_rectCalcu.clear();
-		qDebug() << "【mouseReleaseEvent】 Select :" << m_rectCalcu.m_startPos << "   " << m_rectCalcu.m_EndPos;
-		m_cursorType = CursorType::Waiting;
+		qDebug() << "【mouseReleaseEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
 		break;
 	}
 	case MovePosition:
@@ -261,8 +273,12 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 		break;
 	case ModifSize:
 		break;
-	case Move:
+	case Move: {
+		m_rtCalcu.m_rtSel.translate(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight());
+		m_rtCalcu.m_moveStartPos = QPoint();
+		m_rtCalcu.m_moveEndPos = QPoint();
 		break;
+	}
 	case Waiting: {
 		break;
 	}
@@ -271,6 +287,9 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 	default:
 		break;
 	}
+
+	m_rtCalcu.m_cursorType = CursorType::Waiting;
+	setMouseTracking(true);
 }
 
 
