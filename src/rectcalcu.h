@@ -89,10 +89,10 @@ public:
 	QPoint m_moveEndPos;
 	QPoint m_modifyStartPos;
 	QPoint m_modifyEndPos;
-	QRect m_rtSel;
 	CursorType m_cursorType = CursorType::UnknowCursorType;     // 光标类型（对应此时鼠标的操作类型）
 
 private:
+	QRect m_rtSel;
 	bool m_bClear;  // 当前清理状态
 };
 

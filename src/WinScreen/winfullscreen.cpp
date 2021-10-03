@@ -49,12 +49,11 @@ void WinFullScreen::getVirtualScreen()
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
 
-	int size = _msize(m_currPixmap);
-	QTime startTime = QTime::currentTime();
-	//m_currPixmap->save("m_currPixmap.png");
-	QTime stopTime = QTime::currentTime();
-	int elapsed = startTime.msecsTo(stopTime);
-	qDebug() << "save m_currPixmap tim =" << elapsed << "ms" << size;
+	//QTime startTime = QTime::currentTime();
+	////m_currPixmap->save("m_currPixmap.png");
+	//QTime stopTime = QTime::currentTime();
+	//int elapsed = startTime.msecsTo(stopTime);
+	//qDebug() << "save m_currPixmap tim =" << elapsed << "ms" << size;
 }
 
 // 获取屏幕遮罩
@@ -108,13 +107,13 @@ QPixmap* WinFullScreen::getBasePixmap()
 
 	m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
 	QPainter pa(m_basePixmap);
-	QTime startTime = QTime::currentTime();
 	pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
-	//m_basePixmap->save("m_basePixmap.png");
-	//m_currPixmap->save("m_currPixmap2.png");
-	QTime stopTime = QTime::currentTime();
-	int elapsed = startTime.msecsTo(stopTime);
-	qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
+	//QTime startTime = QTime::currentTime();
+	////m_basePixmap->save("m_basePixmap.png");
+	////m_currPixmap->save("m_currPixmap2.png");
+	//QTime stopTime = QTime::currentTime();
+	//int elapsed = startTime.msecsTo(stopTime);
+	//qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
 
 	return m_basePixmap;
 }
@@ -125,21 +124,19 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
 
 	pa.setPen(Qt::red);
-	QRect rtSel(m_rtCalcu.m_rtSel.translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));
+	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));
 
 	 //拉伸边框矩形大小
 	modifyRectSize(rtSel);
+	m_rtCalcu.getSelRect();
 
-
-	qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
+	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
 	// 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
 		pa.drawPixmap(rtSel, m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio())));
 		pa.drawRect(rtSel);
 
 	}
-
-	qDebug() << "【paintEvent 2】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
 
 	QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel);
 	QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel);
@@ -166,7 +163,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.drawRect(rtBottomRight);
 
 	
-	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.m_rtSel << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
+	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
 
 
@@ -264,7 +261,7 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 
 void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 {
-	qDebug() << "【mouseMoveEvent】 :" << event->pos();
+	//qDebug() << "【mouseMoveEvent】 :" << event->pos();
 
 	switch (m_rtCalcu.m_cursorType)
 	{
@@ -282,12 +279,12 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 	case ModifyTLAndBR:
 	case ModifyTRAndBL: {
 		m_rtCalcu.m_modifyEndPos = event->pos();
-		qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.m_rtSel << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
+		//qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.getSelRect() << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
 		break;
 	}
 	case Move: {
 		m_rtCalcu.m_moveEndPos = event->pos();
-		qDebug() << "【mouseMoveEvent】Move :" << m_rtCalcu.m_rtSel << m_rtCalcu.getSelRect()<< m_rtCalcu.getMoveWidth()<< m_rtCalcu.getMoveHeight();
+		//qDebug() << "【mouseMoveEvent】Move :" << m_rtCalcu.getSelRect() << m_rtCalcu.getSelRect()<< m_rtCalcu.getMoveWidth()<< m_rtCalcu.getMoveHeight();
 		break;
 	}
 	case Waiting: {
@@ -324,7 +321,7 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 
 void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 {
-	qDebug() << "【mouseReleaseEvent】 :" << event->pos();
+	//qDebug() << "【mouseReleaseEvent】 :" << event->pos();
 
 	switch (m_rtCalcu.m_cursorType)
 	{
@@ -340,17 +337,17 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 	case ModifHeight:
 	case ModifyTLAndBR:
 	case ModifyTRAndBL: {
-		modifyRectSize(m_rtCalcu.m_rtSel);
+		modifyRectSize(m_rtCalcu.getSelRect());
 
 		m_rtCalcu.m_modifyStartPos = QPoint();
 		m_rtCalcu.m_modifyEndPos = QPoint();
 		m_cursorArea = CursorArea::UnknowCursorArea;
-		qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.m_rtSel << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
+		//qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.getSelRect() << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
 		break;
 		break;
 	}
 	case Move: {
-		m_rtCalcu.m_rtSel.translate(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight());
+		m_rtCalcu.getSelRect().translate(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight());
 		m_rtCalcu.m_moveStartPos = QPoint();
 		m_rtCalcu.m_moveEndPos = QPoint();
 		break;
