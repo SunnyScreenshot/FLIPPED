@@ -172,10 +172,12 @@ void RectCalcu::clear()
 	m_cursorType = CursorType::Waiting;
 	m_bClear = true;
 }
+
 void RectCalcu::setClear(bool clear)
 {
 	m_bClear = clear;
 }
+
 bool RectCalcu::isClear()
 {
 	return m_bClear;

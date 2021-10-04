@@ -24,10 +24,9 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-	
 	//setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	//setFixedSize(QApplication::desktop()->size());
-	setFixedSize(1920, 1080);
+    resize(1920, 1080);
 }
 
 WinFullScreen::~WinFullScreen() 

@@ -4,7 +4,7 @@ set(PROJECT_NAME PicShot)
 #set(PROJECT_VERSION_MINOR 1)
 
 project(${PROJECT_NAME})
-set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_BINARY_DIR}/bin) # 更改二进制输出路径
+set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin) # 更改二进制输出路径
 
 # 此处配合 VMSVC 的 UTF8-BOM 插件，达到跨平台
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -22,11 +22,11 @@ endif()
 set(PICSHOT_SOURCES
     main.cpp
     WinScreen/winfullscreen.cpp
-    rectcalcu.cpp
+    WinScreen/rectcalcu.cpp
     )
 set(PICSHOT_HEADERS
     WinScreen/winfullscreen.h
-    rectcalcu.h
+    WinScreen/rectcalcu.h
     )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -44,11 +44,17 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
+configure_file(${CMAKE_SOURCE_DIR}/config/log4qt.conf ${CMAKE_BINARY_DIR} COPYONLY)
+
+include_directories(${CMAKE_SOURCE_DIR}/Log4Qt/include)
+link_directories(${CMAKE_BINARY_DIR}/bin)
+
 add_executable(${PROJECT_NAME}
     ${PICSHOT_SOURCES}
     ${PICSHOT_HEADERS}
     )
 target_link_libraries(${PROJECT_NAME}
         ${QT5_LIBS_LINK}
+#        log4qt
         )
 

@@ -8,7 +8,7 @@
 #include <QWidget>
 #include <QList>
 #include <QColor>
-#include "../rectcalcu.h"
+#include "rectcalcu.h"
 
 QT_BEGIN_NAMESPACE
 class QScreen;
