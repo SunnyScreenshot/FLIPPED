@@ -3,17 +3,17 @@
 #include <QPushButton>
 #include <QDebug>
 #include "WinScreen/winfullscreen.h"
-//#include "logger.h"
-//#include "logmanager.h"
-//#include "propertyconfigurator.h"
+#include "logger.h"
+#include "logmanager.h"
+#include "propertyconfigurator.h"
 
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-//    //配置文件路径
-//    Log4Qt::PropertyConfigurator::configure(a.applicationDirPath() + "/../log4qt.conf");
-//    Log4Qt::LogManager::setHandleQtMessages(true);
+    //配置文件路径
+    Log4Qt::PropertyConfigurator::configure(a.applicationDirPath() + "/../log4qt.conf");
+    Log4Qt::LogManager::setHandleQtMessages(true);
 
 	WinFullScreen winFullScreen;
     winFullScreen.display();
