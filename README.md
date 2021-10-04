@@ -6,6 +6,20 @@ Lightweight screenshot tool
 
 
 
+## Clone
+
+```bash
+# 方式一
+git clone --recursive https://github.com/xmuli/PicShot.git   // 它会自动初始化并更新每一个子模块
+
+# 方式二
+git clone https://github.com/xmuli/PicShot.git
+git submodule init
+git submodule update
+```
+
+
+
 ## Build And Delete
 
 ```bash
