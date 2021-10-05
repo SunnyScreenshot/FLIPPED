@@ -5,10 +5,10 @@
 #include <QtGlobal>
 #include <QObject>
 #include "WinScreen/winfullscreen.h"
+#include "WinScreen/winmain.h"
 #include "logger.h"
 #include "logmanager.h"
 #include "propertyconfigurator.h"
-
 
 
 int main(int argc, char *argv[]) {
@@ -24,16 +24,19 @@ int main(int argc, char *argv[]) {
     qSetMessagePattern("%{type} %{time [yyyy-MM-dd hh:mm:ss]} (%{file} %{line}) %{function} %{message}");
 #endif
 
-    qInfo()<<QObject::tr("Program running program start.");
+ //   qInfo()<<QObject::tr("Program running program start.");
 
-	WinFullScreen winFullScreen;
-    winFullScreen.display();
+	//WinFullScreen winFullScreen;
+ //   winFullScreen.display();
 
-	winFullScreen.getBasePixmap();
-	//winFullScreen.showFullScreen(); //只顶级窗口有效，且不是双屏全屏
-    winFullScreen.show();
+	//winFullScreen.getBasePixmap();
+	////winFullScreen.showFullScreen(); //只顶级窗口有效，且不是双屏全屏
+ //   winFullScreen.show();
 
-    qInfo()<<QObject::tr("Program running program end.");
+    //qInfo()<<QObject::tr("Program running program end.");
+
+	WinMain* win = new WinMain();
+	win->show();
 
     return QApplication::exec();
 }

@@ -1,5 +1,5 @@
 ﻿//
-// Created by xmuli on 2021/9/29.
+// Created by XMuli <xmulitech@gmail.com> on 2021/9/29.
 //
 
 #include "winfullscreen.h"
