@@ -46,6 +46,12 @@ find_package(Qt5 COMPONENTS
 
 configure_file(${CMAKE_SOURCE_DIR}/config/log4qt.conf ${CMAKE_BINARY_DIR} COPYONLY)
 
+add_compile_definitions(QT_MESSAGELOGCONTEXT  # Release 版本下也能输出文件名、行号等
+#    QT_NO_DEBUG_OUTPUT     # 屏蔽 debug\info\warning 信息
+#    QT_NO_INFO_OUTPUT
+#    QT_NO_WARNING_OUTPUT
+    )
+
 include_directories(${CMAKE_SOURCE_DIR}/Log4Qt/include)
 link_directories(${CMAKE_BINARY_DIR}/bin)
 

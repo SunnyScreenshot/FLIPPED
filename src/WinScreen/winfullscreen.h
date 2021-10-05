@@ -34,8 +34,6 @@ private:
 	QPixmap* getblurPixmap(QColor color = QColor(255, 255, 255, 0.2 * 255));
 
 	void modifyRectSize(QRect& rtSel);
-	
-
 
 protected:
 	virtual void paintEvent(QPaintEvent *event) override;

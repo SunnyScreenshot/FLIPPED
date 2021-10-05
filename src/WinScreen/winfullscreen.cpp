@@ -27,6 +27,11 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	//setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	//setFixedSize(QApplication::desktop()->size());
     resize(1920, 1080);
+    QDesktopWidget* desktopWidget =QApplication::desktop();
+    QRect deskRect =desktopWidget->availableGeometry();   //获取可用桌面大小
+    QRect screenRect =desktopWidget->screenGeometry();  //获取设备屏幕大小
+
+    qDebug()<<deskRect<<screenRect;
 }
 
 WinFullScreen::~WinFullScreen() 
@@ -173,12 +178,16 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Escape) {
 		close();
-		qDebug() << "---Key_Escape---";
+        qDebug() << "Key_Escape";
 	}
 }
 
 void WinFullScreen::mousePressEvent(QMouseEvent *event)
 {
+    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
+             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
+
 	m_rtCalcu.m_cursorType = CursorType::Waiting;
 	setMouseTracking(false);
 
@@ -221,15 +230,15 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 
 	}
 
-	qDebug() << "【mousePressEvent】 :" << event->pos();
+    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
+             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
 
 	switch (m_rtCalcu.m_cursorType)
 	{
 	case Select: {
 		m_rtCalcu.m_startPos = event->pos();
-		m_rtCalcu.m_EndPos = event->pos();
-		//m_rectCalcu.setClear(false);
-		qDebug() << "【mousePressEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
+        m_rtCalcu.m_EndPos = event->pos();
 		break;
 	}
 	case MovePosition:
@@ -260,7 +269,9 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 
 void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 {
-	//qDebug() << "【mouseMoveEvent】 :" << event->pos();
+    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
+             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
 
 	switch (m_rtCalcu.m_cursorType)
 	{
@@ -278,20 +289,17 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 	case ModifyTLAndBR:
 	case ModifyTRAndBL: {
 		m_rtCalcu.m_modifyEndPos = event->pos();
-		//qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.getSelRect() << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
 		break;
 	}
 	case Move: {
-		m_rtCalcu.m_moveEndPos = event->pos();
-		//qDebug() << "【mouseMoveEvent】Move :" << m_rtCalcu.getSelRect() << m_rtCalcu.getSelRect()<< m_rtCalcu.getMoveWidth()<< m_rtCalcu.getMoveHeight();
+        m_rtCalcu.m_moveEndPos = event->pos();
 		break;
 	}
 	case Waiting: {
 		switch (m_rtCalcu.getCursorArea(event->pos()))
 		{
 		case CursorCrossHorizontal:
-			setCursor(Qt::SizeHorCursor);
-			//m_rectCalcu.m_cursorType = xxxxx
+            setCursor(Qt::SizeHorCursor);
 			break;
 		case CursorCrossVertical:
 			setCursor(Qt::SizeVerCursor);
@@ -320,7 +328,9 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 
 void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 {
-	//qDebug() << "【mouseReleaseEvent】 :" << event->pos();
+    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
+             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
 
 	switch (m_rtCalcu.m_cursorType)
 	{
@@ -370,7 +380,7 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 void WinFullScreen::display()
 {
 	for (QScreen* it : m_screens) {
-		qDebug() << "------------------------------------------\n"
+        qInfo() << "----------------------------------------------------------------------------\n"
 			<< "count:" << it << "  devicePixelRatio:" << it->devicePixelRatio() << "  manufacturer:" << it->manufacturer()
 			<< "  model:" << it->model() << "  name:" << it->name() << "  physicalSize:" << it->physicalSize() << "  refreshRate:" << it->refreshRate()
 			<< "  serialNumber:" << it->serialNumber() << "  size:" << it->size() << "  Scale:" << getScale(it) << "  virtualGeometry:" << it->virtualGeometry() << "\n"
@@ -400,6 +410,7 @@ double WinFullScreen::getScale()
 
 double WinFullScreen::getScale(QScreen * screen)
 {
+#ifdef Q_OS_WIN
 	double scale = screen->logicalDotsPerInch() / 96.0;
 	if (scale < 1.25)
 		return 1;
@@ -421,4 +432,9 @@ double WinFullScreen::getScale(QScreen * screen)
 		return 3.5;
 	else
 		return scale;
+#elif  defined(Q_OS_MAC)
+    double scale = screen->logicalDotsPerInch() / 72.0;
+
+#elif  defined(Q_OS_LINUX)
+#endif
 }
