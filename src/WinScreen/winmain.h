@@ -25,6 +25,8 @@ private:
 	void init();
 	QWidget* tabShortcuts();
 	QWidget* tabOutput();
+	QWidget* tabAbout();
+
 	//void setLayout(QWidget *parent = nullptr);
 
 signals:

@@ -15,6 +15,7 @@
 #include <QPushButton>
 #include <QDebug>
 #include <QLineEdit>
+#include <QTextEdit>
 #include <QToolButton>
 
 WinMain::WinMain(QWidget *parent) 
@@ -49,8 +50,12 @@ void WinMain::init()
 	QTabWidget* tabWidget = new QTabWidget();
 	tabWidget->addTab(tabOutput(), tr("Output"));
 	tabWidget->addTab(tabShortcuts(), tr("Screenshots"));
+	tabWidget->addTab(tabAbout(), tr("About"));
+
 
 	QVBoxLayout* vLayout = new QVBoxLayout(this);
+	//vLayout->setMargin(4);
+	//vLayout->setSpacing(0);
 	vLayout->addWidget(tabWidget);
 }
 
@@ -61,6 +66,7 @@ QWidget * WinMain::tabShortcuts()
 	QVBoxLayout* mainVLayout = new QVBoxLayout();
 
 	QHBoxLayout* hLayout = new QHBoxLayout();
+	hLayout->setMargin(0);
 	hLayout->addWidget(new QLabel(tr("Global Shortcuts 1")), Qt::AlignLeft);
 	hLayout->addWidget(new QLabel(tr("ⓘ")), Qt::AlignLeft);
 	hLayout->addStretch(3);
@@ -72,6 +78,7 @@ QWidget * WinMain::tabShortcuts()
 	mainVLayout->addWidget(line);
 
 	QGridLayout* girdLayout = new QGridLayout();
+	girdLayout->setMargin(0);
 	girdLayout->addWidget(new QLabel(tr("Screenshots")), 0, 0, Qt::AlignLeft);
 	m_scrnShot = new QKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F1));
 	girdLayout->addWidget(m_scrnShot, 0, 1, Qt::AlignLeft);
@@ -99,7 +106,6 @@ QWidget * WinMain::tabShortcuts()
 
 	mainVLayout->addStretch(0);
 	mainVLayout->addWidget(new WinResetBtn());
-
 
 	tabOneShortcuts->setLayout(mainVLayout);
 	QStackedWidget* stack = new QStackedWidget();
@@ -143,4 +149,26 @@ QWidget * WinMain::tabOutput()
 	mainVLayout->addWidget(new WinResetBtn());
 
 	return outputWidget;
+}
+
+QWidget* WinMain::tabAbout()
+{
+	QWidget* aboutWidget = new QWidget();
+	QHBoxLayout* mainHLayout = new QHBoxLayout(aboutWidget);
+	mainHLayout->setMargin(0);
+	mainHLayout->setSpacing(0);
+
+	QVBoxLayout* vLayout = new QVBoxLayout();
+	vLayout->setMargin(0);
+	vLayout->addWidget(new QLabel(tr("后面替换为 LOGO 图标")));
+	vLayout->addWidget(new QLabel(tr("PicShot")));
+	vLayout->addWidget(new QLabel(tr("一款开源且极简的跨平台截图软件")));
+	vLayout->addWidget(new QLabel(tr("版本：V1.0 (2021.xx.xx)")));
+	vLayout->addWidget(new QLabel(tr("版权© 2021 偕臧/XMuli")));
+	vLayout->addStretch(0);
+	mainHLayout->addLayout(vLayout, 2);
+	QTextEdit* textEdit = new QTextEdit("鸣谢");
+	mainHLayout->addWidget(textEdit, 3);
+
+	return aboutWidget;
 }
