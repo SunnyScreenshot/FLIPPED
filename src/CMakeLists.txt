@@ -56,8 +56,9 @@ add_compile_definitions(QT_MESSAGELOGCONTEXT  # Release 版本下也能输出文
 #    QT_NO_WARNING_OUTPUT
     )
 
-include_directories(${CMAKE_SOURCE_DIR}/Log4Qt/include
-    ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey)
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty/Log4Qt/include
+    ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey
+    )
 link_directories(${CMAKE_BINARY_DIR}/bin
     ${CMAKE_BINARY_DIR}/3rdparty/QHotkey
     )
