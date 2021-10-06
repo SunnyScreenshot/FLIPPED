@@ -56,8 +56,11 @@ add_compile_definitions(QT_MESSAGELOGCONTEXT  # Release 版本下也能输出文
 #    QT_NO_WARNING_OUTPUT
     )
 
-include_directories(${CMAKE_SOURCE_DIR}/Log4Qt/include)
-link_directories(${CMAKE_BINARY_DIR}/bin)
+include_directories(${CMAKE_SOURCE_DIR}/Log4Qt/include
+    ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey)
+link_directories(${CMAKE_BINARY_DIR}/bin
+    ${CMAKE_BINARY_DIR}/3rdparty/QHotkey
+    )
 
 add_executable(${PROJECT_NAME}
     ${PICSHOT_SOURCES}
@@ -66,5 +69,6 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
         ${QT5_LIBS_LINK}
         log4qt
+        qhotkey
         )
 

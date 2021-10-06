@@ -10,6 +10,8 @@
 #include "logmanager.h"
 #include "propertyconfigurator.h"
 
+// test
+#include <QHotkey>
 #include "WinScreen/winresetbtn.h"
 
 
@@ -37,8 +39,27 @@ int main(int argc, char *argv[]) {
 
     //qInfo()<<QObject::tr("Program running program end.");
 
-	WinMain* win = new WinMain();
-	win->show();
+    WinMain* win = new WinMain();
+    win->show();
+
+    auto hotkey = new QHotkey(QKeySequence("ctrl+alt+t"), true, win);//The hotkey will be automatically registered
+    qDebug() << "Is Registered: " << hotkey->isRegistered();
+
+    static bool bShow = true;
+    QObject::connect(hotkey, &QHotkey::activated, qApp, [&](){
+        bShow = !bShow;
+
+        if (bShow) {
+            win->show();
+            qDebug() << "Hotkey Activated - win->show()";
+        } else {
+            win->hide();
+            qDebug() << "Hotkey Activated - win->hide()";
+        }
+
+
+    });
+
 
     return QApplication::exec();
 }
