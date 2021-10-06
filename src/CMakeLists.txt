@@ -24,11 +24,13 @@ set(PICSHOT_SOURCES
     WinScreen/winfullscreen.cpp
     WinScreen/rectcalcu.cpp
     WinScreen/winmain.cpp
+	WinScreen/winresetbtn.cpp
     )
 set(PICSHOT_HEADERS
     WinScreen/winfullscreen.h
     WinScreen/rectcalcu.h
     WinScreen/winmain.h
+	WinScreen/winresetbtn.h
     )
 
 set(CMAKE_CXX_STANDARD 20)

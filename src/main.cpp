@@ -10,6 +10,8 @@
 #include "logmanager.h"
 #include "propertyconfigurator.h"
 
+#include "WinScreen/winresetbtn.h"
+
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
