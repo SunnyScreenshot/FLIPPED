@@ -16,6 +16,8 @@
 #include <QDebug>
 #include <QLineEdit>
 #include <QTextEdit>
+#include <QSpinBox>
+#include <QCheckBox>
 #include <QToolButton>
 
 WinMain::WinMain(QWidget *parent) 
@@ -48,10 +50,10 @@ WinMain::~WinMain()
 void WinMain::init()
 {
 	QTabWidget* tabWidget = new QTabWidget();
+	tabWidget->addTab(tabScreenShot(), tr("ScreenShot"));
 	tabWidget->addTab(tabOutput(), tr("Output"));
 	tabWidget->addTab(tabShortcuts(), tr("Screenshots"));
 	tabWidget->addTab(tabAbout(), tr("About"));
-
 
 	QVBoxLayout* vLayout = new QVBoxLayout(this);
 	//vLayout->setMargin(4);
@@ -59,23 +61,121 @@ void WinMain::init()
 	vLayout->addWidget(tabWidget);
 }
 
+QWidget * WinMain::tabScreenShot()
+{
+	// 边框颜色组 ------------------------------------
+	QHBoxLayout* vlBorderCol = new QHBoxLayout();
+	vlBorderCol->setMargin(0);
+	vlBorderCol->addWidget(new QLabel(tr("Border Color")));
+	vlBorderCol->addWidget(new QLabel(tr("Col")));
+	QHBoxLayout* vlArchorCol = new QHBoxLayout();
+	vlArchorCol->setMargin(0);
+	vlArchorCol->addWidget(new QLabel(tr("Archor Color")));
+	vlArchorCol->addWidget(new QLabel(tr("Col")));
+	QHBoxLayout* vlCrossCurveCol = new QHBoxLayout();
+	vlCrossCurveCol->setMargin(0);
+	vlCrossCurveCol->addWidget(new QLabel(tr("Cross Curve Color")));
+	vlCrossCurveCol->addWidget(new QLabel(tr("Col")));
+
+	QSpinBox* sbBorderWidth = new QSpinBox();
+	sbBorderWidth->setMinimum(0);
+	sbBorderWidth->setSingleStep(1);
+	sbBorderWidth->setValue(2);
+	QSpinBox* sbArchorCount = new QSpinBox();
+	sbArchorCount->setMinimum(0);
+	sbArchorCount->setMaximum(8);
+	sbArchorCount->setSingleStep(4);
+	sbArchorCount->setValue(0);
+	QSpinBox* sbvlCrossCurveWidget = new QSpinBox();
+	sbvlCrossCurveWidget->setMinimum(0);
+	sbvlCrossCurveWidget->setSingleStep(1);
+	sbvlCrossCurveWidget->setValue(1);
+
+	QGridLayout* girdLayout = new QGridLayout();
+	girdLayout->setMargin(0);
+	girdLayout->addLayout(vlBorderCol, 0, 0);
+	girdLayout->addLayout(vlArchorCol, 1, 0);
+	girdLayout->addLayout(vlCrossCurveCol, 2, 0);
+	// TODO 2021-10-07: (0, 1) 插入一个弹簧
+	girdLayout->addWidget(new QLabel(tr("Border Widget")), 0, 2);
+	girdLayout->addWidget(new QLabel(tr("Archor Count")), 1, 2);
+	girdLayout->addWidget(new QLabel(tr("Cross Curve Widget")), 2, 2);
+	girdLayout->addWidget(sbBorderWidth, 0, 3);
+	girdLayout->addWidget(sbArchorCount, 1, 3);
+	girdLayout->addWidget(sbvlCrossCurveWidget, 2, 3);
+
+	QHBoxLayout* hlGirdParent = new QHBoxLayout();
+	hlGirdParent->setMargin(0);
+	hlGirdParent->addLayout(girdLayout);
+	hlGirdParent->addStretch(0);
+	
+	// checkbox 组 ------------------------------------
+	QCheckBox* cbWinDetection = new QCheckBox(tr("enable window detection"));
+	QCheckBox* cbCatchCurcose = new QCheckBox(tr("catch curcose"));
+	QCheckBox* cbAutoCpoyClipboard = new QCheckBox(tr("auto cpoy clipboard"));
+	QVBoxLayout* vlCheckBox = new QVBoxLayout();
+	vlCheckBox->setMargin(0);
+	vlCheckBox->addWidget(cbWinDetection);
+	vlCheckBox->addWidget(cbCatchCurcose);
+	vlCheckBox->addWidget(cbAutoCpoyClipboard);
+
+	// 整体布局 ------------------------------------
+	QWidget* tabScreenShot = new QWidget();
+	QVBoxLayout* mainVLayout = new QVBoxLayout(tabScreenShot);
+	mainVLayout->addLayout(hlGirdParent);
+	mainVLayout->addLayout(vlCheckBox);
+	mainVLayout->addStretch(0);
+	mainVLayout->addWidget(new WinResetBtn());
+
+	return tabScreenShot;
+}
+
+QWidget * WinMain::tabOutput()
+{
+	QGridLayout* girdLayout = new QGridLayout();
+	girdLayout->addWidget(new QLabel(tr("File Name")), 0, 0, Qt::AlignLeft);
+	m_leFileName = new QLineEdit("PicShot_xxxxx.png");
+	girdLayout->addWidget(m_leFileName, 0, 1, Qt::AlignLeft);
+	m_tbFileName = new QToolButton();
+	girdLayout->addWidget(m_tbFileName, 0, 2, Qt::AlignLeft);
+	girdLayout->addWidget(new QLabel(tr("Screen Path")), 1, 0, Qt::AlignLeft);
+	m_leScrnPath = new QLineEdit("path/1111");
+	girdLayout->addWidget(m_leScrnPath, 1, 1, Qt::AlignLeft);
+	m_tbScrnPath = new QToolButton();
+	girdLayout->addWidget(m_tbScrnPath, 1, 2, Qt::AlignLeft);
+	girdLayout->addWidget(new QLabel(tr("Config Path")), 2, 0, Qt::AlignLeft);
+	m_leConfPath = new QLineEdit("path/1112");
+	girdLayout->addWidget(m_leConfPath, 2, 1, Qt::AlignLeft);
+	m_tbConfPath = new QToolButton();
+	girdLayout->addWidget(m_tbConfPath, 2, 2, Qt::AlignLeft);
+	girdLayout->addWidget(new QLabel(tr("Log Path")), 3, 0, Qt::AlignLeft);
+	m_leLogPath = new QLineEdit("path/1113");
+	girdLayout->addWidget(m_leLogPath, 3, 1, Qt::AlignLeft);
+	m_tbLogPath = new QToolButton();
+	girdLayout->addWidget(m_tbLogPath, 3, 2, Qt::AlignLeft);
+
+	// 整体布局 ------------------------------------
+	QWidget* outputWidget = new QWidget();
+	QVBoxLayout* mainVLayout = new QVBoxLayout(outputWidget);
+	girdLayout->addWidget(m_tbLogPath, 3, 2, Qt::AlignLeft);
+	mainVLayout->addLayout(girdLayout);
+	mainVLayout->addStretch(0);
+	mainVLayout->addWidget(new WinResetBtn());
+
+	return outputWidget;
+}
+
 QWidget * WinMain::tabShortcuts()
 {
-	// tabOneShortcuts 是第一页 widget
-	QWidget* tabOneShortcuts = new QWidget();
-	QVBoxLayout* mainVLayout = new QVBoxLayout();
-
 	QHBoxLayout* hLayout = new QHBoxLayout();
 	hLayout->setMargin(0);
 	hLayout->addWidget(new QLabel(tr("Global Shortcuts 1")), Qt::AlignLeft);
 	hLayout->addWidget(new QLabel(tr("ⓘ")), Qt::AlignLeft);
 	hLayout->addStretch(3);
-	mainVLayout->addLayout(hLayout);
 
 	QFrame* line = new QFrame();
 	line->setFrameShape(QFrame::HLine);
 	line->setFrameShadow(QFrame::Sunken);
-	mainVLayout->addWidget(line);
 
 	QGridLayout* girdLayout = new QGridLayout();
 	girdLayout->setMargin(0);
@@ -99,11 +199,16 @@ QWidget * WinMain::tabShortcuts()
 	girdLayout->addWidget(m_scrnShotWhole, 3, 1, Qt::AlignLeft);
 	m_labScrnShotWhole = new QLabel("✔");
 	girdLayout->addWidget(m_labScrnShotWhole, 3, 2, Qt::AlignLeft);
-	mainVLayout->addLayout(girdLayout);
 	//girdLayout->setColumnStretch(0, 2);
 	//girdLayout->setColumnStretch(1, 7);
 	//girdLayout->setColumnStretch(2, 1);
 
+	// 整体布局 ------------------------------------
+	QWidget* tabOneShortcuts = new QWidget();
+	QVBoxLayout* mainVLayout = new QVBoxLayout();
+	mainVLayout->addLayout(hLayout);
+	mainVLayout->addWidget(line);
+	mainVLayout->addLayout(girdLayout);
 	mainVLayout->addStretch(0);
 	mainVLayout->addWidget(new WinResetBtn());
 
@@ -114,41 +219,6 @@ QWidget * WinMain::tabShortcuts()
 
 	//stack->setCurrentIndex(0);  // 设置 QStackedWidget 翻页
 	return stack;
-}
-
-
-QWidget * WinMain::tabOutput()
-{
-	QWidget* outputWidget = new QWidget();
-	QVBoxLayout* mainVLayout = new QVBoxLayout(outputWidget);
-
-	QGridLayout* girdLayout = new QGridLayout();
-	girdLayout->addWidget(new QLabel(tr("File Name")), 0, 0, Qt::AlignLeft);
-	m_leFileName = new QLineEdit("PicShot_xxxxx.png");
-	girdLayout->addWidget(m_leFileName, 0, 1, Qt::AlignLeft);
-	m_tbFileName = new QToolButton();
-	girdLayout->addWidget(m_tbFileName, 0, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Screen Path")), 1, 0, Qt::AlignLeft);
-	m_leScrnPath = new QLineEdit("path/1111");
-	girdLayout->addWidget(m_leScrnPath, 1, 1, Qt::AlignLeft);
-	m_tbScrnPath = new QToolButton();
-	girdLayout->addWidget(m_tbScrnPath, 1, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Config Path")), 2, 0, Qt::AlignLeft);
-	m_leConfPath = new QLineEdit("path/1112");
-	girdLayout->addWidget(m_leConfPath, 2, 1, Qt::AlignLeft);
-	m_tbConfPath = new QToolButton();
-	girdLayout->addWidget(m_tbConfPath, 2, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Log Path")), 3, 0, Qt::AlignLeft);
-	m_leLogPath = new QLineEdit("path/1113");
-	girdLayout->addWidget(m_leLogPath, 3, 1, Qt::AlignLeft);
-	m_tbLogPath = new QToolButton();
-	girdLayout->addWidget(m_tbLogPath, 3, 2, Qt::AlignLeft);
-
-	mainVLayout->addLayout(girdLayout);
-	mainVLayout->addStretch(0);
-	mainVLayout->addWidget(new WinResetBtn());
-
-	return outputWidget;
 }
 
 QWidget* WinMain::tabAbout()

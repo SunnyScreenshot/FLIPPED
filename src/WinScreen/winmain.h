@@ -23,8 +23,9 @@ public:
 
 private:
 	void init();
-	QWidget* tabShortcuts();
+	QWidget* tabScreenShot();
 	QWidget* tabOutput();
+	QWidget* tabShortcuts();
 	QWidget* tabAbout();
 
 	//void setLayout(QWidget *parent = nullptr);
