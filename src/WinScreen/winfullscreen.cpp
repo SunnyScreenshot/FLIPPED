@@ -26,22 +26,29 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 
 	//setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	//setFixedSize(QApplication::desktop()->size());
-    resize(1920, 1080);
-    QDesktopWidget* desktopWidget =QApplication::desktop();
-    QRect deskRect =desktopWidget->availableGeometry();   //获取可用桌面大小
-    QRect screenRect =desktopWidget->screenGeometry();  //获取设备屏幕大小
+	resize(1920, 1080);
 
-    qDebug()<<deskRect<<screenRect;
+	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
 
 WinFullScreen::~WinFullScreen() 
 {
+}
+
+// 清空截图内容（当关闭 Esc、或完成截图时）
+void WinFullScreen::onClearScreen()
+{
+	//m_screens、m_primaryScreen 还保留
+
 	delete m_currPixmap;
 	m_currPixmap = nullptr;
 	delete m_blurPixmap;
 	m_blurPixmap = nullptr;
 	delete m_basePixmap;
 	m_basePixmap = nullptr;
+
+	m_rtCalcu.clear();
+	m_cursorArea = CursorArea::UnknowCursorArea;
 }
 
 // 获取虚拟屏幕截图
@@ -128,18 +135,15 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
 
 	pa.setPen(Qt::red);
-	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));
-
-	 //拉伸边框矩形大小
-	modifyRectSize(rtSel);
-	m_rtCalcu.getSelRect();
+	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));  // 移动选中矩形
+	modifyRectSize(rtSel);  // 拉伸选中矩形大小
 
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
 	// 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
 		pa.drawPixmap(rtSel, m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio())));
 		pa.drawRect(rtSel);
-
+		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
 	QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel);
@@ -166,19 +170,16 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.drawRect(rtBottomLeft);
 	pa.drawRect(rtBottomRight);
 
-	
 	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
-
-
-	update();
 }
 
 void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Escape) {
+		qDebug() << "Key_Escape";
+		emit sigClearScreen();
 		close();
-        qDebug() << "Key_Escape";
 	}
 }
 
@@ -265,6 +266,8 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 	default:
 		break;
 	}
+
+	update();
 }
 
 void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
@@ -324,6 +327,8 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 	default:
 		break;
 	}
+
+	update();
 }
 
 void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
@@ -372,13 +377,18 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 
 	m_rtCalcu.m_cursorType = CursorType::Waiting;
 	setMouseTracking(true);
+
+	update();
 }
-
-
 
 // 屏幕详细参数
 void WinFullScreen::display()
 {
+	QDesktopWidget* desktopWidget = QApplication::desktop();
+	QRect deskRect = desktopWidget->availableGeometry();   //获取可用桌面大小
+	QRect screenRect = desktopWidget->screenGeometry();  //获取设备屏幕大小
+	qInfo() << "availableGeometry(可用桌面大小):" << deskRect << "  screenGeometry(设备屏幕大小):"<< screenRect;
+
 	for (QScreen* it : m_screens) {
         qInfo() << "----------------------------------------------------------------------------\n"
 			<< "count:" << it << "  devicePixelRatio:" << it->devicePixelRatio() << "  manufacturer:" << it->manufacturer()
@@ -400,7 +410,6 @@ double WinFullScreen::getDevicePixelRatio(QScreen * screen)
 		return 0.0;
 	else
 		return screen->devicePixelRatio();
-	
 }
 
 double WinFullScreen::getScale()

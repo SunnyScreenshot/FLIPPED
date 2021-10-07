@@ -29,6 +29,12 @@ public:
 	double getScale(QScreen *screen);
 	QPixmap* getBasePixmap();
 
+signals:
+	void sigClearScreen();
+
+public:
+	void onClearScreen();
+
 private:
 	void getVirtualScreen();
 	QPixmap* getblurPixmap(QColor color = QColor(255, 255, 255, 0.2 * 255));
@@ -50,7 +56,7 @@ private:
 	QPixmap* m_blurPixmap;       // 遮罩
 	QPixmap* m_basePixmap;       // 当前屏幕截图 + 遮罩
 
-	RectCalcu m_rtCalcu;        // 选中矩形区域
+	RectCalcu m_rtCalcu;         // 选中矩形区域
 	CursorArea m_cursorArea;     // 光标所在区域
 };
 

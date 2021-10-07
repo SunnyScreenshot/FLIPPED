@@ -32,34 +32,24 @@ int main(int argc, char *argv[]) {
 
 	//WinFullScreen winFullScreen;
  //   winFullScreen.display();
-
 	//winFullScreen.getBasePixmap();
-	////winFullScreen.showFullScreen(); //只顶级窗口有效，且不是双屏全屏
  //   winFullScreen.show();
 
     //qInfo()<<QObject::tr("Program running program end.");
 
     WinMain* win = new WinMain();
     win->show();
+	WinFullScreen winFullScreen;
 
     auto hotkey = new QHotkey(QKeySequence("ctrl+alt+t"), true, win);//The hotkey will be automatically registered
     qDebug() << "Is Registered: " << hotkey->isRegistered();
 
     static bool bShow = true;
     QObject::connect(hotkey, &QHotkey::activated, qApp, [&](){
-        bShow = !bShow;
-
-        if (bShow) {
-            win->show();
-            qDebug() << "Hotkey Activated - win->show()";
-        } else {
-            win->hide();
-            qDebug() << "Hotkey Activated - win->hide()";
-        }
-
-
+	    winFullScreen.display();
+		winFullScreen.getBasePixmap();
+	    winFullScreen.show();
     });
-
 
     return QApplication::exec();
 }
