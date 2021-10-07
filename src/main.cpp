@@ -13,9 +13,12 @@
 // test
 #include <QHotkey>
 #include "WinScreen/winresetbtn.h"
+#include "WinScreen/tary.h"
 
 
 int main(int argc, char *argv[]) {
+	QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
     QApplication a(argc, argv);
 
 #if  0
@@ -37,19 +40,21 @@ int main(int argc, char *argv[]) {
 
     //qInfo()<<QObject::tr("Program running program end.");
 
-    WinMain* win = new WinMain();
-    win->show();
-	WinFullScreen winFullScreen;
+ //   WinMain* win = new WinMain();
+ //   win->show();
+	//WinFullScreen winFullScreen;
 
-    auto hotkey = new QHotkey(QKeySequence("ctrl+alt+t"), true, win);//The hotkey will be automatically registered
-    qDebug() << "Is Registered: " << hotkey->isRegistered();
+ //   auto hotkey = new QHotkey(QKeySequence("ctrl+alt+t"), true, win);//The hotkey will be automatically registered
+ //   qDebug() << "Is Registered: " << hotkey->isRegistered();
 
-    static bool bShow = true;
-    QObject::connect(hotkey, &QHotkey::activated, qApp, [&](){
-	    winFullScreen.display();
-		winFullScreen.getBasePixmap();
-	    winFullScreen.show();
-    });
+ //   static bool bShow = true;
+ //   QObject::connect(hotkey, &QHotkey::activated, qApp, [&](){
+	//    winFullScreen.display();
+	//	winFullScreen.getBasePixmap();
+	//    winFullScreen.show();
+ //   });
+
+	Tary tary;
 
     return QApplication::exec();
 }
