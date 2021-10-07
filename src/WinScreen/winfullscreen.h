@@ -32,7 +32,7 @@ public:
 signals:
 	void sigClearScreen();
 
-public:
+public slots:
 	void onClearScreen();
 
 private:

@@ -25,14 +25,14 @@ set(PICSHOT_SOURCES
     WinScreen/rectcalcu.cpp
     WinScreen/winmain.cpp
     WinScreen/winresetbtn.cpp
-    WinScreen/tary.cpp
+    WinScreen/tray.cpp
     )
 set(PICSHOT_HEADERS
     WinScreen/winfullscreen.h
     WinScreen/rectcalcu.h
     WinScreen/winmain.h
     WinScreen/winresetbtn.h
-    WinScreen/tary.h
+    WinScreen/tray.h
     )
 set(PICSHOT_RESOURCES
     Resources.qrc

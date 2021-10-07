@@ -13,12 +13,12 @@
 // test
 #include <QHotkey>
 #include "WinScreen/winresetbtn.h"
-#include "WinScreen/tary.h"
+#include "WinScreen/tray.h"
 
 
 int main(int argc, char *argv[]) {
-	QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
+	// TODO 2021-10-08 高分屏适配的许多尝试: QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);
 
 #if  0
@@ -32,29 +32,11 @@ int main(int argc, char *argv[]) {
 #endif
 
  //   qInfo()<<QObject::tr("Program running program start.");
-
-	//WinFullScreen winFullScreen;
- //   winFullScreen.display();
-	//winFullScreen.getBasePixmap();
- //   winFullScreen.show();
+ 
+	// 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
+	Tray* tary = new Tray();
 
     //qInfo()<<QObject::tr("Program running program end.");
-
- //   WinMain* win = new WinMain();
- //   win->show();
-	//WinFullScreen winFullScreen;
-
- //   auto hotkey = new QHotkey(QKeySequence("ctrl+alt+t"), true, win);//The hotkey will be automatically registered
- //   qDebug() << "Is Registered: " << hotkey->isRegistered();
-
- //   static bool bShow = true;
- //   QObject::connect(hotkey, &QHotkey::activated, qApp, [&](){
-	//    winFullScreen.display();
-	//	winFullScreen.getBasePixmap();
-	//    winFullScreen.show();
- //   });
-
-	Tary tary;
 
     return QApplication::exec();
 }

@@ -33,6 +33,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 
 WinFullScreen::~WinFullScreen() 
 {
+	int a = 13;
 }
 
 // 清空截图内容（当关闭 Esc、或完成截图时）
@@ -179,7 +180,8 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_Escape) {
 		qDebug() << "Key_Escape";
 		emit sigClearScreen();
-		close();
+		hide();
+		//close();   // 销毁会有问题
 	}
 }
 
