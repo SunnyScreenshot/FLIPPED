@@ -6,9 +6,10 @@
 #define WINMAIN_H
 
 #include <QWidget>
+#include "../widget/xkeysequenceedit.h"
 
 QT_BEGIN_NAMESPACE
-class QKeySequenceEdit;
+class XKeySequenceEdit;
 class QLabel;
 class QLineEdit;
 class QToolButton;
@@ -32,13 +33,16 @@ private:
 
 signals:
 
+public slots:
+    void onScrnShot(const QKeySequence &keySequence);
+
 
 private:
 	// tab shortcut
-	QKeySequenceEdit* m_scrnShot;        // 截图
-	QKeySequenceEdit* m_scrnShotLater;   // 延时截图
-	QKeySequenceEdit* m_scrnShotRect;    // 矩形区域截图
-	QKeySequenceEdit* m_scrnShotWhole;   // 整个屏幕截图
+    XKeySequenceEdit* m_scrnShot;        // 截图
+    XKeySequenceEdit* m_scrnShotLater;   // 延时截图
+    XKeySequenceEdit* m_scrnShotRect;    // 矩形区域截图
+    XKeySequenceEdit* m_scrnShotWhole;   // 整个屏幕截图
 	QLabel* m_labScrnShot;
 	QLabel* m_labScrnShotLater;
 	QLabel* m_labScrnShotRect;

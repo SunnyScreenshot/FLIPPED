@@ -21,18 +21,22 @@ endif()
 
 set(PICSHOT_SOURCES
     main.cpp
-    WinScreen/winfullscreen.cpp
-    WinScreen/rectcalcu.cpp
-    WinScreen/winmain.cpp
-    WinScreen/winresetbtn.cpp
-    WinScreen/tray.cpp
+    winscreen/winfullscreen.cpp
+    winscreen/rectcalcu.cpp
+    winscreen/winmain.cpp
+    winscreen/winresetbtn.cpp
+    winscreen/tray.cpp
+
+    widget/xkeysequenceedit.cpp
     )
 set(PICSHOT_HEADERS
-    WinScreen/winfullscreen.h
-    WinScreen/rectcalcu.h
-    WinScreen/winmain.h
-    WinScreen/winresetbtn.h
-    WinScreen/tray.h
+    winscreen/winfullscreen.h
+    winscreen/rectcalcu.h
+    winscreen/winmain.h
+    winscreen/winresetbtn.h
+    winscreen/tray.h
+
+    widget/xkeysequenceedit.h
     )
 set(PICSHOT_RESOURCES
     Resources.qrc
