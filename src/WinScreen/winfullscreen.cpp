@@ -383,8 +383,21 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 	update();
 }
 
+WinFullScreen &WinFullScreen::instance()
+{
+    static WinFullScreen m_instance;
+    return m_instance;
+}
+
+void WinFullScreen::getScrnShots()
+{
+    this->getScrnInfo();
+    this->getBasePixmap();
+    this->show();
+}
+
 // 屏幕详细参数
-void WinFullScreen::display()
+void WinFullScreen::getScrnInfo()
 {
 	QDesktopWidget* desktopWidget = QApplication::desktop();
 	QRect deskRect = desktopWidget->availableGeometry();   //获取可用桌面大小

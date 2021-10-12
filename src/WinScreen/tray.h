@@ -39,8 +39,7 @@ private:
 	QSystemTrayIcon* m_sysTary;
 
 	QHotkey* m_hkScnShot;
-	WinMain* m_winMain;
-	WinFullScreen* m_winFallScn;
+    WinMain* m_winMain;
 };
 
 #endif // TARY_H

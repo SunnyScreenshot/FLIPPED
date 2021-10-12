@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by xmuli on 2021/10/10.
 //
 
@@ -14,6 +14,15 @@ public:
     XKeySequenceEdit(QWidget *parent = 0);
     XKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent = nullptr);
     ~XKeySequenceEdit();
+
+//	void test();
+
+signals:
+	void sigKeySeqChanged(const QKeySequence &keySequence);
+
+//public slots:
+	//void onEditingFinished();
+	//void onKeySequenceChanged(const QKeySequence &keySequence);
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;

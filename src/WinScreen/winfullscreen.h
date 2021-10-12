@@ -18,11 +18,13 @@ QT_END_NAMESPACE
 class WinFullScreen : public  QWidget
 {
     Q_OBJECT
-public:
-    explicit WinFullScreen(QWidget *parent = nullptr);
-    ~WinFullScreen() override;
 
-	void display();
+public:
+    static WinFullScreen& instance();
+    void getScrnShots();
+
+private:
+    void getScrnInfo();
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
 	double getScale();
@@ -36,9 +38,14 @@ public slots:
 	void onClearScreen();
 
 private:
+//    WinFullScreen();
+    WinFullScreen(QWidget *parent = nullptr);
+//    WinFullScreen(const WinFullScreen&);
+//    WinFullScreen& operator=(const WinFullScreen&);
+    ~WinFullScreen() override;
+
 	void getVirtualScreen();
 	QPixmap* getblurPixmap(QColor color = QColor(255, 255, 255, 0.2 * 255));
-
 	void modifyRectSize(QRect& rtSel);
 
 protected:

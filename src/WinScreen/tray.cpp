@@ -8,7 +8,7 @@
 #include <QAction>
 #include <QMenu>
 #include <QIcon>
-#include "QCoreApplication"
+#include <QCoreApplication>
 
 Tray::Tray(QObject *parent)
     : QObject(parent)
@@ -17,9 +17,8 @@ Tray::Tray(QObject *parent)
 	, m_quit(nullptr)
 	, m_menuTary(nullptr)
 	, m_sysTary(nullptr)
-	, m_winMain(nullptr)
-	, m_winFallScn(nullptr)
 	, m_hkScnShot(nullptr)
+    , m_winMain(nullptr)
 {
 	init();
 }
@@ -47,8 +46,7 @@ void Tray::init()
 	m_sysTary->setContextMenu(m_menuTary);
 	m_sysTary->setVisible(true);
 
-	m_winMain = new WinMain();
-	m_winFallScn = new WinFullScreen();
+    m_winMain = new WinMain();
 
 	connect(m_screenShot, &QAction::triggered, this, &Tray::onScreenShot);
 	connect(m_showWinConfig, &QAction::triggered, this, &Tray::onShowWinConfig);
@@ -62,10 +60,7 @@ void Tray::init()
 void Tray::onScreenShot()
 {
 	// TODO 2021-10-08 模拟按下快捷键或后续的封装函数
-	
-	m_winFallScn->display();
-	m_winFallScn->getBasePixmap();
-	m_winFallScn->show();
+    WinFullScreen::instance().getScrnShots();
 }
 
 void Tray::onShowWinConfig(bool checked)

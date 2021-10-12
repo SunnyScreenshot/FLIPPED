@@ -21,6 +21,8 @@
 #include <QCheckBox>
 #include <QToolButton>
 #include <QSizePolicy>
+#include <QHotkey>
+#include <QCoreApplication>
 
 
 WinMain::WinMain(QWidget *parent) 
@@ -236,10 +238,7 @@ QWidget * WinMain::tabShortcuts()
 
 
     // connect ------------------------------------
-    connect(m_scrnShot, &XKeySequenceEdit::keySequenceChanged, this, &WinMain::onScrnShot);
-
-
-
+    connect(m_scrnShot, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onScrnShot);
 
     return stack;
 }
@@ -268,6 +267,12 @@ QWidget* WinMain::tabAbout()
 
 void WinMain::onScrnShot(const QKeySequence &keySequence)
 {
-    if (keySequence.count() > 1)
-    qDebug()<< "sender():" << sender()<<"keySequence:"<<keySequence<< "keySequence:" << keySequence.count();
+	//if (keySequence.count() != 1)  // XKeySequenceEdit::keySequenceChanged 重载前后的发射信号是派生类还是继承类，和时机是？？？
+	//	return;
+
+
+	QHotkey* hkScnShot = new QHotkey(keySequence, true, qApp);//The hotkey will be automatically registered
+	qInfo() << "Is Registered22: " << hkScnShot->isRegistered();
+	qInfo()<< "sender():" << sender()<<"keySequence:"<<keySequence<< "keySequence:" << keySequence.count();
+
 }

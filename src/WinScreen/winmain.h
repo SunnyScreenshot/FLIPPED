@@ -36,7 +36,6 @@ signals:
 public slots:
     void onScrnShot(const QKeySequence &keySequence);
 
-
 private:
 	// tab shortcut
     XKeySequenceEdit* m_scrnShot;        // 截图
