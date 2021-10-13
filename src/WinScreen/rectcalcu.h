@@ -6,6 +6,8 @@
 #define PICSHOT_RECTCALCU_H
 
 #include <QWidget>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #define HAIF_INTERVAL 4    // 一半间隔，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
 
@@ -81,9 +83,11 @@ public:
 
 	QRect getRect(QPoint pos1, QPoint pos2);
 	QRect getRect(QRect rect, int px, CursorArea area);
+	QRect& limitBound(QRect& rt, QRect rtDesktop = QApplication::desktop()->rect());
 
 private:
 	QRect& setSelRect(QPoint pos1, QPoint pos2);
+	
 
 public:
 	QPoint m_startPos;

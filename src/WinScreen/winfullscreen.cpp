@@ -24,7 +24,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-	//setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+	setWindowFlags(Qt::FramelessWindowHint /*| Qt::WindowStaysOnTopHint*/ | windowFlags()); // 去掉标题栏 + 置顶
 	//setFixedSize(QApplication::desktop()->size());
 	resize(1920, 1080);
 
@@ -135,6 +135,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 
 	pa.setPen(Qt::red);
 	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));  // 移动选中矩形
+	m_rtCalcu.limitBound(rtSel, rect());
 	modifyRectSize(rtSel);  // 拉伸选中矩形大小
 
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
@@ -361,6 +362,7 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 	}
 	case Move: {
 		m_rtCalcu.getSelRect().translate(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight());
+		//m_rtCalcu.limitBound(m_rtCalcu.getSelRect()); //  遇到边缘时，则修改选中矩形大小（便少了一丝趣味性）
 		m_rtCalcu.m_moveStartPos = QPoint();
 		m_rtCalcu.m_moveEndPos = QPoint();
 		break;

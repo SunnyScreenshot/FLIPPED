@@ -13,6 +13,24 @@ QRect& RectCalcu::setSelRect(QPoint pos1, QPoint pos2)
 	return  m_rtSel;
 }
 
+// 限制选中矩形不超过虚拟屏幕的边界， rect 为当前选中矩形
+QRect& RectCalcu::limitBound(QRect& rt, QRect rtDesktop)
+{
+	if (!rt.isValid())
+		return rt;
+
+	if (rt.left() <= rtDesktop.left())
+		rt.setLeft(rtDesktop.left());
+	if (rt.top() <= rtDesktop.top())
+		rt.setTop(rtDesktop.top());
+	if (rt.right() >= rtDesktop.right())
+		rt.setRight(rtDesktop.right());
+	if (rt.bottom() >= rtDesktop.bottom())
+		rt.setBottom(rtDesktop.bottom());
+
+	return rt;
+}
+
 
 // 判断当前鼠标所在区域; false 为大概区域（显示光标）; true 为详细区域（修改矩形大小做准备）
 const CursorArea RectCalcu::getCursorArea(QPoint pos, bool details)
