@@ -79,8 +79,11 @@ public:
 	bool isClear();
 	const CursorArea getCursorArea(QPoint pos, bool details = false);
 
+	QRect getRect(QPoint pos1, QPoint pos2);
+	QRect getRect(QRect rect, int px, CursorArea area);
+
 private:
-	QRect& getRect(QPoint pos1, QPoint pos2);
+	QRect& setSelRect(QPoint pos1, QPoint pos2);
 
 public:
 	QPoint m_startPos;

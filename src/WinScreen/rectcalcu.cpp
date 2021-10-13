@@ -7,18 +7,9 @@
 #include <QPoint>
 
 // 通过任意两点获取一个选中矩形
-QRect& RectCalcu::getRect(QPoint pos1, QPoint pos2)
+QRect& RectCalcu::setSelRect(QPoint pos1, QPoint pos2)
 {
-	int xMin = qMin<int>(pos1.x(), pos2.x());
-	int xMax = qMax<int>(pos1.x(), pos2.x());
-	int yMin = qMin<int>(pos1.y(), pos2.y());
-	int yMax = qMax<int>(pos1.y(), pos2.y());
-
-	if (xMin == xMax || yMin == yMax)
-		m_rtSel = QRect();
-	else
-		m_rtSel = QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
-
+	m_rtSel = getRect(pos1, pos2);
 	return  m_rtSel;
 }
 
@@ -83,6 +74,64 @@ const CursorArea RectCalcu::getCursorArea(QPoint pos, bool details)
 	}
 }
 
+QRect RectCalcu::getRect(QPoint pos1, QPoint pos2)
+{
+	int xMin = qMin<int>(pos1.x(), pos2.x());
+	int xMax = qMax<int>(pos1.x(), pos2.x());
+	int yMin = qMin<int>(pos1.y(), pos2.y());
+	int yMax = qMax<int>(pos1.y(), pos2.y());
+
+	return  QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
+}
+
+/*!
+ * \brief RectCalcu::getRect 获取拉伸后的矩形（拉伸边框线，而非四角落的点）
+ * \param rect 拉伸之前的矩形
+ * \param px 边框准备移动的像素
+ * \param area 要拉伸的那一边的边框
+ * \return 拉伸之后的边框
+ */
+QRect RectCalcu::getRect(QRect rect, int px, CursorArea area)
+{
+	if (!rect.isValid())
+		return QRect();
+
+	int min = 0;
+	int max = 0;
+	switch (area)
+	{
+	case CursorCrossLeft: {
+		min = qMin(rect.left() + px, rect.right());
+		max = qMax(rect.left() + px, rect.right());
+		rect = QRect(QPoint(min, rect.top()), QPoint(max, rect.bottom()));
+		break;
+	}
+	case CursorCrossTop: {
+		min = qMin(rect.top() + px, rect.bottom());
+		max = qMax(rect.top() + px, rect.bottom());
+		rect = QRect(QPoint(rect.left(), min), QPoint(rect.right(), max));
+		break;
+	}
+	case CursorCrossRight: {
+		min = qMin(rect.right() + px, rect.left());
+		max = qMax(rect.right() + px, rect.left());
+		rect = QRect(QPoint(min, rect.top()), QPoint(max, rect.bottom()));
+		break;
+	}
+	case CursorCrossBottom: {
+		min = qMin(rect.bottom() + px, rect.top());
+		max = qMax(rect.bottom() + px, rect.top());
+		rect = QRect(QPoint(rect.left(), min), QPoint(rect.right(), max));
+		break;
+	}
+	default:
+		return QRect();
+		break;
+	}
+
+	return rect;
+}
+
 RectCalcu::RectCalcu()
 {
 	clear();
@@ -95,7 +144,7 @@ RectCalcu::~RectCalcu()
 QRect& RectCalcu::getSelRect()
 {
 	if (m_cursorType == CursorType::Select)
-		m_rtSel = getRect(m_startPos, m_EndPos);
+		m_rtSel = setSelRect(m_startPos, m_EndPos);
 
 	return m_rtSel;
 //

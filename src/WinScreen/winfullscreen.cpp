@@ -82,29 +82,27 @@ QPixmap* WinFullScreen::getblurPixmap(QColor color)
 }
 
 // 修改拉伸选中矩形的大小
-void WinFullScreen::modifyRectSize(QRect& rtSel)
+void WinFullScreen::modifyRectSize(QRect& rt)
 {
-	QRect rt(rtSel);
 	int width = m_rtCalcu.getModifyWidth();
 	int height = m_rtCalcu.getModifyHeight();
 	if (m_cursorArea == CursorArea::CursorCrossLeft) {
-		rtSel.setTopLeft(rt.topLeft() + QPoint(width, 0));
+		rt = m_rtCalcu.getRect(rt, width, m_cursorArea);
 	} else if (m_cursorArea == CursorArea::CursorCrossRight) {
-		rtSel.setBottomRight(rt.bottomRight() + QPoint(width, 0));
+		rt = m_rtCalcu.getRect(rt, width, m_cursorArea);
 	} else if (m_cursorArea == CursorArea::CursorCrossTop) {
-		rtSel.setTopLeft(rt.topLeft() + QPoint(0, height));
+		rt = m_rtCalcu.getRect(rt, height, m_cursorArea);
 	} else if (m_cursorArea == CursorArea::CursorCrossBottom) {
-		rtSel.setBottomRight(rt.bottomRight() + QPoint(0, height));
+		rt = m_rtCalcu.getRect(rt, height, m_cursorArea);
 	} else if (m_cursorArea == CursorArea::CursorCrossTopLeft) {
-		rtSel.setTopLeft(rt.topLeft() + QPoint(width, height));
+		rt = m_rtCalcu.getRect(rt.topLeft() + QPoint(width, height), rt.bottomRight());
 	} else if (m_cursorArea == CursorArea::CursorCrossTopRight) {
-		rtSel.setTopRight(rt.topRight() + QPoint(width, height));
+		rt = m_rtCalcu.getRect(rt.topRight() + QPoint(width, height), rt.bottomLeft());
 	} else if (m_cursorArea == CursorArea::CursorCrossBottomLeft) {
-		rtSel.setBottomLeft(rt.bottomLeft() + QPoint(width, height));
+		rt = m_rtCalcu.getRect(rt.bottomLeft() + QPoint(width, height), rt.topRight());
 	} else if (m_cursorArea == CursorArea::CursorCrossBottomRight) {
-		rtSel.setBottomRight(rt.bottomRight() + QPoint(width, height));
+		rt = m_rtCalcu.getRect(rt.bottomRight() + QPoint(width, height), rt.topLeft());
 	} else {
-
 	}
 }
 
@@ -359,7 +357,6 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 		m_rtCalcu.m_modifyEndPos = QPoint();
 		m_cursorArea = CursorArea::UnknowCursorArea;
 		//qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.getSelRect() << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
-		break;
 		break;
 	}
 	case Move: {
