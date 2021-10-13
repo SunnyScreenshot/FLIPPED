@@ -8,6 +8,8 @@
 #include <QWidget>
 #include "../widget/xkeysequenceedit.h"
 
+class QHotkey;
+
 QT_BEGIN_NAMESPACE
 class XKeySequenceEdit;
 class QLabel;
@@ -24,6 +26,7 @@ public:
 
 private:
 	void init();
+    void hotKeyInit();
 	QWidget* tabScreenShot();
 	QWidget* tabOutput();
 	QWidget* tabShortcuts();
@@ -32,9 +35,11 @@ private:
 	//void setLayout(QWidget *parent = nullptr);
 
 signals:
+    void sigKeySeqChanged(const QKeySequence &keySequence);
 
 public slots:
-    void onScrnShot(const QKeySequence &keySequence);
+    void onScrnShot();
+    void onKeySeqChanged(const QKeySequence &keySequence);
 
 private:
 	// tab shortcut
@@ -42,10 +47,6 @@ private:
     XKeySequenceEdit* m_scrnShotLater;   // 延时截图
     XKeySequenceEdit* m_scrnShotRect;    // 矩形区域截图
     XKeySequenceEdit* m_scrnShotWhole;   // 整个屏幕截图
-	QLabel* m_labScrnShot;
-	QLabel* m_labScrnShotLater;
-	QLabel* m_labScrnShotRect;
-	QLabel* m_labScrnShotWhole;
 
 	// tab optput
 	QLineEdit* m_leFileName;        // 文件名称
@@ -56,6 +57,12 @@ private:
 	QToolButton* m_tbScrnPath;
 	QToolButton* m_tbConfPath;
 	QToolButton* m_tbLogPath;
+
+    // hotKey
+    QHotkey* m_hkScrnShot;
+    QHotkey* m_hkScrnShotLater;
+    QHotkey* m_hkScrnShotRect;
+    QHotkey* m_hkScrnShotWhole;
 };
 
 #endif // WINMAIN_H

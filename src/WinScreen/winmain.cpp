@@ -4,6 +4,7 @@
 
 #include "winmain.h"
 #include "winresetbtn.h"
+#include "winfullscreen.h"
 #include "../widget/xkeysequenceedit.h"
 #include <QBoxLayout>
 #include <QGridLayout>
@@ -24,17 +25,12 @@
 #include <QHotkey>
 #include <QCoreApplication>
 
-
 WinMain::WinMain(QWidget *parent) 
 	: QWidget(parent)
 	, m_scrnShot(nullptr)
 	, m_scrnShotLater(nullptr)
 	, m_scrnShotRect(nullptr)
 	, m_scrnShotWhole(nullptr)
-	, m_labScrnShot(nullptr)
-	, m_labScrnShotLater(nullptr)
-	, m_labScrnShotRect(nullptr)
-	, m_labScrnShotWhole(nullptr)
 	, m_leFileName(nullptr)
 	, m_leScrnPath(nullptr)
 	, m_leConfPath(nullptr)
@@ -43,8 +39,13 @@ WinMain::WinMain(QWidget *parent)
 	, m_tbScrnPath(nullptr)
 	, m_tbConfPath(nullptr)
 	, m_tbLogPath(nullptr)
+    , m_hkScrnShot(nullptr)
+    , m_hkScrnShotLater(nullptr)
+    , m_hkScrnShotRect(nullptr)
+    , m_hkScrnShotWhole(nullptr)
 {
 	init();
+    hotKeyInit();
     resize(800, 400);
 }
 
@@ -63,7 +64,26 @@ void WinMain::init()
 	QVBoxLayout* vLayout = new QVBoxLayout(this);
 	//vLayout->setMargin(4);
 	//vLayout->setSpacing(0);
-	vLayout->addWidget(tabWidget);
+    vLayout->addWidget(tabWidget);
+}
+
+void WinMain::hotKeyInit()
+{
+    // hotKey connect ------------------------------------
+//    qDebug() << "Is Registered: " << m_hkScnShot->isRegistered();
+    m_hkScrnShot = new QHotkey(QKeySequence("ctrl+alt+t"), true, qApp);
+    connect(m_hkScrnShot, &QHotkey::activated, this, &WinMain::onScrnShot);
+    m_hkScrnShotLater = new QHotkey(QKeySequence("ctrl+alt+y"), true, qApp);
+    connect(m_hkScrnShotLater, &QHotkey::activated, this, &WinMain::onScrnShot);
+    m_hkScrnShotRect = new QHotkey(QKeySequence("ctrl+alt+t"), true, qApp);
+    connect(m_hkScrnShotRect, &QHotkey::activated, this, &WinMain::onScrnShot);
+    m_hkScrnShotWhole = new QHotkey(QKeySequence("ctrl+alt+y"), true, qApp);
+    connect(m_hkScrnShotWhole, &QHotkey::activated, this, &WinMain::onScrnShot);
+
+    connect(m_scrnShot, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
+    connect(m_scrnShotLater, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
+    connect(m_scrnShotRect, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
+    connect(m_scrnShotWhole, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
 }
 
 QWidget * WinMain::tabScreenShot()
@@ -185,37 +205,38 @@ QWidget * WinMain::tabShortcuts()
 
 	// https://jishurizhi.com/p-74.html
 	QGridLayout* girdLayout = new QGridLayout();
+    girdLayout->setObjectName("tabShortcutsGirdLayout");
 	girdLayout->setMargin(0);
     const int keyEditWidget = 300;
 	girdLayout->addWidget(new QLabel(tr("Screenshots")), 0, 0, Qt::AlignLeft);
     m_scrnShot = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F1));
     m_scrnShot->setMinimumWidth(keyEditWidget);
 	girdLayout->addWidget(m_scrnShot, 0, 1, Qt::AlignLeft);
-	m_labScrnShot = new QLabel("✔");
-	girdLayout->addWidget(m_labScrnShot, 0, 2, Qt::AlignLeft);
+	QLabel* labScrnShot = new QLabel("✔");
+	girdLayout->addWidget(labScrnShot, 0, 2, Qt::AlignLeft);
 	girdLayout->addWidget(new QLabel(tr("Time-lapse Screenshot")), 1, 0, Qt::AlignLeft);
     m_scrnShotLater = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F2));
     m_scrnShotLater->setMinimumWidth(keyEditWidget);
 	girdLayout->addWidget(m_scrnShotLater, 1, 1, Qt::AlignLeft);
-	m_labScrnShotLater = new QLabel("✔");
-	girdLayout->addWidget(m_labScrnShotLater, 1, 2, Qt::AlignLeft);
+	QLabel* labScrnShotLater = new QLabel("✔");
+	girdLayout->addWidget(labScrnShotLater, 1, 2, Qt::AlignLeft);
 	girdLayout->addWidget(new QLabel(tr("Rectangular Area")), 2, 0, Qt::AlignLeft);
     m_scrnShotRect = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3));
     m_scrnShotRect->setMinimumWidth(keyEditWidget);
 	girdLayout->addWidget(m_scrnShotRect, 2, 1, Qt::AlignLeft);
-	m_labScrnShotRect = new QLabel("✔");
-	girdLayout->addWidget(m_labScrnShotRect, 2, 2, Qt::AlignLeft);
+	QLabel* labScrnShotRect = new QLabel("✔");
+	girdLayout->addWidget(labScrnShotRect, 2, 2, Qt::AlignLeft);
     girdLayout->addWidget(new QLabel(tr("Rectangular Area222")), 3, 0, Qt::AlignLeft);
-    m_scrnShotRect = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3));
-    m_scrnShotRect->setMinimumWidth(keyEditWidget);
-    girdLayout->addWidget(m_scrnShotRect, 3, 1, Qt::AlignLeft);
-    m_labScrnShotRect = new QLabel("✔");
-    girdLayout->addWidget(m_labScrnShotRect, 3, 2, Qt::AlignLeft);
+	m_scrnShotWhole = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3));
+	m_scrnShotWhole->setMinimumWidth(keyEditWidget);
+    girdLayout->addWidget(m_scrnShotWhole, 3, 1, Qt::AlignLeft);
+	QLabel* labScrnShotWhole = new QLabel("✔");
+    girdLayout->addWidget(labScrnShotWhole, 3, 2, Qt::AlignLeft);
 
     m_scrnShot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_scrnShotLater->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_labScrnShotLater->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_labScrnShotRect->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	m_scrnShotRect->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	m_scrnShotWhole->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 //    girdLayout->setColumnStretch(0, 0);
 //    girdLayout->setColumnStretch(1, 0);
 //    girdLayout->setColumnStretch(2, 0);
@@ -235,10 +256,6 @@ QWidget * WinMain::tabShortcuts()
 	qInfo() << "添加第一页的控件完成";
 
 	//stack->setCurrentIndex(0);  // 设置 QStackedWidget 翻页
-
-
-    // connect ------------------------------------
-    connect(m_scrnShot, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onScrnShot);
 
     return stack;
 }
@@ -265,14 +282,55 @@ QWidget* WinMain::tabAbout()
     return aboutWidget;
 }
 
-void WinMain::onScrnShot(const QKeySequence &keySequence)
+void WinMain::onScrnShot()
 {
-	//if (keySequence.count() != 1)  // XKeySequenceEdit::keySequenceChanged 重载前后的发射信号是派生类还是继承类，和时机是？？？
-	//	return;
+    WinFullScreen::instance().getScrnShots();
+}
 
+void WinMain::onKeySeqChanged(const QKeySequence &keySequence)
+{
+    XKeySequenceEdit* obj = qobject_cast<XKeySequenceEdit *>(sender());
+    if (!obj)
+        return;
 
-	QHotkey* hkScnShot = new QHotkey(keySequence, true, qApp);//The hotkey will be automatically registered
-	qInfo() << "Is Registered22: " << hkScnShot->isRegistered();
-	qInfo()<< "sender():" << sender()<<"keySequence:"<<keySequence<< "keySequence:" << keySequence.count();
+    QGridLayout* girdLayout = obj->parent()->findChild<QGridLayout*>("tabShortcutsGirdLayout");
+    if (!girdLayout)
+        return;
 
+    int row = -1;
+    int col = -1;
+    int rowSpan = -1;
+    int columnSpan = -1;
+    girdLayout->getItemPosition(girdLayout->indexOf(obj), &row, &col, &rowSpan, &columnSpan);
+    qInfo()<<"----->"<<obj<<obj->parent()<<obj->parentWidget()<<girdLayout;
+    qInfo()<<"----->"<<girdLayout->indexOf(obj);
+    QLayoutItem* item = girdLayout->itemAtPosition(row, col + 1);
+    QLabel* lab = qobject_cast<QLabel *>(item->widget());
+
+	QHotkey* hotkey = nullptr;
+	if (obj == m_scrnShot) {
+		hotkey = m_hkScrnShot;
+	} else if (obj == m_scrnShotLater) {
+		hotkey = m_hkScrnShotLater;
+	} else if (obj == m_scrnShotRect) {
+		hotkey = m_hkScrnShotRect;
+	} else if (obj == m_scrnShotWhole) {
+		hotkey = m_hkScrnShotWhole;
+	} else {
+	}
+
+	if (!hotkey || !lab)
+		return;
+
+	hotkey->resetShortcut();
+	hotkey->setShortcut(keySequence, true);
+
+    if (hotkey->isRegistered()) {
+        lab->setText(tr("✔️12"));
+    } else {
+        lab->setText(tr("❌23"));
+    }
+
+    qInfo() << "Is Registered22: " << hotkey << hotkey->isRegistered()<<obj->parent();
+    qInfo()<< "sender():" << sender()<<"keySequence:"<<keySequence<< "keySequence:" << keySequence.count();
 }

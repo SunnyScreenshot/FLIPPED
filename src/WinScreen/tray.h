@@ -38,7 +38,6 @@ private:
 	QMenu* m_menuTary;
 	QSystemTrayIcon* m_sysTary;
 
-	QHotkey* m_hkScnShot;
     WinMain* m_winMain;
 };
 

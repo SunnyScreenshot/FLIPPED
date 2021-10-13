@@ -16,8 +16,7 @@ Tray::Tray(QObject *parent)
 	, m_showWinConfig(nullptr)
 	, m_quit(nullptr)
 	, m_menuTary(nullptr)
-	, m_sysTary(nullptr)
-	, m_hkScnShot(nullptr)
+    , m_sysTary(nullptr)
     , m_winMain(nullptr)
 {
 	init();
@@ -51,10 +50,6 @@ void Tray::init()
 	connect(m_screenShot, &QAction::triggered, this, &Tray::onScreenShot);
 	connect(m_showWinConfig, &QAction::triggered, this, &Tray::onShowWinConfig);
 	connect(m_quit, &QAction::triggered, this, &Tray::deleteLater); // 代替退出槽
-
-	m_hkScnShot = new QHotkey(QKeySequence("ctrl+alt+t"), true, qApp);//The hotkey will be automatically registered
-	qDebug() << "Is Registered: " << m_hkScnShot->isRegistered();
-	QObject::connect(m_hkScnShot, &QHotkey::activated, this, &Tray::onScreenShot);
 }
 
 void Tray::onScreenShot()
@@ -66,5 +61,5 @@ void Tray::onScreenShot()
 void Tray::onShowWinConfig(bool checked)
 {
 	Q_UNUSED(checked)
-	m_winMain->show();
+    m_winMain->show();
 }
