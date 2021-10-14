@@ -9,6 +9,7 @@
 #include <QDesktopWidget>
 #include <QPainter>
 #include <QKeyEvent>
+#include <QIcon>
 #include <QTime>
 #include <QDebug>
 
@@ -24,7 +25,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-	setWindowFlags(Qt::FramelessWindowHint /*| Qt::WindowStaysOnTopHint*/ | windowFlags()); // 去掉标题栏 + 置顶
+//    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	//setFixedSize(QApplication::desktop()->size());
 	resize(1920, 1080);
 
@@ -106,6 +107,94 @@ void WinFullScreen::modifyRectSize(QRect& rt)
 	}
 }
 
+void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
+{
+	if (num == 0)
+		return;
+
+	pa.save();
+	pa.setRenderHint(QPainter::Antialiasing, false);
+	pa.setBrush(Qt::NoBrush);
+	QPen penWhite(QColor(255, 255, 255, 1 * 255), 1);
+	penWhite.setStyle(Qt::CustomDashLine);
+	penWhite.setDashOffset(0);
+	penWhite.setDashPattern(QVector<qreal>() << 4 * getScale() << 4 * getScale());
+	penWhite.setCapStyle(Qt::FlatCap);
+	pa.setPen(penWhite);
+	pa.drawLine(QPoint(rt.left(), rt.top()), QPoint(rt.right(), rt.top()));
+	pa.drawLine(QPoint(rt.left(), rt.top()), QPoint(rt.left(), rt.bottom()));
+	pa.drawLine(QPoint(rt.left(), rt.bottom()), QPoint(rt.right(), rt.bottom()));
+	pa.drawLine(QPoint(rt.right(), rt.top()), QPoint(rt.right(), rt.bottom()));
+
+	QPen penBlack(penWhite);
+	penBlack.setColor(QColor(0, 0, 0, 1 * 255));
+	penBlack.setDashOffset(4);
+	pa.setPen(penBlack);
+	pa.drawLine(QPoint(rt.left(), rt.top()), QPoint(rt.right(), rt.top()));
+	pa.drawLine(QPoint(rt.left(), rt.top()), QPoint(rt.left(), rt.bottom()));
+	pa.drawLine(QPoint(rt.left(), rt.bottom()), QPoint(rt.right(), rt.bottom()));
+	pa.drawLine(QPoint(rt.right(), rt.top()), QPoint(rt.right(), rt.bottom()));
+
+	int x1 = 0;
+	int y1 = 0;
+	int x2 = 0;
+	int y2 = 0;
+	rt.getCoords(&x1, &y1, &x2, &y2);
+
+	QVector<QPoint> ver = { QPoint(x1, y1),
+							QPoint(x2, y1),
+							QPoint(x1, y2),
+							QPoint(x2, y2),
+							QPoint((x1 + x2) / 2.0, y1),
+							QPoint((x1 + x2) / 2.0, y2),
+							QPoint(x1, (y1 + y2) / 2.0),
+							QPoint(x2, (y1 + y2) / 2.0) };
+
+	pa.setPen(QPen(Qt::white, 1.5));
+	pa.setBrush(QColor(146, 146, 146, 1 * 255));
+	QPoint offsetPos(HAIF_R_BORDER_MARK * getScale(), HAIF_R_BORDER_MARK * getScale());
+	pa.setRenderHint(QPainter::Antialiasing, true);
+
+	for (int i = 0; i < num; ++i)
+		pa.drawEllipse(ver[i], offsetPos.x(), offsetPos.y());
+
+	pa.restore();
+}
+
+// 样式一: 浅蓝色
+void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
+{
+    if (num == 0)
+        return;
+
+    pa.setPen(Qt::NoPen);
+    pa.setBrush(Qt::NoBrush);
+
+    QIcon icon(":/resources/icons/boardPoint_8px.svg");
+    QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 2 * getScale());
+    pixmap.setDevicePixelRatio(getDevicePixelRatio());
+
+    QPoint offsetPos(HAIF_R_BORDER_MARK * getScale(), HAIF_R_BORDER_MARK * getScale()) ;
+    pa.drawPixmap(rt.topLeft() - offsetPos, pixmap);
+    pa.drawPixmap(rt.topRight() - offsetPos, pixmap);
+    pa.drawPixmap(rt.bottomLeft() - offsetPos, pixmap);
+    pa.drawPixmap(rt.bottomRight() - offsetPos, pixmap);
+
+    if (num <= 8) {
+		int x1 = 0;
+		int y1 = 0;
+		int x2 = 0;
+		int y2 = 0;
+
+        rt.getCoords(&x1, &y1, &x2, &y2);
+        pa.drawPixmap(QPoint((x1 + x2) / 2, y1) - offsetPos, pixmap);
+        pa.drawPixmap(QPoint((x1 + x2) / 2, y2) - offsetPos, pixmap);
+        pa.drawPixmap(QPoint(x1, (y1 + y2) / 2) - offsetPos, pixmap);
+        pa.drawPixmap(QPoint(x2, (y1 + y2) / 2) - offsetPos, pixmap);
+	}
+}
+
+
 // 获取当前屏幕截图 + 遮罩
 QPixmap* WinFullScreen::getBasePixmap()
 {
@@ -130,10 +219,15 @@ QPixmap* WinFullScreen::getBasePixmap()
 
 void WinFullScreen::paintEvent(QPaintEvent *event)
 {
+	Q_UNUSED(event);
 	QPainter pa(this);
+	QPen pen(QColor("#01bdff"));
+    pen.setWidth(2);
+	pa.setPen(pen);
+	pa.setOpacity(1);
+	pa.setBrush(Qt::transparent);
 	pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
 
-	pa.setPen(Qt::red);
 	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));  // 移动选中矩形
 	m_rtCalcu.limitBound(rtSel, rect());
 	modifyRectSize(rtSel);  // 拉伸选中矩形大小
@@ -142,10 +236,13 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	// 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
 		pa.drawPixmap(rtSel, m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio())));
-		pa.drawRect(rtSel);
+		drawBorderMac(pa, rtSel);
+		//pa.drawRect(rtSel);
+		//drawBorderBlue(pa, rtSel);
 		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
+#if 0
 	QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel);
 	QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
@@ -172,6 +269,9 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 
 	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
+#endif // 1
+
+
 }
 
 void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
@@ -362,7 +462,7 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 	}
 	case Move: {
 		m_rtCalcu.getSelRect().translate(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight());
-		//m_rtCalcu.limitBound(m_rtCalcu.getSelRect()); //  遇到边缘时，则修改选中矩形大小（便少了一丝趣味性）
+		m_rtCalcu.limitBound(m_rtCalcu.getSelRect());
 		m_rtCalcu.m_moveStartPos = QPoint();
 		m_rtCalcu.m_moveEndPos = QPoint();
 		break;

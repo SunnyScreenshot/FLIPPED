@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/PicShot_32.svg</file>
+        <file>resources/icons/boardPoint_8px.svg</file>
     </qresource>
 </RCC>

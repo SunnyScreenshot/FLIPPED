@@ -10,6 +10,9 @@
 #include <QColor>
 #include "rectcalcu.h"
 
+#define HAIF_R_BORDER_MARK 4  // 边框上标记点的半径
+
+
 QT_BEGIN_NAMESPACE
 class QScreen;
 class QPixmap;
@@ -45,8 +48,14 @@ private:
     ~WinFullScreen() override;
 
 	void getVirtualScreen();
-	QPixmap* getblurPixmap(QColor color = QColor(255, 255, 255, 0.2 * 255));
+	QPixmap* getblurPixmap(QColor color = QColor(0, 0, 0, 0.5 * 255));
 	void modifyRectSize(QRect& rtSel);
+
+	// 绘画边框样式
+    void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
+	void drawBorderMac(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
+
+
 
 protected:
 	virtual void paintEvent(QPaintEvent *event) override;
