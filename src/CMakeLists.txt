@@ -28,6 +28,9 @@ set(PICSHOT_SOURCES
     winscreen/tray.cpp
 
     widget/xkeysequenceedit.cpp
+
+    syswininfo/syswininfo.cpp
+    syswininfo/syswininfo_win.cpp
     )
 set(PICSHOT_HEADERS
     winscreen/winfullscreen.h
@@ -37,6 +40,9 @@ set(PICSHOT_HEADERS
     winscreen/tray.h
 
     widget/xkeysequenceedit.h
+
+    syswininfo/syswininfo.h
+    syswininfo/syswininfo_win.h
     )
 set(PICSHOT_RESOURCES
     Resources.qrc
