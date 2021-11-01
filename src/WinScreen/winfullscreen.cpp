@@ -58,15 +58,16 @@ void WinFullScreen::getVirtualScreen()
 {
 	// TODO 2021-09-29:
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
+	if (!m_currPixmap) {
+		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
+		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
 
-	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
-	m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
-
-	//QTime startTime = QTime::currentTime();
-	////m_currPixmap->save("m_currPixmap.png");
-	//QTime stopTime = QTime::currentTime();
-	//int elapsed = startTime.msecsTo(stopTime);
-	//qDebug() << "save m_currPixmap tim =" << elapsed << "ms" << size;
+		//QTime startTime = QTime::currentTime();
+		////m_currPixmap->save("m_currPixmap.png");
+		//QTime stopTime = QTime::currentTime();
+		//int elapsed = startTime.msecsTo(stopTime);
+		//qDebug() << "save m_currPixmap tim =" << elapsed << "ms" << size;
+	}
 }
 
 // 获取屏幕遮罩
@@ -75,9 +76,11 @@ QPixmap* WinFullScreen::getblurPixmap(QColor color)
 	if (!m_currPixmap)
 		return nullptr;
 
-	m_blurPixmap = new QPixmap(m_currPixmap->size());
-	m_blurPixmap->fill(color);
-	//m_blurPixmap->save("m_blurPixmap.png");
+	if (!m_blurPixmap) {
+		m_blurPixmap = new QPixmap(m_currPixmap->size());
+		m_blurPixmap->fill(color);
+		//m_blurPixmap->save("m_blurPixmap.png");
+	}
 
 	return m_blurPixmap;
 }
@@ -204,15 +207,17 @@ QPixmap* WinFullScreen::getBasePixmap()
 	if (!m_blurPixmap)
 		getblurPixmap();
 
-	m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
-	QPainter pa(m_basePixmap);
-	pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
-	//QTime startTime = QTime::currentTime();
-	////m_basePixmap->save("m_basePixmap.png");
-	////m_currPixmap->save("m_currPixmap2.png");
-	//QTime stopTime = QTime::currentTime();
-	//int elapsed = startTime.msecsTo(stopTime);
-	//qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
+	if (!m_basePixmap) {
+		m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
+		QPainter pa(m_basePixmap);
+		pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
+		//QTime startTime = QTime::currentTime();
+		////m_basePixmap->save("m_basePixmap.png");
+		////m_currPixmap->save("m_currPixmap2.png");
+		//QTime stopTime = QTime::currentTime();
+		//int elapsed = startTime.msecsTo(stopTime);
+		//qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
+	}
 
 	return m_basePixmap;
 }
@@ -220,6 +225,10 @@ QPixmap* WinFullScreen::getBasePixmap()
 void WinFullScreen::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
+
+	if (!m_basePixmap)
+		return;
+
 	QPainter pa(this);
 	QPen pen(QColor("#01bdff"));
     pen.setWidth(2);
