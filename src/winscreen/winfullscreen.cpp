@@ -174,10 +174,10 @@ void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound
     pa.setBrush(Qt::NoBrush);
 
     QIcon icon(":/resources/icons/boardPoint_8px.svg");
-    QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 2 * getScale());
+    QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 4 * getScale());
     pixmap.setDevicePixelRatio(getDevicePixelRatio());
 
-    QPoint offsetPos(HAIF_R_BORDER_MARK * getScale(), HAIF_R_BORDER_MARK * getScale()) ;
+    QPoint offsetPos(HAIF_R_BORDER_MARK * 2 * getScale(), HAIF_R_BORDER_MARK * 2 * getScale()) ;
     pa.drawPixmap(rt.topLeft() - offsetPos, pixmap);
     pa.drawPixmap(rt.topRight() - offsetPos, pixmap);
     pa.drawPixmap(rt.bottomLeft() - offsetPos, pixmap);
@@ -231,7 +231,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 
 	QPainter pa(this);
 	QPen pen(QColor("#01bdff"));
-    pen.setWidth(2);
+    pen.setWidth(4);
 	pa.setPen(pen);
 	pa.setOpacity(1);
 	pa.setBrush(Qt::transparent);
@@ -245,9 +245,14 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	// 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
 		pa.drawPixmap(rtSel, m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio())));
+
+	#if 0
 		drawBorderMac(pa, rtSel);
-		//pa.drawRect(rtSel);
-		//drawBorderBlue(pa, rtSel);
+	#else
+		pa.drawRect(rtSel);
+		drawBorderBlue(pa, rtSel);
+	#endif
+		
 		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
