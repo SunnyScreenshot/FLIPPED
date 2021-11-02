@@ -24,6 +24,7 @@
 #include <QSizePolicy>
 #include <QHotkey>
 #include <QCoreApplication>
+#include <QTimer>
 
 WinMain::WinMain(QWidget *parent) 
 	: QWidget(parent)
@@ -74,11 +75,11 @@ void WinMain::hotKeyInit()
     m_hkScrnShot = new QHotkey(QKeySequence("ctrl+alt+t"), true, qApp);
     connect(m_hkScrnShot, &QHotkey::activated, this, &WinMain::onScrnShot);
     m_hkScrnShotLater = new QHotkey(QKeySequence("ctrl+alt+y"), true, qApp);
-    connect(m_hkScrnShotLater, &QHotkey::activated, this, &WinMain::onScrnShot);
+    connect(m_hkScrnShotLater, &QHotkey::activated, this, &WinMain::onScrnShotLater);
     m_hkScrnShotRect = new QHotkey(QKeySequence("ctrl+alt+t"), true, qApp);
-    connect(m_hkScrnShotRect, &QHotkey::activated, this, &WinMain::onScrnShot);
+    connect(m_hkScrnShotRect, &QHotkey::activated, this, &WinMain::onScrnShotRect);
     m_hkScrnShotWhole = new QHotkey(QKeySequence("ctrl+alt+y"), true, qApp);
-    connect(m_hkScrnShotWhole, &QHotkey::activated, this, &WinMain::onScrnShot);
+    connect(m_hkScrnShotWhole, &QHotkey::activated, this, &WinMain::onScrnShotWhole);
 
     connect(m_scrnShot, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
     connect(m_scrnShotLater, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
@@ -212,25 +213,25 @@ QWidget * WinMain::tabShortcuts()
     m_scrnShot = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F1));
     m_scrnShot->setMinimumWidth(keyEditWidget);
 	girdLayout->addWidget(m_scrnShot, 0, 1, Qt::AlignLeft);
-	QLabel* labScrnShot = new QLabel("✔");
+	QLabel* labScrnShot = new QLabel("👀");
 	girdLayout->addWidget(labScrnShot, 0, 2, Qt::AlignLeft);
 	girdLayout->addWidget(new QLabel(tr("Time-lapse Screenshot")), 1, 0, Qt::AlignLeft);
     m_scrnShotLater = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F2));
     m_scrnShotLater->setMinimumWidth(keyEditWidget);
 	girdLayout->addWidget(m_scrnShotLater, 1, 1, Qt::AlignLeft);
-	QLabel* labScrnShotLater = new QLabel("✔");
+	QLabel* labScrnShotLater = new QLabel("👀");
 	girdLayout->addWidget(labScrnShotLater, 1, 2, Qt::AlignLeft);
 	girdLayout->addWidget(new QLabel(tr("Rectangular Area")), 2, 0, Qt::AlignLeft);
     m_scrnShotRect = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3));
     m_scrnShotRect->setMinimumWidth(keyEditWidget);
 	girdLayout->addWidget(m_scrnShotRect, 2, 1, Qt::AlignLeft);
-	QLabel* labScrnShotRect = new QLabel("✔");
+	QLabel* labScrnShotRect = new QLabel("👀");
 	girdLayout->addWidget(labScrnShotRect, 2, 2, Qt::AlignLeft);
     girdLayout->addWidget(new QLabel(tr("Rectangular Area222")), 3, 0, Qt::AlignLeft);
 	m_scrnShotWhole = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3));
 	m_scrnShotWhole->setMinimumWidth(keyEditWidget);
     girdLayout->addWidget(m_scrnShotWhole, 3, 1, Qt::AlignLeft);
-	QLabel* labScrnShotWhole = new QLabel("✔");
+	QLabel* labScrnShotWhole = new QLabel("👀");
     girdLayout->addWidget(labScrnShotWhole, 3, 2, Qt::AlignLeft);
 
     m_scrnShot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -287,6 +288,30 @@ void WinMain::onScrnShot()
     WinFullScreen::instance().getScrnShots();
 }
 
+void WinMain::onScrnShotLater()
+{
+	WinFullScreen& instance = WinFullScreen::instance();
+	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+	instance.setFixedSize(QApplication::desktop()->size());
+
+	QTimer::singleShot(3000, [&]() {
+		instance.getScrnShots();
+	});
+}
+
+void WinMain::onScrnShotRect()
+{
+	//TODO:2021.11.2 截图预设的固定大小的矩形
+}
+
+void WinMain::onScrnShotWhole()
+{
+	WinFullScreen& instance = WinFullScreen::instance();
+	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+	instance.setFixedSize(QApplication::desktop()->size());
+	instance.getScrnShots();
+}
+
 void WinMain::onKeySeqChanged(const QKeySequence &keySequence)
 {
     XKeySequenceEdit* obj = qobject_cast<XKeySequenceEdit *>(sender());
@@ -326,9 +351,9 @@ void WinMain::onKeySeqChanged(const QKeySequence &keySequence)
 	hotkey->setShortcut(keySequence, true);
 
     if (hotkey->isRegistered()) {
-        lab->setText(tr("✔️12"));
+        lab->setText(tr("✔️"));
     } else {
-        lab->setText(tr("❌23"));
+        lab->setText(tr("❌"));
     }
 
     qInfo() << "Is Registered22: " << hotkey << hotkey->isRegistered()<<obj->parent();

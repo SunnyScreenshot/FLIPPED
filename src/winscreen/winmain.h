@@ -34,11 +34,12 @@ private:
 
 	//void setLayout(QWidget *parent = nullptr);
 
-signals:
-    void sigKeySeqChanged(const QKeySequence &keySequence);
-
 public slots:
     void onScrnShot();
+	void onScrnShotLater();
+	void onScrnShotRect();
+	void onScrnShotWhole();
+
     void onKeySeqChanged(const QKeySequence &keySequence);
 
 private:

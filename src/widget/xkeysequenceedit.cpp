@@ -51,8 +51,9 @@ void XKeySequenceEdit::keyPressEvent(QKeyEvent *event)
 	QKeySequence keySeq = keySequence();
 	qInfo() << "keySeq:" << keySeq << "keySeq.count():" << keySeq.count();
 
-    if ( keySeq.count() <= 0)
-        return;
+	// Fix: 按下相同快捷键编辑框为空白
+    //if ( keySeq.count() <= 0)
+    //    return;
 
     int key = keySeq[0];
     if (key == Qt::Key_Backspace || key == Qt::Key_Delete)

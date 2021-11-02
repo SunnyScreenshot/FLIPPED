@@ -294,7 +294,7 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 		qDebug() << "Key_Escape";
 		emit sigClearScreen();
 		hide();
-		//close();   // 销毁会有问题
+		//close();   // 销毁会有问题,已经排查：1. tray 有关，改用 qpushbutton 和 close即可； 2.单例有关，该市建议修改为 new 指针的比较合适
 	}
 }
 

@@ -55,8 +55,6 @@ private:
     void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
 	void drawBorderMac(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
 
-
-
 protected:
 	virtual void paintEvent(QPaintEvent *event) override;
 	virtual void keyReleaseEvent(QKeyEvent *event) override;
