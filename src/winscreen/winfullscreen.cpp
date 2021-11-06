@@ -123,7 +123,7 @@ void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound
 	QPen penWhite(QColor(255, 255, 255, 1 * 255), 1);
 	penWhite.setStyle(Qt::CustomDashLine);
 	penWhite.setDashOffset(0);
-	penWhite.setDashPattern(QVector<qreal>() << 4 * getScale() << 4 * getScale());
+    penWhite.setDashPattern(QVector<qreal>() << 4 * WinFullScreen::getScale() << 4 * WinFullScreen::getScale());
 	penWhite.setCapStyle(Qt::FlatCap);
 	pa.setPen(penWhite);
 	pa.drawLine(QPoint(rt.left(), rt.top()), QPoint(rt.right(), rt.top()));
@@ -157,7 +157,7 @@ void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound
 
 	pa.setPen(QPen(Qt::white, 1.5));
 	pa.setBrush(QColor(146, 146, 146, 1 * 255));
-	QPoint offsetPos(HAIF_R_BORDER_MARK * getScale(), HAIF_R_BORDER_MARK * getScale());
+    QPoint offsetPos(HAIF_R_BORDER_MARK * WinFullScreen::getScale(), HAIF_R_BORDER_MARK * WinFullScreen::getScale());
 	pa.setRenderHint(QPainter::Antialiasing, true);
 
 	for (int i = 0; i < num; ++i)
@@ -176,10 +176,10 @@ void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound
     pa.setBrush(Qt::NoBrush);
 
     QIcon icon(":/resources/icons/boardPoint_8px.svg");
-    QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 4 * getScale());
+    QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 4 * WinFullScreen::getScale());
     pixmap.setDevicePixelRatio(getDevicePixelRatio());
 
-    QPoint offsetPos(HAIF_R_BORDER_MARK * 2 * getScale(), HAIF_R_BORDER_MARK * 2 * getScale()) ;
+    QPoint offsetPos(HAIF_R_BORDER_MARK * 2 * WinFullScreen::getScale(), HAIF_R_BORDER_MARK * 2 * WinFullScreen::getScale()) ;
     pa.drawPixmap(rt.topLeft() - offsetPos, pixmap);
     pa.drawPixmap(rt.topRight() - offsetPos, pixmap);
     pa.drawPixmap(rt.bottomLeft() - offsetPos, pixmap);
@@ -547,11 +547,6 @@ double WinFullScreen::getDevicePixelRatio(QScreen * screen)
 		return 0.0;
 	else
 		return screen->devicePixelRatio();
-}
-
-double WinFullScreen::getScale()
-{
-	return getScale(m_primaryScreen);
 }
 
 double WinFullScreen::getScale(QScreen * screen)

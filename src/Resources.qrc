@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>resources/PicShot_32.svg</file>
         <file>resources/icons/boardPoint_8px.svg</file>
+        <file>resources/icons/normal/copy.svg</file>
+        <file>resources/icons/normal/download.svg</file>
+        <file>resources/icons/pressed/copy.svg</file>
+        <file>resources/icons/pressed/download.svg</file>
     </qresource>
 </RCC>

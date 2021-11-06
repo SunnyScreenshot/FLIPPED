@@ -27,12 +27,13 @@ public:
     static WinFullScreen& instance();
     void getScrnShots();
 
+    static double getScale(QScreen *screen = QApplication::primaryScreen());
+
 private:
     void getScrnInfo();
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
-	double getScale();
-	double getScale(QScreen *screen);
+
 	QPixmap* getBasePixmap();
 
 signals:
