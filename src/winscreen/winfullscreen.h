@@ -9,6 +9,7 @@
 #include <QList>
 #include <QColor>
 #include "rectcalcu.h"
+#include "wintoolbar.h"
 
 #define HAIF_R_BORDER_MARK 4  // 边框上标记点的半径
 
@@ -72,6 +73,8 @@ private:
 
 	RectCalcu m_rtCalcu;         // 选中矩形区域
 	CursorArea m_cursorArea;     // 光标所在区域
+
+    WinToolBar* m_toolBar;     // 工具栏
 };
 
 

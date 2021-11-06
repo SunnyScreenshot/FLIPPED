@@ -21,6 +21,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_basePixmap(nullptr)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
+    , m_toolBar(nullptr)
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
@@ -29,6 +30,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	//setFixedSize(QApplication::desktop()->size());
 	resize(1920, 1080);
 
+    m_toolBar = new WinToolBar(this);
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
 
@@ -255,6 +257,13 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 		
 		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
+
+    if (isVisible() && m_toolBar) {
+        QPoint topLeft;
+        topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
+        topLeft.setY(rtSel.bottomRight().y());
+        m_toolBar->move(topLeft);
+    }
 
 #if 0
 	QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel);
