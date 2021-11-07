@@ -22,10 +22,13 @@ public:
 
     void init();
 
+signals:
+    void sigDownload();
+    void sigCopy();
+
 public slots:
     void onToolBtn();
-    void onDownload();
-    void onCopy();
+
 private:
     QStringList m_toolBtnName;
     QVector<QToolButton *> m_vecToolBar;

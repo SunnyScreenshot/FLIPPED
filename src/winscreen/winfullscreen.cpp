@@ -12,6 +12,7 @@
 #include <QIcon>
 #include <QTime>
 #include <QDebug>
+#include <QClipboard>
 
 WinFullScreen::WinFullScreen(QWidget *parent)
 	: QWidget(parent)
@@ -31,6 +32,9 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	resize(1920, 1080);
 
     m_toolBar = new WinToolBar(this);
+    connect(m_toolBar, &WinToolBar::sigDownload, this, &WinFullScreen::onDownload);
+    connect(m_toolBar, &WinToolBar::sigCopy, this, &WinFullScreen::onCopy);
+
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
 
@@ -52,7 +56,36 @@ void WinFullScreen::onClearScreen()
 	m_basePixmap = nullptr;
 
 	m_rtCalcu.clear();
-	m_cursorArea = CursorArea::UnknowCursorArea;
+    m_cursorArea = CursorArea::UnknowCursorArea;
+}
+
+void WinFullScreen::onDownload()
+{
+    if (m_savePixmap.isNull())
+        return;
+
+    QTime startTime = QTime::currentTime();
+    m_savePixmap.save("m_savePixmap.png");
+    QTime stopTime = QTime::currentTime();
+    int elapsed = startTime.msecsTo(stopTime);
+    qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
+
+    emit sigClearScreen();
+    hide();
+}
+
+void WinFullScreen::onCopy()
+{
+    if (m_savePixmap.isNull())
+        return;
+
+//    ScreenShots *screenShot = static_cast<ScreenShots *>(parent());
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setPixmap(m_savePixmap);
+    qDebug()<<"--------------onCopy"<<parent()<<parent()->parent();
+
+    emit sigClearScreen();
+    hide();
 }
 
 // 获取虚拟屏幕截图
@@ -63,12 +96,6 @@ void WinFullScreen::getVirtualScreen()
 	if (!m_currPixmap) {
 		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
-
-		//QTime startTime = QTime::currentTime();
-		////m_currPixmap->save("m_currPixmap.png");
-		//QTime stopTime = QTime::currentTime();
-		//int elapsed = startTime.msecsTo(stopTime);
-		//qDebug() << "save m_currPixmap tim =" << elapsed << "ms" << size;
 	}
 }
 
@@ -246,7 +273,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
 	// 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
-		pa.drawPixmap(rtSel, m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio())));
+        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
+        pa.drawPixmap(rtSel, m_savePixmap);
 
 	#if 0
 		drawBorderMac(pa, rtSel);

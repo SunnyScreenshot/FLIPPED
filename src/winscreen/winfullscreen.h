@@ -42,11 +42,12 @@ signals:
 public slots:
 	void onClearScreen();
 
+    // toolBar 的槽函数
+    void onDownload();
+    void onCopy();
+
 private:
-//    WinFullScreen();
     WinFullScreen(QWidget *parent = nullptr);
-//    WinFullScreen(const WinFullScreen&);
-//    WinFullScreen& operator=(const WinFullScreen&);
     ~WinFullScreen() override;
 
 	void getVirtualScreen();
@@ -71,6 +72,7 @@ private:
 	QPixmap* m_currPixmap;       // 当前屏幕截图
 	QPixmap* m_blurPixmap;       // 遮罩
 	QPixmap* m_basePixmap;       // 当前屏幕截图 + 遮罩
+    QPixmap m_savePixmap;       // 当前屏幕截图 + 遮罩
 
 	RectCalcu m_rtCalcu;         // 选中矩形区域
 	CursorArea m_cursorArea;     // 光标所在区域

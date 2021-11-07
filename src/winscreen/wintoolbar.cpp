@@ -1,3 +1,6 @@
+﻿//
+// Created by XMuli <xmulitech@gmail.com> on 2021/11/06.
+//
 #include "wintoolbar.h"
 #include "winfullscreen.h"
 #include <QToolButton>
@@ -75,13 +78,12 @@ void WinToolBar::init()
         m_vecToolBar[i]->setIconSize(QSize(24, 24) * WinFullScreen::getScale());
         m_vecToolBar[i]->setToolTip(listToolTip[i]);
         m_vecToolBar[i]->setCheckable(false);
+        m_vecToolBar[i]->setChecked(false);
 
         qInfo()<<"===========>"<<name << m_vecToolBar[i]->iconSize()<<rect();
         hLayout->addWidget(m_vecToolBar[i]);
         connect(m_vecToolBar[i], &QToolButton::released, this, &WinToolBar::onToolBtn);
     }
-
-
 }
 
 void WinToolBar::onToolBtn()
@@ -90,19 +92,23 @@ void WinToolBar::onToolBtn()
     if (!obj)
         return;
 
-    if (obj->objectName() == "download") {
-        onDownload();
-    } else if (obj->objectName() == "copy") {
-        onCopy();
+    QToolButton* toolBtn = qobject_cast<QToolButton *>(obj);
+    if (!toolBtn)
+        return;
+
+    QString namePressed = ":/resources/icons/pressed/" + toolBtn->objectName() + ".svg";
+    QString nameNormal = ":/resources/icons/normal/" + toolBtn->objectName() + ".svg";
+
+    if (toolBtn->isChecked()) {
+        toolBtn->setIcon(QIcon(namePressed));
+    } else {
+        toolBtn->setIcon(QIcon(nameNormal));
+    }
+
+    if (toolBtn->objectName() == "download") {
+        emit sigDownload();
+    } else if (toolBtn->objectName() == "copy") {
+        emit sigCopy();
     }
 }
 
-void WinToolBar::onDownload()
-{
-    qInfo()<<"---------------->onDownload";
-}
-
-void WinToolBar::onCopy()
-{
-    qInfo()<<"---------------->onCopy";
-}
