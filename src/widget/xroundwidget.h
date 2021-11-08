@@ -12,7 +12,7 @@ class XRoundWidget : public QWidget
     Q_OBJECT
 public:
     XRoundWidget(QWidget *parent = nullptr);
-    ~XRoundWidget();
+    virtual ~XRoundWidget();
 
     void init();
 

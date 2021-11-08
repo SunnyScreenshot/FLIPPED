@@ -18,7 +18,7 @@ class WinToolBar : public XRoundWidget
     Q_OBJECT
 public:
     WinToolBar(QWidget *parent = nullptr);
-    ~WinToolBar();
+    virtual ~WinToolBar();
 
     void init();
 

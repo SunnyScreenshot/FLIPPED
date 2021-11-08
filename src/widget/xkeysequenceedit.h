@@ -13,7 +13,7 @@ class XKeySequenceEdit : public QKeySequenceEdit
 public:
     XKeySequenceEdit(QWidget *parent = 0);
     XKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent = nullptr);
-    ~XKeySequenceEdit();
+    virtual ~XKeySequenceEdit();
 
 //	void test();
 

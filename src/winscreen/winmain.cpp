@@ -25,6 +25,7 @@
 #include <QHotkey>
 #include <QCoreApplication>
 #include <QTimer>
+#include <QColorDialog>
 
 WinMain::WinMain(QWidget *parent) 
 	: QWidget(parent)
@@ -93,15 +94,30 @@ QWidget * WinMain::tabScreenShot()
 	QHBoxLayout* vlBorderCol = new QHBoxLayout();
 	vlBorderCol->setMargin(0);
 	vlBorderCol->addWidget(new QLabel(tr("Border Color")));
-	vlBorderCol->addWidget(new QLabel(tr("Col")));
+    QLabel* borderColor = new QLabel(this);
+    borderColor->setObjectName("borderColor");
+    borderColor->setFixedWidth(30 * WinFullScreen::getScale());
+    borderColor->installEventFilter(this);
+    borderColor->setAutoFillBackground(true);
+    vlBorderCol->addWidget(borderColor);
 	QHBoxLayout* vlArchorCol = new QHBoxLayout();
 	vlArchorCol->setMargin(0);
 	vlArchorCol->addWidget(new QLabel(tr("Archor Color")));
-	vlArchorCol->addWidget(new QLabel(tr("Col")));
+    QLabel* archorColor = new QLabel(this);
+    archorColor->setObjectName("archorColor");
+    archorColor->setFixedWidth(30 * WinFullScreen::getScale());
+    archorColor->installEventFilter(this);
+    archorColor->setAutoFillBackground(true);
+    vlArchorCol->addWidget(archorColor);
 	QHBoxLayout* vlCrossCurveCol = new QHBoxLayout();
 	vlCrossCurveCol->setMargin(0);
 	vlCrossCurveCol->addWidget(new QLabel(tr("Cross Curve Color")));
-	vlCrossCurveCol->addWidget(new QLabel(tr("Col")));
+    QLabel* crossCurveColor = new QLabel(this);
+    crossCurveColor->setObjectName("crossCurveColor");
+    crossCurveColor->setFixedWidth(30 * WinFullScreen::getScale());
+    crossCurveColor->installEventFilter(this);
+    crossCurveColor->setAutoFillBackground(true);
+    vlCrossCurveCol->addWidget(crossCurveColor);
 
 	QSpinBox* sbBorderWidth = new QSpinBox();
 	sbBorderWidth->setMinimum(0);
@@ -358,4 +374,28 @@ void WinMain::onKeySeqChanged(const QKeySequence &keySequence)
 
     qInfo() << "Is Registered22: " << hotkey << hotkey->isRegistered()<<obj->parent();
     qInfo()<< "sender():" << sender()<<"keySequence:"<<keySequence<< "keySequence:" << keySequence.count();
+}
+
+// see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
+bool WinMain::eventFilter(QObject *watched, QEvent *event)
+{
+    QLabel* lab = qobject_cast<QLabel *>(watched);
+
+    if (!lab)
+        return QWidget::eventFilter(watched, event);
+
+    if (event->type() == QEvent::MouseButtonRelease) {
+        if (lab->objectName() == "borderColor"
+                || lab->objectName() == "archorColor"
+                || lab->objectName() == "crossCurveColor") {
+            QColor color = QColorDialog::getColor(lab->palette().color(QPalette::Background), this, tr("选择文本颜色"));
+            QPalette palette;
+            palette.setColor(QPalette::Background, color);
+            lab->setPalette(palette);
+        }
+
+        return true;
+    }
+
+    return QWidget::eventFilter(watched, event);
 }

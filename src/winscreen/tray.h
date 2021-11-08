@@ -22,7 +22,7 @@ class Tray : public QObject
     Q_OBJECT
 public:
     explicit Tray(QObject *parent = nullptr);
-    ~Tray();
+    virtual ~Tray();
 
 private:
 	void init();

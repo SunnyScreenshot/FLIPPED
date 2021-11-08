@@ -22,7 +22,7 @@ class WinMain : public QWidget
     Q_OBJECT
 public:
     explicit WinMain(QWidget *parent = nullptr);
-	~WinMain();
+    virtual ~WinMain();
 
 private:
 	void init();
@@ -64,6 +64,9 @@ private:
     QHotkey* m_hkScrnShotLater;
     QHotkey* m_hkScrnShotRect;
     QHotkey* m_hkScrnShotWhole;
+
+public:
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
 #endif // WINMAIN_H
