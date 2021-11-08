@@ -63,7 +63,7 @@ void WinToolBar::init()
     m_vecToolBar.fill(nullptr, m_toolBtnName.count());
     setContentsMargins(0, 0, 0, 0);
     QHBoxLayout* hLayout = new QHBoxLayout();
-    hLayout->setContentsMargins(0, 0, 0, 0);
+    hLayout->setContentsMargins(4, 4, 4, 4);
     hLayout->setSpacing(0);
     setLayout(hLayout);
 
@@ -75,7 +75,7 @@ void WinToolBar::init()
         m_vecToolBar[i]->setToolButtonStyle(Qt::ToolButtonIconOnly);
         m_vecToolBar[i]->setAutoRaise(true);   // 自动浮动模式
         m_vecToolBar[i]->setIcon(QIcon(name));
-        m_vecToolBar[i]->setIconSize(QSize(24, 24) * WinFullScreen::getScale());
+        m_vecToolBar[i]->setIconSize(QSize(16, 16) * WinFullScreen::getScale());
         m_vecToolBar[i]->setToolTip(listToolTip[i]);
         m_vecToolBar[i]->setCheckable(false);
         m_vecToolBar[i]->setChecked(false);
