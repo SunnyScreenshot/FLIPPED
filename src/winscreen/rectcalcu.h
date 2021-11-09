@@ -16,6 +16,7 @@ class QRect;
 class QPoint;
 QT_END_NAMESPACE
 
+// TODO 2021.11.09 后优化为 emun class、或写进 class 里面定，而非此全局形式
 enum CursorType {
 	Select = 0x00000000,
 	MovePosition = 0x00000001,
