@@ -20,6 +20,18 @@ WinToolBar::~WinToolBar()
 
 }
 
+// 绘画栏是否处于点击状态;
+bool WinToolBar::isToolBtnChecked()
+{
+    QList<QToolButton *> listBtn = findChildren<QToolButton *>();
+    for (QToolButton* btn : listBtn) {
+        if (btn && btn->isChecked())
+            return true;
+    }
+
+    return false;
+}
+
 void WinToolBar::init()
 {
     m_toolBtnName << "rectangle"
@@ -108,6 +120,17 @@ void WinToolBar::onToolBtn()
     } else {
         toolBtn->setIcon(QIcon(nameNormal));
     }
+
+    // 仅单选
+    QList<QToolButton *> listBtn = findChildren<QToolButton *>();
+    for (QToolButton* btn : listBtn) {
+        if (!btn)
+            return;
+        else
+            btn->setChecked(false);
+    }
+
+    toolBtn->setChecked(true);
 
     if (toolBtn->objectName() == "download") {
         emit sigDownload();

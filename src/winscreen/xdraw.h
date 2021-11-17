@@ -35,11 +35,16 @@ public:
     explicit XDraw(QObject* parent = nullptr);
     virtual ~XDraw();
 
+
+
 private:
+    void deawRect(QRect& rt, QPen pen = QPen(Qt::red), int width = 4, QBrush brush = QBrush(Qt::NoBrush));
     bool drawStep();
     bool saveDrawStep(QVector<XDrawStep *>& steps);
     bool revoke();
     bool revoke(XDrawStep* step);
+
+
 
 private:
     XDrawStep m_step;

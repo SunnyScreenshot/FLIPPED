@@ -21,3 +21,9 @@ XDraw::~XDraw()
 {
 
 }
+
+
+void XDraw::deawRect(QRect &rt, QPen pen, int width, QBrush brush)
+{
+
+}

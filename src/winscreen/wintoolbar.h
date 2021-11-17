@@ -20,6 +20,9 @@ public:
     WinToolBar(QWidget *parent = nullptr);
     virtual ~WinToolBar();
 
+    bool isToolBtnChecked();
+
+private:
     void init();
 
 signals:
