@@ -3,6 +3,8 @@
 //
 #include "xdraw.h"
 
+#include <QPainter>
+
 /*!
  * \brief The XDrawStep struct 绘画步骤
  */
@@ -14,7 +16,7 @@
 XDraw::XDraw(QObject *parent)
     : QObject(parent)
 {
-
+    // 变量还没有初始化
 }
 
 XDraw::~XDraw()
@@ -22,8 +24,10 @@ XDraw::~XDraw()
 
 }
 
-
-void XDraw::deawRect(QRect &rt, QPen pen, int width, QBrush brush)
+void XDraw::deawRect(QPainter &pa, QRect &rt, QPen pen, int width, QBrush brush)
 {
-
+    pen.setWidth(width);
+    pa.setPen(pen);
+    pa.setBrush(brush);
+    pa.drawRect(rt);
 }

@@ -7,6 +7,7 @@
 #include <QStringList>
 #include <QHBoxLayout>
 #include <QDebug>
+#include <QPainter>
 
 
 WinToolBar::WinToolBar(QWidget *parent)
@@ -100,6 +101,16 @@ void WinToolBar::init()
         hLayout->addWidget(m_vecToolBar[i]);
         connect(m_vecToolBar[i], &QToolButton::released, this, &WinToolBar::onToolBtn);
     }
+
+
+    connect(this, &WinToolBar::sigDrawRect, this, &WinToolBar::onDrawRect);
+}
+
+void WinToolBar::onDrawRect()
+{
+    QPainter pa(this);
+    QRect rect(0, 0, 10, 10);
+    m_draw.deawRect(pa, rect);
 }
 
 void WinToolBar::onToolBtn()
@@ -112,30 +123,33 @@ void WinToolBar::onToolBtn()
     if (!toolBtn)
         return;
 
-    QString namePressed = ":/resources/icons/pressed/" + toolBtn->objectName() + ".svg";
-    QString nameNormal = ":/resources/icons/normal/" + toolBtn->objectName() + ".svg";
-
-    if (toolBtn->isChecked()) {
-        toolBtn->setIcon(QIcon(namePressed));
-    } else {
-        toolBtn->setIcon(QIcon(nameNormal));
+    if (toolBtn->objectName() == "rectangle") {
+        emit sigDrawRect();
+    } else if (toolBtn->objectName() == "copy") {
+        emit sigCopy();
+    } else if (toolBtn->objectName() == "copy") {
+        emit sigCopy();
     }
 
     // 仅单选
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* btn : listBtn) {
-        if (!btn)
-            return;
+        QString namePressed = ":/resources/icons/pressed/" + btn->objectName() + ".svg";
+        QString nameNormal = ":/resources/icons/normal/" + btn->objectName() + ".svg";
+
+        if (btn->isChecked() && btn == toolBtn) {
+            if (btn->isChecked())
+                btn->setIcon(QIcon(namePressed));
+            else
+                btn->setIcon(QIcon(nameNormal));
+            continue;
+        }
+
+        btn->setChecked(false);
+        if (btn->isChecked())
+            btn->setIcon(QIcon(namePressed));
         else
-            btn->setChecked(false);
-    }
-
-    toolBtn->setChecked(true);
-
-    if (toolBtn->objectName() == "download") {
-        emit sigDownload();
-    } else if (toolBtn->objectName() == "copy") {
-        emit sigCopy();
+            btn->setIcon(QIcon(nameNormal));
     }
 }
 
