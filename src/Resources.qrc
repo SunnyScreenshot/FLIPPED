@@ -6,5 +6,55 @@
         <file>resources/icons/normal/download.svg</file>
         <file>resources/icons/pressed/copy.svg</file>
         <file>resources/icons/pressed/download.svg</file>
+        <file>../../ShotX/src/icons/pressed/arrow.svg</file>
+        <file>../../ShotX/src/icons/pressed/copy.svg</file>
+        <file>../../ShotX/src/icons/pressed/download.svg</file>
+        <file>../../ShotX/src/icons/pressed/ellipse.svg</file>
+        <file>../../ShotX/src/icons/pressed/exit.svg</file>
+        <file>../../ShotX/src/icons/pressed/fill-ellipse.svg</file>
+        <file>../../ShotX/src/icons/pressed/fill-rect.svg</file>
+        <file>../../ShotX/src/icons/pressed/gif.svg</file>
+        <file>../../ShotX/src/icons/pressed/line.svg</file>
+        <file>../../ShotX/src/icons/pressed/mosaic.svg</file>
+        <file>../../ShotX/src/icons/pressed/pen.svg</file>
+        <file>../../ShotX/src/icons/pressed/recover.svg</file>
+        <file>../../ShotX/src/icons/pressed/rectangle.svg</file>
+        <file>../../ShotX/src/icons/pressed/revoke.svg</file>
+        <file>../../ShotX/src/icons/pressed/right.svg</file>
+        <file>../../ShotX/src/icons/pressed/screenshot.svg</file>
+        <file>../../ShotX/src/icons/pressed/text.svg</file>
+        <file>../../ShotX/src/icons/pressed/update.svg</file>
+        <file>resources/icons/normal/arrow.svg</file>
+        <file>resources/icons/normal/ellipse.svg</file>
+        <file>resources/icons/normal/exit.svg</file>
+        <file>resources/icons/normal/fill-ellipse.svg</file>
+        <file>resources/icons/normal/fill-rect.svg</file>
+        <file>resources/icons/normal/gif.svg</file>
+        <file>resources/icons/normal/line.svg</file>
+        <file>resources/icons/normal/mosaic.svg</file>
+        <file>resources/icons/normal/pen.svg</file>
+        <file>resources/icons/normal/recover.svg</file>
+        <file>resources/icons/normal/rectangle.svg</file>
+        <file>resources/icons/normal/revoke.svg</file>
+        <file>resources/icons/normal/right.svg</file>
+        <file>resources/icons/normal/screenshot.svg</file>
+        <file>resources/icons/normal/text.svg</file>
+        <file>resources/icons/normal/update.svg</file>
+        <file>resources/icons/pressed/arrow.svg</file>
+        <file>resources/icons/pressed/ellipse.svg</file>
+        <file>resources/icons/pressed/exit.svg</file>
+        <file>resources/icons/pressed/fill-ellipse.svg</file>
+        <file>resources/icons/pressed/fill-rect.svg</file>
+        <file>resources/icons/pressed/gif.svg</file>
+        <file>resources/icons/pressed/line.svg</file>
+        <file>resources/icons/pressed/mosaic.svg</file>
+        <file>resources/icons/pressed/pen.svg</file>
+        <file>resources/icons/pressed/recover.svg</file>
+        <file>resources/icons/pressed/rectangle.svg</file>
+        <file>resources/icons/pressed/revoke.svg</file>
+        <file>resources/icons/pressed/right.svg</file>
+        <file>resources/icons/pressed/screenshot.svg</file>
+        <file>resources/icons/pressed/text.svg</file>
+        <file>resources/icons/pressed/update.svg</file>
     </qresource>
 </RCC>
