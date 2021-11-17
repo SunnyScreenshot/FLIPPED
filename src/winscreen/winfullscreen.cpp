@@ -266,7 +266,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 
 	QPainter pa(this);
 	QPen pen(QColor("#01bdff"));
-    pen.setWidth(4);
+    const int width = HAIF_INTERVAL * 2;  // 画笔宽度
+    pen.setWidth(width);
 	pa.setPen(pen);
 	pa.setOpacity(1);
 	pa.setBrush(Qt::transparent);
@@ -282,26 +283,40 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
         pa.drawPixmap(rtSel, m_savePixmap);
 
-	#if 0
-		drawBorderMac(pa, rtSel);
-	#else
-		pa.drawRect(rtSel);
-		drawBorderBlue(pa, rtSel);
-	#endif
+    #if 0
+        drawBorderMac(pa, rtSel);
+    #else
+        pa.drawRect(rtSel);
+        drawBorderBlue(pa, rtSel);
+//        pen.setWidth(1);
+//        pen.setColor(Qt::red);
+//        pa.setPen(pen);
+//        pa.drawRect(rtSel);
+    #endif
 		
 		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
     if (isVisible() && m_toolBar) {
         QPoint topLeft;
+        const int space = 4;
         topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
-        topLeft.setY(rtSel.bottomRight().y());
+        topLeft.setY(rtSel.bottomRight().y() + width / 2 + space);
         m_toolBar->move(topLeft);
     }
 
+
+//    if (m_rtCalcu.getSelRect().contains(pos(), false)
+//            && m_toolBar->isToolBtnChecked()/*
+//            && m_rtCalcu.m_cursorType == Waiting*/)
+//        setCursor(Qt::CrossCursor);
+//        m_rtCalcu.m_cursorType = Drawing;
+//    else
+//        m_rtCalcu.m_cursorType = Waiting;
+
 #if 0
-	QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel);
-	QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel);
+    QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
+    QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel, width / 2);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
 
 	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
@@ -480,6 +495,10 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 		}
 		break;
 	}
+    case Drawing: {
+        setCursor(Qt::CrossCursor);
+        break;
+    }
 	case UnknowCursorType:
 		break;
 	default:

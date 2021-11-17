@@ -32,7 +32,7 @@ QRect& RectCalcu::limitBound(QRect& rt, QRect rtDesktop)
 }
 
 
-// 判断当前鼠标所在区域; false 为大概区域（显示光标）; true 为详细区域（修改矩形大小做准备）
+// 判断当前鼠标所在区域; false 为大概区域（用来粗略计算显示光标区域即可）; true 为详细区域（精确计算所在区域，需要修改矩形大小做准备，显示不同光标）
 const CursorArea RectCalcu::getCursorArea(QPoint pos, bool details)
 {
 	if (m_rtSel.isEmpty())

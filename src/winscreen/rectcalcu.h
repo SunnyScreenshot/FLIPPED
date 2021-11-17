@@ -9,7 +9,9 @@
 #include <QApplication>
 #include <QDesktopWidget>
 
-#define HAIF_INTERVAL 4    // 一半间隔，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
+// 1. HAIF_INTERVAL 为一半间隔，边框宽度一半高; 2 * HAIF_INTERVAL 为边框的宽度，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
+// 2. HAIF_INTERVAL 为边框一般的灵敏度，光标移动到上面便会变化形态
+#define HAIF_INTERVAL 2
 
 QT_BEGIN_NAMESPACE
 class QRect;
@@ -30,6 +32,7 @@ enum CursorType {
 
 	Move = 0x00000100,
 	Waiting = 0x00000200,
+    Drawing = 0x00000400,
 
 	UnknowCursorType
 };
