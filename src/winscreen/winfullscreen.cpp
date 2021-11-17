@@ -13,6 +13,9 @@
 #include <QTime>
 #include <QDebug>
 #include <QClipboard>
+#include <QFileDialog>
+
+#define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
 WinFullScreen::WinFullScreen(QWidget *parent)
 	: QWidget(parent)
@@ -64,8 +67,11 @@ void WinFullScreen::onDownload()
     if (m_savePixmap.isNull())
         return;
 
+    QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files件(*.*)"));
+    QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
+
     QTime startTime = QTime::currentTime();
-    m_savePixmap.save("m_savePixmap.png");
+    m_savePixmap.save(fileNmae);
     QTime stopTime = QTime::currentTime();
     int elapsed = startTime.msecsTo(stopTime);
     qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
@@ -533,6 +539,12 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 	update();
 }
 
+/*!
+ * \brief WinFullScreen::instance 单例的实现
+ * \return 返回单例的引用
+ * \note 问：类的static变量在什么时候初始化？函数的static变量在什么时候初始化？
+ * \li 答：类的静态成员变量在类实例化之前就已经存在了，并且分配了内存。函数的static变量在执行此函数时进行初始化。
+ */
 WinFullScreen &WinFullScreen::instance()
 {
     static WinFullScreen m_instance;
