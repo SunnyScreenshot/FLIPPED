@@ -83,7 +83,7 @@ private:
     WinToolBar* m_toolBar;       // 工具栏
     XDraw* m_draw;               // 绘画栏
 
-    QVector<QRect> m_vRtDraw;
+    QVector<QRect> m_vRtDraw;    // 验证可行否，需换掉
 };
 
 

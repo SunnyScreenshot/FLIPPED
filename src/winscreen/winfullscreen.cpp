@@ -374,6 +374,9 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 	}
 }
 
+// 注意: 1. 按下、松开时候会切换状态；点击绘画按钮也会切换状态
+//      2. 开启鼠标跟踪时机；点击绘画按钮也会相应开启/关闭
+//      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
 void WinFullScreen::mousePressEvent(QMouseEvent *event)
 {
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
