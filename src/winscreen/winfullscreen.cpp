@@ -26,6 +26,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
     , m_toolBar(nullptr)
+    , m_draw(nullptr)
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
@@ -34,9 +35,13 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	//setFixedSize(QApplication::desktop()->size());
 	resize(1920, 1080);
 
+    m_draw = new XDraw(this);
     m_toolBar = new WinToolBar(this);
     connect(m_toolBar, &WinToolBar::sigDownload, this, &WinFullScreen::onDownload);
     connect(m_toolBar, &WinToolBar::sigCopy, this, &WinFullScreen::onCopy);
+
+    connect(m_toolBar, &WinToolBar::sigDrawStart, this, &WinFullScreen::onDrawStart);
+    connect(m_toolBar, &WinToolBar::sigDrawEnd, this, &WinFullScreen::onDrawEnd);
 
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
@@ -92,6 +97,18 @@ void WinFullScreen::onCopy()
 
     emit sigClearScreen();
     hide();
+}
+
+void WinFullScreen::onDrawStart()
+{
+    m_rtCalcu.m_cursorType = CursorType::Drawing;
+    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.m_cursorType;
+}
+
+void WinFullScreen::onDrawEnd()
+{
+    m_rtCalcu.m_cursorType = CursorType::Waiting;
+    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.m_cursorType;
 }
 
 // 获取虚拟屏幕截图
@@ -294,7 +311,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 //        pa.drawRect(rtSel);
     #endif
 		
-		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
+//		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
     if (isVisible() && m_toolBar) {
@@ -305,14 +322,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
         m_toolBar->move(topLeft);
     }
 
-
-//    if (m_rtCalcu.getSelRect().contains(pos(), false)
-//            && m_toolBar->isToolBtnChecked()/*
-//            && m_rtCalcu.m_cursorType == Waiting*/)
-//        setCursor(Qt::CrossCursor);
-//        m_rtCalcu.m_cursorType = Drawing;
-//    else
-//        m_rtCalcu.m_cursorType = Waiting;
+    // 工具栏绘画
+    m_draw->drawRect(pa, QRect(50, 50, 100, 100));
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
@@ -362,7 +373,13 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
              << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
 
-	m_rtCalcu.m_cursorType = CursorType::Waiting;
+    bool bDrawing = false;
+    if (m_rtCalcu.m_cursorType == CursorType::Drawing) {
+        bDrawing = true;
+    } else {
+        m_rtCalcu.m_cursorType = CursorType::Waiting;
+    }
+
 	setMouseTracking(false);
 
 	if (m_rtCalcu.getSelRect().isEmpty()) {
@@ -371,7 +388,7 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 	} else {  // 可能是添加编辑画图、或者移动等模式
 		if (event->button() == Qt::LeftButton)
 		{
-			if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorInner) {
+            if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorInner && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::Move;
 			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossLeft) {
 				m_rtCalcu.m_cursorType = CursorType::ModifWidth;
@@ -496,7 +513,13 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 		break;
 	}
     case Drawing: {
-        setCursor(Qt::CrossCursor);
+       if (m_rtCalcu.getSelRect().contains(event->pos(), false))
+          setCursor(Qt::CrossCursor);
+       else
+           setCursor(Qt::ArrowCursor);
+
+//       qDebug() << "-----------Drawing->:" << m_rtCalcu.getSelRect() << pos() << "【" << m_rtCalcu.getSelRect().contains(pos(), false) << cursor();
+
         break;
     }
 	case UnknowCursorType:
@@ -552,7 +575,9 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 		break;
 	}
 
-	m_rtCalcu.m_cursorType = CursorType::Waiting;
+    if (m_rtCalcu.m_cursorType != CursorType::Drawing)
+        m_rtCalcu.m_cursorType = CursorType::Waiting;
+
 	setMouseTracking(true);
 
 	update();

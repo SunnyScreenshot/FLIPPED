@@ -24,10 +24,11 @@ XDraw::~XDraw()
 
 }
 
-void XDraw::deawRect(QPainter &pa, QRect &rt, QPen pen, int width, QBrush brush)
+void XDraw::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush brush)
 {
-    pen.setWidth(width);
+    pen.setWidth(width * 10);
+    pen.setColor(Qt::red);
     pa.setPen(pen);
-    pa.setBrush(brush);
+    pa.setBrush(Qt::yellow);
     pa.drawRect(rt);
 }

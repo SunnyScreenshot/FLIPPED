@@ -10,9 +10,9 @@
 #include <QColor>
 #include "rectcalcu.h"
 #include "wintoolbar.h"
+#include "xdraw.h"
 
 #define HAIF_R_BORDER_MARK 4  // 边框上标记点的半径
-
 
 QT_BEGIN_NAMESPACE
 class QScreen;
@@ -46,6 +46,9 @@ public slots:
     void onDownload();
     void onCopy();
 
+    void onDrawStart();
+    void onDrawEnd();
+
 private:
     WinFullScreen(QWidget *parent = nullptr);
     ~WinFullScreen() override;
@@ -77,7 +80,8 @@ private:
 	RectCalcu m_rtCalcu;         // 选中矩形区域
 	CursorArea m_cursorArea;     // 光标所在区域
 
-    WinToolBar* m_toolBar;     // 工具栏
+    WinToolBar* m_toolBar;       // 工具栏
+    XDraw* m_draw;                // 绘画栏
 };
 
 

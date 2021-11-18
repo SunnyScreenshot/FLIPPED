@@ -100,7 +100,7 @@ public:
 	QPoint m_moveEndPos;
 	QPoint m_modifyStartPos;
 	QPoint m_modifyEndPos;
-	CursorType m_cursorType = CursorType::UnknowCursorType;     // 光标类型（对应此时鼠标的操作类型）
+    CursorType m_cursorType = CursorType::UnknowCursorType;     // 光标类型（对应此时鼠标的操作类型）
 
 private:
 	QRect m_rtSel;

@@ -73,7 +73,8 @@ void WinToolBar::init()
     m_vecToolBar.fill(nullptr, m_toolBtnName.count());
     setContentsMargins(0, 0, 0, 0);
     QHBoxLayout* hLayout = new QHBoxLayout();
-    hLayout->setContentsMargins(4, 4, 4, 4);
+    const int margin = 8;
+    hLayout->setContentsMargins(margin, margin, margin, margin);
     hLayout->setSpacing(0);
     setLayout(hLayout);
 
@@ -108,9 +109,13 @@ void WinToolBar::init()
 
 void WinToolBar::onDrawRect()
 {
-    QPainter pa(this);
-    QRect rect(0, 0, 10, 10);
-    m_draw.deawRect(pa, rect);
+//    QWidget* device = qobject_cast<QWidget *>(this->parent());
+//    if (!device)
+//        return;
+
+//    QPainter pa(this);
+//    QRect rect(0, 0, 100, 100);
+//    m_draw.drawRect(pa, rect);
 }
 
 void WinToolBar::onToolBtn()
@@ -123,33 +128,46 @@ void WinToolBar::onToolBtn()
     if (!toolBtn)
         return;
 
-    if (toolBtn->objectName() == "rectangle") {
-        emit sigDrawRect();
-    } else if (toolBtn->objectName() == "copy") {
-        emit sigCopy();
-    } else if (toolBtn->objectName() == "copy") {
-        emit sigCopy();
-    }
-
     // 仅单选
+    bool bNoChecked = false;  // false 前面几个绘画按钮均为处于未点击状态,即非绘画 Drawing 状态
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* btn : listBtn) {
         QString namePressed = ":/resources/icons/pressed/" + btn->objectName() + ".svg";
         QString nameNormal = ":/resources/icons/normal/" + btn->objectName() + ".svg";
 
         if (btn->isChecked() && btn == toolBtn) {
-            if (btn->isChecked())
+            if (btn->isChecked()) {
                 btn->setIcon(QIcon(namePressed));
-            else
+                bNoChecked = true;
+            } else {
                 btn->setIcon(QIcon(nameNormal));
+            }
+
             continue;
         }
 
         btn->setChecked(false);
-        if (btn->isChecked())
+        if (btn->isChecked()) {
             btn->setIcon(QIcon(namePressed));
-        else
+            bNoChecked = true;
+        } else {
             btn->setIcon(QIcon(nameNormal));
+        }
     }
+
+    if (bNoChecked)
+        emit sigDrawStart();
+    else
+        emit sigDrawEnd();
+
+    // 发射信号
+    if (toolBtn->objectName() == "rectangle") {
+        emit sigDrawRect();
+    } else if (toolBtn->objectName() == "download") {
+        emit sigDownload();
+    } else if (toolBtn->objectName() == "copy") {
+        emit sigCopy();
+    }
+
 }
 
