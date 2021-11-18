@@ -102,12 +102,15 @@ void WinFullScreen::onCopy()
 void WinFullScreen::onDrawStart()
 {
     m_rtCalcu.m_cursorType = CursorType::Drawing;
+    setMouseTracking(false);  // Fix: 鼠标移动中会被自动绘画矩形，副作用绘画状态的光标不完美了(选中框内外的光标被固定了)，严格不算 bug，一种外观特效
     qInfo()<<"--------------onDrawStart"<<m_rtCalcu.m_cursorType;
 }
+
 
 void WinFullScreen::onDrawEnd()
 {
     m_rtCalcu.m_cursorType = CursorType::Waiting;
+    setMouseTracking(true);  // 等待状态开启鼠标跟踪
     qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.m_cursorType;
 }
 
