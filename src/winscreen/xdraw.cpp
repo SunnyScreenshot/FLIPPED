@@ -26,9 +26,9 @@ XDraw::~XDraw()
 
 void XDraw::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush brush)
 {
-    pen.setWidth(width * 10);
+    pen.setWidth(width);
     pen.setColor(Qt::red);
     pa.setPen(pen);
-    pa.setBrush(Qt::yellow);
+    pa.setBrush(brush);
     pa.drawRect(rt);
 }

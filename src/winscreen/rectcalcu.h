@@ -85,7 +85,7 @@ public:
 	bool isClear();
 	const CursorArea getCursorArea(QPoint pos, bool details = false);
 
-	QRect getRect(QPoint pos1, QPoint pos2);
+    static QRect getRect(QPoint pos1, QPoint pos2);
 	QRect getRect(QRect rect, int px, CursorArea area);
 	QRect& limitBound(QRect& rt, QRect rtDesktop = QApplication::desktop()->rect());
 

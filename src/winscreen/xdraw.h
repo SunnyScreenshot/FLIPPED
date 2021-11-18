@@ -31,8 +31,9 @@ enum class XDrawType {
 
 struct  XDrawStep
 {
-    QRect rtSour = QRect();        // 源位置
-    QRect rtDest = QRect();        // 目标位置
+    QPoint startPos = QPoint();
+    QPoint endPos = QPoint();
+    QRect rt = QRect();        // 初始绘画位置
     QPen pen = QPen(Qt::NoPen);
     QBrush brush = QBrush(Qt::NoBrush);
     QFont font = QFont();
@@ -54,7 +55,8 @@ public:
 
 
 
-private:
+public:
+    XDrawStep m_step;
     QVector<XDrawStep> m_vDrawStep;
 };
 

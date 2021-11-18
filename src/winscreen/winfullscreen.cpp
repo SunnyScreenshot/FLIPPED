@@ -323,7 +323,11 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     }
 
     // 工具栏绘画
-    m_draw->drawRect(pa, QRect(50, 50, 100, 100));
+    m_draw->drawRect(pa, RectCalcu::getRect(m_draw->m_step.startPos, m_draw->m_step.endPos));
+
+    for (QRect rt : m_vRtDraw) {
+        m_draw->drawRect(pa, rt);
+    }
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
@@ -390,40 +394,38 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 		{
             if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorInner && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::Move;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossLeft) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossLeft && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifWidth;
 				m_cursorArea = CursorArea::CursorCrossLeft;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossRight) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossRight && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifWidth;
 				m_cursorArea = CursorArea::CursorCrossRight;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTop) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTop && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifHeight;
 				m_cursorArea = CursorArea::CursorCrossTop;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottom) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottom && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifHeight;
 				m_cursorArea = CursorArea::CursorCrossBottom;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopLeft) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopLeft && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifyTLAndBR;
 				m_cursorArea = CursorArea::CursorCrossTopLeft;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopRight) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopRight && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifyTRAndBL;
 				m_cursorArea = CursorArea::CursorCrossTopRight;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomLeft) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomLeft && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifyTRAndBL;
 				m_cursorArea = CursorArea::CursorCrossBottomLeft;
-			} else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomRight) {
+            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomRight && !bDrawing) {
 				m_rtCalcu.m_cursorType = CursorType::ModifyTLAndBR;
 				m_cursorArea = CursorArea::CursorCrossBottomRight;
 			} else {
-
 			}
 		}
-
 	}
 
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();;
 
 	switch (m_rtCalcu.m_cursorType)
 	{
@@ -451,6 +453,11 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 	case Waiting: {
 		break;
 	}
+    case Drawing: {
+        m_draw->m_step.startPos = event->pos();
+        m_draw->m_step.endPos = event->pos();
+        break;
+    }
 	case UnknowCursorType:
 		break;
 	default:
@@ -464,7 +471,7 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 {
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();;
 
 	switch (m_rtCalcu.m_cursorType)
 	{
@@ -518,8 +525,8 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
        else
            setCursor(Qt::ArrowCursor);
 
+       m_draw->m_step.endPos = event->pos();
 //       qDebug() << "-----------Drawing->:" << m_rtCalcu.getSelRect() << pos() << "【" << m_rtCalcu.getSelRect().contains(pos(), false) << cursor();
-
         break;
     }
 	case UnknowCursorType:
@@ -535,7 +542,7 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 {
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();
 
 	switch (m_rtCalcu.m_cursorType)
 	{
@@ -566,19 +573,27 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 		m_rtCalcu.m_moveEndPos = QPoint();
 		break;
 	}
-	case Waiting: {
+    case Waiting: {
 		break;
 	}
+    case Drawing: {
+        m_draw->m_step.endPos = event->pos();
+        m_vRtDraw.push_back(RectCalcu::getRect(m_draw->m_step.startPos, m_draw->m_step.endPos));
+
+        m_draw->m_step.startPos = event->pos();
+        qInfo() << "--------------------------count>"<<m_vRtDraw.count();
+        break;
+    }
 	case UnknowCursorType:
 		break;
 	default:
 		break;
 	}
 
-    if (m_rtCalcu.m_cursorType != CursorType::Drawing)
+    if (m_rtCalcu.m_cursorType != CursorType::Drawing) {
         m_rtCalcu.m_cursorType = CursorType::Waiting;
-
-	setMouseTracking(true);
+        setMouseTracking(true);
+    }
 
 	update();
 }

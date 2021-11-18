@@ -81,7 +81,9 @@ private:
 	CursorArea m_cursorArea;     // 光标所在区域
 
     WinToolBar* m_toolBar;       // 工具栏
-    XDraw* m_draw;                // 绘画栏
+    XDraw* m_draw;               // 绘画栏
+
+    QVector<QRect> m_vRtDraw;
 };
 
 
