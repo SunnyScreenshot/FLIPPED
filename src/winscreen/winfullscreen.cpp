@@ -103,7 +103,7 @@ void WinFullScreen::onDrawStart()
 {
     m_rtCalcu.m_cursorType = CursorType::Drawing;
     setMouseTracking(false);  // Fix: 鼠标移动中会被自动绘画矩形，副作用绘画状态的光标不完美了(选中框内外的光标被固定了)，严格不算 bug，一种外观特效
-    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.m_cursorType;
+//    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.m_cursorType;
 }
 
 
@@ -111,7 +111,7 @@ void WinFullScreen::onDrawEnd()
 {
     m_rtCalcu.m_cursorType = CursorType::Waiting;
     setMouseTracking(true);  // 等待状态开启鼠标跟踪
-    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.m_cursorType;
+//    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.m_cursorType;
 }
 
 // 获取虚拟屏幕截图
@@ -440,8 +440,6 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
         m_rtCalcu.m_EndPos = event->pos();
 		break;
 	}
-	case MovePosition:
-		break;
 	case ModifWidth:
 	case ModifHeight:
 	case ModifyTLAndBR:
@@ -485,9 +483,6 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 		m_rtCalcu.m_EndPos = event->pos();
 		setCursor(Qt::ArrowCursor);
 		qDebug() << "【mouseMoveEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
-		break;
-	}
-	case MovePosition: {
 		break;
 	}
 	case ModifWidth:
@@ -558,8 +553,6 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 		qDebug() << "【mouseReleaseEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
 		break;
 	}
-	case MovePosition:
-		break;
 	case ModifWidth:
 	case ModifHeight:
 	case ModifyTLAndBR:

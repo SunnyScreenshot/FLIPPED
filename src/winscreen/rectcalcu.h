@@ -18,52 +18,65 @@ class QRect;
 class QPoint;
 QT_END_NAMESPACE
 
-// TODO 2021.11.09 后优化为 emun class、或写进 class 里面定，而非此全局形式
-enum CursorType {
-	Select = 0x00000000,
-	MovePosition = 0x00000001,
-	ModifWidth = 0x00000002,
-	ModifHeight = 0x00000004,
-	ModifBorderSize = ModifWidth | ModifHeight,
-	ModifyTLAndBR = 0x00000010,
-	ModifyTRAndBL = 0x00000020,
-	ModifyCorner = ModifyTLAndBR | ModifyTRAndBL,
-	ModifySize = ModifBorderSize | ModifyCorner,
+// Xps 为 XPicShot 的缩写
+namespace Xps {
 
-	Move = 0x00000100,
-	Waiting = 0x00000200,
-    Drawing = 0x00000400,
+// TODO 2021.11.09 后优化为 emun class、或写进 class 里面定，而非此全局形式(那就需要重载 qDebug() 的 << 函数了，输出类)
+enum CursorType {                                  // ------------（矩形区域）------------
+    Select,                                        // 选中
+    Move,                                          // 移动
+    ModifWidth,                                    // 拉伸左、右
+    ModifHeight,                                   // 拉伸上、下
+    ModifBorderSize = ModifWidth | ModifHeight,    // 拉伸任意一边（左、右、上、下）
 
-	UnknowCursorType
+    ModifyTLAndBR,                                 // 拉伸斜对角（左上、右下）
+    ModifyTRAndBL,                                 // 拉伸斜对角（右上、左下）
+    ModifyCorner = ModifyTLAndBR | ModifyTRAndBL,  // 拉伸斜任意一斜角（左上、右下、右上、左下）
+    ModifySize = ModifBorderSize | ModifyCorner,   // 拉伸矩形任意一边或一斜角（左、右、上、下；左上、右下、右上、左下）
+
+    Waiting,                                       // 等待（未有，和已有矩形局域）
+
+                                                   // ------------（绘画栏状态）------------
+    Drawing,                                       // 绘画中（绘画按钮有处于点击状态）
+    DrawSelect,                                    // 绘画时选中的绘画元素
+    DrawMove,                                      // 绘画时移动的绘画元素
+
+                                                   // ------------（未知）------------
+    UnknowCursorType                               // 未知
 };
 Q_DECLARE_FLAGS(CursorTypes, CursorType)     // 枚举 CursorType 生成宏 CursorTypes
 Q_DECLARE_OPERATORS_FOR_FLAGS(CursorTypes)  // 重载宏 CursorType 的 |() 函数
 
 enum CursorArea {
-	CursorCrossLeft = 0x00000000,
-	CursorCrossTop = 0x00000001,
-	CursorCrossRight = 0x00000002,
-	CursorCrossBottom = 0x00000004,
-	CursorCrossHorizontal = CursorCrossLeft | CursorCrossRight,
-	CursorCrossVertical = CursorCrossTop | CursorCrossBottom,
-	CursorCrossBorder = CursorCrossHorizontal | CursorCrossVertical,
+    CursorCrossLeft = 0x00000000,
+    CursorCrossTop = 0x00000001,
+    CursorCrossRight = 0x00000002,
+    CursorCrossBottom = 0x00000004,
+    CursorCrossHorizontal = CursorCrossLeft | CursorCrossRight,
+    CursorCrossVertical = CursorCrossTop | CursorCrossBottom,
+    CursorCrossBorder = CursorCrossHorizontal | CursorCrossVertical,
 
-	CursorCrossTopLeft = 0x00000010,
-	CursorCrossTopRight = 0x00000020,
-	CursorCrossBottomLeft = 0x00000040,
-	CursorCrossBottomRight = 0x00000080,
-	CursorCrossTL2BR = CursorCrossTopLeft | CursorCrossBottomRight,
-	CursorCrossTR2BL = CursorCrossTopRight | CursorCrossBottomLeft,
-	CursorCrossCorner = CursorCrossTL2BR | CursorCrossTR2BL,
-	CursorCross = CursorCrossBorder | CursorCrossCorner,
+    CursorCrossTopLeft = 0x00000010,
+    CursorCrossTopRight = 0x00000020,
+    CursorCrossBottomLeft = 0x00000040,
+    CursorCrossBottomRight = 0x00000080,
+    CursorCrossTL2BR = CursorCrossTopLeft | CursorCrossBottomRight,
+    CursorCrossTR2BL = CursorCrossTopRight | CursorCrossBottomLeft,
+    CursorCrossCorner = CursorCrossTL2BR | CursorCrossTR2BL,
+    CursorCross = CursorCrossBorder | CursorCrossCorner,
 
-	CursorOutSize = 0x00000100,
-	CursorInner = 0x00000200,
+    CursorOutSize = 0x00000100,
+    CursorInner = 0x00000200,
 
-	UnknowCursorArea
+    UnknowCursorArea
 };
 Q_DECLARE_FLAGS(CursorAreas, CursorArea)
-Q_DECLARE_OPERATORS_FOR_FLAGS(CursorAreas)
+//Q_DECLARE_OPERATORS_FOR_FLAGS(CursorAreas)
+
+}
+
+// ** 方便使用枚举 **
+using namespace Xps;
 
 // 矩形计算
 class RectCalcu
@@ -83,7 +96,7 @@ public:
 	void clear();
 	void setClear(bool clear);
 	bool isClear();
-	const CursorArea getCursorArea(QPoint pos, bool details = false);
+    const CursorArea getCursorArea(QPoint pos, bool details = false);
 
     static QRect getRect(QPoint pos1, QPoint pos2);
 	QRect getRect(QRect rect, int px, CursorArea area);
@@ -92,7 +105,6 @@ public:
 private:
 	QRect& setSelRect(QPoint pos1, QPoint pos2);
 	
-
 public:
 	QPoint m_startPos;
 	QPoint m_EndPos;
