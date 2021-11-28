@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by XMuli <xmulitech@gmail.com> on 2021/11/09.
 //
 #ifndef XDRAW_H
@@ -19,7 +19,7 @@ enum class XDrawState {
     Unknow
 };
 
-enum class XDrawType {
+enum class XDrawShape {
     Rectangles,
     Ellipses,
     Lines,
@@ -34,10 +34,26 @@ struct  XDrawStep
     QPoint startPos = QPoint();
     QPoint endPos = QPoint();
     QRect rt = QRect();        // 初始绘画位置
-    QPen pen = QPen(Qt::NoPen);
+    XDrawShape shape = XDrawShape::NoDraw;  // 绘画类型
+
+    int rX = 58; // 短长轴
+    int rY = 58; // 竖长轴
+    QString text = "==Test Text==";
+//    QPen pen = QPen(Qt::NoPen);
+//    int penWidth = 1;
+//    QBrush brush = QBrush(Qt::NoBrush);
+//    int brushWidth = 1;
+//    QFont font = QFont();
+//    int fontSize = 16;
+
+    // test
+    QPen pen = QPen(Qt::red);
+    int penWidth = 2;
     QBrush brush = QBrush(Qt::NoBrush);
     QFont font = QFont();
-    XDrawType drawType = XDrawType::NoDraw;  // 绘画类型
+    int fontSize = 16;
+
+    void clear();
 };
 
 class XDraw : public QObject
@@ -59,5 +75,11 @@ public:
     XDrawStep m_step;
     QVector<XDrawStep> m_vDrawStep;
 };
+
+//QDebug operator<<(QDebug myDebug, const XDrawStep& step)
+//{
+//    myDebug << step.rt << step.shape;
+//    return myDebug;
+//}
 
 #endif // XDRAW_H

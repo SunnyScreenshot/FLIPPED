@@ -7,6 +7,7 @@
 #include "../widget/xroundwidget.h"
 #include <QWidget>
 #include <QVector>
+#include "xdraw.h"
 
 QT_BEGIN_NAMESPACE
 class QToolButton;
@@ -28,12 +29,11 @@ private:
 signals:
     void sigDrawStart();       // 处于绘画状态
     void sigDrawEnd();         // 处于绘画状态
-    void sigDrawRect();
+    void sigDrawShape(XDrawShape shape);
     void sigDownload();
     void sigCopy();
 
 public slots:
-    void onDrawRect();
     void onToolBtn();
 
 private:

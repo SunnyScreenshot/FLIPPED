@@ -25,6 +25,7 @@ namespace Xps {
 enum CursorType {                                  // ------------（矩形区域）------------
     Select,                                        // 选中
     Move,                                          // 移动
+    Waiting,                                       // 等待（未有，和已有矩形局域）
     ModifWidth,                                    // 拉伸左、右
     ModifHeight,                                   // 拉伸上、下
     ModifBorderSize = ModifWidth | ModifHeight,    // 拉伸任意一边（左、右、上、下）
@@ -34,12 +35,11 @@ enum CursorType {                                  // ------------（矩形区�
     ModifyCorner = ModifyTLAndBR | ModifyTRAndBL,  // 拉伸斜任意一斜角（左上、右下、右上、左下）
     ModifySize = ModifBorderSize | ModifyCorner,   // 拉伸矩形任意一边或一斜角（左、右、上、下；左上、右下、右上、左下）
 
-    Waiting,                                       // 等待（未有，和已有矩形局域）
-
                                                    // ------------（绘画栏状态）------------
     Drawing,                                       // 绘画中（绘画按钮有处于点击状态）
     DrawSelect,                                    // 绘画时选中的绘画元素
     DrawMove,                                      // 绘画时移动的绘画元素
+    DrawWaiting,                                   // 绘画时等待
 
                                                    // ------------（未知）------------
     UnknowCursorType                               // 未知
@@ -112,7 +112,7 @@ public:
 	QPoint m_moveEndPos;
 	QPoint m_modifyStartPos;
 	QPoint m_modifyEndPos;
-    CursorType m_cursorType = CursorType::UnknowCursorType;     // 光标类型（对应此时鼠标的操作类型）
+    CursorType m_cursorType = CursorType::UnknowCursorType;     // 程序状态（对应此时鼠标的操作类型）
 
 private:
 	QRect m_rtSel;

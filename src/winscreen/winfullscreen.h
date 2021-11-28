@@ -43,6 +43,7 @@ public slots:
 	void onClearScreen();
 
     // toolBar 的槽函数
+    void onDrawShape(XDrawShape shape);
     void onDownload();
     void onCopy();
 
@@ -60,6 +61,9 @@ private:
 	// 绘画边框样式
     void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
 	void drawBorderMac(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
+
+    // 辅助（绘画）函数， TODO 可以迁移到 XDrawHelper 中？
+    void drawStep(QPainter& pa, XDrawStep &step);
 
 protected:
 	virtual void paintEvent(QPaintEvent *event) override;
@@ -81,9 +85,10 @@ private:
 	CursorArea m_cursorArea;     // 光标所在区域
 
     WinToolBar* m_toolBar;       // 工具栏
-    XDraw* m_draw;               // 绘画栏
+    XDrawStep m_drawStep;        // 当前绘画一步骤
+//    XDraw* m_draw;               // 绘画 Helper
 
-    QVector<QRect> m_vRtDraw;    // 验证可行否，需换掉
+    QVector<XDrawStep> m_vDraw;    // 验证可行否，需换掉
 };
 
 

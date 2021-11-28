@@ -103,19 +103,6 @@ void WinToolBar::init()
         connect(m_vecToolBar[i], &QToolButton::released, this, &WinToolBar::onToolBtn);
     }
 
-
-    connect(this, &WinToolBar::sigDrawRect, this, &WinToolBar::onDrawRect);
-}
-
-void WinToolBar::onDrawRect()
-{
-//    QWidget* device = qobject_cast<QWidget *>(this->parent());
-//    if (!device)
-//        return;
-
-//    QPainter pa(this);
-//    QRect rect(0, 0, 100, 100);
-//    m_draw.drawRect(pa, rect);
 }
 
 void WinToolBar::onToolBtn()
@@ -160,9 +147,33 @@ void WinToolBar::onToolBtn()
     else
         emit sigDrawEnd();
 
+    m_toolBtnName << "rectangle"
+               << "ellipse"
+               << "line"
+               << "arrow"
+               << "pen"
+               << "text"
+               << "mosaic"
+               << "revoke"
+               << "download"
+               << "copy";
     // 发射信号
     if (toolBtn->objectName() == "rectangle") {
-        emit sigDrawRect();
+        emit sigDrawShape(XDrawShape::Rectangles);
+    } else if (toolBtn->objectName() == "ellipse") {
+        emit sigDrawShape(XDrawShape::Ellipses);
+    } else if (toolBtn->objectName() == "line") {
+        emit sigDrawShape(XDrawShape::Lines);
+    } else if (toolBtn->objectName() == "arrow") {
+        emit sigDrawShape(XDrawShape::Arrows);
+//    } else if (toolBtn->objectName() == "pen") {
+//        emit sigDrawShape(XDrawShape::Pen);
+    } else if (toolBtn->objectName() == "text") {
+        emit sigDrawShape(XDrawShape::Texts);
+    } else if (toolBtn->objectName() == "mosaic") {
+        emit sigDrawShape(XDrawShape::Mosaics);
+    } else if (toolBtn->objectName() == "revoke") {
+//        emit sigDrawShape(XDrawShape::Rectangles);
     } else if (toolBtn->objectName() == "download") {
         emit sigDownload();
     } else if (toolBtn->objectName() == "copy") {

@@ -26,7 +26,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
     , m_toolBar(nullptr)
-    , m_draw(nullptr)
+//    , m_draw(nullptr)
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
@@ -35,13 +35,14 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	//setFixedSize(QApplication::desktop()->size());
 	resize(1920, 1080);
 
-    m_draw = new XDraw(this);
+//    m_draw = new XDraw(this);
     m_toolBar = new WinToolBar(this);
     connect(m_toolBar, &WinToolBar::sigDownload, this, &WinFullScreen::onDownload);
     connect(m_toolBar, &WinToolBar::sigCopy, this, &WinFullScreen::onCopy);
 
     connect(m_toolBar, &WinToolBar::sigDrawStart, this, &WinFullScreen::onDrawStart);
     connect(m_toolBar, &WinToolBar::sigDrawEnd, this, &WinFullScreen::onDrawEnd);
+    connect(m_toolBar, &WinToolBar::sigDrawShape, this, &WinFullScreen::onDrawShape);
 
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
@@ -65,6 +66,12 @@ void WinFullScreen::onClearScreen()
 
 	m_rtCalcu.clear();
     m_cursorArea = CursorArea::UnknowCursorArea;
+}
+
+void WinFullScreen::onDrawShape(XDrawShape shape)
+{
+    m_drawStep.shape = shape;
+    qDebug() << "--------@onDrawShape:" << int(m_drawStep.shape);
 }
 
 void WinFullScreen::onDownload()
@@ -216,7 +223,52 @@ void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound
 	for (int i = 0; i < num; ++i)
 		pa.drawEllipse(ver[i], offsetPos.x(), offsetPos.y());
 
-	pa.restore();
+    pa.restore();
+}
+
+// 绘画当前类型的一个图案形状
+void WinFullScreen::drawStep(QPainter& pa, XDrawStep& step)
+{
+    if (XDrawShape::NoDraw == step.shape)
+        return;
+
+//    QPen pen(step.pen);
+//    pen.setWidth(step.penWidth);
+//    QBrush brush(step.brush);
+//    QFont font(step.font);
+//    font.setPixelSize(step.fontSize);
+
+//    pa.setPen(pen);
+//    pa.setBrush(brush);
+//    pa.setFont(font);
+
+    switch (step.shape) {
+    case XDrawShape::Rectangles: {
+        pa.drawRect(step.rt);
+        break;
+    }
+    case XDrawShape::Ellipses: {
+        pa.drawEllipse(step.rt.center(), step.rt.width() / 2, step.rt.height() / 2);
+        break;
+    }
+    case XDrawShape::Lines: {
+        pa.drawLine(step.startPos, step.endPos);
+        break;
+    }
+    case XDrawShape::Arrows: {
+        pa.drawLine(step.startPos, step.endPos);
+        break;
+    }
+    case XDrawShape::Texts: {
+        pa.drawText(step.rt.topLeft(), step.text);
+        break;
+    }
+    case XDrawShape::Mosaics: {
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 // 样式一: 浅蓝色
@@ -326,11 +378,16 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     }
 
     // 工具栏绘画
-    m_draw->drawRect(pa, RectCalcu::getRect(m_draw->m_step.startPos, m_draw->m_step.endPos));
+    pen.setWidth(2);
+    pen.setColor(Qt::red);
+    pa.setPen(pen);
+    pa.setBrush(Qt::NoBrush);
+//    m_draw->drawRect(pa, m_drawStep.rt);
+//    drawStep(pa, m_drawStep.rt);
 
-    for (QRect rt : m_vRtDraw) {
-        m_draw->drawRect(pa, rt);
-    }
+    drawStep(pa, m_drawStep);
+    for (XDrawStep& it : m_vDraw)
+        drawStep(pa, it);
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
@@ -458,8 +515,8 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 		break;
 	}
     case Drawing: {
-        m_draw->m_step.startPos = event->pos();
-        m_draw->m_step.endPos = event->pos();
+        m_drawStep.startPos = event->pos();
+        m_drawStep.endPos = event->pos();
         break;
     }
 	case UnknowCursorType:
@@ -526,8 +583,10 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
        else
            setCursor(Qt::ArrowCursor);
 
-       m_draw->m_step.endPos = event->pos();
-//       qDebug() << "-----------Drawing->:" << m_rtCalcu.getSelRect() << pos() << "【" << m_rtCalcu.getSelRect().contains(pos(), false) << cursor();
+       m_drawStep.endPos = event->pos();
+       m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
+       qDebug() << "-----MOVE------Drawing->:" << m_drawStep.rt << (int)m_drawStep.shape;
+// << m_rtCalcu.getSelRect() << pos() << "【" << m_rtCalcu.getSelRect().contains(pos(), false) << cursor();
         break;
     }
 	case UnknowCursorType:
@@ -576,11 +635,17 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
 		break;
 	}
     case Drawing: {
-        m_draw->m_step.endPos = event->pos();
-        m_vRtDraw.push_back(RectCalcu::getRect(m_draw->m_step.startPos, m_draw->m_step.endPos));
+        m_drawStep.endPos = event->pos();
+        m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
+        m_vDraw.push_back(m_drawStep);
 
-        m_draw->m_step.startPos = event->pos();
-        qInfo() << "--------------------------count>"<<m_vRtDraw.count();
+        m_drawStep.clear();
+        qInfo() << "--------------------------count>"<<m_vDraw.count();
+
+        int i = 1;
+        for (XDrawStep it : m_vDraw) {
+            qDebug() << i++ << "  rt:" << it.rt << "  shape:" << int(it.shape) << endl;
+        }
         break;
     }
 	case UnknowCursorType:

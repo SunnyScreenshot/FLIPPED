@@ -30,5 +30,24 @@ void XDraw::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush brush)
     pen.setColor(Qt::red);
     pa.setPen(pen);
     pa.setBrush(brush);
-    pa.drawRect(rt);
+//    pa.drawRect(rt);
 }
+
+void XDrawStep::clear()
+{
+//    startPos = QPoint();
+//    endPos = QPoint();
+    rt = QRect();
+//    shape = XDrawShape::NoDraw;
+
+    rX = 8;
+    rY = 8;
+    text = "==Test Text==";
+
+    pen = QPen(Qt::NoPen);
+    penWidth = 1;
+    brush = QBrush(Qt::NoBrush);
+    font = QFont();
+    fontSize = 16;
+}
+
