@@ -304,7 +304,6 @@ void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound
 	}
 }
 
-
 // 获取当前屏幕截图 + 遮罩
 QPixmap* WinFullScreen::getBasePixmap()
 {
@@ -360,10 +359,6 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     #else
         pa.drawRect(rtSel);
         drawBorderBlue(pa, rtSel);
-//        pen.setWidth(1);
-//        pen.setColor(Qt::red);
-//        pa.setPen(pen);
-//        pa.drawRect(rtSel);
     #endif
 		
 //		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
@@ -382,9 +377,6 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::red);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
-//    m_draw->drawRect(pa, m_drawStep.rt);
-//    drawStep(pa, m_drawStep.rt);
-
     drawStep(pa, m_drawStep);
     for (XDrawStep& it : m_vDraw)
         drawStep(pa, it);
@@ -585,7 +577,7 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 
        m_drawStep.endPos = event->pos();
        m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
-       qDebug() << "-----MOVE------Drawing->:" << m_drawStep.rt << (int)m_drawStep.shape;
+//       qDebug() << "-----MOVE------Drawing->:" << m_drawStep.rt << (int)m_drawStep.shape;
 // << m_rtCalcu.getSelRect() << pos() << "【" << m_rtCalcu.getSelRect().contains(pos(), false) << cursor();
         break;
     }
