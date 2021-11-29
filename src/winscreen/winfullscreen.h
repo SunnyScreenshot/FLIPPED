@@ -44,6 +44,7 @@ public slots:
 
     // toolBar 的槽函数
     void onDrawShape(XDrawShape shape);
+    void onRevoke();
     void onDownload();
     void onCopy();
 
@@ -79,16 +80,17 @@ private:
 	QPixmap* m_currPixmap;       // 当前屏幕截图
 	QPixmap* m_blurPixmap;       // 遮罩
 	QPixmap* m_basePixmap;       // 当前屏幕截图 + 遮罩
-    QPixmap m_savePixmap;       // 当前屏幕截图 + 遮罩
+    QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
 
 	RectCalcu m_rtCalcu;         // 选中矩形区域
 	CursorArea m_cursorArea;     // 光标所在区域
 
     WinToolBar* m_toolBar;       // 工具栏
     XDrawStep m_drawStep;        // 当前绘画一步骤
-//    XDraw* m_draw;               // 绘画 Helper
+//    XDraw* m_draw;             // 绘画 Helper
 
-    QVector<XDrawStep> m_vDraw;    // 验证可行否，需换掉
+    QVector<XDrawStep> m_vDraw;  // 验证可行否，需换掉
+    QVector<XDrawStep> m_vDrawRevoke;
 };
 
 

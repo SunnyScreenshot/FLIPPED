@@ -173,7 +173,7 @@ void WinToolBar::onToolBtn()
     } else if (toolBtn->objectName() == "mosaic") {
         emit sigDrawShape(XDrawShape::Mosaics);
     } else if (toolBtn->objectName() == "revoke") {
-//        emit sigDrawShape(XDrawShape::Rectangles);
+        emit sigRevoke();
     } else if (toolBtn->objectName() == "download") {
         emit sigDownload();
     } else if (toolBtn->objectName() == "copy") {

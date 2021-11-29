@@ -35,10 +35,10 @@ void XDraw::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush brush)
 
 void XDrawStep::clear()
 {
-//    startPos = QPoint();
-//    endPos = QPoint();
+    startPos = QPoint();
+    endPos = QPoint();
     rt = QRect();
-//    shape = XDrawShape::NoDraw;
+//    shape = XDrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
 
     rX = 8;
     rY = 8;

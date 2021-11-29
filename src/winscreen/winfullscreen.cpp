@@ -26,7 +26,6 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
     , m_toolBar(nullptr)
-//    , m_draw(nullptr)
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
@@ -43,6 +42,8 @@ WinFullScreen::WinFullScreen(QWidget *parent)
     connect(m_toolBar, &WinToolBar::sigDrawStart, this, &WinFullScreen::onDrawStart);
     connect(m_toolBar, &WinToolBar::sigDrawEnd, this, &WinFullScreen::onDrawEnd);
     connect(m_toolBar, &WinToolBar::sigDrawShape, this, &WinFullScreen::onDrawShape);
+    connect(m_toolBar, &WinToolBar::sigRevoke, this, &WinFullScreen::onRevoke);
+
 
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
@@ -72,6 +73,16 @@ void WinFullScreen::onDrawShape(XDrawShape shape)
 {
     m_drawStep.shape = shape;
     qDebug() << "--------@onDrawShape:" << int(m_drawStep.shape);
+}
+
+// 撤销了几步？
+void WinFullScreen::onRevoke()
+{
+
+    m_vDrawRevoke.push_back(*(m_vDraw.end() - 1));
+    m_vDraw.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRevoke.count() << "    m_vDraw:" << m_vDraw.count();
+    update();
 }
 
 void WinFullScreen::onDownload()
@@ -374,10 +385,13 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 
     // 工具栏绘画
     pen.setWidth(2);
-    pen.setColor(Qt::red);
+    pen.setColor(Qt::yellow);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
     drawStep(pa, m_drawStep);
+
+    pen.setColor(Qt::red);
+    pa.setPen(pen);
     for (XDrawStep& it : m_vDraw)
         drawStep(pa, it);
 
@@ -409,7 +423,6 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
 #endif // 1
-
 
 }
 
@@ -480,7 +493,7 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();;
+             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();
 
 	switch (m_rtCalcu.m_cursorType)
 	{
