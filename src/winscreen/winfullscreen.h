@@ -90,8 +90,8 @@ private:
     XDrawStep m_drawStep;        // 当前绘画一步骤
 //    XDraw* m_draw;             // 绘画 Helper
 
-    QVector<XDrawStep> m_vDraw;  // 验证可行否，需换掉
-    QVector<XDrawStep> m_vDrawRevoke;
+    QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
+    QVector<XDrawStep> m_vDrawRedo;  // 重做步骤
 };
 
 

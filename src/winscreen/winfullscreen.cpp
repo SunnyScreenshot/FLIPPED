@@ -79,23 +79,23 @@ void WinFullScreen::onDrawShape(XDrawShape shape)
 // 点击一次，撤销一步
 void WinFullScreen::onUndo()
 {
-    if (m_vDraw.count() <= 0)
+    if (m_vDrawUndo.count() <= 0)
         return;
 
-    m_vDrawRevoke.push_back(*(m_vDraw.end() - 1));
-    m_vDraw.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRevoke.count() << "    m_vDraw:" << m_vDraw.count();
+    m_vDrawRedo.push_back(*(m_vDrawUndo.end() - 1));
+    m_vDrawUndo.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRedo.count() << "    m_vDraw:" << m_vDrawUndo.count();
     update();
 }
 
 void WinFullScreen::onRedo()
 {
-    if (m_vDrawRevoke.count() <= 0)
+    if (m_vDrawRedo.count() <= 0)
         return;
 
-    m_vDraw.push_back(*(m_vDrawRevoke.end() - 1));
-    m_vDrawRevoke.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRevoke.count() << "    m_vDraw:" << m_vDraw.count();
+    m_vDrawUndo.push_back(*(m_vDrawRedo.end() - 1));
+    m_vDrawRedo.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRedo.count() << "    m_vDraw:" << m_vDrawUndo.count();
     update();
 }
 
@@ -406,7 +406,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 
     pen.setColor(Qt::red);
     pa.setPen(pen);
-    for (XDrawStep& it : m_vDraw)
+    for (XDrawStep& it : m_vDrawUndo)
         drawStep(pa, it);
 
 #if 0
@@ -656,13 +656,13 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
     case Drawing: {
         m_drawStep.endPos = event->pos();
         m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
-        m_vDraw.push_back(m_drawStep);
+        m_vDrawUndo.push_back(m_drawStep);
 
         m_drawStep.clear();
-        qInfo() << "--------------------------count>"<<m_vDraw.count();
+        qInfo() << "--------------------------count>"<<m_vDrawUndo.count();
 
         int i = 1;
-        for (XDrawStep it : m_vDraw) {
+        for (XDrawStep it : m_vDrawUndo) {
             qDebug() << i++ << "  rt:" << it.rt << "  shape:" << int(it.shape) << endl;
         }
         break;
