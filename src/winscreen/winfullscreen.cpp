@@ -251,21 +251,23 @@ void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound
     pa.restore();
 }
 
-// 绘画当前类型的一个图案形状
-void WinFullScreen::drawStep(QPainter& pa, XDrawStep& step)
+// 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；false 使用上一个环境的
+void WinFullScreen::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 {
     if (XDrawShape::NoDraw == step.shape)
         return;
 
-//    QPen pen(step.pen);
-//    pen.setWidth(step.penWidth);
-//    QBrush brush(step.brush);
-//    QFont font(step.font);
-//    font.setPixelSize(step.fontSize);
+    if (isUseOwn) {
+        QPen pen(step.pen);
+        pen.setWidth(step.penWidth);
+        QBrush brush(step.brush);
+        QFont font(step.font);
+        font.setPixelSize(step.fontSize);
 
-//    pa.setPen(pen);
-//    pa.setBrush(brush);
-//    pa.setFont(font);
+        pa.setPen(pen);
+        pa.setBrush(brush);
+        pa.setFont(font);
+    }
 
     switch (step.shape) {
     case XDrawShape::Rectangles: {
@@ -402,10 +404,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::yellow);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
-    drawStep(pa, m_drawStep);
+    drawStep(pa, m_drawStep, false);
 
-    pen.setColor(Qt::red);
-    pa.setPen(pen);
     for (XDrawStep& it : m_vDrawUndo)
         drawStep(pa, it);
 
@@ -437,7 +437,6 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
 #endif // 1
-
 }
 
 void WinFullScreen::keyReleaseEvent(QKeyEvent *event)

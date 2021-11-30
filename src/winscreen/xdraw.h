@@ -69,8 +69,6 @@ public:
     bool revoke();
     bool revoke(XDrawStep* step);
 
-
-
 public:
     XDrawStep m_step;
     QVector<XDrawStep> m_vDrawStep;

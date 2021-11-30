@@ -42,12 +42,12 @@ void XDrawStep::clear()
 
     rX = 8;
     rY = 8;
-    text = "==Test Text==";
+//    text = "==Test Text==";
 
-    pen = QPen(Qt::NoPen);
-    penWidth = 1;
-    brush = QBrush(Qt::NoBrush);
-    font = QFont();
-    fontSize = 16;
+//    pen = QPen(Qt::NoPen);
+//    penWidth = 1;
+//    brush = QBrush(Qt::NoBrush);
+//    font = QFont();
+//    fontSize = 16;
 }
 
