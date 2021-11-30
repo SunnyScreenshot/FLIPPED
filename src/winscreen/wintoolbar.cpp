@@ -37,12 +37,12 @@ void WinToolBar::init()
 {
     m_toolBtnName << "rectangle"
                << "ellipse"
-               << "line"
                << "arrow"
                << "pen"
                << "text"
                << "mosaic"
-               << "revoke"
+               << "undo"
+               << "redo"
                << "download"
                << "copy";
 
@@ -58,16 +58,16 @@ void WinToolBar::init()
                            , tr("download (⌘ + S)")
                            , tr("copy (⌘ + C)")};
 #else
-    QStringList listToolTip = {tr("rectangle (Ctrl + 1)")
-                           , tr("ellipse (Ctrl + 2)")
-                           , tr("line (Ctrl + 3)")
-                           , tr("arrow (Ctrl + 4)")
-                           , tr("pen (Ctrl + 5）")
-                           , tr("text (Ctrl + 6)")
-                           , tr("mosaic (Ctrl + 7)")
-                           , tr("revoke (Ctrl + z)")
-                           , tr("download (Ctrl + S)")
-                           , tr("copy (Ctrl + C)")};
+    QStringList listToolTip = {tr("rectangle")
+                           , tr("ellipse")
+                           , tr("arrow")
+                           , tr("pen")
+                           , tr("text")
+                           , tr("mosaic")
+                           , tr("undo")
+                           , tr("redo")
+                           , tr("download")
+                           , tr("copy")};
 #endif
 
     m_vecToolBar.fill(nullptr, m_toolBtnName.count());
@@ -90,8 +90,9 @@ void WinToolBar::init()
         m_vecToolBar[i]->setToolTip(listToolTip[i]);
         m_vecToolBar[i]->setChecked(false);
 
-        // TODO 2021.11.17 后优化为 list 的最后三项
-        if (m_vecToolBar[i]->objectName() == "revoke"
+        // TODO 2021.11.17 后优化为 list 的最后 4 项
+        if (m_vecToolBar[i]->objectName() == "undo"
+                || m_vecToolBar[i]->objectName() == "redo"
                 || m_vecToolBar[i]->objectName() == "download"
                 || m_vecToolBar[i]->objectName() == "copy")
             m_vecToolBar[i]->setCheckable(false);
@@ -147,23 +148,21 @@ void WinToolBar::onToolBtn()
     else
         emit sigDrawEnd();
 
-    m_toolBtnName << "rectangle"
-               << "ellipse"
-               << "line"
-               << "arrow"
-               << "pen"
-               << "text"
-               << "mosaic"
-               << "revoke"
-               << "download"
-               << "copy";
+//    m_toolBtnName << "rectangle"
+//               << "ellipse"
+//               << "arrow"
+//               << "pen"
+//               << "text"
+//               << "mosaic"
+//               << "undo"
+//               << "redo"
+//               << "download"
+//               << "copy";
     // 发射信号
     if (toolBtn->objectName() == "rectangle") {
         emit sigDrawShape(XDrawShape::Rectangles);
     } else if (toolBtn->objectName() == "ellipse") {
         emit sigDrawShape(XDrawShape::Ellipses);
-    } else if (toolBtn->objectName() == "line") {
-        emit sigDrawShape(XDrawShape::Lines);
     } else if (toolBtn->objectName() == "arrow") {
         emit sigDrawShape(XDrawShape::Arrows);
 //    } else if (toolBtn->objectName() == "pen") {
@@ -172,8 +171,10 @@ void WinToolBar::onToolBtn()
         emit sigDrawShape(XDrawShape::Texts);
     } else if (toolBtn->objectName() == "mosaic") {
         emit sigDrawShape(XDrawShape::Mosaics);
-    } else if (toolBtn->objectName() == "revoke") {
-        emit sigRevoke();
+    } else if (toolBtn->objectName() == "undo") {
+        emit sigUndo();
+    } else if (toolBtn->objectName() == "redo") {
+        emit sigRedo();
     } else if (toolBtn->objectName() == "download") {
         emit sigDownload();
     } else if (toolBtn->objectName() == "copy") {

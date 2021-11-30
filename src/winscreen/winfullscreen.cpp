@@ -42,7 +42,8 @@ WinFullScreen::WinFullScreen(QWidget *parent)
     connect(m_toolBar, &WinToolBar::sigDrawStart, this, &WinFullScreen::onDrawStart);
     connect(m_toolBar, &WinToolBar::sigDrawEnd, this, &WinFullScreen::onDrawEnd);
     connect(m_toolBar, &WinToolBar::sigDrawShape, this, &WinFullScreen::onDrawShape);
-    connect(m_toolBar, &WinToolBar::sigRevoke, this, &WinFullScreen::onRevoke);
+    connect(m_toolBar, &WinToolBar::sigUndo, this, &WinFullScreen::onUndo);
+    connect(m_toolBar, &WinToolBar::sigRedo, this, &WinFullScreen::onRedo);
 
 
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
@@ -75,12 +76,25 @@ void WinFullScreen::onDrawShape(XDrawShape shape)
     qDebug() << "--------@onDrawShape:" << int(m_drawStep.shape);
 }
 
-// 撤销了几步？
-void WinFullScreen::onRevoke()
+// 点击一次，撤销一步
+void WinFullScreen::onUndo()
 {
+    if (m_vDraw.count() <= 0)
+        return;
 
     m_vDrawRevoke.push_back(*(m_vDraw.end() - 1));
     m_vDraw.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRevoke.count() << "    m_vDraw:" << m_vDraw.count();
+    update();
+}
+
+void WinFullScreen::onRedo()
+{
+    if (m_vDrawRevoke.count() <= 0)
+        return;
+
+    m_vDraw.push_back(*(m_vDrawRevoke.end() - 1));
+    m_vDrawRevoke.pop_back();
     qDebug() << "---->m_vDrawRevoke:" << m_vDrawRevoke.count() << "    m_vDraw:" << m_vDraw.count();
     update();
 }

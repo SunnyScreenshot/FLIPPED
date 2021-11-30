@@ -44,7 +44,8 @@ public slots:
 
     // toolBar 的槽函数
     void onDrawShape(XDrawShape shape);
-    void onRevoke();
+    void onUndo();
+    void onRedo();
     void onDownload();
     void onCopy();
 

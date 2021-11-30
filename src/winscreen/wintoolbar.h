@@ -30,7 +30,8 @@ signals:
     void sigDrawStart();       // 处于绘画状态
     void sigDrawEnd();         // 处于绘画状态
     void sigDrawShape(XDrawShape shape);
-    void sigRevoke();
+    void sigUndo();
+    void sigRedo();
     void sigDownload();
     void sigCopy();
 
