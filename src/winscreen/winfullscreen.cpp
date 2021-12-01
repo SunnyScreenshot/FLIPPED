@@ -30,9 +30,9 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-    //setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-	//setFixedSize(QApplication::desktop()->size());
-	resize(1920, 1080);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+    setFixedSize(QApplication::desktop()->size());
+//    resize(1920, 1080);
 
 //    m_draw = new XDraw(this);
     m_toolBar = new WinToolBar(this);
@@ -108,7 +108,7 @@ void WinFullScreen::onDownload()
     QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
 
     QTime startTime = QTime::currentTime();
-    m_savePixmap.save(fileNmae);
+    m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
     QTime stopTime = QTime::currentTime();
     int elapsed = startTime.msecsTo(stopTime);
     qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
@@ -125,7 +125,7 @@ void WinFullScreen::onCopy()
 //    ScreenShots *screenShot = static_cast<ScreenShots *>(parent());
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setPixmap(m_savePixmap);
-    qDebug()<<"--------------onCopy"<<parent()<<parent()->parent();
+    qDebug()<<"--------------onCopy"<<parent();
 
     emit sigClearScreen();
     hide();
@@ -369,7 +369,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	pa.setPen(pen);
 	pa.setOpacity(1);
 	pa.setBrush(Qt::transparent);
-	pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
+    pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
 
 	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));  // 移动选中矩形
 	m_rtCalcu.limitBound(rtSel, rect());
@@ -380,6 +380,10 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 	if (rtSel.width() > 0 && rtSel.height() > 0){
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
         pa.drawPixmap(rtSel, m_savePixmap);
+
+        QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rtSel.left()).arg(rtSel.top()).arg(rtSel.width()).arg(rtSel.height())
+                .arg(m_savePixmap.width()).arg(m_savePixmap.height());
+        pa.drawText(rtSel.topLeft() + QPoint(0, -50), str);
 
     #if 0
         drawBorderMac(pa, rtSel);
@@ -406,8 +410,10 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     pa.setBrush(Qt::NoBrush);
     drawStep(pa, m_drawStep, false);
 
+    pa.begin(m_currPixmap);
     for (XDrawStep& it : m_vDrawUndo)
         drawStep(pa, it);
+    pa.end();
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
