@@ -101,8 +101,14 @@ void WinFullScreen::onRedo()
 
 void WinFullScreen::onDownload()
 {
-    if (m_savePixmap.isNull())
+    if (!m_savePixmap || !m_currPixmap)
         return;
+
+    QPainter pa;
+    pa.begin(m_currPixmap);
+    for (XDrawStep& it : m_vDrawUndo)
+        drawStep(pa, it);
+    pa.end();
 
     QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files件(*.*)"));
     QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
@@ -119,12 +125,23 @@ void WinFullScreen::onDownload()
 
 void WinFullScreen::onCopy()
 {
-    if (m_savePixmap.isNull())
+    if (!m_savePixmap || !m_currPixmap)
         return;
 
-//    ScreenShots *screenShot = static_cast<ScreenShots *>(parent());
+    QPainter pa;
+    pa.begin(m_currPixmap);
+    for (XDrawStep& it : m_vDrawUndo)
+        drawStep(pa, it);
+    pa.end();
+
+    // TODO: 2021.12.02, 为何添加 QFileDialog::getSaveFileName (此两行)即可顺利保存绘画后的文件，复制到剪切板中？
+    // 可能？sleep(1000) x;  update(); 都不是原因，不对
+//    QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files件(*.*)"));
+//    QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png");
+
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setPixmap(m_savePixmap);
+
     qDebug()<<"--------------onCopy"<<parent();
 
     emit sigClearScreen();
@@ -364,13 +381,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     if (!m_blurPixmap)
         getBlurPixmap();
 
-    QPainter pa;
-    pa.begin(m_currPixmap);
-    for (XDrawStep& it : m_vDrawUndo)
-        drawStep(pa, it);
-    pa.end();
-
-    pa.begin(this);
+    QPainter pa(this);
     const int width = HAIF_INTERVAL * 2;  // 画笔宽度
     QPen pen(QColor("#01bdff"));
     pen.setWidth(width);
@@ -420,7 +431,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     pa.setBrush(Qt::NoBrush);
     drawStep(pa, m_drawStep, false);
 
-    pa.end();
+    for (XDrawStep& it : m_vDrawUndo)
+        drawStep(pa, it);
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
