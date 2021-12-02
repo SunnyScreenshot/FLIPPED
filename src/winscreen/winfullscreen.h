@@ -34,7 +34,7 @@ private:
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
 
-	QPixmap* getBasePixmap();
+//	QPixmap* getBasePixmap();
 
 signals:
 	void sigClearScreen();
@@ -57,7 +57,7 @@ private:
     ~WinFullScreen() override;
 
     QPixmap* getVirtualScreen();
-    QPixmap* getBlurPixmap(QColor color = QColor(0, 0, 0, 0.5 * 255));
+//    QPixmap* getBlurPixmap(QColor color = QColor(0, 0, 0, 0.5 * 255));
 	void modifyRectSize(QRect& rtSel);
 
 	// 绘画边框样式
@@ -79,8 +79,8 @@ private:
 	QScreen* m_primaryScreen;    // 主屏幕
 
 	QPixmap* m_currPixmap;       // 当前屏幕截图
-	QPixmap* m_blurPixmap;       // 遮罩
-	QPixmap* m_basePixmap;       // 当前屏幕截图 + 遮罩
+//	QPixmap* m_blurPixmap;       // 遮罩
+//	QPixmap* m_basePixmap;       // 当前屏幕截图 + 遮罩
     QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
 
 	RectCalcu m_rtCalcu;         // 选中矩形区域

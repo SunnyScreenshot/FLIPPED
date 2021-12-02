@@ -21,8 +21,8 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	: QWidget(parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
-	, m_blurPixmap(nullptr)
-	, m_basePixmap(nullptr)
+//	, m_blurPixmap(nullptr)
+//	, m_basePixmap(nullptr)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
     , m_toolBar(nullptr)
@@ -61,10 +61,10 @@ void WinFullScreen::onClearScreen()
 
 	delete m_currPixmap;
 	m_currPixmap = nullptr;
-	delete m_blurPixmap;
-	m_blurPixmap = nullptr;
-	delete m_basePixmap;
-	m_basePixmap = nullptr;
+//	delete m_blurPixmap;
+//	m_blurPixmap = nullptr;
+//	delete m_basePixmap;
+//	m_basePixmap = nullptr;
 
 	m_rtCalcu.clear();
     m_cursorArea = CursorArea::UnknowCursorArea;
@@ -176,18 +176,18 @@ QPixmap* WinFullScreen::getVirtualScreen()
     return m_currPixmap;
 }
 
-// 获取屏幕遮罩
-QPixmap* WinFullScreen::getBlurPixmap(QColor color)
-{
-	if (!m_blurPixmap) {
-        QDesktopWidget *desktop = QApplication::desktop();
-        m_blurPixmap = new QPixmap(desktop->size());
-		m_blurPixmap->fill(color);
-		//m_blurPixmap->save("m_blurPixmap.png");
-	}
+//// 获取屏幕遮罩
+//QPixmap* WinFullScreen::getBlurPixmap(QColor color)
+//{
+//	if (!m_blurPixmap) {
+//        QDesktopWidget *desktop = QApplication::desktop();
+//        m_blurPixmap = new QPixmap(desktop->size());
+//		m_blurPixmap->fill(color);
+//		//m_blurPixmap->save("m_blurPixmap.png");
+//	}
 
-    return m_blurPixmap;
-}
+//    return m_blurPixmap;
+//}
 
 // 修改拉伸选中矩形的大小
 void WinFullScreen::modifyRectSize(QRect& rt)
@@ -349,38 +349,38 @@ void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound
 }
 
 // 获取当前屏幕截图 + 遮罩
-QPixmap* WinFullScreen::getBasePixmap()
-{
-	if (!m_currPixmap)
-		getVirtualScreen();
+//QPixmap* WinFullScreen::getBasePixmap()
+//{
+//	if (!m_currPixmap)
+//		getVirtualScreen();
 
-	if (!m_blurPixmap)
-        getBlurPixmap();
+//	if (!m_blurPixmap)
+//        getBlurPixmap();
 
-    if (!m_basePixmap) {
-        m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
-        QPainter pa(m_basePixmap);
-        pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
-        //QTime startTime = QTime::currentTime();
-        ////m_basePixmap->save("m_basePixmap.png");
-        ////m_currPixmap->save("m_currPixmap2.png");
-        //QTime stopTime = QTime::currentTime();
-        //int elapsed = startTime.msecsTo(stopTime);
-        //qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
-    }
+//    if (!m_basePixmap) {
+//        m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
+//        QPainter pa(m_basePixmap);
+//        pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
+//        //QTime startTime = QTime::currentTime();
+//        ////m_basePixmap->save("m_basePixmap.png");
+//        ////m_currPixmap->save("m_currPixmap2.png");
+//        //QTime stopTime = QTime::currentTime();
+//        //int elapsed = startTime.msecsTo(stopTime);
+//        //qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
+//    }
 
-    return m_basePixmap;
-}
+//    return m_basePixmap;
+//}
 
+// 效果：绘画的顺序重要
 void WinFullScreen::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
 
     if (!m_currPixmap)
         getVirtualScreen();
-    if (!m_blurPixmap)
-        getBlurPixmap();
 
+    // 原始图案
     QPainter pa(this);
     const int width = HAIF_INTERVAL * 2;  // 画笔宽度
     QPen pen(QColor("#01bdff"));
@@ -389,14 +389,13 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     pa.setOpacity(1);
     pa.setBrush(Qt::transparent);
     pa.drawPixmap(QApplication::desktop()->rect(), *m_currPixmap);
-    pa.drawPixmap(QApplication::desktop()->rect(), *m_blurPixmap);
 
 	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));  // 移动选中矩形
 	m_rtCalcu.limitBound(rtSel, rect());
 	modifyRectSize(rtSel);  // 拉伸选中矩形大小
 
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
-	// 注意独立屏幕缩放比（eg: macox = 2）
+    // 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
         pa.drawPixmap(rtSel, m_savePixmap);
@@ -405,17 +404,43 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
                 .arg(m_savePixmap.width()).arg(m_savePixmap.height());
         pa.drawText(rtSel.topLeft() + QPoint(0, -50), str);
 
-    #if 0
-        drawBorderMac(pa, rtSel);
-    #else
-        pa.drawRect(rtSel);
-        drawBorderBlue(pa, rtSel);
-    #endif
-
         qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
-//		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
+        qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
+    // 绘画图案
+    pen.setWidth(HAIF_INTERVAL);
+    pen.setColor(Qt::yellow);
+    pa.setPen(pen);
+    drawStep(pa, m_drawStep, false);
+
+    for (XDrawStep& it : m_vDrawUndo)
+        drawStep(pa, it);
+
+    // 屏幕遮罩
+    QPainterPath path;
+    path.addRect(QApplication::desktop()->rect());
+    path.addRect(rtSel);
+    path.setFillRule(Qt::OddEvenFill);
+    pa.setPen(Qt::NoPen);
+    pa.setBrush(QColor(0, 0, 0, 0.5 * 255));
+    pa.drawPath(path);
+
+    // 边框
+    if (rtSel.width() > 0 && rtSel.height() > 0){
+        pen.setColor(QColor("#01bdff"));
+        pen.setStyle(Qt::SolidLine);
+        pa.setPen(pen);
+        pa.setBrush(Qt::NoBrush);
+        #if 0
+            drawBorderMac(pa, rtSel);
+        #else
+            pa.drawRect(rtSel);
+            drawBorderBlue(pa, rtSel);
+        #endif
+    }
+
+    // 绘画工具栏
     if (isVisible() && m_toolBar) {
         QPoint topLeft;
         const int space = 4;
@@ -423,16 +448,6 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
         topLeft.setY(rtSel.bottomRight().y() + width / 2 + space);
         m_toolBar->move(topLeft);
     }
-
-    // 工具栏绘画
-    pen.setWidth(HAIF_INTERVAL);
-    pen.setColor(Qt::yellow);
-    pa.setPen(pen);
-    pa.setBrush(Qt::NoBrush);
-    drawStep(pa, m_drawStep, false);
-
-    for (XDrawStep& it : m_vDrawUndo)
-        drawStep(pa, it);
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
