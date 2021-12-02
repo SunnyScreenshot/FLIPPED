@@ -30,9 +30,9 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-    setFixedSize(QApplication::desktop()->size());
-//    resize(1920, 1080);
+//    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+//    setFixedSize(QApplication::desktop()->size());
+    resize(1920, 1080);
 
 //    m_draw = new XDraw(this);
     m_toolBar = new WinToolBar(this);
@@ -147,29 +147,29 @@ void WinFullScreen::onDrawEnd()
 }
 
 // 获取虚拟屏幕截图
-void WinFullScreen::getVirtualScreen() 
+QPixmap* WinFullScreen::getVirtualScreen()
 {
 	// TODO 2021-09-29:
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
 	if (!m_currPixmap) {
 		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
-	}
+    }
+
+    return m_currPixmap;
 }
 
 // 获取屏幕遮罩
-QPixmap* WinFullScreen::getblurPixmap(QColor color)
+QPixmap* WinFullScreen::getBlurPixmap(QColor color)
 {
-	if (!m_currPixmap)
-		return nullptr;
-
 	if (!m_blurPixmap) {
-		m_blurPixmap = new QPixmap(m_currPixmap->size());
+        QDesktopWidget *desktop = QApplication::desktop();
+        m_blurPixmap = new QPixmap(desktop->size());
 		m_blurPixmap->fill(color);
 		//m_blurPixmap->save("m_blurPixmap.png");
 	}
 
-	return m_blurPixmap;
+    return m_blurPixmap;
 }
 
 // 修改拉伸选中矩形的大小
@@ -338,38 +338,47 @@ QPixmap* WinFullScreen::getBasePixmap()
 		getVirtualScreen();
 
 	if (!m_blurPixmap)
-		getblurPixmap();
+        getBlurPixmap();
 
-	if (!m_basePixmap) {
-		m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
-		QPainter pa(m_basePixmap);
-		pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
-		//QTime startTime = QTime::currentTime();
-		////m_basePixmap->save("m_basePixmap.png");
-		////m_currPixmap->save("m_currPixmap2.png");
-		//QTime stopTime = QTime::currentTime();
-		//int elapsed = startTime.msecsTo(stopTime);
-		//qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
-	}
+    if (!m_basePixmap) {
+        m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
+        QPainter pa(m_basePixmap);
+        pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
+        //QTime startTime = QTime::currentTime();
+        ////m_basePixmap->save("m_basePixmap.png");
+        ////m_currPixmap->save("m_currPixmap2.png");
+        //QTime stopTime = QTime::currentTime();
+        //int elapsed = startTime.msecsTo(stopTime);
+        //qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
+    }
 
-	return m_basePixmap;
+    return m_basePixmap;
 }
 
 void WinFullScreen::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
 
-	if (!m_basePixmap)
-		return;
+    if (!m_currPixmap)
+        getVirtualScreen();
+    if (!m_blurPixmap)
+        getBlurPixmap();
 
-	QPainter pa(this);
-	QPen pen(QColor("#01bdff"));
+    QPainter pa;
+    pa.begin(m_currPixmap);
+    for (XDrawStep& it : m_vDrawUndo)
+        drawStep(pa, it);
+    pa.end();
+
+    pa.begin(this);
     const int width = HAIF_INTERVAL * 2;  // 画笔宽度
+    QPen pen(QColor("#01bdff"));
     pen.setWidth(width);
-	pa.setPen(pen);
-	pa.setOpacity(1);
-	pa.setBrush(Qt::transparent);
-    pa.drawPixmap(QApplication::desktop()->rect(), *m_basePixmap);
+    pa.setPen(pen);
+    pa.setOpacity(1);
+    pa.setBrush(Qt::transparent);
+    pa.drawPixmap(QApplication::desktop()->rect(), *m_currPixmap);
+    pa.drawPixmap(QApplication::desktop()->rect(), *m_blurPixmap);
 
 	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));  // 移动选中矩形
 	m_rtCalcu.limitBound(rtSel, rect());
@@ -391,7 +400,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
         pa.drawRect(rtSel);
         drawBorderBlue(pa, rtSel);
     #endif
-		
+
+        qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
 //		qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
@@ -404,15 +414,12 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     }
 
     // 工具栏绘画
-    pen.setWidth(2);
+    pen.setWidth(HAIF_INTERVAL);
     pen.setColor(Qt::yellow);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
     drawStep(pa, m_drawStep, false);
 
-    pa.begin(m_currPixmap);
-    for (XDrawStep& it : m_vDrawUndo)
-        drawStep(pa, it);
     pa.end();
 
 #if 0
@@ -701,7 +708,7 @@ WinFullScreen &WinFullScreen::instance()
 void WinFullScreen::getScrnShots()
 {
     this->getScrnInfo();
-    this->getBasePixmap();
+//    this->getBasePixmap();
     this->show();
 }
 

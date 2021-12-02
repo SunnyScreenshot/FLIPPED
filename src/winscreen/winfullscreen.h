@@ -56,8 +56,8 @@ private:
     WinFullScreen(QWidget *parent = nullptr);
     ~WinFullScreen() override;
 
-	void getVirtualScreen();
-	QPixmap* getblurPixmap(QColor color = QColor(0, 0, 0, 0.5 * 255));
+    QPixmap* getVirtualScreen();
+    QPixmap* getBlurPixmap(QColor color = QColor(0, 0, 0, 0.5 * 255));
 	void modifyRectSize(QRect& rtSel);
 
 	// 绘画边框样式
