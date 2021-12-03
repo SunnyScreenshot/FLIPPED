@@ -26,15 +26,12 @@ class WinFullScreen : public  QWidget
 public:
     static WinFullScreen& instance();
     void getScrnShots();
-
     static double getScale(QScreen *screen = QApplication::primaryScreen());
 
 private:
     void getScrnInfo();
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
-
-//	QPixmap* getBasePixmap();
 
 signals:
 	void sigClearScreen();
@@ -57,7 +54,6 @@ private:
     ~WinFullScreen() override;
 
     QPixmap* getVirtualScreen();
-//    QPixmap* getBlurPixmap(QColor color = QColor(0, 0, 0, 0.5 * 255));
 	void modifyRectSize(QRect& rtSel);
 
 	// 绘画边框样式
@@ -79,8 +75,6 @@ private:
 	QScreen* m_primaryScreen;    // 主屏幕
 
 	QPixmap* m_currPixmap;       // 当前屏幕截图
-//	QPixmap* m_blurPixmap;       // 遮罩
-//	QPixmap* m_basePixmap;       // 当前屏幕截图 + 遮罩
     QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
 
 	RectCalcu m_rtCalcu;         // 选中矩形区域
@@ -93,6 +87,5 @@ private:
     QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
     QVector<XDrawStep> m_vDrawRedo;  // 重做步骤
 };
-
 
 #endif //PICSHOT_WINFULLSCREEN_H

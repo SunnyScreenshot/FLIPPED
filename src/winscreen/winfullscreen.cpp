@@ -21,8 +21,6 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	: QWidget(parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
-//	, m_blurPixmap(nullptr)
-//	, m_basePixmap(nullptr)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
     , m_toolBar(nullptr)
@@ -45,13 +43,11 @@ WinFullScreen::WinFullScreen(QWidget *parent)
     connect(m_toolBar, &WinToolBar::sigUndo, this, &WinFullScreen::onUndo);
     connect(m_toolBar, &WinToolBar::sigRedo, this, &WinFullScreen::onRedo);
 
-
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
 
 WinFullScreen::~WinFullScreen() 
 {
-	int a = 13;
 }
 
 // 清空截图内容（当关闭 Esc、或完成截图时）
@@ -61,10 +57,6 @@ void WinFullScreen::onClearScreen()
 
 	delete m_currPixmap;
 	m_currPixmap = nullptr;
-//	delete m_blurPixmap;
-//	m_blurPixmap = nullptr;
-//	delete m_basePixmap;
-//	m_basePixmap = nullptr;
 
 	m_rtCalcu.clear();
     m_cursorArea = CursorArea::UnknowCursorArea;
@@ -155,7 +147,6 @@ void WinFullScreen::onDrawStart()
 //    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.m_cursorType;
 }
 
-
 void WinFullScreen::onDrawEnd()
 {
     m_rtCalcu.m_cursorType = CursorType::Waiting;
@@ -175,19 +166,6 @@ QPixmap* WinFullScreen::getVirtualScreen()
 
     return m_currPixmap;
 }
-
-//// 获取屏幕遮罩
-//QPixmap* WinFullScreen::getBlurPixmap(QColor color)
-//{
-//	if (!m_blurPixmap) {
-//        QDesktopWidget *desktop = QApplication::desktop();
-//        m_blurPixmap = new QPixmap(desktop->size());
-//		m_blurPixmap->fill(color);
-//		//m_blurPixmap->save("m_blurPixmap.png");
-//	}
-
-//    return m_blurPixmap;
-//}
 
 // 修改拉伸选中矩形的大小
 void WinFullScreen::modifyRectSize(QRect& rt)
@@ -347,30 +325,6 @@ void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound
         pa.drawPixmap(QPoint(x2, (y1 + y2) / 2) - offsetPos, pixmap);
 	}
 }
-
-// 获取当前屏幕截图 + 遮罩
-//QPixmap* WinFullScreen::getBasePixmap()
-//{
-//	if (!m_currPixmap)
-//		getVirtualScreen();
-
-//	if (!m_blurPixmap)
-//        getBlurPixmap();
-
-//    if (!m_basePixmap) {
-//        m_basePixmap = new QPixmap(m_currPixmap->copy(m_currPixmap->rect()));
-//        QPainter pa(m_basePixmap);
-//        pa.drawPixmap(m_basePixmap->rect(), *m_blurPixmap);
-//        //QTime startTime = QTime::currentTime();
-//        ////m_basePixmap->save("m_basePixmap.png");
-//        ////m_currPixmap->save("m_currPixmap2.png");
-//        //QTime stopTime = QTime::currentTime();
-//        //int elapsed = startTime.msecsTo(stopTime);
-//        //qDebug() << "save m_basePixmap time 汉字测试 =" << elapsed << "ms";
-//    }
-
-//    return m_basePixmap;
-//}
 
 // 效果：绘画的顺序重要
 void WinFullScreen::paintEvent(QPaintEvent *event)
@@ -738,7 +692,6 @@ WinFullScreen &WinFullScreen::instance()
 void WinFullScreen::getScrnShots()
 {
     this->getScrnInfo();
-//    this->getBasePixmap();
     this->show();
 }
 

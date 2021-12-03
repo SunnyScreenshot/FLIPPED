@@ -85,7 +85,6 @@ public:
 	RectCalcu();
 	~RectCalcu();
 
-
 	QRect& getSelRect();
 	QRect getOuterSelRect(QRect& rect, int interval = HAIF_INTERVAL);
 	QRect getInnerSelRect(QRect& rect, int interval = HAIF_INTERVAL);
@@ -118,6 +117,5 @@ private:
 	QRect m_rtSel;
 	bool m_bClear;  // 当前清理状态
 };
-
 
 #endif //PICSHOT_RECTCALCU_H
