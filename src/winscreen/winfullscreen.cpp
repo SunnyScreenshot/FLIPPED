@@ -382,7 +382,8 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 
     // 原始图案
     QPainter pa(this);
-    const int width = HAIF_INTERVAL * 2;  // 画笔宽度
+    pa.setRenderHint(QPainter::Antialiasing, true);
+    const int width = HAIF_INTERVAL;  // 画笔宽度
     QPen pen(QColor("#01bdff"));
     pen.setWidth(width);
     pa.setPen(pen);
@@ -400,16 +401,12 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
         pa.drawPixmap(rtSel, m_savePixmap);
 
-        QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rtSel.left()).arg(rtSel.top()).arg(rtSel.width()).arg(rtSel.height())
-                .arg(m_savePixmap.width()).arg(m_savePixmap.height());
-        pa.drawText(rtSel.topLeft() + QPoint(0, -50), str);
-
         qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
         qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
     // 绘画图案
-    pen.setWidth(HAIF_INTERVAL);
+    pen.setWidth(width / 2);
     pen.setColor(Qt::yellow);
     pa.setPen(pen);
     drawStep(pa, m_drawStep, false);
@@ -430,8 +427,14 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     if (rtSel.width() > 0 && rtSel.height() > 0){
         pen.setColor(QColor("#01bdff"));
         pen.setStyle(Qt::SolidLine);
+        pen.setWidth(width);
         pa.setPen(pen);
         pa.setBrush(Qt::NoBrush);
+
+        QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rtSel.left()).arg(rtSel.top()).arg(rtSel.width()).arg(rtSel.height())
+                .arg(m_savePixmap.width()).arg(m_savePixmap.height());
+        pa.drawText(rtSel.topLeft() + QPoint(0, -10), str);
+
         #if 0
             drawBorderMac(pa, rtSel);
         #else
@@ -445,13 +448,13 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
         QPoint topLeft;
         const int space = 4;
         topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
-        topLeft.setY(rtSel.bottomRight().y() + width / 2 + space);
+        topLeft.setY(rtSel.bottomRight().y() + width + space);
         m_toolBar->move(topLeft);
     }
 
 #if 0
-    QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width / 2);
-    QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel, width / 2);
+    QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
+    QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel, width);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
 
 	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
