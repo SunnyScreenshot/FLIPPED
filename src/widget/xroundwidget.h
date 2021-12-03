@@ -5,6 +5,7 @@
 #ifndef XROUNDWIDGET_H
 #define XROUNDWIDGET_H
 
+#include <QBoxLayout>
 #include <QWidget>
 
 class XRoundWidget : public QWidget
@@ -18,6 +19,8 @@ public:
 
 protected:
     virtual void paintEvent(QPaintEvent *event) override;
+
+
 };
 
 #endif // XROUNDWIDGET_H

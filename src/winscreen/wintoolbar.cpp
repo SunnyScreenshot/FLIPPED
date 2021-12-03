@@ -11,7 +11,7 @@
 
 
 WinToolBar::WinToolBar(QWidget *parent)
-    : XRoundWidget(parent)
+    : QWidget(parent)
 {
     init();
 }
@@ -72,6 +72,7 @@ void WinToolBar::init()
 
     m_vecToolBar.fill(nullptr, m_toolBtnName.count());
     setContentsMargins(0, 0, 0, 0);
+
     QHBoxLayout* hLayout = new QHBoxLayout();
     const int margin = 8;
     hLayout->setContentsMargins(margin, margin, margin, margin);

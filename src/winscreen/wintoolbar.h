@@ -14,7 +14,7 @@ class QToolButton;
 class QStringList;
 QT_END_NAMESPACE
 
-class WinToolBar : public XRoundWidget
+class WinToolBar : public QWidget
 {
     Q_OBJECT
 public:
