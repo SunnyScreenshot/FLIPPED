@@ -84,8 +84,8 @@ private:
     XDrawStep m_drawStep;        // 当前绘画一步骤
 //    XDraw* m_draw;             // 绘画 Helper
 
+    QVector<XDrawStep> m_vDrawed;    // 已绘步骤
     QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
-    QVector<XDrawStep> m_vDrawRedo;  // 重做步骤
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

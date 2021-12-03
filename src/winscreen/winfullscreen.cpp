@@ -58,6 +58,9 @@ void WinFullScreen::onClearScreen()
 	delete m_currPixmap;
 	m_currPixmap = nullptr;
 
+	m_vDrawed.clear();
+	m_vDrawUndo.clear();
+
 	m_rtCalcu.clear();
     m_cursorArea = CursorArea::UnknowCursorArea;
 }
@@ -71,23 +74,23 @@ void WinFullScreen::onDrawShape(XDrawShape shape)
 // 点击一次，撤销一步
 void WinFullScreen::onUndo()
 {
-    if (m_vDrawUndo.count() <= 0)
+    if (m_vDrawed.count() <= 0)
         return;
 
-    m_vDrawRedo.push_back(*(m_vDrawUndo.end() - 1));
-    m_vDrawUndo.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRedo.count() << "    m_vDraw:" << m_vDrawUndo.count();
+    m_vDrawUndo.push_back(*(m_vDrawed.end() - 1));
+    m_vDrawed.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
     update();
 }
 
 void WinFullScreen::onRedo()
 {
-    if (m_vDrawRedo.count() <= 0)
+    if (m_vDrawUndo.count() <= 0)
         return;
 
-    m_vDrawUndo.push_back(*(m_vDrawRedo.end() - 1));
-    m_vDrawRedo.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawRedo.count() << "    m_vDraw:" << m_vDrawUndo.count();
+    m_vDrawed.push_back(*(m_vDrawUndo.end() - 1));
+    m_vDrawUndo.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
     update();
 }
 
@@ -98,7 +101,7 @@ void WinFullScreen::onDownload()
 
     QPainter pa;
     pa.begin(m_currPixmap);
-    for (XDrawStep& it : m_vDrawUndo)
+    for (XDrawStep& it : m_vDrawed)
         drawStep(pa, it);
     pa.end();
 
@@ -122,7 +125,7 @@ void WinFullScreen::onCopy()
 
     QPainter pa;
     pa.begin(m_currPixmap);
-    for (XDrawStep& it : m_vDrawUndo)
+    for (XDrawStep& it : m_vDrawed)
         drawStep(pa, it);
     pa.end();
 
@@ -365,7 +368,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
     pa.setPen(pen);
     drawStep(pa, m_drawStep, false);
 
-    for (XDrawStep& it : m_vDrawUndo)
+    for (XDrawStep& it : m_vDrawed)
         drawStep(pa, it);
 
     // 屏幕遮罩
@@ -652,13 +655,13 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
     case Drawing: {
         m_drawStep.endPos = event->pos();
         m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
-        m_vDrawUndo.push_back(m_drawStep);
+        m_vDrawed.push_back(m_drawStep);
 
         m_drawStep.clear();
-        qInfo() << "--------------------------count>"<<m_vDrawUndo.count();
+        qInfo() << "--------------------------count>"<<m_vDrawed.count();
 
         int i = 1;
-        for (XDrawStep it : m_vDrawUndo) {
+        for (XDrawStep it : m_vDrawed) {
             qDebug() << i++ << "  rt:" << it.rt << "  shape:" << int(it.shape) << endl;
         }
         break;
