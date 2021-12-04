@@ -11,7 +11,7 @@
 #include "rectcalcu.h"
 #include "drawtoolbar.h"
 #include "subgraptoolbar.h"
-#include "xdraw.h"
+#include "drawhelper.h"
 
 #define HAIF_R_BORDER_MARK 4  // 边框上标记点的半径
 

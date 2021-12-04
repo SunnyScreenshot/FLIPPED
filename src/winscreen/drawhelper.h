@@ -56,12 +56,12 @@ struct  XDrawStep
     void clear();
 };
 
-class XDraw : public QObject
+class DrawHelper : public QObject
 {
     Q_OBJECT
 public:
-    explicit XDraw(QObject* parent = nullptr);
-    virtual ~XDraw();
+    explicit DrawHelper(QObject* parent = nullptr);
+    virtual ~DrawHelper();
 
     void drawRect(QPainter& pa, QRect rt, QPen pen = QPen(Qt::red), int width = 2, QBrush brush = QBrush(Qt::NoBrush));
     bool drawStep();

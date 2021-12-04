@@ -7,7 +7,7 @@
 #include "../widget/xroundwidget.h"
 #include <QWidget>
 #include <QVector>
-#include "xdraw.h"
+#include "drawhelper.h"
 
 QT_BEGIN_NAMESPACE
 class QToolButton;
