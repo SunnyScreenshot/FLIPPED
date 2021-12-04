@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by XMuli <xmulitech@gmail.com> on 2021/11/06.
 //
 #ifndef WINTOOLBAR_H
@@ -14,12 +14,12 @@ class QToolButton;
 class QStringList;
 QT_END_NAMESPACE
 
-class WinToolBar : public QWidget
+class SubGrapToolBar : public QWidget
 {
     Q_OBJECT
 public:
-    WinToolBar(QWidget *parent = nullptr);
-    virtual ~WinToolBar();
+    SubGrapToolBar(QWidget *parent = nullptr);
+    virtual ~SubGrapToolBar();
 
     bool isToolBtnChecked();
 

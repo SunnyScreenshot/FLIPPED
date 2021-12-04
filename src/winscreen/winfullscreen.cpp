@@ -24,6 +24,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
     , m_toolBar(nullptr)
+    , m_tbDrawBar(new WinDrawTool(this))
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
@@ -33,15 +34,15 @@ WinFullScreen::WinFullScreen(QWidget *parent)
     resize(1920, 1080);
 
 //    m_draw = new XDraw(this);
-    m_toolBar = new WinToolBar(this);
-    connect(m_toolBar, &WinToolBar::sigDownload, this, &WinFullScreen::onDownload);
-    connect(m_toolBar, &WinToolBar::sigCopy, this, &WinFullScreen::onCopy);
+    m_toolBar = new SubGrapToolBar(this);
+    connect(m_toolBar, &SubGrapToolBar::sigDownload, this, &WinFullScreen::onDownload);
+    connect(m_toolBar, &SubGrapToolBar::sigCopy, this, &WinFullScreen::onCopy);
 
-    connect(m_toolBar, &WinToolBar::sigDrawStart, this, &WinFullScreen::onDrawStart);
-    connect(m_toolBar, &WinToolBar::sigDrawEnd, this, &WinFullScreen::onDrawEnd);
-    connect(m_toolBar, &WinToolBar::sigDrawShape, this, &WinFullScreen::onDrawShape);
-    connect(m_toolBar, &WinToolBar::sigUndo, this, &WinFullScreen::onUndo);
-    connect(m_toolBar, &WinToolBar::sigRedo, this, &WinFullScreen::onRedo);
+    connect(m_toolBar, &SubGrapToolBar::sigDrawStart, this, &WinFullScreen::onDrawStart);
+    connect(m_toolBar, &SubGrapToolBar::sigDrawEnd, this, &WinFullScreen::onDrawEnd);
+    connect(m_toolBar, &SubGrapToolBar::sigDrawShape, this, &WinFullScreen::onDrawShape);
+    connect(m_toolBar, &SubGrapToolBar::sigUndo, this, &WinFullScreen::onUndo);
+    connect(m_toolBar, &SubGrapToolBar::sigRedo, this, &WinFullScreen::onRedo);
 
 	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
 }
@@ -408,6 +409,19 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
         topLeft.setY(rtSel.bottomRight().y() + width + space);
         m_toolBar->move(topLeft);
     }
+
+    // 绘画工具栏
+    if (isVisible() && m_tbDrawBar) {
+        QPoint topLeft;
+        const int space = 4;
+        topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
+        topLeft.setY(rtSel.bottomRight().y() + width + space * 2 + m_toolBar->height());
+        m_tbDrawBar->move(topLeft);
+
+
+
+    }
+
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);

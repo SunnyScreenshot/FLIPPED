@@ -9,7 +9,8 @@
 #include <QList>
 #include <QColor>
 #include "rectcalcu.h"
-#include "wintoolbar.h"
+#include "windrawtool.h"
+#include "SubGrapToolBar.h"
 #include "xdraw.h"
 
 #define HAIF_R_BORDER_MARK 4  // 边框上标记点的半径
@@ -73,14 +74,13 @@ protected:
 private:
 	QList<QScreen *> m_screens;  // 所有屏幕
 	QScreen* m_primaryScreen;    // 主屏幕
-
 	QPixmap* m_currPixmap;       // 当前屏幕截图
     QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
-
 	RectCalcu m_rtCalcu;         // 选中矩形区域
 	CursorArea m_cursorArea;     // 光标所在区域
 
-    WinToolBar* m_toolBar;       // 工具栏
+    SubGrapToolBar* m_toolBar;       // 工具栏
+    WinDrawTool* m_tbDrawBar;
     XDrawStep m_drawStep;        // 当前绘画一步骤
 //    XDraw* m_draw;             // 绘画 Helper
 

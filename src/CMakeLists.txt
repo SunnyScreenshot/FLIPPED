@@ -26,7 +26,7 @@ set(PICSHOT_SOURCES
     winscreen/winmain.cpp
     winscreen/winresetbtn.cpp
     winscreen/tray.cpp
-    winscreen/wintoolbar.cpp
+    winscreen/subgraptoolbar.cpp
     winscreen/xdraw.cpp
     winscreen/wincolorpick.cpp
     winscreen/windrawrect.cpp
@@ -46,7 +46,7 @@ set(PICSHOT_HEADERS
     winscreen/winmain.h
     winscreen/winresetbtn.h
     winscreen/tray.h
-    winscreen/wintoolbar.h
+    winscreen/subgraptoolbar.h
     winscreen/xdraw.h
     winscreen/wincolorpick.h
     winscreen/windrawrect.h

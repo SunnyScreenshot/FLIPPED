@@ -1,7 +1,7 @@
 ﻿//
 // Created by XMuli <xmulitech@gmail.com> on 2021/11/06.
 //
-#include "wintoolbar.h"
+#include "subgraptoolbar.h"
 #include "winfullscreen.h"
 #include <QToolButton>
 #include <QStringList>
@@ -10,19 +10,19 @@
 #include <QPainter>
 
 
-WinToolBar::WinToolBar(QWidget *parent)
+SubGrapToolBar::SubGrapToolBar(QWidget *parent)
     : QWidget(parent)
 {
     init();
 }
 
-WinToolBar::~WinToolBar()
+SubGrapToolBar::~SubGrapToolBar()
 {
 
 }
 
 // 绘画栏是否处于点击状态;
-bool WinToolBar::isToolBtnChecked()
+bool SubGrapToolBar::isToolBtnChecked()
 {
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* btn : listBtn) {
@@ -33,7 +33,7 @@ bool WinToolBar::isToolBtnChecked()
     return false;
 }
 
-void WinToolBar::init()
+void SubGrapToolBar::init()
 {
     m_toolBtnName << "rectangle"
                << "ellipse"
@@ -73,8 +73,8 @@ void WinToolBar::init()
     m_vecToolBar.fill(nullptr, m_toolBtnName.count());
     setContentsMargins(0, 0, 0, 0);
 
+    const int margin = 0;
     QHBoxLayout* hLayout = new QHBoxLayout();
-    const int margin = 8;
     hLayout->setContentsMargins(margin, margin, margin, margin);
     hLayout->setSpacing(0);
     setLayout(hLayout);
@@ -102,12 +102,12 @@ void WinToolBar::init()
 
         qInfo()<<"===========>"<<name << m_vecToolBar[i]->iconSize()<<rect();
         hLayout->addWidget(m_vecToolBar[i]);
-        connect(m_vecToolBar[i], &QToolButton::released, this, &WinToolBar::onToolBtn);
+        connect(m_vecToolBar[i], &QToolButton::released, this, &SubGrapToolBar::onToolBtn);
     }
 
 }
 
-void WinToolBar::onToolBtn()
+void SubGrapToolBar::onToolBtn()
 {
     QObject* obj = sender();
     if (!obj)

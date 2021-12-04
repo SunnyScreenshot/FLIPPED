@@ -7,7 +7,9 @@ class WinDrawTool : public XRoundWidget
 {
     Q_OBJECT
 public:
-    WinDrawTool();
+    explicit WinDrawTool(QWidget *parent = nullptr);
+
+    void init();
 };
 
 #endif // WINDRAWTOOL_H
