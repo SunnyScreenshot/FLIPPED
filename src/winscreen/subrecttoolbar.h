@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by xmuli on 2021/12/04.
 //
 #ifndef WINDRAWRECT_H
@@ -14,11 +14,11 @@
 /*!
  * \brief The WinDrawRect class 工具栏绘画矩形详细选择
  */
-class WinDrawRect : public QWidget
+class SubRectToolBar : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WinDrawRect(QWidget *parent = nullptr);
+    explicit SubRectToolBar(QWidget *parent = nullptr);
 
 private:
     void init();

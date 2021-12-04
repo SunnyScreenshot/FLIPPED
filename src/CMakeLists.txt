@@ -28,9 +28,9 @@ set(PICSHOT_SOURCES
     winscreen/tray.cpp
     winscreen/drawtoolbar.cpp
     winscreen/subgraptoolbar.cpp
+    winscreen/subrecttoolbar.cpp
     winscreen/drawhelper.cpp
     winscreen/wincolorpick.cpp
-    winscreen/windrawrect.cpp
 
     widget/xkeysequenceedit.cpp
     widget/xroundwidget.cpp
@@ -48,9 +48,9 @@ set(PICSHOT_HEADERS
     winscreen/tray.h
     winscreen/drawtoolbar.h
     winscreen/subgraptoolbar.h
+    winscreen/subrecttoolbar.h
     winscreen/drawhelper.h
     winscreen/wincolorpick.h
-    winscreen/windrawrect.h
 
     widget/xkeysequenceedit.h
     widget/xroundwidget.h

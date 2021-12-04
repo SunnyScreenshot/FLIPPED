@@ -1,4 +1,4 @@
-﻿#include "windrawrect.h"
+﻿#include "subrecttoolbar.h"
 #include "drawtoolbar.h"
 #include "subgraptoolbar.h"
 #include <QBoxLayout>
@@ -18,7 +18,7 @@ void DrawToolBar::init()
     vLayout->setContentsMargins(margin, margin, margin, margin);
     vLayout->setSpacing(0);
     vLayout->addWidget(new SubGrapToolBar(this));
-    vLayout->addWidget(new WinDrawRect(this));
+    vLayout->addWidget(new SubRectToolBar(this));
     QFrame* frame = new QFrame(this);
     frame->setFixedWidth(10);
     vLayout->addWidget(frame);
