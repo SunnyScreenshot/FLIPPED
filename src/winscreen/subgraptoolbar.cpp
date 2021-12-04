@@ -3,6 +3,7 @@
 //
 #include "subgraptoolbar.h"
 #include "screenshot.h"
+#include "../xglobal.h"
 #include <QToolButton>
 #include <QStringList>
 #include <QHBoxLayout>
@@ -87,7 +88,7 @@ void SubGrapToolBar::init()
         m_vecToolBar[i]->setToolButtonStyle(Qt::ToolButtonIconOnly);
         m_vecToolBar[i]->setAutoRaise(true);   // 自动浮动模式
         m_vecToolBar[i]->setIcon(QIcon(name));
-        m_vecToolBar[i]->setIconSize(QSize(16, 16) * ScreenShot::getScale());
+        m_vecToolBar[i]->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT) * ScreenShot::getScale());
         m_vecToolBar[i]->setToolTip(listToolTip[i]);
         m_vecToolBar[i]->setChecked(false);
 
@@ -100,7 +101,7 @@ void SubGrapToolBar::init()
         else
             m_vecToolBar[i]->setCheckable(true);
 
-        qInfo()<<"===========>"<<name << m_vecToolBar[i]->iconSize()<<rect();
+        qInfo()<<"===========>"<<name << m_vecToolBar[i]->iconSize()<<rect() << ScreenShot::getScale();
         hLayout->addWidget(m_vecToolBar[i]);
         connect(m_vecToolBar[i], &QToolButton::released, this, &SubGrapToolBar::onToolBtn);
     }

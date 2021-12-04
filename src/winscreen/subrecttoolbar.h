@@ -21,13 +21,14 @@ public:
     explicit SubRectToolBar(QWidget *parent = nullptr);
 
 private:
-    void init();
+    void initUI();
 
 private:
     QToolButton* m_tbRect;
     QToolButton* m_tbFilledRect;
+
 //    QToolButton* m_tbColorBorder;
-//    QSpinBox* m_spBorder;
+    QSpinBox* m_spBorder;
 //    QToolButton* m_tbRoundCorners;
 //    QComboBox* m_cbDashes;
 //    QSpinBox* m_spOutLine;

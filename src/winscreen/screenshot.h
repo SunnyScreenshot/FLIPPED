@@ -5,15 +5,14 @@
 #ifndef PICSHOT_WINFULLSCREEN_H
 #define PICSHOT_WINFULLSCREEN_H
 
-#include <QWidget>
-#include <QList>
-#include <QColor>
 #include "rectcalcu.h"
 #include "drawtoolbar.h"
 #include "subgraptoolbar.h"
 #include "drawhelper.h"
-
-#define HAIF_R_BORDER_MARK 4  // 边框上标记点的半径
+#include "../xglobal.h"
+#include <QWidget>
+#include <QList>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
 class QScreen;

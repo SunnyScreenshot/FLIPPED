@@ -41,6 +41,7 @@ set(PICSHOT_SOURCES
     syswininfo/syswininfo_win.cpp
     )
 set(PICSHOT_HEADERS
+    xglobal.h
     winscreen/screenshot.h
     winscreen/rectcalcu.h
     winscreen/winmain.h

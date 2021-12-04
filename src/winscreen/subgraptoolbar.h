@@ -5,9 +5,9 @@
 #define WINTOOLBAR_H
 
 #include "../widget/xroundwidget.h"
+#include "drawhelper.h"
 #include <QWidget>
 #include <QVector>
-#include "drawhelper.h"
 
 QT_BEGIN_NAMESPACE
 class QToolButton;

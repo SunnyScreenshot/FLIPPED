@@ -2,11 +2,10 @@
 // Created by XMuli <xmulitech@gmail.com> on 2021/11/06.
 //
 #include "xroundwidget.h"
+#include "../xglobal.h"
 #include <QColor>
 #include <QHBoxLayout>
 #include <QPainter>
-
-#define ROUNDED 8  // 圆角矩形的圆角大小
 
 XRoundWidget::XRoundWidget(QWidget *parent)
     : QWidget(parent)
@@ -31,7 +30,7 @@ void XRoundWidget::paintEvent(QPaintEvent *event)
 
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    pa.setPen(Qt::red);
+    pa.setPen(Qt::NoPen);
     pa.setBrush(QColor(255, 255, 255, 0.8 * 255));
-    pa.drawRoundedRect(contentsRect(), ROUNDED, ROUNDED);
+    pa.drawRoundedRect(contentsRect(), ROUNDED_RECT, ROUNDED_RECT);
 }
