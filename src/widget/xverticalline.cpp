@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by XMuli <xmulitech@gmail.com> on 2021/12/04.
 //
 #include "xverticalline.h"
@@ -10,11 +10,12 @@
 //frameShape : Shape//框架形状
 //midLineWidth : int//中间线的宽度
 
-XVerticalLine::XVerticalLine(QWidget *parent, Qt::WindowFlags f)
+XVerticalLine::XVerticalLine(int height, QWidget *parent, Qt::WindowFlags f)
     : QFrame(parent, f)
 {
     setFrameShape(VLine);
     setFrameShadow(Sunken);
     setLineWidth(0);
     setMidLineWidth(2);
+	setFixedHeight(height);
 }

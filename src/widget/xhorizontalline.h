@@ -12,7 +12,7 @@ class XHorizontalLine : public QFrame
 {
     Q_OBJECT
 public:
-    XHorizontalLine(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    XHorizontalLine(int width, QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 };
 
 #endif // XHORIZONTALLINE_H

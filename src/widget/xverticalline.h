@@ -1,4 +1,4 @@
-//
+﻿//
 // Created by XMuli <xmulitech@gmail.com> on 2021/12/04.
 //
 
@@ -12,7 +12,7 @@ class XVerticalLine : public QFrame
 {
     Q_OBJECT
 public:
-    XVerticalLine(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
+    XVerticalLine(int height, QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 };
 
 #endif // XVERTICALLINE_H

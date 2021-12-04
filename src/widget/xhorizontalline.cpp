@@ -4,11 +4,12 @@
 
 #include "xhorizontalline.h"
 
-XHorizontalLine::XHorizontalLine(QWidget *parent, Qt::WindowFlags f)
+XHorizontalLine::XHorizontalLine(int width, QWidget *parent, Qt::WindowFlags f)
     : QFrame(parent, f)
 {
     setFrameShape(HLine);
     setFrameShadow(Sunken);
     setLineWidth(0);
-    setMidLineWidth(1);
+    setMidLineWidth(2);
+    setFixedWidth(width);
 }
