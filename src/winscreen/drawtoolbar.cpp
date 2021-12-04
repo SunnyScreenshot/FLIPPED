@@ -1,15 +1,15 @@
 ﻿#include "windrawrect.h"
-#include "windrawtool.h"
+#include "drawtoolbar.h"
 #include "subgraptoolbar.h"
 #include <QBoxLayout>
 
-WinDrawTool::WinDrawTool(QWidget *parent)
+DrawToolBar::DrawToolBar(QWidget *parent)
     : XRoundWidget(parent)
 {
     init();
 }
 
-void WinDrawTool::init()
+void DrawToolBar::init()
 {
     setContentsMargins(0, 0, 0, 0);
 

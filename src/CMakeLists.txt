@@ -30,7 +30,7 @@ set(PICSHOT_SOURCES
     winscreen/xdraw.cpp
     winscreen/wincolorpick.cpp
     winscreen/windrawrect.cpp
-    winscreen/windrawtool.cpp
+    winscreen/drawtoolbar.cpp
 
     widget/xkeysequenceedit.cpp
     widget/xroundwidget.cpp
@@ -50,7 +50,7 @@ set(PICSHOT_HEADERS
     winscreen/xdraw.h
     winscreen/wincolorpick.h
     winscreen/windrawrect.h
-    winscreen/windrawtool.h
+    winscreen/drawtoolbar.h
 
     widget/xkeysequenceedit.h
     widget/xroundwidget.h

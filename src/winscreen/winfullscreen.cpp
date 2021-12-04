@@ -24,7 +24,7 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 	, m_rtCalcu()
 	, m_cursorArea(CursorArea::UnknowCursorArea)
     , m_toolBar(nullptr)
-    , m_tbDrawBar(new WinDrawTool(this))
+    , m_tbDrawBar(new DrawToolBar(this))
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
