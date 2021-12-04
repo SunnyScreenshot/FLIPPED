@@ -34,6 +34,8 @@ set(PICSHOT_SOURCES
 
     widget/xkeysequenceedit.cpp
     widget/xroundwidget.cpp
+    widget/xhorizontalline.cpp
+    widget/xverticalline.cpp
 
     syswininfo/syswininfo.cpp
     syswininfo/syswininfo_win.cpp
@@ -52,6 +54,8 @@ set(PICSHOT_HEADERS
 
     widget/xkeysequenceedit.h
     widget/xroundwidget.h
+    widget/xhorizontalline.h
+    widget/xverticalline.h
 
     syswininfo/syswininfo.h
     syswininfo/syswininfo_win.h
