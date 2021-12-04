@@ -19,48 +19,51 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
-set(PICSHOT_SOURCES
-    main.cpp
-    winscreen/screenshot.cpp
-    winscreen/rectcalcu.cpp
-    winscreen/winmain.cpp
-    winscreen/winresetbtn.cpp
-    winscreen/tray.cpp
-    winscreen/drawtoolbar.cpp
-    winscreen/subgraptoolbar.cpp
-    winscreen/subrecttoolbar.cpp
-    winscreen/drawhelper.cpp
-    winscreen/wincolorpick.cpp
+# Sources files
+set(SRCS
+# main
+    "main.cpp"
+    "xglobal.h"
 
-    widget/xkeysequenceedit.cpp
-    widget/xroundwidget.cpp
-    widget/xhorizontalline.cpp
-    widget/xverticalline.cpp
+# syswininfo
+    "syswininfo/syswininfo.h"
+    "syswininfo/syswininfo.cpp"
+    "syswininfo/syswininfo_win.h"
+    "syswininfo/syswininfo_win.cpp"
 
-    syswininfo/syswininfo.cpp
-    syswininfo/syswininfo_win.cpp
-    )
-set(PICSHOT_HEADERS
-    xglobal.h
-    winscreen/screenshot.h
-    winscreen/rectcalcu.h
-    winscreen/winmain.h
-    winscreen/winresetbtn.h
-    winscreen/tray.h
-    winscreen/drawtoolbar.h
-    winscreen/subgraptoolbar.h
-    winscreen/subrecttoolbar.h
-    winscreen/drawhelper.h
-    winscreen/wincolorpick.h
+# widget
+    "widget/xkeysequenceedit.h"
+    "widget/xkeysequenceedit.cpp"
+    "widget/xroundwidget.h"
+    "widget/xroundwidget.cpp"
+    "widget/xhorizontalline.h"
+    "widget/xhorizontalline.cpp"
+    "widget/xverticalline.h"
+    "widget/xverticalline.cpp"
 
-    widget/xkeysequenceedit.h
-    widget/xroundwidget.h
-    widget/xhorizontalline.h
-    widget/xverticalline.h
+# winscreen
+    "winscreen/screenshot.h"
+    "winscreen/screenshot.cpp"
+    "winscreen/rectcalcu.h"
+    "winscreen/rectcalcu.cpp"
+    "winscreen/winmain.h"
+    "winscreen/winmain.cpp"
+    "winscreen/winresetbtn.h"
+    "winscreen/winresetbtn.cpp"
+    "winscreen/tray.h"
+    "winscreen/tray.cpp"
+    "winscreen/drawtoolbar.h"
+    "winscreen/drawtoolbar.cpp"
+    "winscreen/subgraptoolbar.h"
+    "winscreen/subgraptoolbar.cpp"
+    "winscreen/subrecttoolbar.h"
+    "winscreen/subrecttoolbar.cpp"
+    "winscreen/wincolorpick.h"
+    "winscreen/wincolorpick.cpp"
+    "winscreen/drawhelper.h"
+    "winscreen/drawhelper.cpp"
+)
 
-    syswininfo/syswininfo.h
-    syswininfo/syswininfo_win.h
-    )
 set(PICSHOT_RESOURCES
     Resources.qrc
     )
@@ -96,8 +99,7 @@ link_directories(${CMAKE_BINARY_DIR}/bin
     )
 
 add_executable(${PROJECT_NAME}
-    ${PICSHOT_SOURCES}
-    ${PICSHOT_HEADERS}
+    ${SRCS}
     ${PICSHOT_RESOURCES}
     )
 target_link_libraries(${PROJECT_NAME}

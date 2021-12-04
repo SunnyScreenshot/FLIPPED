@@ -105,7 +105,6 @@ void SubGrapToolBar::init()
         hLayout->addWidget(m_vecToolBar[i]);
         connect(m_vecToolBar[i], &QToolButton::released, this, &SubGrapToolBar::onToolBtn);
     }
-
 }
 
 void SubGrapToolBar::onToolBtn()

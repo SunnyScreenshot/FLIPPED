@@ -21,7 +21,6 @@ DrawHelper::DrawHelper(QObject *parent)
 
 DrawHelper::~DrawHelper()
 {
-
 }
 
 void DrawHelper::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush brush)
