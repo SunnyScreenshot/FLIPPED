@@ -11,15 +11,14 @@
 XRoundWidget::XRoundWidget(QWidget *parent)
     : QWidget(parent)
 {
-    init();
+    initUI();
 }
 
 XRoundWidget::~XRoundWidget()
 {
-
 }
 
-void XRoundWidget::init()
+void XRoundWidget::initUI()
 {
     setWindowFlags(Qt::FramelessWindowHint);      // 去掉标题栏
     setAttribute(Qt::WA_TranslucentBackground);   // 设置透明，自绘画为圆角矩形
@@ -33,6 +32,6 @@ void XRoundWidget::paintEvent(QPaintEvent *event)
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     pa.setPen(Qt::red);
-    pa.setBrush(QColor(255, 255, 255, 0.7 * 255));
+    pa.setBrush(QColor(255, 255, 255, 0.8 * 255));
     pa.drawRoundedRect(contentsRect(), ROUNDED, ROUNDED);
 }

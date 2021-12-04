@@ -12,15 +12,13 @@ class XRoundWidget : public QWidget
 {
     Q_OBJECT
 public:
-    XRoundWidget(QWidget *parent = nullptr);
+    explicit XRoundWidget(QWidget *parent = nullptr);
     virtual ~XRoundWidget();
 
-    void init();
+    void initUI();
 
 protected:
     virtual void paintEvent(QPaintEvent *event) override;
-
-
 };
 
 #endif // XROUNDWIDGET_H
