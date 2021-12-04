@@ -2,7 +2,7 @@
 // Created by XMuli <xmulitech@gmail.com> on 2021/11/06.
 //
 #include "subgraptoolbar.h"
-#include "winfullscreen.h"
+#include "screenshot.h"
 #include <QToolButton>
 #include <QStringList>
 #include <QHBoxLayout>
@@ -87,7 +87,7 @@ void SubGrapToolBar::init()
         m_vecToolBar[i]->setToolButtonStyle(Qt::ToolButtonIconOnly);
         m_vecToolBar[i]->setAutoRaise(true);   // 自动浮动模式
         m_vecToolBar[i]->setIcon(QIcon(name));
-        m_vecToolBar[i]->setIconSize(QSize(16, 16) * WinFullScreen::getScale());
+        m_vecToolBar[i]->setIconSize(QSize(16, 16) * ScreenShot::getScale());
         m_vecToolBar[i]->setToolTip(listToolTip[i]);
         m_vecToolBar[i]->setChecked(false);
 

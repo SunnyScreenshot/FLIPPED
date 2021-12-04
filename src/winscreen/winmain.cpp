@@ -4,7 +4,7 @@
 
 #include "winmain.h"
 #include "winresetbtn.h"
-#include "winfullscreen.h"
+#include "screenshot.h"
 #include "../widget/xkeysequenceedit.h"
 #include <QBoxLayout>
 #include <QGridLayout>
@@ -96,7 +96,7 @@ QWidget * WinMain::tabScreenShot()
 	vlBorderCol->addWidget(new QLabel(tr("Border Color")));
     QLabel* borderColor = new QLabel(this);
     borderColor->setObjectName("borderColor");
-    borderColor->setFixedWidth(30 * WinFullScreen::getScale());
+    borderColor->setFixedWidth(30 * ScreenShot::getScale());
     borderColor->installEventFilter(this);
     borderColor->setAutoFillBackground(true);
     vlBorderCol->addWidget(borderColor);
@@ -105,7 +105,7 @@ QWidget * WinMain::tabScreenShot()
 	vlArchorCol->addWidget(new QLabel(tr("Archor Color")));
     QLabel* archorColor = new QLabel(this);
     archorColor->setObjectName("archorColor");
-    archorColor->setFixedWidth(30 * WinFullScreen::getScale());
+    archorColor->setFixedWidth(30 * ScreenShot::getScale());
     archorColor->installEventFilter(this);
     archorColor->setAutoFillBackground(true);
     vlArchorCol->addWidget(archorColor);
@@ -114,7 +114,7 @@ QWidget * WinMain::tabScreenShot()
 	vlCrossCurveCol->addWidget(new QLabel(tr("Cross Curve Color")));
     QLabel* crossCurveColor = new QLabel(this);
     crossCurveColor->setObjectName("crossCurveColor");
-    crossCurveColor->setFixedWidth(30 * WinFullScreen::getScale());
+    crossCurveColor->setFixedWidth(30 * ScreenShot::getScale());
     crossCurveColor->installEventFilter(this);
     crossCurveColor->setAutoFillBackground(true);
     vlCrossCurveCol->addWidget(crossCurveColor);
@@ -194,7 +194,7 @@ QWidget * WinMain::tabOutput()
 	m_leLogPath = new QLineEdit("path/1113");
 	girdLayout->addWidget(m_leLogPath, 3, 1, Qt::AlignLeft);
 	m_tbLogPath = new QToolButton();
-	girdLayout->addWidget(m_tbLogPath, 3, 2, Qt::AlignLeft);
+    girdLayout->addWidget(m_tbLogPath, 3, 2, Qt::AlignLeft);
 
 	// 整体布局 ------------------------------------
 	QWidget* outputWidget = new QWidget();
@@ -301,12 +301,12 @@ QWidget* WinMain::tabAbout()
 
 void WinMain::onScrnShot()
 {
-    WinFullScreen::instance().getScrnShots();
+    ScreenShot::instance().getScrnShots();
 }
 
 void WinMain::onScrnShotLater()
 {
-	WinFullScreen& instance = WinFullScreen::instance();
+	ScreenShot& instance = ScreenShot::instance();
 	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	instance.setFixedSize(QApplication::desktop()->size());
 
@@ -322,7 +322,7 @@ void WinMain::onScrnShotRect()
 
 void WinMain::onScrnShotWhole()
 {
-	WinFullScreen& instance = WinFullScreen::instance();
+	ScreenShot& instance = ScreenShot::instance();
 	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	instance.setFixedSize(QApplication::desktop()->size());
 	instance.getScrnShots();

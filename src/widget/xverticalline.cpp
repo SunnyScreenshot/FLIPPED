@@ -16,5 +16,5 @@ XVerticalLine::XVerticalLine(QWidget *parent, Qt::WindowFlags f)
     setFrameShape(VLine);
     setFrameShadow(Sunken);
     setLineWidth(0);
-    setMidLineWidth(1);
+    setMidLineWidth(2);
 }

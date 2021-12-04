@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QtGlobal>
 #include <QObject>
-#include "winscreen/winfullscreen.h"
+#include "winscreen/screenshot.h"
 #include "winscreen/winmain.h"
 #include "logger.h"
 #include "logmanager.h"

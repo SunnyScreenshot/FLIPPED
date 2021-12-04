@@ -2,7 +2,7 @@
 // Created by XMuli <xmulitech@gmail.com> on 2021/9/29.
 //
 
-#include "winfullscreen.h"
+#include "screenshot.h"
 #include <QScreen>
 #include <QPixmap>
 #include <QApplication>
@@ -17,7 +17,7 @@
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
-WinFullScreen::WinFullScreen(QWidget *parent)
+ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
@@ -35,24 +35,24 @@ WinFullScreen::WinFullScreen(QWidget *parent)
 
 //    m_draw = new XDraw(this);
     m_toolBar = new SubGrapToolBar(this);
-    connect(m_toolBar, &SubGrapToolBar::sigDownload, this, &WinFullScreen::onDownload);
-    connect(m_toolBar, &SubGrapToolBar::sigCopy, this, &WinFullScreen::onCopy);
+    connect(m_toolBar, &SubGrapToolBar::sigDownload, this, &ScreenShot::onDownload);
+    connect(m_toolBar, &SubGrapToolBar::sigCopy, this, &ScreenShot::onCopy);
 
-    connect(m_toolBar, &SubGrapToolBar::sigDrawStart, this, &WinFullScreen::onDrawStart);
-    connect(m_toolBar, &SubGrapToolBar::sigDrawEnd, this, &WinFullScreen::onDrawEnd);
-    connect(m_toolBar, &SubGrapToolBar::sigDrawShape, this, &WinFullScreen::onDrawShape);
-    connect(m_toolBar, &SubGrapToolBar::sigUndo, this, &WinFullScreen::onUndo);
-    connect(m_toolBar, &SubGrapToolBar::sigRedo, this, &WinFullScreen::onRedo);
+    connect(m_toolBar, &SubGrapToolBar::sigDrawStart, this, &ScreenShot::onDrawStart);
+    connect(m_toolBar, &SubGrapToolBar::sigDrawEnd, this, &ScreenShot::onDrawEnd);
+    connect(m_toolBar, &SubGrapToolBar::sigDrawShape, this, &ScreenShot::onDrawShape);
+    connect(m_toolBar, &SubGrapToolBar::sigUndo, this, &ScreenShot::onUndo);
+    connect(m_toolBar, &SubGrapToolBar::sigRedo, this, &ScreenShot::onRedo);
 
-	connect(this, &WinFullScreen::sigClearScreen, this, &WinFullScreen::onClearScreen);
+	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 }
 
-WinFullScreen::~WinFullScreen() 
+ScreenShot::~ScreenShot() 
 {
 }
 
 // 清空截图内容（当关闭 Esc、或完成截图时）
-void WinFullScreen::onClearScreen()
+void ScreenShot::onClearScreen()
 {
 	//m_screens、m_primaryScreen 还保留
 
@@ -66,14 +66,14 @@ void WinFullScreen::onClearScreen()
     m_cursorArea = CursorArea::UnknowCursorArea;
 }
 
-void WinFullScreen::onDrawShape(XDrawShape shape)
+void ScreenShot::onDrawShape(XDrawShape shape)
 {
     m_drawStep.shape = shape;
     qDebug() << "--------@onDrawShape:" << int(m_drawStep.shape);
 }
 
 // 点击一次，撤销一步
-void WinFullScreen::onUndo()
+void ScreenShot::onUndo()
 {
     if (m_vDrawed.count() <= 0)
         return;
@@ -84,7 +84,7 @@ void WinFullScreen::onUndo()
     update();
 }
 
-void WinFullScreen::onRedo()
+void ScreenShot::onRedo()
 {
     if (m_vDrawUndo.count() <= 0)
         return;
@@ -95,7 +95,7 @@ void WinFullScreen::onRedo()
     update();
 }
 
-void WinFullScreen::onDownload()
+void ScreenShot::onDownload()
 {
     if (!m_savePixmap || !m_currPixmap)
         return;
@@ -119,7 +119,7 @@ void WinFullScreen::onDownload()
     hide();
 }
 
-void WinFullScreen::onCopy()
+void ScreenShot::onCopy()
 {
     if (!m_savePixmap || !m_currPixmap)
         return;
@@ -144,14 +144,14 @@ void WinFullScreen::onCopy()
     hide();
 }
 
-void WinFullScreen::onDrawStart()
+void ScreenShot::onDrawStart()
 {
     m_rtCalcu.m_cursorType = CursorType::Drawing;
     setMouseTracking(false);  // Fix: 鼠标移动中会被自动绘画矩形，副作用绘画状态的光标不完美了(选中框内外的光标被固定了)，严格不算 bug，一种外观特效
 //    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.m_cursorType;
 }
 
-void WinFullScreen::onDrawEnd()
+void ScreenShot::onDrawEnd()
 {
     m_rtCalcu.m_cursorType = CursorType::Waiting;
     setMouseTracking(true);  // 等待状态开启鼠标跟踪
@@ -159,7 +159,7 @@ void WinFullScreen::onDrawEnd()
 }
 
 // 获取虚拟屏幕截图
-QPixmap* WinFullScreen::getVirtualScreen()
+QPixmap* ScreenShot::getVirtualScreen()
 {
 	// TODO 2021-09-29:
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
@@ -172,7 +172,7 @@ QPixmap* WinFullScreen::getVirtualScreen()
 }
 
 // 修改拉伸选中矩形的大小
-void WinFullScreen::modifyRectSize(QRect& rt)
+void ScreenShot::modifyRectSize(QRect& rt)
 {
 	int width = m_rtCalcu.getModifyWidth();
 	int height = m_rtCalcu.getModifyHeight();
@@ -196,7 +196,7 @@ void WinFullScreen::modifyRectSize(QRect& rt)
 	}
 }
 
-void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
+void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
 {
 	if (num == 0)
 		return;
@@ -207,7 +207,7 @@ void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound
 	QPen penWhite(QColor(255, 255, 255, 1 * 255), 1);
 	penWhite.setStyle(Qt::CustomDashLine);
 	penWhite.setDashOffset(0);
-    penWhite.setDashPattern(QVector<qreal>() << 4 * WinFullScreen::getScale() << 4 * WinFullScreen::getScale());
+    penWhite.setDashPattern(QVector<qreal>() << 4 * ScreenShot::getScale() << 4 * ScreenShot::getScale());
 	penWhite.setCapStyle(Qt::FlatCap);
 	pa.setPen(penWhite);
 	pa.drawLine(QPoint(rt.left(), rt.top()), QPoint(rt.right(), rt.top()));
@@ -241,7 +241,7 @@ void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound
 
 	pa.setPen(QPen(Qt::white, 1.5));
 	pa.setBrush(QColor(146, 146, 146, 1 * 255));
-    QPoint offsetPos(HAIF_R_BORDER_MARK * WinFullScreen::getScale(), HAIF_R_BORDER_MARK * WinFullScreen::getScale());
+    QPoint offsetPos(HAIF_R_BORDER_MARK * ScreenShot::getScale(), HAIF_R_BORDER_MARK * ScreenShot::getScale());
 	pa.setRenderHint(QPainter::Antialiasing, true);
 
 	for (int i = 0; i < num; ++i)
@@ -251,7 +251,7 @@ void WinFullScreen::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound
 }
 
 // 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；false 使用上一个环境的
-void WinFullScreen::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
+void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 {
     if (XDrawShape::NoDraw == step.shape)
         return;
@@ -298,7 +298,7 @@ void WinFullScreen::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 }
 
 // 样式一: 浅蓝色
-void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
+void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 {
     if (num == 0)
         return;
@@ -307,10 +307,10 @@ void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound
     pa.setBrush(Qt::NoBrush);
 
     QIcon icon(":/resources/icons/boardPoint_8px.svg");
-    QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 4 * WinFullScreen::getScale());
+    QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 4 * ScreenShot::getScale());
     pixmap.setDevicePixelRatio(getDevicePixelRatio());
 
-    QPoint offsetPos(HAIF_R_BORDER_MARK * 2 * WinFullScreen::getScale(), HAIF_R_BORDER_MARK * 2 * WinFullScreen::getScale()) ;
+    QPoint offsetPos(HAIF_R_BORDER_MARK * 2 * ScreenShot::getScale(), HAIF_R_BORDER_MARK * 2 * ScreenShot::getScale()) ;
     pa.drawPixmap(rt.topLeft() - offsetPos, pixmap);
     pa.drawPixmap(rt.topRight() - offsetPos, pixmap);
     pa.drawPixmap(rt.bottomLeft() - offsetPos, pixmap);
@@ -331,7 +331,7 @@ void WinFullScreen::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound
 }
 
 // 效果：绘画的顺序重要
-void WinFullScreen::paintEvent(QPaintEvent *event)
+void ScreenShot::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
 
@@ -453,7 +453,7 @@ void WinFullScreen::paintEvent(QPaintEvent *event)
 #endif // 1
 }
 
-void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
+void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 {
 	if (event->key() == Qt::Key_Escape) {
 		qDebug() << "Key_Escape";
@@ -466,7 +466,7 @@ void WinFullScreen::keyReleaseEvent(QKeyEvent *event)
 // 注意: 1. 按下、松开时候会切换状态；点击绘画按钮也会切换状态
 //      2. 开启鼠标跟踪时机；点击绘画按钮也会相应开启/关闭
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
-void WinFullScreen::mousePressEvent(QMouseEvent *event)
+void ScreenShot::mousePressEvent(QMouseEvent *event)
 {
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
@@ -560,7 +560,7 @@ void WinFullScreen::mousePressEvent(QMouseEvent *event)
 	update();
 }
 
-void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
+void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 {
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
@@ -630,7 +630,7 @@ void WinFullScreen::mouseMoveEvent(QMouseEvent *event)
 	update();
 }
 
-void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
+void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 {
     qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
@@ -700,20 +700,20 @@ void WinFullScreen::mouseReleaseEvent(QMouseEvent *event)
  * \note 问：类的static变量在什么时候初始化？函数的static变量在什么时候初始化？
  * \li 答：类的静态成员变量在类实例化之前就已经存在了，并且分配了内存。函数的static变量在执行此函数时进行初始化。
  */
-WinFullScreen &WinFullScreen::instance()
+ScreenShot &ScreenShot::instance()
 {
-    static WinFullScreen m_instance;
+    static ScreenShot m_instance;
     return m_instance;
 }
 
-void WinFullScreen::getScrnShots()
+void ScreenShot::getScrnShots()
 {
     this->getScrnInfo();
     this->show();
 }
 
 // 屏幕详细参数
-void WinFullScreen::getScrnInfo()
+void ScreenShot::getScrnInfo()
 {
 	QDesktopWidget* desktopWidget = QApplication::desktop();
 	QRect deskRect = desktopWidget->availableGeometry();   //获取可用桌面大小
@@ -730,12 +730,12 @@ void WinFullScreen::getScrnInfo()
 	}
 }
 
-double WinFullScreen::getDevicePixelRatio()
+double ScreenShot::getDevicePixelRatio()
 {
 	return m_primaryScreen->devicePixelRatio();
 }
 
-double WinFullScreen::getDevicePixelRatio(QScreen * screen)
+double ScreenShot::getDevicePixelRatio(QScreen * screen)
 {
 	if (!screen)
 		return 0.0;
@@ -743,7 +743,7 @@ double WinFullScreen::getDevicePixelRatio(QScreen * screen)
 		return screen->devicePixelRatio();
 }
 
-double WinFullScreen::getScale(QScreen * screen)
+double ScreenShot::getScale(QScreen * screen)
 {
 #ifdef Q_OS_WIN
 	double scale = screen->logicalDotsPerInch() / 96.0;

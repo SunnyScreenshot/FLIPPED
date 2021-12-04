@@ -20,12 +20,12 @@ class QScreen;
 class QPixmap;
 QT_END_NAMESPACE
 
-class WinFullScreen : public  QWidget
+class ScreenShot : public  QWidget
 {
     Q_OBJECT
 
 public:
-    static WinFullScreen& instance();
+    static ScreenShot& instance();
     void getScrnShots();
     static double getScale(QScreen *screen = QApplication::primaryScreen());
 
@@ -51,8 +51,8 @@ public slots:
     void onDrawEnd();
 
 private:
-    WinFullScreen(QWidget *parent = nullptr);
-    ~WinFullScreen() override;
+    ScreenShot(QWidget *parent = nullptr);
+    ~ScreenShot() override;
 
     QPixmap* getVirtualScreen();
 	void modifyRectSize(QRect& rtSel);

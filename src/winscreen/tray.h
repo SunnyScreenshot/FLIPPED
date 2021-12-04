@@ -8,7 +8,7 @@
 #include <QObject>
 #include <QHotkey>
 #include "winmain.h"
-#include "winfullscreen.h"
+#include "screenshot.h"
 
 QT_BEGIN_NAMESPACE
 class QSystemTrayIcon;

@@ -2,7 +2,7 @@
 // Created by xmuli on 2021/12/04.
 //
 #include "subrecttoolbar.h"
-#include "winfullscreen.h"
+#include "screenshot.h"
 
 #include <QBoxLayout>
 #include "../widget/xverticalline.h"
@@ -17,14 +17,14 @@ SubRectToolBar::SubRectToolBar(QWidget *parent) : QWidget(parent)
 void SubRectToolBar::init()
 {
     m_tbRect->setIcon(QIcon(":/resources/icons/normal/rectangle.svg"));
-    m_tbRect->setIconSize(QSize(16, 16) * WinFullScreen::getScale());
+    m_tbRect->setIconSize(QSize(16, 16) * ScreenShot::getScale());
     m_tbRect->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbRect->setAutoRaise(true);
     m_tbRect->setToolTip(tr("Rectangle"));
     m_tbRect->setChecked(false);
 
     m_tbFilledRect->setIcon(QIcon(":/resources/icons/normal/fill-rect.svg"));
-    m_tbFilledRect->setIconSize(QSize(16, 16) * WinFullScreen::getScale());
+    m_tbFilledRect->setIconSize(QSize(16, 16) * ScreenShot::getScale());
     m_tbFilledRect->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbFilledRect->setAutoRaise(true);
     m_tbFilledRect->setToolTip(tr("Filled Rectangle"));

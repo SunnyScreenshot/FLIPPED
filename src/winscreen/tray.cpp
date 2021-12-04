@@ -55,7 +55,7 @@ void Tray::init()
 void Tray::onScreenShot()
 {
 	// TODO 2021-10-08 模拟按下快捷键或后续的封装函数
-    WinFullScreen::instance().getScrnShots();
+    ScreenShot::instance().getScrnShots();
 }
 
 void Tray::onShowWinConfig(bool checked)

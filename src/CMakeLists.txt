@@ -21,7 +21,7 @@ endif()
 
 set(PICSHOT_SOURCES
     main.cpp
-    winscreen/winfullscreen.cpp
+    winscreen/screenshot.cpp
     winscreen/rectcalcu.cpp
     winscreen/winmain.cpp
     winscreen/winresetbtn.cpp
@@ -41,7 +41,7 @@ set(PICSHOT_SOURCES
     syswininfo/syswininfo_win.cpp
     )
 set(PICSHOT_HEADERS
-    winscreen/winfullscreen.h
+    winscreen/screenshot.h
     winscreen/rectcalcu.h
     winscreen/winmain.h
     winscreen/winresetbtn.h
