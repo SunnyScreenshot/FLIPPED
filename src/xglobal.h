@@ -1,3 +1,6 @@
+//
+// Created by XMuli <xmulitech@gmail.com> on 2021/11/09.
+//
 #ifndef XGLOBAL_H
 #define XGLOBAL_H
 
