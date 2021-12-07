@@ -272,8 +272,6 @@ QWidget * WinMain::tabShortcuts()
     stack->addWidget(tabOneShortcuts); // 添加一页
 	qInfo() << "添加第一页的控件完成";
 
-	//stack->setCurrentIndex(0);  // 设置 QStackedWidget 翻页
-
     return stack;
 }
 
@@ -310,7 +308,7 @@ void WinMain::onScrnShotLater()
 	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	instance.setFixedSize(QApplication::desktop()->size());
 
-	QTimer::singleShot(3000, [&]() {
+    QTimer::singleShot(3000, [&]() {
 		instance.getScrnShots();
 	});
 }
