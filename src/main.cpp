@@ -20,28 +20,9 @@
 #include <string>
 #include <iostream>
 using namespace std;
-class A
-{
-public:
-//    A(){cout << "xxxx1";}
-    A(string s, int a, int b): m_s(s),m_a(a),m_b(b){cout << "xxxx2";}
-//    explicit A(string s):m_s(s){ cout << "xxxx3";}
-
-private:
-    string m_s;
-    int m_a;
-    int m_b;
-};
 
 int main(int argc, char *argv[])
 {
-//    A obj1;
-////    A obj2("sss");  // 正确，直接初始化
-//    A obj3 = obj1;
-//    A obj4(obj1);
-//    A obj4 = string("sss@"); // 错误，
-//    A obj4 = string("sss@");
-
     getAllTopWinRect();
 
     // TODO 2021-10-08 高分屏适配的许多尝试: QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
