@@ -29,7 +29,6 @@ void DrawHelper::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush br
     pen.setColor(Qt::red);
     pa.setPen(pen);
     pa.setBrush(brush);
-//    pa.drawRect(rt);
 }
 
 void XDrawStep::clear()
