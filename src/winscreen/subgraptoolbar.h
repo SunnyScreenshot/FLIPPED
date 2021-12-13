@@ -14,6 +14,7 @@ class QToolButton;
 class QStringList;
 QT_END_NAMESPACE
 
+// 绘画工具栏（图形选择）
 class SubGrapToolBar : public QWidget
 {
     Q_OBJECT

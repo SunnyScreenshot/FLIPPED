@@ -11,9 +11,11 @@
 #include <QVector>
 #include <QWidget>
 
-/*!
- * \brief The WinDrawRect class 工具栏绘画矩形详细选择
- */
+QT_BEGIN_NAMESPACE
+class QToolButton;
+class QSpinBox;
+QT_END_NAMESPACE
+
 class SubRectToolBar : public QWidget
 {
     Q_OBJECT

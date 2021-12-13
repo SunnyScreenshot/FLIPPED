@@ -1,16 +1,17 @@
-﻿#include "subrecttoolbar.h"
-#include "drawtoolbar.h"
+﻿#include "drawtoolbar.h"
 #include "subgraptoolbar.h"
 #include "../widget/xhorizontalline.h"
 #include <QBoxLayout>
 
 DrawToolBar::DrawToolBar(QWidget *parent)
     : XRoundWidget(parent)
+    , m_subRectTb(new SubRectToolBar(this))
+    , m_subEllipseTb(new SubEllipseToolBar(this))
 {
-    init();
+    initUI();
 }
 
-void DrawToolBar::init()
+void DrawToolBar::initUI()
 {
     setContentsMargins(0, 0, 0, 0);
 
@@ -21,10 +22,9 @@ void DrawToolBar::init()
     SubGrapToolBar* subGrapTb = new SubGrapToolBar(this);
     vLayout->addWidget(subGrapTb);
     subGrapTb->show();
+
     vLayout->addWidget(new XHorizontalLine(subGrapTb->width() - margin * 2, this));
-    vLayout->addWidget(new SubRectToolBar(this));
-    QFrame* frame = new QFrame(this);
-    frame->setFixedWidth(10);
-    vLayout->addWidget(frame);
+    vLayout->addWidget(m_subRectTb);
+    vLayout->addWidget(m_subEllipseTb);
     setLayout(vLayout);
 }

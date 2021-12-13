@@ -2,6 +2,8 @@
 #define WINDRAWTOOL_H
 
 #include "../widget/xroundwidget.h"
+#include "subrecttoolbar.h"
+#include "subellipsetoolbar.h"
 
 class DrawToolBar : public XRoundWidget
 {
@@ -9,7 +11,12 @@ class DrawToolBar : public XRoundWidget
 public:
     explicit DrawToolBar(QWidget *parent = nullptr);
 
-    void init();
+    void initUI();
+
+
+private:
+    SubRectToolBar* m_subRectTb;
+    SubEllipseToolBar* m_subEllipseTb;
 };
 
 #endif // WINDRAWTOOL_H

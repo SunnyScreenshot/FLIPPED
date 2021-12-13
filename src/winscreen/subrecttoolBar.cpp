@@ -7,6 +7,8 @@
 #include "../widget/xverticalline.h"
 #include <QBoxLayout>
 #include <QLabel>
+#include <QToolButton>
+#include <QSpinBox>
 
 SubRectToolBar::SubRectToolBar(QWidget *parent) : QWidget(parent)
 	, m_tbRect(new QToolButton(this))
