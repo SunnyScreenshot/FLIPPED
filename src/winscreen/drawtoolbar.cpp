@@ -1,6 +1,7 @@
 ﻿#include "subrecttoolbar.h"
 #include "drawtoolbar.h"
 #include "subgraptoolbar.h"
+#include "../widget/xhorizontalline.h"
 #include <QBoxLayout>
 
 DrawToolBar::DrawToolBar(QWidget *parent)
@@ -17,7 +18,10 @@ void DrawToolBar::init()
     const int margin = 4;
     vLayout->setContentsMargins(margin, margin, margin, margin);
     vLayout->setSpacing(0);
-    vLayout->addWidget(new SubGrapToolBar(this));
+    SubGrapToolBar* subGrapTb = new SubGrapToolBar(this);
+    vLayout->addWidget(subGrapTb);
+    subGrapTb->show();
+    vLayout->addWidget(new XHorizontalLine(subGrapTb->width() - margin * 2, this));
     vLayout->addWidget(new SubRectToolBar(this));
     QFrame* frame = new QFrame(this);
     frame->setFixedWidth(10);
