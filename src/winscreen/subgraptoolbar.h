@@ -23,6 +23,8 @@ public:
     virtual ~SubGrapToolBar();
 
     bool isToolBtnChecked();
+    QToolButton* getCheckedToolBtn(int ignoreLastBtnNum = 4);
+
 
 private:
     void init();
@@ -30,7 +32,7 @@ private:
 signals:
     void sigDrawStart();       // 处于绘画状态
     void sigDrawEnd();         // 处于绘画状态
-    void sigDrawShape(XDrawShape shape);
+    void sigDrawShape(XDrawShape shape, bool checked);
     void sigUndo();
     void sigRedo();
     void sigDownload();

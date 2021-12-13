@@ -34,6 +34,17 @@ bool SubGrapToolBar::isToolBtnChecked()
     return false;
 }
 
+QToolButton* SubGrapToolBar::getCheckedToolBtn(int ignoreLastBtnNum)
+{
+    QList<QToolButton *> listBtn = findChildren<QToolButton *>();
+    for (auto it = listBtn.begin(); it != listBtn.end() - ignoreLastBtnNum ; ++it) {
+        if ((*it)->isChecked())
+            return *it;
+    }
+
+    return nullptr;
+}
+
 void SubGrapToolBar::init()
 {
     m_toolBtnName << "rectangle"
@@ -160,18 +171,19 @@ void SubGrapToolBar::onToolBtn()
 //               << "download"
 //               << "copy";
     // 发射信号
+    bool isChecked = toolBtn->isChecked();
     if (toolBtn->objectName() == "rectangle") {
-        emit sigDrawShape(XDrawShape::Rectangles);
+        emit sigDrawShape(XDrawShape::Rectangles, isChecked);
     } else if (toolBtn->objectName() == "ellipse") {
-        emit sigDrawShape(XDrawShape::Ellipses);
+        emit sigDrawShape(XDrawShape::Ellipses, isChecked);
     } else if (toolBtn->objectName() == "arrow") {
-        emit sigDrawShape(XDrawShape::Arrows);
+        emit sigDrawShape(XDrawShape::Arrows, isChecked);
 //    } else if (toolBtn->objectName() == "pen") {
 //        emit sigDrawShape(XDrawShape::Pen);
     } else if (toolBtn->objectName() == "text") {
-        emit sigDrawShape(XDrawShape::Texts);
+        emit sigDrawShape(XDrawShape::Texts, isChecked);
     } else if (toolBtn->objectName() == "mosaic") {
-        emit sigDrawShape(XDrawShape::Mosaics);
+        emit sigDrawShape(XDrawShape::Mosaics, isChecked);
     } else if (toolBtn->objectName() == "undo") {
         emit sigUndo();
     } else if (toolBtn->objectName() == "redo") {

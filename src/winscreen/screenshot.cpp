@@ -408,6 +408,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
         topLeft.setY(rtSel.bottomRight().y() + width + space);
         m_toolBar->move(topLeft);
+        m_toolBar->hide();
     }
 
     // 绘画工具栏
@@ -417,9 +418,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
         topLeft.setY(rtSel.bottomRight().y() + width + space * 2 + m_toolBar->height());
         m_tbDrawBar->move(topLeft);
-
-
-
     }
 
 
