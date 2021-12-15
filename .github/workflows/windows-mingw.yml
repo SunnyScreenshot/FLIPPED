@@ -95,11 +95,13 @@ jobs:
         run: |
           Get-Command -Name 'qmake' | Format-List
           Get-Command -Name 'mingw32-make' | Format-List
+      - name: Configure CMake
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
       - name: mingw-build
         id: build
         shell: cmd
         run: |
-          qmake
+          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
           mingw32-make
       - name: package
         id: package      
