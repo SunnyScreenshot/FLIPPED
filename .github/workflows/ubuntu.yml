@@ -32,18 +32,12 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - name: pull 3therd
+      - name: pull 3rdparty code
         run: |
           cd ${{github.workspace}}
           git submodule init
           git submodule update
-
-          cd  /home/runner/work/PicShot/PicShot/3rdparty/QHotkey
-          tree
-
-          cd /home/runner/work/PicShot/PicShot/3rdparty/Log4Qt
-          tree
       - name: build ubuntu
         run: |
-          cmake ./
+          cmake .
           make
