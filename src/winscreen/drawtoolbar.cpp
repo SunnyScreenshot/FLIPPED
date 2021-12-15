@@ -1,12 +1,13 @@
 ﻿#include "drawtoolbar.h"
 #include "../widget/xhorizontalline.h"
 #include <QBoxLayout>
+#include <QVector>
 
 DrawToolBar::DrawToolBar(QWidget *parent)
     : XRoundWidget(parent)
-    , m_subGrapTb(new SubGrapToolBar(this))
-    , m_subRectTb(new SubRectToolBar(this))
-    , m_subEllipseTb(new SubEllipseToolBar(this))
+    , m_subGrapBar(new SubGrapToolBar(this))
+    , m_subRectBar(new SubRectToolBar(this))
+    , m_subEllipseBar(new SubEllipseToolBar(this))
     , m_vLayout(new QVBoxLayout())
     , m_hLine(nullptr)
 {
@@ -19,45 +20,67 @@ void DrawToolBar::initUI()
     setContentsMargins(0, 0, 0, 0);
     m_vLayout->setContentsMargins(margin, margin, margin, margin);
     m_vLayout->setSpacing(0);
-    m_vLayout->addWidget(m_subGrapTb);
-    m_subGrapTb->show();
+    m_vLayout->addWidget(m_subGrapBar);
+    m_subGrapBar->show();
     setLayout(m_vLayout);
 
-    m_subRectTb->hide();
-    m_subEllipseTb->hide();
-    m_hLine = new XHorizontalLine(m_subGrapTb->width() - margin * 2, this);
+    m_subRectBar->hide();
+    m_subEllipseBar->hide();
+    m_hLine = new XHorizontalLine(m_subGrapBar->width() - margin * 2, this);
     m_hLine->hide();
 
-    connect(m_subGrapTb, &SubGrapToolBar::sigDrawShape, this, &DrawToolBar::onDrawShape);
+    connect(m_subGrapBar, &SubGrapToolBar::sigDrawShape, this, &DrawToolBar::onDrawShape);
+}
+
+// 默认插在第二个
+void DrawToolBar::insertSubBar(QWidget *subBar, int index)
+{
+    if (!subBar)
+        return;
+
+    if (m_vLayout) {
+        m_vLayout->insertWidget(index, subBar);
+        subBar->show();
+    }
+}
+
+void DrawToolBar::removeSubBar(QWidget* subBar)
+{
+    if (!subBar)
+        return;
+
+    if (subBar && m_vLayout) {
+        m_vLayout->removeWidget(subBar);
+        subBar->hide();
+    }
+}
+
+void DrawToolBar::removeAllSubBar()
+{
+    // m_subGrapTb 不移除
+    QVector<QWidget *> vec = {m_subRectBar
+                             , m_subEllipseBar};
+
+    for (auto subBar : vec) {
+        if (subBar && m_vLayout)
+            removeSubBar(subBar);
+    }
 }
 
 void DrawToolBar::onDrawShape(XDrawShape shape, bool checked)
 {
+    removeAllSubBar();
+
+
     switch (shape) {
     case XDrawShape::Rectangles: {
-        if (checked) {
-            m_vLayout->addWidget(m_subRectTb);
-            m_vLayout->removeWidget(m_subEllipseTb);
-            m_subRectTb->show();
-            m_subEllipseTb->hide();
-        } else {
-            m_vLayout->removeWidget(m_subRectTb);
-            m_subRectTb->hide();
-        }
-
+        if (checked)
+            insertSubBar(m_subRectBar);
         break;
     }
     case XDrawShape::Ellipses: {
-        if (checked) {
-            m_vLayout->addWidget(m_subEllipseTb);
-            m_vLayout->removeWidget(m_subRectTb);
-            m_subEllipseTb->show();
-            m_subRectTb->hide();
-        } else {
-            m_vLayout->removeWidget(m_subEllipseTb);
-            m_subEllipseTb->hide();
-        }
-
+        if (checked)
+            insertSubBar(m_subEllipseBar);
         break;
     }
     default:
@@ -68,11 +91,9 @@ void DrawToolBar::onDrawShape(XDrawShape shape, bool checked)
     setFixedHeight(50);
 
     if (checked) {
-        m_vLayout->insertWidget(1, m_hLine);
-        m_hLine->show();
+        insertSubBar(m_hLine);
         setFixedHeight(100);
     } else {
-        m_vLayout->removeWidget(m_hLine);
-        m_hLine->hide();
+        removeSubBar(m_hLine);
     }
 }

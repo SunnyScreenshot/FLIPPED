@@ -16,13 +16,18 @@ public:
 
     void initUI();
 
+private:
+    void insertSubBar(QWidget* subBar, int index = 1);
+    void removeSubBar(QWidget* subBar);
+    void removeAllSubBar();
+
 public slots:
     void onDrawShape(XDrawShape shape, bool checked);
 
 private:
-    SubGrapToolBar* m_subGrapTb;
-    SubRectToolBar* m_subRectTb;
-    SubEllipseToolBar* m_subEllipseTb;
+    SubGrapToolBar* m_subGrapBar;
+    SubRectToolBar* m_subRectBar;
+    SubEllipseToolBar* m_subEllipseBar;
 
     QVBoxLayout* m_vLayout;
     XHorizontalLine* m_hLine;
