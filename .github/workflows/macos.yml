@@ -2,12 +2,12 @@ name: MacOS
 on: 
   push:
     paths:
-      - '*.pro'
+      - 'CMakeLists.txt'
       - 'src/**'
       - '.github/workflows/macos.yml'
   pull_request:
     paths:
-      - '*.pro'
+      - 'CMakeLists.txt'
       - 'src/**'
       - '.github/workflows/macos.yml' 
 jobs:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-10.15]
-        qt_ver: [5.9.9,5.12.10,5.15.2]
+        qt_ver: [5.12.10,5.15.2]
         qt_arch: [clang_64]
     env:
       targetName: HelloActions-Qt
