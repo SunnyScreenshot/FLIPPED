@@ -23,7 +23,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    getAllTopWinRect();
+//    getAllTopWinRect();
 
     // TODO 2021-10-08 高分屏适配的许多尝试: QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);
