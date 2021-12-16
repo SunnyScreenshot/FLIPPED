@@ -2,7 +2,7 @@
 // Created by xmuli on 2021/10/08.
 //
 
-#ifndef TARY_H
+#ifndef TRAY_H
 #define TRAY_H
 
 #include <QObject>

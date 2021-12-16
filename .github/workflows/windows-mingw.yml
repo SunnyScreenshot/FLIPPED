@@ -26,7 +26,7 @@ jobs:
             qt_tools: "tools_mingw,7.3.0-1-202004170606,qt.tools.win64_mingw730"
             qt_tools_mingw_install: mingw730_64
     env:
-      targetName: HelloActions-Qt.exe
+      targetName: PicShot.exe
     steps:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2.13.0
@@ -49,8 +49,6 @@ jobs:
         run: |
           Write-Output "${{ env.Qt5_DIR }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           Write-Output "${{ env.Qt5_DIR }}/../../Tools/${{ matrix.qt_tools_mingw_install }}/bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-      - name: Configure CMake
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
       - name: pull 3rdparty code
         run: |
           cd ${{github.workspace}}
@@ -60,7 +58,7 @@ jobs:
         id: build
         shell: cmd
         run: |
-          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+          cmake .
           mingw32-make
       - name: package
         id: package      

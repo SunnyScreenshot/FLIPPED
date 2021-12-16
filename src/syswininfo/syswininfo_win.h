@@ -6,7 +6,7 @@
 #define SYSWININFO_WIN_H
 
 //#include <windows.h>
-#include <stdio.h>
+//#include <stdio.h>
 ////#include <tchar.h>
 ////#include <string.h>
 ////#include <iostream>
