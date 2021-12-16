@@ -6,22 +6,6 @@
         <file>resources/icons/normal/download.svg</file>
         <file>resources/icons/pressed/copy.svg</file>
         <file>resources/icons/pressed/download.svg</file>
-        <file>../../ShotX/src/icons/pressed/arrow.svg</file>
-        <file>../../ShotX/src/icons/pressed/copy.svg</file>
-        <file>../../ShotX/src/icons/pressed/download.svg</file>
-        <file>../../ShotX/src/icons/pressed/ellipse.svg</file>
-        <file>../../ShotX/src/icons/pressed/exit.svg</file>
-        <file>../../ShotX/src/icons/pressed/fill-ellipse.svg</file>
-        <file>../../ShotX/src/icons/pressed/fill-rect.svg</file>
-        <file>../../ShotX/src/icons/pressed/gif.svg</file>
-        <file>../../ShotX/src/icons/pressed/line.svg</file>
-        <file>../../ShotX/src/icons/pressed/mosaic.svg</file>
-        <file>../../ShotX/src/icons/pressed/pen.svg</file>
-        <file>../../ShotX/src/icons/pressed/rectangle.svg</file>
-        <file>../../ShotX/src/icons/pressed/right.svg</file>
-        <file>../../ShotX/src/icons/pressed/screenshot.svg</file>
-        <file>../../ShotX/src/icons/pressed/text.svg</file>
-        <file>../../ShotX/src/icons/pressed/update.svg</file>
         <file>resources/icons/normal/arrow.svg</file>
         <file>resources/icons/normal/ellipse.svg</file>
         <file>resources/icons/normal/exit.svg</file>
