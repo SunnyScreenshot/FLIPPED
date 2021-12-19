@@ -4,11 +4,7 @@
 
 Lightweight screenshot tool
 
-
-
-![](https://img.shields.io/badge/language-c++-orange.svg) ![](https://img.shields.io/badge/language-Qt-orange.svg)
-
-![macos-badge](https://github.com/xmuli/PicShot/workflows/macos/badge.svg)   ![ubuntu-badge](https://github.com/xmuli/PicShot/workflows/ubuntu/badge.svg)  ![GitHub All Releases](https://img.shields.io/github/downloads/xmuli/PicShot/total)  ![GitHub stars](https://img.shields.io/github/stars/xmuli/PicShot?style=social) ![GitHub forks](https://img.shields.io/github/forks/xmuli/PicShot?style=social) 
+![](https://img.shields.io/badge/language-c++-orange.svg) ![](https://img.shields.io/badge/language-Qt-orange.svg) ![macos-badge](https://github.com/xmuli/PicShot/workflows/MacOS/badge.svg) ![ubuntu-badge](https://github.com/xmuli/PicShot/workflows/Ubuntu/badge.svg)
 
 
 
