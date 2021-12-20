@@ -27,7 +27,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
-set(PROJECT_SOURCES
+set(SRCS
         main.cpp
         widget.cpp
         widget.h
@@ -36,16 +36,16 @@ set(PROJECT_SOURCES
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(test
         MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
+        ${SRCS}
     )
 else()
     if(ANDROID)
         add_library(test SHARED
-            ${PROJECT_SOURCES}
+            ${SRCS}
         )
     else()
         add_executable(test
-            ${PROJECT_SOURCES}
+            ${SRCS}
         )
     endif()
 endif()
