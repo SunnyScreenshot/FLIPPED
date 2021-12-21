@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
     /* 枚举窗口的所有进程 */
     //获取屏幕上所有的顶层窗口,每发现一个窗口就调用回调函数一次
 
-
 #if  0
     //配置文件路径（日志调试）
 //    Log4Qt::PropertyConfigurator::configure(a.applicationDirPath() + "/../log4qt.conf");
