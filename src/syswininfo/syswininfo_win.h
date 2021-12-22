@@ -5,7 +5,10 @@
 #ifndef SYSWININFO_WIN_H
 #define SYSWININFO_WIN_H
 
+#ifdef Q_OS_WIN
 //#include <windows.h>
+#endif
+
 //#include <stdio.h>
 ////#include <tchar.h>
 ////#include <string.h>
