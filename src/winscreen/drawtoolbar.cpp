@@ -23,6 +23,10 @@ DrawToolBar::DrawToolBar(QWidget *parent)
     connect(m_subGrapBar, &SubGrapToolBar::sigDrawShape, this, &DrawToolBar::sigDrawShape);
     connect(m_subGrapBar, &SubGrapToolBar::sigUndo, this, &DrawToolBar::sigUndo);
     connect(m_subGrapBar, &SubGrapToolBar::sigRedo, this, &DrawToolBar::sigRedo);
+
+    // SubRectToolBar* m_subRectBar;
+    connect(m_subRectBar, &SubRectToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
+
 }
 
 void DrawToolBar::initUI()

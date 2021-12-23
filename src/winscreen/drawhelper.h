@@ -52,6 +52,7 @@ struct  XDrawStep
     QBrush brush = QBrush(Qt::NoBrush);
     QFont font = QFont();
     int fontSize = 16;
+    bool bFill = false;
 
     void clear();
 };

@@ -37,6 +37,7 @@ signals:
 
 public slots:
 	void onClearScreen();
+//    void onDrawContextChange(???);
 
     // toolBar 的槽函数
     void onDrawShape(XDrawShape shape);

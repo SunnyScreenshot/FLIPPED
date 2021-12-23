@@ -42,6 +42,12 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_tbDrawBar, &DrawToolBar::sigUndo, this, &ScreenShot::onUndo);
     connect(m_tbDrawBar, &DrawToolBar::sigRedo, this, &ScreenShot::onRedo);
 
+    connect(m_tbDrawBar, &DrawToolBar::sigIsFill, this, [&](bool bFill) {
+        m_drawStep.bFill = bFill;
+    });
+
+//    connect(m_tbDrawBar, &DrawToolBar::sigIsFill, this, &ScreenShot::onDrawContextChange);
+
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 }
 
@@ -260,6 +266,13 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
         QBrush brush(step.brush);
         QFont font(step.font);
         font.setPixelSize(step.fontSize);
+
+        if (step.bFill){
+            brush.setColor(step.pen.color());
+            brush.setStyle(Qt::SolidPattern);
+        } else {
+            brush.setStyle(Qt::NoBrush);
+        }
 
         pa.setPen(pen);
         pa.setBrush(brush);

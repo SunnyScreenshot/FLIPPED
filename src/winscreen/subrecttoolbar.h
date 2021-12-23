@@ -4,6 +4,7 @@
 #ifndef WINDRAWRECT_H
 #define WINDRAWRECT_H
 
+#include "drawhelper.h"
 #include <QComboBox>
 #include <QSpinBox>
 #include <QStringList>
@@ -24,6 +25,12 @@ public:
 
 private:
     void initUI();
+
+signals:
+    void sigIsFill(bool bFill);
+
+private slots:
+    void onClicked(bool checked);
 
 private:
     QToolButton* m_tbRect;

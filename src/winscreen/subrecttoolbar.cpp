@@ -16,7 +16,23 @@ SubRectToolBar::SubRectToolBar(QWidget *parent) : QWidget(parent)
     , m_spBorder(new QSpinBox(this))
 {
     initUI();
+
+    connect(m_tbRect, &QToolButton::clicked, this, &SubRectToolBar::onClicked);
+    connect(m_tbFilledRect, &QToolButton::clicked, this, &SubRectToolBar::onClicked);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void SubRectToolBar::initUI()
 {
@@ -25,14 +41,14 @@ void SubRectToolBar::initUI()
     m_tbRect->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbRect->setAutoRaise(true);
     m_tbRect->setToolTip(tr("Rectangle"));
-    m_tbRect->setChecked(false);
+    m_tbRect->setChecked(true);
 
     m_tbFilledRect->setIcon(QIcon(":/resources/icons/normal/fill-rect.svg"));
     m_tbFilledRect->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT) * ScreenShot::getScale());
     m_tbFilledRect->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbFilledRect->setAutoRaise(true);
     m_tbFilledRect->setToolTip(tr("Filled Rectangle"));
-    m_tbFilledRect->setChecked(false);
+    m_tbFilledRect->setChecked(true);
 
     setContentsMargins(0, 0, 0, 0);
     const int margin = 0;
@@ -58,4 +74,14 @@ void SubRectToolBar::initUI()
     hLayout->addStretch(0);
 
     setLayout(hLayout);
+}
+
+void SubRectToolBar::onClicked(bool checked)
+{
+    Q_UNUSED(checked);
+
+    if (sender() == m_tbRect)
+        emit sigIsFill(false);
+    else if (sender() == m_tbFilledRect)
+        emit sigIsFill(true);
 }
