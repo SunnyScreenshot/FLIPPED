@@ -21,6 +21,15 @@ private:
     void removeSubBar(QWidget* subBar);
     void removeAllSubBar();
 
+signals: // SubGrapToolBar
+    void sigDrawStart();       // 处于绘画状态
+    void sigDrawEnd();         // 处于绘画状态
+    void sigDrawShape(XDrawShape shape, bool checked);
+    void sigUndo();
+    void sigRedo();
+    void sigDownload();
+    void sigCopy();
+
 public slots:
     void onDrawShape(XDrawShape shape, bool checked);
 

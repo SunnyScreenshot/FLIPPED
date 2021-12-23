@@ -25,7 +25,6 @@ public:
     bool isToolBtnChecked();
     QToolButton* getCheckedToolBtn(int ignoreLastBtnNum = 4);
 
-
 private:
     void init();
 

@@ -12,6 +12,17 @@ DrawToolBar::DrawToolBar(QWidget *parent)
     , m_hLine(nullptr)
 {
     initUI();
+
+
+    // SubGrapToolBar 的信号传递
+    connect(m_subGrapBar, &SubGrapToolBar::sigDownload, this, &DrawToolBar::sigDownload);
+    connect(m_subGrapBar, &SubGrapToolBar::sigCopy, this, &DrawToolBar::sigCopy);
+
+    connect(m_subGrapBar, &SubGrapToolBar::sigDrawStart, this, &DrawToolBar::sigDrawStart);
+    connect(m_subGrapBar, &SubGrapToolBar::sigDrawEnd, this, &DrawToolBar::sigDrawEnd);
+    connect(m_subGrapBar, &SubGrapToolBar::sigDrawShape, this, &DrawToolBar::sigDrawShape);
+    connect(m_subGrapBar, &SubGrapToolBar::sigUndo, this, &DrawToolBar::sigUndo);
+    connect(m_subGrapBar, &SubGrapToolBar::sigRedo, this, &DrawToolBar::sigRedo);
 }
 
 void DrawToolBar::initUI()

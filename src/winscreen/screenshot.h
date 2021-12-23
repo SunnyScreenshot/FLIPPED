@@ -7,7 +7,6 @@
 
 #include "rectcalcu.h"
 #include "drawtoolbar.h"
-#include "subgraptoolbar.h"
 #include "drawhelper.h"
 #include "../xglobal.h"
 #include <QWidget>
@@ -78,8 +77,7 @@ private:
 	RectCalcu m_rtCalcu;         // 选中矩形区域
 	CursorArea m_cursorArea;     // 光标所在区域
 
-    SubGrapToolBar* m_toolBar;       // 工具栏
-    DrawToolBar* m_tbDrawBar;
+    DrawToolBar* m_tbDrawBar;    // 工具栏
     XDrawStep m_drawStep;        // 当前绘画一步骤
 //    XDraw* m_draw;             // 绘画 Helper
 

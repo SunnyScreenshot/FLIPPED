@@ -22,8 +22,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
 	, m_rtCalcu()
-	, m_cursorArea(CursorArea::UnknowCursorArea)
-    , m_toolBar(nullptr)
+    , m_cursorArea(CursorArea::UnknowCursorArea)
     , m_tbDrawBar(new DrawToolBar(this))
 {
 	m_primaryScreen = QApplication::primaryScreen();
@@ -34,15 +33,14 @@ ScreenShot::ScreenShot(QWidget *parent)
     resize(1920, 1080);
 
 //    m_draw = new XDraw(this);
-    m_toolBar = new SubGrapToolBar(this);
-    connect(m_toolBar, &SubGrapToolBar::sigDownload, this, &ScreenShot::onDownload);
-    connect(m_toolBar, &SubGrapToolBar::sigCopy, this, &ScreenShot::onCopy);
+    connect(m_tbDrawBar, &DrawToolBar::sigDownload, this, &ScreenShot::onDownload);
+    connect(m_tbDrawBar, &DrawToolBar::sigCopy, this, &ScreenShot::onCopy);
 
-    connect(m_toolBar, &SubGrapToolBar::sigDrawStart, this, &ScreenShot::onDrawStart);
-    connect(m_toolBar, &SubGrapToolBar::sigDrawEnd, this, &ScreenShot::onDrawEnd);
-    connect(m_toolBar, &SubGrapToolBar::sigDrawShape, this, &ScreenShot::onDrawShape);
-    connect(m_toolBar, &SubGrapToolBar::sigUndo, this, &ScreenShot::onUndo);
-    connect(m_toolBar, &SubGrapToolBar::sigRedo, this, &ScreenShot::onRedo);
+    connect(m_tbDrawBar, &DrawToolBar::sigDrawStart, this, &ScreenShot::onDrawStart);
+    connect(m_tbDrawBar, &DrawToolBar::sigDrawEnd, this, &ScreenShot::onDrawEnd);
+    connect(m_tbDrawBar, &DrawToolBar::sigDrawShape, this, &ScreenShot::onDrawShape);
+    connect(m_tbDrawBar, &DrawToolBar::sigUndo, this, &ScreenShot::onUndo);
+    connect(m_tbDrawBar, &DrawToolBar::sigRedo, this, &ScreenShot::onRedo);
 
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 }
@@ -402,24 +400,13 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     }
 
     // 绘画工具栏
-    if (isVisible() && m_toolBar) {
-        QPoint topLeft;
-        const int space = 4;
-        topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
-        topLeft.setY(rtSel.bottomRight().y() + width + space);
-        m_toolBar->move(topLeft);
-        m_toolBar->hide();
-    }
-
-    // 绘画工具栏
     if (isVisible() && m_tbDrawBar) {
         QPoint topLeft;
         const int space = 4;
-        topLeft.setX(rtSel.bottomRight().x() - m_toolBar->width());
-        topLeft.setY(rtSel.bottomRight().y() + width + space * 2 + m_toolBar->height());
+        topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
+        topLeft.setY(rtSel.bottomRight().y() + width + space);
         m_tbDrawBar->move(topLeft);
     }
-
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
