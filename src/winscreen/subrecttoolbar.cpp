@@ -13,7 +13,7 @@
 SubRectToolBar::SubRectToolBar(QWidget *parent) : QWidget(parent)
 	, m_tbRect(new QToolButton(this))
 	, m_tbFilledRect(new QToolButton(this))
-	, m_spBorder(new QSpinBox(this))
+    , m_spBorder(new QSpinBox(this))
 {
     initUI();
 }

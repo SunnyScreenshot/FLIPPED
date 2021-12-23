@@ -60,6 +60,8 @@ set(SRCS
     "winscreen/subrecttoolbar.cpp"
     "winscreen/subellipsetoolbar.h"
     "winscreen/subellipsetoolbar.cpp"
+    "winscreen/sublinetoolbar.h"
+    "winscreen/sublinetoolbar.cpp"
     "winscreen/wincolorpick.h"
     "winscreen/wincolorpick.cpp"
     "winscreen/drawhelper.h"
