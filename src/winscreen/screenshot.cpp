@@ -46,9 +46,8 @@ ScreenShot::ScreenShot(QWidget *parent)
         m_drawStep.bFill = bFill;
     });
 
-//    connect(m_tbDrawBar, &DrawToolBar::sigIsFill, this, &ScreenShot::onDrawContextChange);
-
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
+
 }
 
 ScreenShot::~ScreenShot() 

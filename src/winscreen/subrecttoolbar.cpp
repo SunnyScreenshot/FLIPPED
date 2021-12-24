@@ -21,19 +21,6 @@ SubRectToolBar::SubRectToolBar(QWidget *parent) : QWidget(parent)
     connect(m_tbFilledRect, &QToolButton::clicked, this, &SubRectToolBar::onClicked);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 void SubRectToolBar::initUI()
 {
     m_tbRect->setIcon(QIcon(":/resources/icons/normal/rectangle.svg"));

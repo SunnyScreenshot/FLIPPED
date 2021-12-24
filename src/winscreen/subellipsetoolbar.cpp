@@ -17,6 +17,9 @@ SubEllipseToolBar::SubEllipseToolBar(QWidget *parent)
     , m_spBorder(new QSpinBox(this))
 {
     initUI();
+
+    connect(m_tbEllipse, &QToolButton::clicked, this, &SubEllipseToolBar::onClicked);
+    connect(m_tbFilledEllipse, &QToolButton::clicked, this, &SubEllipseToolBar::onClicked);
 }
 
 void SubEllipseToolBar::initUI()
@@ -58,4 +61,14 @@ void SubEllipseToolBar::initUI()
     hLayout->addStretch(0);
 
     setLayout(hLayout);
+}
+
+void SubEllipseToolBar::onClicked(bool checked)
+{
+    Q_UNUSED(checked);
+
+    if (sender() == m_tbEllipse)
+        emit sigIsFill(false);
+    else if (sender() == m_tbFilledEllipse)
+        emit sigIsFill(true);
 }

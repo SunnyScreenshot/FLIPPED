@@ -20,6 +20,12 @@ public:
 private:
     void initUI();
 
+signals:
+    void sigIsFill(bool bFill);
+
+private slots:
+    void onClicked(bool checked);
+
 private:
     QToolButton* m_tbEllipse;
     QToolButton* m_tbFilledEllipse;

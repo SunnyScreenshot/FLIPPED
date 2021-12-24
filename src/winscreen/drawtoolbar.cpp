@@ -26,6 +26,7 @@ DrawToolBar::DrawToolBar(QWidget *parent)
 
     // SubRectToolBar* m_subRectBar;
     connect(m_subRectBar, &SubRectToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
+    connect(m_subEllipseBar, &SubEllipseToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
 
 }
 
