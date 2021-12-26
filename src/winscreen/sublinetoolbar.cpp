@@ -4,10 +4,13 @@
 #include "sublinetoolbar.h"
 #include <QBoxLayout>
 #include <QLabel>
+#include <QComboBox>
+#include <QIcon>
 
 SubLineToolBar::SubLineToolBar(QWidget *parent)
     : QWidget(parent)
-    , m_spBorder(new QSpinBox(this))
+    , m_cbEnds(new QComboBox(this))
+    , m_cbDashes(new QComboBox(this))
 {
     initUI();
 }
@@ -19,5 +22,26 @@ void SubLineToolBar::initUI()
     QHBoxLayout* hLayout = new QHBoxLayout();
     hLayout->setObjectName("hLayout");
     hLayout->setContentsMargins(margin, margin, margin, margin);
-    hLayout->setSpacing(0);
+    hLayout->setSpacing(4);
+
+    QStringList listEnds;
+    listEnds << "SolidLine" << "One-wayArrow" << "Two-wayArrow";
+    for (QString name : listEnds) {
+        QString path = QString(":/resources/icons/line/") + name + ".svg";
+        m_cbEnds->addItem(QIcon(path), "");
+    }
+    hLayout->addWidget(new QLabel(tr("Ends"), this), Qt::AlignLeft);
+    hLayout->addWidget(m_cbEnds);
+
+    QStringList listDashes;
+    listDashes << "DashLine" << "DotLine";
+    for (QString name : listDashes) {
+        QString path = QString(":/resources/icons/line/") + name + ".svg";
+        m_cbDashes->addItem(QIcon(path), "");
+    }
+    hLayout->addWidget(new QLabel(tr("Dashes"), this), Qt::AlignLeft);
+    hLayout->addWidget(m_cbDashes);
+
+    hLayout->addStretch(2);
+    setLayout(hLayout);
 }

@@ -59,7 +59,6 @@ void SubRectToolBar::initUI()
 	hLayout->addWidget(m_spBorder);
 
     hLayout->addStretch(0);
-
     setLayout(hLayout);
 }
 

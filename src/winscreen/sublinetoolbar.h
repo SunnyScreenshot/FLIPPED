@@ -7,6 +7,10 @@
 #include <QSpinBox>
 #include <QWidget>
 
+QT_BEGIN_NAMESPACE
+class QComboBox;
+QT_END_NAMESPACE
+
 // 矩形和椭圆等的线型、宽度
 class SubLineToolBar : public QWidget
 {
@@ -19,7 +23,8 @@ private:
 signals:
 
 private:
-    QSpinBox* m_spBorder;
+    QComboBox* m_cbEnds;
+    QComboBox* m_cbDashes;
 
 };
 
