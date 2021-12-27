@@ -43,5 +43,7 @@
         <file>resources/icons/line/One-wayArrow.svg</file>
         <file>resources/icons/line/SolidLine.svg</file>
         <file>resources/icons/line/Two-wayArrow.svg</file>
+        <file>resources/icons/mosaic/pixelated.svg</file>
+        <file>resources/icons/mosaic/smooth.svg</file>
     </qresource>
 </RCC>
