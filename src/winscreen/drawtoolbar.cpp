@@ -9,11 +9,11 @@ DrawToolBar::DrawToolBar(QWidget *parent)
     , m_subRectBar(new SubRectToolBar(this))
     , m_subEllipseBar(new SubEllipseToolBar(this))
     , m_subLineBar(new SubLineToolBar(this))
+    , m_subMosaicBar(new SubMosaicToolBar(this))
     , m_vLayout(new QVBoxLayout())
     , m_hLine(nullptr)
 {
     initUI();
-
 
     // SubGrapToolBar 的信号传递
     connect(m_subGrapBar, &SubGrapToolBar::sigDownload, this, &DrawToolBar::sigDownload);
@@ -28,7 +28,6 @@ DrawToolBar::DrawToolBar(QWidget *parent)
     // SubRectToolBar* m_subRectBar;
     connect(m_subRectBar, &SubRectToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
     connect(m_subEllipseBar, &SubEllipseToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
-
 }
 
 void DrawToolBar::initUI()
@@ -44,6 +43,7 @@ void DrawToolBar::initUI()
     m_subRectBar->hide();
     m_subEllipseBar->hide();
     m_subLineBar->hide();
+    m_subMosaicBar->hide();
     m_hLine = new XHorizontalLine(m_subGrapBar->width() - margin * 2, this);
     m_hLine->hide();
 
@@ -78,7 +78,8 @@ void DrawToolBar::removeAllSubBar()
     // m_subGrapTb 不移除
     QVector<QWidget *> vec = {m_subRectBar
                              , m_subEllipseBar
-                             , m_subLineBar};
+                             , m_subLineBar
+                             , m_subMosaicBar};
 
     for (auto subBar : vec) {
         if (subBar && m_vLayout)
@@ -105,6 +106,11 @@ void DrawToolBar::onDrawShape(XDrawShape shape, bool checked)
     case XDrawShape::Arrows: {
         if (checked)
             insertSubBar(m_subLineBar);
+        break;
+    }
+    case XDrawShape::Mosaics: {
+        if (checked)
+            insertSubBar(m_subMosaicBar);
         break;
     }
     default:

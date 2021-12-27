@@ -31,7 +31,7 @@ void SubLineToolBar::initUI()
         m_cbEnds->addItem(QIcon(path), "");
     }
     hLayout->addWidget(new QLabel(tr("Ends"), this), Qt::AlignLeft);
-    hLayout->addWidget(m_cbEnds);
+    hLayout->addWidget(m_cbEnds, 2);
 
     QStringList listDashes;
     listDashes << "DashLine" << "DotLine";
@@ -40,7 +40,7 @@ void SubLineToolBar::initUI()
         m_cbDashes->addItem(QIcon(path), "");
     }
     hLayout->addWidget(new QLabel(tr("Dashes"), this), Qt::AlignLeft);
-    hLayout->addWidget(m_cbDashes);
+    hLayout->addWidget(m_cbDashes, 2);
 
     hLayout->addStretch(2);
     setLayout(hLayout);
