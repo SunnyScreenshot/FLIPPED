@@ -12,6 +12,8 @@ public:
 
     virtual void initUI() override;
 
+//    void setMosaic()
+
 };
 
 #endif // SUBMOSAICTOOLBAR_H

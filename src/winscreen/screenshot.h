@@ -32,6 +32,8 @@ private:
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
 
+    void changeMasaic(QPixmap* pixmap, int px = 300);
+
 signals:
 	void sigClearScreen();
 
