@@ -20,56 +20,70 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 endif()
 
 # Sources files
-set(SRCS
 # main
-    "main.cpp"
-    "xglobal.h"
+FILE(GLOB SRCS_MAIN
+    "./*.h"
+    "./*.cpp"
+#    "main.cpp"
+#    "xglobal.h"
+    )
 
 # syswininfo
-    "syswininfo/syswininfo.h"
-    "syswininfo/syswininfo.cpp"
-    "syswininfo/syswininfo_win.h"
-    "syswininfo/syswininfo_win.cpp"
+FILE(GLOB_RECURSE SRCS_SYSWININFO
+    "./syswininfo/*.h"
+    "./syswininfo/*.cpp"
+#    "syswininfo/syswininfo.h"
+#    "syswininfo/syswininfo.cpp"
+#    "syswininfo/syswininfo_win.h"
+#    "syswininfo/syswininfo_win.cpp"
+    )
 
 # widget
-    "widget/xkeysequenceedit.h"
-    "widget/xkeysequenceedit.cpp"
-    "widget/xroundwidget.h"
-    "widget/xroundwidget.cpp"
-    "widget/xhorizontalline.h"
-    "widget/xhorizontalline.cpp"
-    "widget/xverticalline.h"
-    "widget/xverticalline.cpp"
+FILE(GLOB_RECURSE SRCS_WIDGET
+    "./widget/*.h"
+    "./widget/*.cpp"
+#    "widget/xkeysequenceedit.h"
+#    "widget/xkeysequenceedit.cpp"
+#    "widget/xroundwidget.h"
+#    "widget/xroundwidget.cpp"
+#    "widget/xhorizontalline.h"
+#    "widget/xhorizontalline.cpp"
+#    "widget/xverticalline.h"
+#    "widget/xverticalline.cpp"
+    )
 
 # winscreen
-    "winscreen/screenshot.h"
-    "winscreen/screenshot.cpp"
-    "winscreen/rectcalcu.h"
-    "winscreen/rectcalcu.cpp"
-    "winscreen/winmain.h"
-    "winscreen/winmain.cpp"
-    "winscreen/winresetbtn.h"
-    "winscreen/winresetbtn.cpp"
-    "winscreen/tray.h"
-    "winscreen/tray.cpp"
-    "winscreen/drawtoolbar.h"
-    "winscreen/drawtoolbar.cpp"
-    "winscreen/subabstoolbar.h"
-    "winscreen/subabstoolbar.cpp"
-    "winscreen/subgraptoolbar.h"
-    "winscreen/subgraptoolbar.cpp"
-    "winscreen/subrecttoolbar.h"
-    "winscreen/subrecttoolbar.cpp"
-    "winscreen/subellipsetoolbar.h"
-    "winscreen/subellipsetoolbar.cpp"
-    "winscreen/sublinetoolbar.h"
-    "winscreen/sublinetoolbar.cpp"
-    "winscreen/submosaictoolbar.h"
-    "winscreen/submosaictoolbar.cpp"
-    "winscreen/wincolorpick.h"
-    "winscreen/wincolorpick.cpp"
-    "winscreen/drawhelper.h"
-    "winscreen/drawhelper.cpp"
+FILE(GLOB_RECURSE SRCS_WINSCREEN
+    "./winscreen/*.h"
+    "./winscreen/*.cpp"
+#    "winscreen/screenshot.h"
+#    "winscreen/screenshot.cpp"
+#    "winscreen/rectcalcu.h"
+#    "winscreen/rectcalcu.cpp"
+#    "winscreen/winmain.h"
+#    "winscreen/winmain.cpp"
+#    "winscreen/winresetbtn.h"
+#    "winscreen/winresetbtn.cpp"
+#    "winscreen/tray.h"
+#    "winscreen/tray.cpp"
+#    "winscreen/drawtoolbar.h"
+#    "winscreen/drawtoolbar.cpp"
+#    "winscreen/subabstoolbar.h"
+#    "winscreen/subabstoolbar.cpp"
+#    "winscreen/subgraptoolbar.h"
+#    "winscreen/subgraptoolbar.cpp"
+#    "winscreen/subrecttoolbar.h"
+#    "winscreen/subrecttoolbar.cpp"
+#    "winscreen/subellipsetoolbar.h"
+#    "winscreen/subellipsetoolbar.cpp"
+#    "winscreen/sublinetoolbar.h"
+#    "winscreen/sublinetoolbar.cpp"
+#    "winscreen/submosaictoolbar.h"
+#    "winscreen/submosaictoolbar.cpp"
+#    "winscreen/wincolorpick.h"
+#    "winscreen/wincolorpick.cpp"
+#    "winscreen/drawhelper.h"
+#    "winscreen/drawhelper.cpp"
 )
 
 set(PICSHOT_RESOURCES
@@ -107,12 +121,21 @@ link_directories(${CMAKE_BINARY_DIR}/bin
     )
 
 add_executable(${PROJECT_NAME}
-    ${SRCS}
+    ${SRCS_MAIN}
+    ${SRCS_SYSWININFO}
+    ${SRCS_WIDGET}
+    ${SRCS_WINSCREEN}
     ${PICSHOT_RESOURCES}
     )
+
 target_link_libraries(${PROJECT_NAME}
         ${QT5_LIBS_LINK}
         log4qt
         qhotkey
         )
+
+source_group("" FILES ${SRCS_MAIN})
+source_group("syswininfo" FILES ${SRCS_SYSWININFO})
+source_group("widget" FILES ${SRCS_WIDGET})
+source_group("winscreen" FILES ${SRCS_WINSCREEN})
 
