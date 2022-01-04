@@ -24,69 +24,27 @@ endif()
 FILE(GLOB SRCS_MAIN
     "./*.h"
     "./*.cpp"
-#    "main.cpp"
-#    "xglobal.h"
     )
 
 # syswininfo
 FILE(GLOB_RECURSE SRCS_SYSWININFO
     "./syswininfo/*.h"
     "./syswininfo/*.cpp"
-#    "syswininfo/syswininfo.h"
-#    "syswininfo/syswininfo.cpp"
-#    "syswininfo/syswininfo_win.h"
-#    "syswininfo/syswininfo_win.cpp"
     )
 
 # widget
 FILE(GLOB_RECURSE SRCS_WIDGET
     "./widget/*.h"
     "./widget/*.cpp"
-#    "widget/xkeysequenceedit.h"
-#    "widget/xkeysequenceedit.cpp"
-#    "widget/xroundwidget.h"
-#    "widget/xroundwidget.cpp"
-#    "widget/xhorizontalline.h"
-#    "widget/xhorizontalline.cpp"
-#    "widget/xverticalline.h"
-#    "widget/xverticalline.cpp"
     )
 
 # winscreen
 FILE(GLOB_RECURSE SRCS_WINSCREEN
     "./winscreen/*.h"
     "./winscreen/*.cpp"
-#    "winscreen/screenshot.h"
-#    "winscreen/screenshot.cpp"
-#    "winscreen/rectcalcu.h"
-#    "winscreen/rectcalcu.cpp"
-#    "winscreen/winmain.h"
-#    "winscreen/winmain.cpp"
-#    "winscreen/winresetbtn.h"
-#    "winscreen/winresetbtn.cpp"
-#    "winscreen/tray.h"
-#    "winscreen/tray.cpp"
-#    "winscreen/drawtoolbar.h"
-#    "winscreen/drawtoolbar.cpp"
-#    "winscreen/subabstoolbar.h"
-#    "winscreen/subabstoolbar.cpp"
-#    "winscreen/subgraptoolbar.h"
-#    "winscreen/subgraptoolbar.cpp"
-#    "winscreen/subrecttoolbar.h"
-#    "winscreen/subrecttoolbar.cpp"
-#    "winscreen/subellipsetoolbar.h"
-#    "winscreen/subellipsetoolbar.cpp"
-#    "winscreen/sublinetoolbar.h"
-#    "winscreen/sublinetoolbar.cpp"
-#    "winscreen/submosaictoolbar.h"
-#    "winscreen/submosaictoolbar.cpp"
-#    "winscreen/wincolorpick.h"
-#    "winscreen/wincolorpick.cpp"
-#    "winscreen/drawhelper.h"
-#    "winscreen/drawhelper.cpp"
 )
 
-set(PICSHOT_RESOURCES
+set(SRCS_RESOURCES
     Resources.qrc
     )
 
@@ -125,7 +83,7 @@ add_executable(${PROJECT_NAME}
     ${SRCS_SYSWININFO}
     ${SRCS_WIDGET}
     ${SRCS_WINSCREEN}
-    ${PICSHOT_RESOURCES}
+    ${SRCS_RESOURCES}
     )
 
 target_link_libraries(${PROJECT_NAME}
