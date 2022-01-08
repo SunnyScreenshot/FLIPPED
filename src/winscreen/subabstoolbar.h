@@ -23,12 +23,13 @@ public:
 protected:
     void initAbsTb(QString tbPath, QString tbToolTip);
     void initFilledAbsTb(QString tbPath, QString tbToolTip);
-
+	
 signals:
     void sigIsFill(bool bFill);
 
 public slots:
     void onClicked(bool checked);
+	void onToggleOnlyOneBtn(bool bFill);
 
 private:
     QToolButton* m_tbAbs;

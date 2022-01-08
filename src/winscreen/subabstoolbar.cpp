@@ -18,11 +18,13 @@ SubAbsToolBar::SubAbsToolBar(QWidget *parent)
     m_tbAbs->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbAbs->setAutoRaise(true);
     m_tbAbs->setChecked(true);
+	m_tbAbs->setCheckable(true);
 
     m_tbFilledAbs->setIconSize(QSize(iconWidth, iconWidth));
     m_tbFilledAbs->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbFilledAbs->setAutoRaise(true);
     m_tbFilledAbs->setChecked(true);
+	m_tbFilledAbs->setCheckable(true);
 
     setContentsMargins(0, 0, 0, 0);
     const int margin = 0;
@@ -42,6 +44,7 @@ SubAbsToolBar::SubAbsToolBar(QWidget *parent)
 
     connect(m_tbAbs, &QToolButton::clicked, this, &SubAbsToolBar::onClicked);
     connect(m_tbFilledAbs, &QToolButton::clicked, this, &SubAbsToolBar::onClicked);
+	connect(this, &SubAbsToolBar::sigIsFill, this, &SubAbsToolBar::onToggleOnlyOneBtn);
 }
 
 void SubAbsToolBar::initAbsTb(QString tbPath, QString tbToolTip)
@@ -60,6 +63,18 @@ void SubAbsToolBar::initFilledAbsTb(QString tbPath, QString tbToolTip)
 
     m_tbFilledAbs->setIcon(QIcon(tbPath));
     m_tbFilledAbs->setToolTip(tbToolTip);
+}
+
+// 确保只有一个被处于被点击状态
+void SubAbsToolBar::onToggleOnlyOneBtn(bool bFill)
+{
+	if (bFill) {
+		m_tbAbs->setChecked(false);
+		m_tbFilledAbs->setChecked(true);
+	} else {
+		m_tbAbs->setChecked(true);
+		m_tbFilledAbs->setChecked(false);
+	}
 }
 
 void SubAbsToolBar::onClicked(bool checked)
