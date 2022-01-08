@@ -46,6 +46,10 @@ struct  XDrawStep
 //    QFont font = QFont();
 //    int fontSize = 16;
 
+	// Mosaic ----------------
+	//bool mscIsSmooth = false;    // true 毛玻璃模糊；false 像素模糊;  isFill 代替了此变量
+	int mscPx = 3; // 马赛克默认模糊块
+
     // test
     QPen pen = QPen(Qt::red);
     int penWidth = 2;

@@ -305,6 +305,18 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
         break;
     }
     case XDrawShape::Mosaics: {
+		if (!m_currPixmap)
+			return;
+
+		if (!step.bFill) {
+			// setMosaicSmooth
+		} else {
+			// TODO: 多绘画几个就略有点卡顿？？
+			QPixmap mosaicPixmap = m_currPixmap->copy(QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
+			QImage& image = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
+			pa.drawImage(step.rt, image);
+		}
+
         break;
     }
     default:
@@ -419,7 +431,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     // 绘画工具栏
     if (isVisible() && m_tbDrawBar) {
         QPoint topLeft;
-        const int space = 4;
+        const int space = 8;
         topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
         topLeft.setY(rtSel.bottomRight().y() + width + space);
         m_tbDrawBar->move(topLeft);
@@ -748,7 +760,7 @@ double ScreenShot::getDevicePixelRatio(QScreen * screen)
 // test 马赛克
 void ScreenShot::changeMasaic(QPixmap* pixmap, int px)
 {
-    if (!m_currPixmap)
+    if (!pixmap)
         return;
 
     const QImage& image = pixmap->toImage();

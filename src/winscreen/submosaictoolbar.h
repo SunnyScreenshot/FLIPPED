@@ -14,6 +14,9 @@ public:
 
 //    void setMosaic()
 
+	QImage setMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
+	static QImage setMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
+
 };
 
 #endif // SUBMOSAICTOOLBAR_H
