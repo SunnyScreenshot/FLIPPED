@@ -390,14 +390,14 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
-    // 绘画图案
-    pen.setWidth(width / 2);
-    pen.setColor(Qt::yellow);
-    pa.setPen(pen);
-    drawStep(pa, m_drawStep, false);
-
+	// 绘画图案
     for (XDrawStep& it : m_vDrawed)
         drawStep(pa, it);
+
+	pen.setWidth(width / 2);
+	pen.setColor(Qt::yellow);
+	pa.setPen(pen);
+	drawStep(pa, m_drawStep, false);
 
     // 屏幕遮罩
     QPainterPath path;
