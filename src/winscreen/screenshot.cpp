@@ -285,10 +285,16 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 
     switch (step.shape) {
     case XDrawShape::Rectangles: {
+		if (step.rt.isEmpty())
+			break;
+
         pa.drawRect(step.rt);
         break;
     }
     case XDrawShape::Ellipses: {
+		if (step.rt.isEmpty())
+			break;
+
         pa.drawEllipse(step.rt.center(), step.rt.width() / 2, step.rt.height() / 2);
         break;
     }
@@ -311,12 +317,14 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		if (!step.bFill) {
 			// setMosaicSmooth
 		} else {
-			// TODO: 多绘画几个就略有点卡顿？？
+			// TODO: 多绘画几个就略有点卡顿，一切到此处便会内存先增加后恢复
+			if (step.rt.isEmpty())  // 优化，删除就很明显
+				break;
+
 			QPixmap mosaicPixmap = m_currPixmap->copy(QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
             const QImage image = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
             pa.drawImage(step.rt, image);
 		}
-
         break;
     }
     default:
