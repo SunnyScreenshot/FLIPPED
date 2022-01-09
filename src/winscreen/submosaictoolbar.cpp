@@ -16,10 +16,10 @@ void SubMosaicToolBar::initUI()
 	initFilledAbsTb(":/resources/icons/mosaic/pixelated.svg", tr("Pixelated"));
 
 
-	addWidget(new QLabel(tr("Strength:"), this));
-	QSlider* slider = new QSlider(Qt::Horizontal, this);
-	slider->setTickPosition(QSlider::TicksAbove);
-	addWidget(slider);
+	//addWidget(new QLabel(tr("Strength:"), this));
+	//QSlider* slider = new QSlider(Qt::Horizontal, this);
+	//slider->setTickPosition(QSlider::TicksAbove);
+	//addWidget(slider);
 	addStretch(0);
 }
 
