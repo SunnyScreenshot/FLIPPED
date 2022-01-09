@@ -1,4 +1,4 @@
-#ifndef SUBMOSAICTOOLBAR_H
+ï»¿#ifndef SUBMOSAICTOOLBAR_H
 #define SUBMOSAICTOOLBAR_H
 
 #include "subabstoolbar.h"
@@ -14,8 +14,8 @@ public:
 
 //    void setMosaic()
 
-	QImage setMosaicSmooth(QPixmap* pixmap, int px);      // Ã«²£Á§ÂíÈü¿Ë
-	static QImage setMosaicPixlelated(QPixmap* pixmap, int px = 20);  // ÏñËØ¼¶ÂíÈü¿Ë
+	QImage setMosaicSmooth(QPixmap* pixmap, int px);      // æ¯›ç»ç’ƒé©¬èµ›å…‹
+	static QImage setMosaicPixlelated(QPixmap* pixmap, int px = 20);  // åƒç´ çº§é©¬èµ›å…‹
 
 };
 
