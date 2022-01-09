@@ -313,8 +313,8 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		} else {
 			// TODO: 多绘画几个就略有点卡顿？？
 			QPixmap mosaicPixmap = m_currPixmap->copy(QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
-			QImage& image = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
-			pa.drawImage(step.rt, image);
+            const QImage image = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
+            pa.drawImage(step.rt, image);
 		}
 
         break;
