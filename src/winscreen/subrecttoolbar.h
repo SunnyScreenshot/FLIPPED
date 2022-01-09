@@ -5,6 +5,7 @@
 #define WINDRAWRECT_H
 
 #include "drawhelper.h"
+#include "subabstoolbar.h"
 #include <QComboBox>
 #include <QSpinBox>
 #include <QStringList>
@@ -17,24 +18,14 @@ class QToolButton;
 class QSpinBox;
 QT_END_NAMESPACE
 
-class SubRectToolBar : public QWidget
+class SubRectToolBar : public SubAbsToolBar
 {
     Q_OBJECT
 public:
     explicit SubRectToolBar(QWidget *parent = nullptr);
 
+	virtual void initUI() override;
 private:
-    void initUI();
-
-signals:
-    void sigIsFill(bool bFill);
-
-private slots:
-    void onClicked(bool checked);
-
-private:
-    QToolButton* m_tbRect;
-    QToolButton* m_tbFilledRect;
 
 //    QToolButton* m_tbColorBorder;
     QSpinBox* m_spBorder;
