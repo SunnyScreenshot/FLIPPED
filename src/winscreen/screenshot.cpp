@@ -30,7 +30,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	m_screens = QApplication::screens();
 
 //    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-//    setFixedSize(QApplication::desktop()->size());
+    setFixedSize(QApplication::desktop()->size());
     resize(1920, 1080);
 
 //    m_draw = new XDraw(this);
@@ -48,7 +48,6 @@ ScreenShot::ScreenShot(QWidget *parent)
     });
 
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
-
 }
 
 ScreenShot::~ScreenShot() 
@@ -59,7 +58,6 @@ ScreenShot::~ScreenShot()
 void ScreenShot::onClearScreen()
 {
 	//m_screens、m_primaryScreen 还保留
-
 	delete m_currPixmap;
 	m_currPixmap = nullptr;
 
@@ -68,7 +66,7 @@ void ScreenShot::onClearScreen()
 
 	m_rtCalcu.clear();
     m_cursorArea = CursorArea::UnknowCursorArea;
-}
+};
 
 void ScreenShot::onDrawShape(XDrawShape shape)
 {
@@ -119,12 +117,8 @@ void ScreenShot::onDownload()
     int elapsed = startTime.msecsTo(stopTime);
     qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
 
-    changeMasaic(&m_savePixmap);
-
     emit sigClearScreen();
     hide();
-
-
 }
 
 void ScreenShot::onCopy()
@@ -763,42 +757,6 @@ double ScreenShot::getDevicePixelRatio(QScreen * screen)
 		return 0.0;
 	else
         return screen->devicePixelRatio();
-}
-
-// test 马赛克
-void ScreenShot::changeMasaic(QPixmap* pixmap, int px)
-{
-    if (!pixmap)
-        return;
-
-    const QImage& image = pixmap->toImage();
-    QImage* pImage = const_cast<QImage *>(&image);
-
-
-    const int width = image.width();
-    const int height = image.height();
-
-    for (int i = 0; i < width; i += px) {
-        for (int j = 0; j < height; j += px) {
-            QSize size(px, px);
-            if (width - i < px)
-                size.setWidth(width - i);
-            if (height - j < px)
-                size.setHeight(height - j);
-
-            const QPoint topLeft(i, j);
-            const QRect rt(topLeft, size);
-
-//            qInfo()<<"--------->>i:"<< i << "  j:" << j << "  rt:" << rt;
-            QColor color = pImage->pixelColor(rt.topLeft());
-            for (int x = rt.x(); x < rt.right(); ++x) {
-                for (int y = rt.y(); y < rt.bottom(); ++y)
-                    pImage->setPixelColor(x, y, color);
-            }
-        }
-    }
-
-    pImage->save(CURR_TIME + "masaic.png");
 }
 
 double ScreenShot::getScale(QScreen * screen)

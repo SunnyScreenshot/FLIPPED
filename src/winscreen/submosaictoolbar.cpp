@@ -15,7 +15,6 @@ void SubMosaicToolBar::initUI()
 	initAbsTb(":/resources/icons/mosaic/smooth.svg", tr("Smooth"));
 	initFilledAbsTb(":/resources/icons/mosaic/pixelated.svg", tr("Pixelated"));
 
-
 	//addWidget(new QLabel(tr("Strength:"), this));
 	//QSlider* slider = new QSlider(Qt::Horizontal, this);
 	//slider->setTickPosition(QSlider::TicksAbove);

@@ -193,6 +193,5 @@ void SubGrapToolBar::onToolBtn()
     } else if (toolBtn->objectName() == "copy") {
         emit sigCopy();
     }
-
 }
 

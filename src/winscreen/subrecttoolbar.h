@@ -26,8 +26,6 @@ public:
 
 	virtual void initUI() override;
 private:
-
-//    QToolButton* m_tbColorBorder;
     QSpinBox* m_spBorder;
 //    QToolButton* m_tbRoundCorners;
 //    QComboBox* m_cbDashes;
