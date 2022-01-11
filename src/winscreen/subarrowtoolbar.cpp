@@ -1,13 +1,13 @@
 //
 // Created by XMuli <xmulitech@gmail.com> on 2021/12/23.
 //
-#include "sublinetoolbar.h"
+#include "subarrowtoolbar.h"
 #include <QBoxLayout>
 #include <QLabel>
 #include <QComboBox>
 #include <QIcon>
 
-SubLineToolBar::SubLineToolBar(QWidget *parent)
+SubArrowToolBar::SubArrowToolBar(QWidget *parent)
     : QWidget(parent)
     , m_cbEnds(new QComboBox(this))
     , m_cbDashes(new QComboBox(this))
@@ -15,7 +15,7 @@ SubLineToolBar::SubLineToolBar(QWidget *parent)
     initUI();
 }
 
-void SubLineToolBar::initUI()
+void SubArrowToolBar::initUI()
 {
     setContentsMargins(0, 0, 0, 0);
     const int margin = 0;

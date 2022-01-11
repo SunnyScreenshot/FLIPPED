@@ -8,7 +8,7 @@ DrawToolBar::DrawToolBar(QWidget *parent)
     , m_subGrapBar(new SubGrapToolBar(this))
     , m_subRectBar(new SubRectToolBar(this))
     , m_subEllipseBar(new SubEllipseToolBar(this))
-    , m_subLineBar(new SubLineToolBar(this))
+    , m_subArrowBar(new SubArrowToolBar(this))
     , m_subMosaicBar(new SubMosaicToolBar(this))
     , m_vLayout(new QVBoxLayout())
     , m_hLine(nullptr)
@@ -44,7 +44,7 @@ void DrawToolBar::initUI()
 
     m_subRectBar->hide();
     m_subEllipseBar->hide();
-    m_subLineBar->hide();
+    m_subArrowBar->hide();
     m_subMosaicBar->hide();
     m_hLine = new XHorizontalLine(m_subGrapBar->width() - margin * 2, this);
     m_hLine->hide();
@@ -80,7 +80,7 @@ void DrawToolBar::removeAllSubBar()
     // m_subGrapTb 不移除
     QVector<QWidget *> vec = {m_subRectBar
                              , m_subEllipseBar
-                             , m_subLineBar
+                             , m_subArrowBar
                              , m_subMosaicBar};
 
     for (auto subBar : vec) {
@@ -107,7 +107,7 @@ void DrawToolBar::onDrawShape(XDrawShape shape, bool checked)
     }
     case XDrawShape::Arrows: {
         if (checked)
-            insertSubBar(m_subLineBar);
+            insertSubBar(m_subArrowBar);
         break;
     }
     case XDrawShape::Mosaics: {

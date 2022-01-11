@@ -1,8 +1,8 @@
 //
 // Created by XMuli <xmulitech@gmail.com> on 2021/12/23.
 //
-#ifndef SUBLINETOOLBAR_H
-#define SUBLINETOOLBAR_H
+#ifndef SUBARROWTOOLBAR_H
+#define SUBARROWTOOLBAR_H
 
 #include <QSpinBox>
 #include <QWidget>
@@ -12,11 +12,11 @@ class QComboBox;
 QT_END_NAMESPACE
 
 // 矩形和椭圆等的线型、宽度
-class SubLineToolBar : public QWidget
+class SubArrowToolBar : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SubLineToolBar(QWidget *parent = nullptr);
+    explicit SubArrowToolBar(QWidget *parent = nullptr);
 
 private:
     void initUI();

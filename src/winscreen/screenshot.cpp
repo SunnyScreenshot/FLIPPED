@@ -303,14 +303,14 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
         pa.drawEllipse(step.rt.center(), step.rt.width() / 2, step.rt.height() / 2);
         break;
     }
-    case XDrawShape::Lines: {
-        pa.drawLine(step.startPos, step.endPos);
-        break;
-    }
     case XDrawShape::Arrows: {
         pa.drawLine(step.startPos, step.endPos);
         break;
     }
+	case XDrawShape::Brush: {
+		pa.drawLine(step.startPos, step.endPos);
+		break;
+	}
     case XDrawShape::Texts: {
         pa.drawText(step.rt.topLeft(), step.text);
         break;

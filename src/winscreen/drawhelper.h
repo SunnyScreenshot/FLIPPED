@@ -22,41 +22,54 @@ enum class XDrawState {
 enum class XDrawShape {
     Rectangles,
     Ellipses,
-    Lines,
+    Brush,
     Arrows,
     Texts,
     Mosaics,
     NoDraw
 };
 
+//Rectangles,
+//Ellipses,
+//Arrows,
+//Lines,
+//Texts,
+//Mosaics,
+//NoDraw
 struct  XDrawStep
 {
-    QPoint startPos = QPoint();
-    QPoint endPos = QPoint();
-    QRect rt = QRect();        // 初始绘画位置
-    XDrawShape shape = XDrawShape::NoDraw;  // 绘画类型
+	// 公共元素 ------------------
+    QPoint startPos = QPoint();             // 起点
+    QPoint endPos = QPoint();               // 终点
+    QRect rt = QRect();                     // 初始绘画位置
+    XDrawShape shape = XDrawShape::NoDraw;  // 绘画形状
+	bool bFill = false;                     // 绘画类型
 
-    int rX = 58; // 短长轴
-    int rY = 58; // 竖长轴
+	QPen pen = QPen(Qt::red);
+	int penWidth = 2;
+	QBrush brush = QBrush(Qt::NoBrush);
+	int brushWidth = 1;
+
+	// Rectangles ----------------
+
+
+	// Ellipses ------------------
+    int rX = 58;                             // 短长轴
+    int rY = 58;                             // 竖长轴
+
+	// Arrows --------------------
+
+	// Brush(Customized path) ----
+	// CusPath;
+
+
+	// Texts ---------------------
     QString text = "==Test Text==";
-//    QPen pen = QPen(Qt::NoPen);
-//    int penWidth = 1;
-//    QBrush brush = QBrush(Qt::NoBrush);
-//    int brushWidth = 1;
-//    QFont font = QFont();
-//    int fontSize = 16;
+	QFont font = QFont();
+	int fontSize = 16;
 
-	// Mosaic ----------------
-	//bool mscIsSmooth = false;    // true 毛玻璃模糊；false 像素模糊;  isFill 代替了此变量
+	// Mosaic ---------------------
 	int mscPx = 3; // 马赛克默认模糊块
-
-    // test
-    QPen pen = QPen(Qt::red);
-    int penWidth = 2;
-    QBrush brush = QBrush(Qt::NoBrush);
-    QFont font = QFont();
-    int fontSize = 16;
-    bool bFill = false;
 
     void clear();
 };
