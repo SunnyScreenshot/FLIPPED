@@ -29,8 +29,19 @@ ScreenShot::ScreenShot(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
-//    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-    setFixedSize(QApplication::desktop()->size());
+	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
+ //   setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+ //   setFixedSize(m_screens[0]->virtualGeometry().size());
+	//move(m_screens[0]->virtualGeometry().topLeft());
+
+	//int x1 = 0;
+	//int x2 = 0;
+	//int y1 = 0;
+	//int y2 = 0;
+	//m_screens[0]->virtualGeometry().getRect(&x1, &y1, &x2, &y2);
+	//QRect rt(x1, y1, x2, y2);
+	//qInfo() << "-------->" << m_screens[0]->virtualGeometry() << "  " << QApplication::desktop()->rect() << "   " << rt;
+
     resize(1920, 1080);
 
 //    m_draw = new XDraw(this);

@@ -17,14 +17,14 @@ SubAbsToolBar::SubAbsToolBar(QWidget *parent)
     m_tbAbs->setIconSize(QSize(iconWidth, iconWidth));
     m_tbAbs->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbAbs->setAutoRaise(true);
-    m_tbAbs->setChecked(true);
 	m_tbAbs->setCheckable(true);
+    m_tbAbs->setChecked(true);
 
     m_tbFilledAbs->setIconSize(QSize(iconWidth, iconWidth));
     m_tbFilledAbs->setToolButtonStyle(Qt::ToolButtonIconOnly);
     m_tbFilledAbs->setAutoRaise(true);
-    m_tbFilledAbs->setChecked(true);
 	m_tbFilledAbs->setCheckable(true);
+    m_tbFilledAbs->setChecked(false);
 
     setContentsMargins(0, 0, 0, 0);
     const int margin = 0;
