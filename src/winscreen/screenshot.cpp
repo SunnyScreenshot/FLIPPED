@@ -29,10 +29,16 @@ ScreenShot::ScreenShot(QWidget *parent)
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
+	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
+	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
+
+	qInfo() << "#-------------------------->" << geom << m_screens[0]->size() << m_screens[1]->size();
+
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
- //   setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
- //   setFixedSize(m_screens[0]->virtualGeometry().size());
-	//move(m_screens[0]->virtualGeometry().topLeft());
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+    setFixedSize(geom.size());
+	move(geom.topLeft());
+    //resize(1920, 1080);
 
 	//int x1 = 0;
 	//int x2 = 0;
@@ -40,9 +46,8 @@ ScreenShot::ScreenShot(QWidget *parent)
 	//int y2 = 0;
 	//m_screens[0]->virtualGeometry().getRect(&x1, &y1, &x2, &y2);
 	//QRect rt(x1, y1, x2, y2);
-	//qInfo() << "-------->" << m_screens[0]->virtualGeometry() << "  " << QApplication::desktop()->rect() << "   " << rt;
+	qInfo() << "-------->" << m_screens[0]->virtualGeometry() << "  " << QApplication::desktop()->rect() << "   " << m_screens[0]->virtualGeometry().topLeft();
 
-    resize(1920, 1080);
 
 //    m_draw = new XDraw(this);
     connect(m_tbDrawBar, &DrawToolBar::sigDownload, this, &ScreenShot::onDownload);
@@ -148,6 +153,7 @@ void ScreenShot::onCopy()
 //    QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files件(*.*)"));
 //    QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png");
 
+
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setPixmap(m_savePixmap);
 
@@ -178,7 +184,9 @@ QPixmap* ScreenShot::getVirtualScreen()
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
 	if (!m_currPixmap) {
 		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
-		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
+		const QRect geom = desktop->geometry(); // 多屏的矩形取并集
+		qInfo() << "------------------------------->" << geom << desktop->screenGeometry() << desktop->availableGeometry();
+		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
     }
 
     return m_currPixmap;
