@@ -35,10 +35,14 @@ ScreenShot::ScreenShot(QWidget *parent)
 	qInfo() << "#-------------------------->" << geom << m_screens[0]->size() << m_screens[1]->size();
 
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+
+#if 0
+	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
     setFixedSize(geom.size());
 	move(geom.topLeft());
-    //resize(1920, 1080);
+#else
+	resize(1920, 1080);
+#endif
 
 	//int x1 = 0;
 	//int x2 = 0;
@@ -184,9 +188,14 @@ QPixmap* ScreenShot::getVirtualScreen()
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
 	if (!m_currPixmap) {
 		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
-		const QRect geom = desktop->geometry(); // 多屏的矩形取并集
-		qInfo() << "------------------------------->" << geom << desktop->screenGeometry() << desktop->availableGeometry();
-		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
+
+#if 0
+		//const QRect geom = desktop->geometry(); // 多屏的矩形取并集
+		//qInfo() << "------------------------------->" << geom << desktop->screenGeometry() << desktop->availableGeometry();
+		//m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
+#else
+		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
+#endif
     }
 
     return m_currPixmap;
@@ -316,7 +325,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
         break;
     }
 	case XDrawShape::Brush: {
-		pa.drawLine(step.startPos, step.endPos);
+		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
 	}
     case XDrawShape::Texts: {
@@ -652,6 +661,12 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
        m_drawStep.endPos = event->pos();
        m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
+
+	   //if (/*选中为画刷*/)
+	   //{
+	   m_drawStep.custPath.append(event->pos());
+	   //}
+
 //       qDebug() << "-----MOVE------Drawing->:" << m_drawStep.rt << (int)m_drawStep.shape;
 // << m_rtCalcu.getSelRect() << pos() << "【" << m_rtCalcu.getSelRect().contains(pos(), false) << cursor();
         break;

@@ -8,6 +8,7 @@
 #include <QPen>
 #include <QRect>
 #include <QFont>
+#include <QPainterPath>
 
 // C++11 新增带作用域的枚举，用 enum class  或enum struct（两者等价）声明。
 // https://blog.csdn.net/luckysym/article/details/1666114
@@ -60,7 +61,7 @@ struct  XDrawStep
 	// Arrows --------------------
 
 	// Brush(Customized path) ----
-	// CusPath;
+	QVector<QPoint> custPath;
 
 
 	// Texts ---------------------
