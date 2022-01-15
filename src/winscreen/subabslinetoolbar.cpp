@@ -30,7 +30,6 @@ void SubAbsLineToolBar::initUI()
     hLayout->setContentsMargins(margin, margin, margin, margin);
     hLayout->setSpacing(4);
 
-
 	QMap<QString, LineEnds> mapEnds = { {"EmptyToEmpty", LineEnds::EmptyToEmpty}
 		, {"EmptyToRecesedArrow", LineEnds::EmptyToRecesedArrow}
 		, {"DotToRecesedArrow", LineEnds::DotToRecesedArrow}

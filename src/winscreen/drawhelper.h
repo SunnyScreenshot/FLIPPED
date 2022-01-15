@@ -65,31 +65,29 @@ using namespace XC;
 //Mosaics,
 //NoDraw
 struct  XDrawStep
-{
-	// 公共元素 ------------------
-    QPoint startPos = QPoint();             // 起点
-    QPoint endPos = QPoint();               // 终点
-    QRect rt = QRect();                     // 初始绘画位置
-    DrawShape shape = DrawShape::NoDraw;  // 绘画形状
-	bool bFill = false;                     // 绘画类型
+{   // 公共元素 ------------------
+	QPoint startPos;                         // 起点
+	QPoint endPos;                           // 终点
+	QRect rt;                                // 初始绘画位置
+    DrawShape shape = DrawShape::NoDraw;     // 绘画形状
+	bool bFill = false;                      // 绘画类型
 
 	QPen pen = QPen(Qt::red);
-	int penWidth = 2;
-	QBrush brush = QBrush(Qt::NoBrush);
-	int brushWidth = 1;
+	int penWidth = 2;                         // 画笔宽度
+	QBrush brush = QBrush(Qt::NoBrush);       // 画刷
+	int brushWidth = 1;                       // 画刷宽度
+	int transparency = 1;                     // 透明度
 
 	// Rectangles ----------------
 
-
 	// Ellipses ------------------
-    int rX = 58;                             // 短长轴
-    int rY = 58;                             // 竖长轴
-
-	// Arrows --------------------
-
-	// Brush(Customized path) ----
-	QVector<QPoint> custPath;
-
+    int rX = 58;                              // 短长轴
+    int rY = 58;                              // 竖长轴
+	
+	// Arrows || Brush(Customized path) ---
+	LineEnds lineEnd = LineEnds::EmptyToEmpty;
+	LineDashes lineDashe = LineDashes::SolidLine;
+	QVector<QPoint> custPath;                 // 手绘路径
 
 	// Texts ---------------------
     QString text = "==Test Text==";
@@ -99,7 +97,7 @@ struct  XDrawStep
 	// Mosaic ---------------------
 	int mscPx = 3; // 马赛克默认模糊块
 
-    void clear();
+	void clear();
 };
 
 class DrawHelper : public QObject
