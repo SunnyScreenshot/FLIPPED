@@ -10,25 +10,52 @@
 #include <QFont>
 #include <QPainterPath>
 
-// C++11 新增带作用域的枚举，用 enum class  或enum struct（两者等价）声明。
-// https://blog.csdn.net/luckysym/article/details/1666114
-enum class XDrawState {
-    Draw,
-    Move,
-    Delete,
-    Wateing,
-    Unknow
-};
+namespace XC {
+	// C++11 新增带作用域的枚举，用 enum class  或enum struct（两者等价）声明。
+	// https://blog.csdn.net/luckysym/article/details/1666114
+	enum class DrawState {
+		Draw,
+		Move,
+		Delete,
+		Wateing,
+		Unknow
+	};
 
-enum class XDrawShape {
-    Rectangles,
-    Ellipses,
-    Brush,
-    Arrows,
-    Texts,
-    Mosaics,
-    NoDraw
-};
+	enum class DrawShape {
+		Rectangles,
+		Ellipses,
+		Brush,
+		Arrows,
+		Texts,
+		Mosaics,
+		NoDraw
+	};
+
+	enum class LineEnds {
+		EmptyToEmpty,
+		EmptyToRecesedArrow,
+		DotToRecesedArrow,
+		EmptyToArrow,
+		DotToArrow,
+		EmptyToDot,
+		DotToEmpty,
+		DotToDot,
+		RecesedArrowToRecesedArrow,
+		ArrowToArrow
+	};
+
+	enum class LineDashes {
+		SolidLine,
+		DashLine,
+		DotLine,
+		DashDotLine,
+		DashDotDotLine,
+		CustomDashLine
+	};
+}
+
+using namespace XC;
+
 
 //Rectangles,
 //Ellipses,
@@ -43,7 +70,7 @@ struct  XDrawStep
     QPoint startPos = QPoint();             // 起点
     QPoint endPos = QPoint();               // 终点
     QRect rt = QRect();                     // 初始绘画位置
-    XDrawShape shape = XDrawShape::NoDraw;  // 绘画形状
+    DrawShape shape = DrawShape::NoDraw;  // 绘画形状
 	bool bFill = false;                     // 绘画类型
 
 	QPen pen = QPen(Qt::red);

@@ -11,7 +11,7 @@ QT_BEGIN_NAMESPACE
 class QComboBox;
 QT_END_NAMESPACE
 
-// 矩形和椭圆等的线型、宽度
+// 抽象绘画线：直线和画刷线
 class SubAbsLineToolBar : public QWidget
 {
     Q_OBJECT
@@ -20,12 +20,12 @@ public:
 
 private:
     void initUI();
+
 signals:
 
 private:
     QComboBox* m_cbEnds;
     QComboBox* m_cbDashes;
-
 };
 
 #endif // SUBLINETOOLBAR_H

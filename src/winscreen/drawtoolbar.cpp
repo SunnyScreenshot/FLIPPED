@@ -9,6 +9,7 @@ DrawToolBar::DrawToolBar(QWidget *parent)
     , m_subRectBar(new SubRectToolBar(this))
     , m_subEllipseBar(new SubEllipseToolBar(this))
     , m_subArrowBar(new SubAbsLineToolBar(this))
+	, m_subBrushBar(new SubAbsLineToolBar(this))
     , m_subMosaicBar(new SubMosaicToolBar(this))
     , m_vLayout(new QVBoxLayout())
     , m_hLine(nullptr)
@@ -44,7 +45,8 @@ void DrawToolBar::initUI()
 
     m_subRectBar->hide();
     m_subEllipseBar->hide();
-    m_subArrowBar->hide();
+	m_subArrowBar->hide();
+	m_subBrushBar->hide();
     m_subMosaicBar->hide();
     m_hLine = new XHorizontalLine(m_subGrapBar->width() - margin * 2, this);
     m_hLine->hide();
@@ -81,6 +83,7 @@ void DrawToolBar::removeAllSubBar()
     QVector<QWidget *> vec = {m_subRectBar
                              , m_subEllipseBar
                              , m_subArrowBar
+							 , m_subBrushBar
                              , m_subMosaicBar};
 
     for (auto subBar : vec) {
@@ -89,28 +92,33 @@ void DrawToolBar::removeAllSubBar()
     }
 }
 
-void DrawToolBar::onDrawShape(XDrawShape shape, bool checked)
+void DrawToolBar::onDrawShape(DrawShape shape, bool checked)
 {
     removeAllSubBar();
 
 
     switch (shape) {
-    case XDrawShape::Rectangles: {
+    case DrawShape::Rectangles: {
         if (checked)
             insertSubBar(m_subRectBar);
         break;
     }
-    case XDrawShape::Ellipses: {
+    case DrawShape::Ellipses: {
         if (checked)
             insertSubBar(m_subEllipseBar);
         break;
     }
-    case XDrawShape::Arrows: {
+    case DrawShape::Arrows: {
         if (checked)
             insertSubBar(m_subArrowBar);
         break;
     }
-    case XDrawShape::Mosaics: {
+	case DrawShape::Brush: {
+		if (checked)
+			insertSubBar(m_subBrushBar);
+		break;
+	}
+    case DrawShape::Mosaics: {
         if (checked)
             insertSubBar(m_subMosaicBar);
         break;

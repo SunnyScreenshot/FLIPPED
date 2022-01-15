@@ -31,7 +31,7 @@ private:
 signals:
     void sigDrawStart();       // 处于绘画状态
     void sigDrawEnd();         // 处于绘画状态
-    void sigDrawShape(XDrawShape shape, bool checked);
+    void sigDrawShape(DrawShape shape, bool checked);
     void sigUndo();
     void sigRedo();
     void sigDownload();

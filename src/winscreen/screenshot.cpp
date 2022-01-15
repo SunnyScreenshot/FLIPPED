@@ -88,7 +88,7 @@ void ScreenShot::onClearScreen()
     m_cursorArea = CursorArea::UnknowCursorArea;
 };
 
-void ScreenShot::onDrawShape(XDrawShape shape)
+void ScreenShot::onDrawShape(DrawShape shape)
 {
     m_drawStep.shape = shape;
     qDebug() << "--------@onDrawShape:" << int(m_drawStep.shape);
@@ -283,7 +283,7 @@ void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
 // 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；false 使用上一个环境的
 void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 {
-    if (XDrawShape::NoDraw == step.shape)
+    if (DrawShape::NoDraw == step.shape)
         return;
 
     if (isUseOwn) {
@@ -306,33 +306,33 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
     }
 
     switch (step.shape) {
-    case XDrawShape::Rectangles: {
+    case DrawShape::Rectangles: {
 		if (step.rt.isEmpty())
 			break;
 
         pa.drawRect(step.rt);
         break;
     }
-    case XDrawShape::Ellipses: {
+    case DrawShape::Ellipses: {
 		if (step.rt.isEmpty())
 			break;
 
         pa.drawEllipse(step.rt.center(), step.rt.width() / 2, step.rt.height() / 2);
         break;
     }
-    case XDrawShape::Arrows: {
+    case DrawShape::Arrows: {
         pa.drawLine(step.startPos, step.endPos);
         break;
     }
-	case XDrawShape::Brush: {
+	case DrawShape::Brush: {
 		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
 	}
-    case XDrawShape::Texts: {
+    case DrawShape::Texts: {
         pa.drawText(step.rt.topLeft(), step.text);
         break;
     }
-    case XDrawShape::Mosaics: {
+    case DrawShape::Mosaics: {
 		if (!m_currPixmap)
 			return;
 

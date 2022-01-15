@@ -27,7 +27,7 @@ signals:
     // SubGrapToolBar
     void sigDrawStart();
     void sigDrawEnd();
-    void sigDrawShape(XDrawShape shape, bool checked);
+    void sigDrawShape(DrawShape shape, bool checked);
     void sigUndo();
     void sigRedo();
     void sigDownload();
@@ -40,14 +40,15 @@ signals:
     void sigDrawContexChange(XDrawStep step); // 切换画笔、宽度等
 
 public slots:
-    void onDrawShape(XDrawShape shape, bool checked);
+    void onDrawShape(DrawShape shape, bool checked);
 
 private:
     SubGrapToolBar* m_subGrapBar;
     SubRectToolBar* m_subRectBar;
     SubEllipseToolBar* m_subEllipseBar;
-    // TODO: 2021.12.25 SubRectToolBar SubEllipseToolBar 行为相似，可以优化为同一个类的两个对象（或者继承类）
+    // TODO: 2021.12.25 SubRectToolBar SubEllipseToolBar 行为相似，可以优化为同一个类的两个对象（或者继承类） 已经优化
     SubAbsLineToolBar* m_subArrowBar;
+	SubAbsLineToolBar* m_subBrushBar;
     SubMosaicToolBar* m_subMosaicBar;
 
     QVBoxLayout* m_vLayout;

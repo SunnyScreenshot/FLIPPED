@@ -40,7 +40,7 @@ public slots:
 //    void onDrawContextChange(???);
 
     // toolBar 的槽函数
-    void onDrawShape(XDrawShape shape);
+    void onDrawShape(DrawShape shape);
     void onUndo();
     void onRedo();
     void onDownload();

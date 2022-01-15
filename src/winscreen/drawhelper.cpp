@@ -36,7 +36,7 @@ void XDrawStep::clear()
     startPos = QPoint();
     endPos = QPoint();
     rt = QRect();
-//    shape = XDrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
+//    shape = DrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
 
     rX = 8;
     rY = 8;

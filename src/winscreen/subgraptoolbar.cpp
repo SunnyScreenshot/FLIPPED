@@ -173,17 +173,17 @@ void SubGrapToolBar::onToolBtn()
     // 发射信号
     bool isChecked = toolBtn->isChecked();
     if (toolBtn->objectName() == "rectangle") {
-        emit sigDrawShape(XDrawShape::Rectangles, isChecked);
+        emit sigDrawShape(DrawShape::Rectangles, isChecked);
     } else if (toolBtn->objectName() == "ellipse") {
-        emit sigDrawShape(XDrawShape::Ellipses, isChecked);
+        emit sigDrawShape(DrawShape::Ellipses, isChecked);
     } else if (toolBtn->objectName() == "arrow") {
-        emit sigDrawShape(XDrawShape::Arrows, isChecked);
-//    } else if (toolBtn->objectName() == "pen") {
-//        emit sigDrawShape(XDrawShape::Pen);
+        emit sigDrawShape(DrawShape::Arrows, isChecked);
+    } else if (toolBtn->objectName() == "pen") {
+        emit sigDrawShape(DrawShape::Brush, isChecked);
     } else if (toolBtn->objectName() == "text") {
-        emit sigDrawShape(XDrawShape::Texts, isChecked);
+        emit sigDrawShape(DrawShape::Texts, isChecked);
     } else if (toolBtn->objectName() == "mosaic") {
-        emit sigDrawShape(XDrawShape::Mosaics, isChecked);
+        emit sigDrawShape(DrawShape::Mosaics, isChecked);
     } else if (toolBtn->objectName() == "undo") {
         emit sigUndo();
     } else if (toolBtn->objectName() == "redo") {
