@@ -353,7 +353,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
 	}
-    case DrawShape::Texts: {
+    case DrawShape::Text: {
         pa.drawText(step.rt.topLeft(), step.text);
         break;
     }

@@ -26,7 +26,7 @@ namespace XC {
 		Ellipses,
 		Brush,
 		Arrows,
-		Texts,
+		Text,
 		Mosaics,
 		NoDraw
 	};
