@@ -33,6 +33,11 @@ signals:
     void sigDownload();
     void sigCopy();
 
+	// m_subArrowBar、m_subBrushBar
+	void sigLineEndsChange(LineEnds end);
+	void sigLineDasheChange(Qt::PenStyle dashe);
+
+
     //
     void sigIsFill(bool bFill);
 

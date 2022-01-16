@@ -15,8 +15,7 @@ class QRect;
 class QPoint;
 QT_END_NAMESPACE
 
-// Xps 为 XPicShot 的缩写
-namespace Xps {
+namespace XC {
 
 // TODO 2021.11.09 后优化为 emun class、或写进 class 里面定，而非此全局形式(那就需要重载 qDebug() 的 << 函数了，输出类)
 enum CursorType {                                  // ------------（矩形区域）------------
@@ -73,7 +72,7 @@ Q_DECLARE_FLAGS(CursorAreas, CursorArea)
 }
 
 // ** 方便使用枚举 **
-using namespace Xps;
+using namespace XC;
 
 // 矩形计算
 class RectCalcu

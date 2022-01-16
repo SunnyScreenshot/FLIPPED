@@ -43,15 +43,6 @@ namespace XC {
 		RecesedArrowToRecesedArrow,
 		ArrowToArrow
 	};
-
-	enum class LineDashes {
-		SolidLine,
-		DashLine,
-		DotLine,
-		DashDotLine,
-		DashDotDotLine,
-		CustomDashLine
-	};
 }
 
 using namespace XC;
@@ -85,8 +76,8 @@ struct  XDrawStep
     int rY = 58;                              // 竖长轴
 	
 	// Arrows || Brush(Customized path) ---
-	LineEnds lineEnd = LineEnds::EmptyToEmpty;
-	LineDashes lineDashe = LineDashes::SolidLine;
+	LineEnds lineEnds = LineEnds::EmptyToEmpty;
+	Qt::PenStyle lineDashes = Qt::SolidLine;
 	QVector<QPoint> custPath;                 // 手绘路径
 
 	// Texts ---------------------

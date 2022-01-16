@@ -11,7 +11,7 @@
 #include <QDebug>
 
 Q_DECLARE_METATYPE(LineEnds)
-Q_DECLARE_METATYPE(LineDashes)
+Q_DECLARE_METATYPE(Qt::PenStyle)
 
 SubAbsLineToolBar::SubAbsLineToolBar(QWidget *parent)
     : QWidget(parent)
@@ -19,6 +19,13 @@ SubAbsLineToolBar::SubAbsLineToolBar(QWidget *parent)
     , m_cbDashes(new QComboBox(this))
 {
     initUI();
+
+	connect(m_cbEnds, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, [&](int index) {
+		emit sigLineEndsChange(m_cbEnds->itemData(index).value<LineEnds>());
+	});
+	connect(m_cbDashes, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, [&](int index) {
+		emit sigLineDasheChange(m_cbDashes->itemData(index).value<Qt::PenStyle>());
+	});
 }
 
 void SubAbsLineToolBar::initUI()
@@ -49,12 +56,12 @@ void SubAbsLineToolBar::initUI()
     hLayout->addWidget(new QLabel(tr("Ends"), this), Qt::AlignLeft);
     hLayout->addWidget(m_cbEnds, 2);
 
-	QMap<QString, LineDashes> mapDashes = {{"SolidLine", LineDashes::SolidLine}
-		, {"DashLine", LineDashes::DashLine}
-		, {"DotLine", LineDashes::DotLine}
-		, {"DashDotLine", LineDashes::DashDotLine}
-		, {"DashDotDotLine", LineDashes::DashDotDotLine}
-		, {"CustomDashLine", LineDashes::CustomDashLine}
+	QMap<QString, Qt::PenStyle> mapDashes = {{"SolidLine", Qt::SolidLine}
+		, {"DashLine", Qt::DashLine}
+		, {"DotLine", Qt::DotLine}
+		, {"DashDotLine", Qt::DashDotLine}
+		, {"DashDotDotLine", Qt::DashDotDotLine}
+		, {"CustomDashLine", Qt::CustomDashLine}
 	};
 
 	for (auto it = mapDashes.constBegin(); it != mapDashes.constEnd(); ++it) {

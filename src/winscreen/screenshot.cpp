@@ -67,6 +67,9 @@ ScreenShot::ScreenShot(QWidget *parent)
         m_drawStep.bFill = bFill;
     });
 
+	connect(m_tbDrawBar, &DrawToolBar::sigLineEndsChange, this, &ScreenShot::onLineEndsChange);
+	connect(m_tbDrawBar, &DrawToolBar::sigLineDasheChange, this, &ScreenShot::onLineDasheChange);
+
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 }
 
@@ -181,6 +184,16 @@ void ScreenShot::onDrawEnd()
 //    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.m_cursorType;
 }
 
+void ScreenShot::onLineEndsChange(LineEnds ends)
+{
+	m_drawStep.lineEnds = ends;
+}
+
+void ScreenShot::onLineDasheChange(Qt::PenStyle dashes)
+{
+	m_drawStep.lineDashes = dashes;
+}
+
 // 获取虚拟屏幕截图
 QPixmap* ScreenShot::getVirtualScreen()
 {
@@ -289,6 +302,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
     if (isUseOwn) {
         QPen pen(step.pen);
         pen.setWidth(step.penWidth);
+		pen.setStyle(step.lineDashes);
         QBrush brush(step.brush);
         QFont font(step.font);
         font.setPixelSize(step.fontSize);
@@ -591,6 +605,8 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 		break;
 	}
     case Drawing: {
+		//if (!m_rtCalcu.getSelRect().contains(event->pos(), true))
+		//	return;
         m_drawStep.startPos = event->pos();
         m_drawStep.endPos = event->pos();
         break;

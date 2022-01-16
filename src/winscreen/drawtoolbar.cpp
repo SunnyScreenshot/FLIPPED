@@ -30,7 +30,10 @@ DrawToolBar::DrawToolBar(QWidget *parent)
     connect(m_subRectBar, &SubRectToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
     connect(m_subEllipseBar, &SubEllipseToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
 	connect(m_subMosaicBar, &SubMosaicToolBar::sigIsFill, this, &DrawToolBar::sigIsFill);
-	
+
+	// SubMosaicToolBar* m_subArrowBar、m_subBrushBar
+	connect(m_subArrowBar, &SubAbsLineToolBar::sigLineEndsChange, this, &DrawToolBar::sigLineEndsChange);
+	connect(m_subBrushBar, &SubAbsLineToolBar::sigLineDasheChange, this, &DrawToolBar::sigLineDasheChange);
 }
 
 void DrawToolBar::initUI()

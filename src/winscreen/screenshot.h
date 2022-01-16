@@ -49,6 +49,9 @@ public slots:
     void onDrawStart();
     void onDrawEnd();
 
+	void onLineEndsChange(LineEnds ends);
+	void onLineDasheChange(Qt::PenStyle dashes);
+
 private:
     ScreenShot(QWidget *parent = nullptr);
     ~ScreenShot() override;

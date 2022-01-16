@@ -4,6 +4,7 @@
 #ifndef SUBABSLINETOOLBAR_H
 #define SUBABSLINETOOLBAR_H
 
+#include "drawhelper.h"
 #include <QSpinBox>
 #include <QWidget>
 
@@ -22,6 +23,8 @@ private:
     void initUI();
 
 signals:
+	void sigLineEndsChange(LineEnds ends);
+	void sigLineDasheChange(Qt::PenStyle dashes);
 
 private:
     QComboBox* m_cbEnds;
