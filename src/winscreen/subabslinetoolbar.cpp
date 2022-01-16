@@ -13,6 +13,9 @@
 Q_DECLARE_METATYPE(LineEnds)
 Q_DECLARE_METATYPE(Qt::PenStyle)
 
+const int ArrowWidth = 10;
+const int ArrowHeight = 18;
+
 SubAbsLineToolBar::SubAbsLineToolBar(QWidget *parent)
     : QWidget(parent)
     , m_cbEnds(new QComboBox(this))
@@ -26,6 +29,49 @@ SubAbsLineToolBar::SubAbsLineToolBar(QWidget *parent)
 	connect(m_cbDashes, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, [&](int index) {
 		emit sigLineDasheChange(m_cbDashes->itemData(index).value<Qt::PenStyle>());
 	});
+}
+
+QPainterPath SubAbsLineToolBar::getArrowHead(QPoint p1, QPoint p2, const int thickness)
+{
+	QLineF base(p1, p2);
+	// Create the vector for the position of the base  of the arrowhead
+	QLineF temp(QPoint(0, 0), p2 - p1);
+	int val = ArrowHeight + thickness * 4;
+	if (base.length() < val) {
+		val = static_cast<int>(base.length() + thickness * 2);
+	}
+	temp.setLength(base.length() + thickness * 2 - val);
+	// Move across the line up to the head
+	QPointF bottomTranslation(temp.p2());
+
+	// Rotate base of the arrowhead
+	base.setLength(ArrowWidth + thickness * 2);
+	base.setAngle(base.angle() + 90);
+	// Move to the correct point
+	QPointF temp2 = p1 - base.p2();
+	// Center it
+	QPointF centerTranslation((temp2.x() / 2), (temp2.y() / 2));
+
+	base.translate(bottomTranslation);
+	base.translate(centerTranslation);
+
+	QPainterPath path;
+	path.moveTo(p2);
+	path.lineTo(base.p1());
+	path.lineTo(base.p2());
+	path.lineTo(p2);
+	return path;
+}
+
+QLine SubAbsLineToolBar::getShorterLine(QPoint p1, QPoint p2, const int thickness)
+{
+	QLineF l(p1, p2);
+	int val = ArrowHeight + thickness * 4;
+	if (l.length() < val) {
+		val = static_cast<int>(l.length() + thickness * 2);
+	}
+	l.setLength(l.length() + thickness * 2 - val);
+	return l.toLine();
 }
 
 void SubAbsLineToolBar::initUI()

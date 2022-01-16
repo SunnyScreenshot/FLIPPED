@@ -335,10 +335,21 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
         break;
     }
     case DrawShape::Arrows: {
-        pa.drawLine(step.startPos, step.endPos);
+		step.brush.setColor(step.pen.color());   // TODO 2022.01.16: 可以优化到上面去的 if 判断
+		step.brush.setStyle(Qt::SolidPattern);
+		pa.setBrush(step.brush);
+
+		QPainterPath arrowPath = SubAbsLineToolBar::getArrowHead(step.startPos, step.endPos);
+		pa.fillPath(arrowPath, step.brush);
+		pa.drawLine(SubAbsLineToolBar::getShorterLine(step.startPos, step.endPos));
+
+		//QPoint offset(0, 20);
+		//pa.setPen(Qt::green);
+		//pa.drawLine(step.startPos + offset, step.endPos + offset);
         break;
     }
 	case DrawShape::Brush: {
+
 		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
 	}

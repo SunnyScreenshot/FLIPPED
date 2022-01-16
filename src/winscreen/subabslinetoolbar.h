@@ -19,6 +19,9 @@ class SubAbsLineToolBar : public QWidget
 public:
     explicit SubAbsLineToolBar(QWidget *parent = nullptr);
 
+	static QPainterPath getArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
+	static QLine getShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
+
 private:
     void initUI();
 
