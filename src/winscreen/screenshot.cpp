@@ -15,6 +15,7 @@
 #include <QClipboard>
 #include <QFileDialog>
 #include <QImage>
+#include <QTextEdit>
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -25,6 +26,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_rtCalcu()
     , m_cursorArea(CursorArea::UnknowCursorArea)
     , m_tbDrawBar(new DrawToolBar(this))
+	, m_textEdit(new XTextWidget(this))
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
@@ -354,7 +356,10 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		break;
 	}
     case DrawShape::Text: {
-        pa.drawText(step.rt.topLeft(), step.text);
+		m_textEdit->move(step.editPos);
+		//m_textEdit->show();
+		// TODO: 使用编辑框
+        //pa.drawText(step.rt.topLeft(), step.text);
         break;
     }
     case DrawShape::Mosaics: {
@@ -441,8 +446,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
         pa.drawPixmap(rtSel, m_savePixmap);
 
-        qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
-        qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
+        //qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
+        //qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
 	}
 
 	// 绘画图案
@@ -620,6 +625,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 		//	return;
         m_drawStep.startPos = event->pos();
         m_drawStep.endPos = event->pos();
+		m_drawStep.editPos = event->pos(); // TODO 2022.01.16 可优化: 某些状态不用保存，对应移动和按下
         break;
     }
 	case UnknowCursorType:
@@ -687,6 +693,7 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
            setCursor(Qt::ArrowCursor);
 
        m_drawStep.endPos = event->pos();
+	   m_drawStep.editPos = event->pos();
        m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
 
 	   //if (/*选中为画刷*/)
@@ -746,10 +753,10 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
     case Drawing: {
         m_drawStep.endPos = event->pos();
         m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
-        m_vDrawed.push_back(m_drawStep);
+        m_vDrawed.push_back(m_drawStep); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
 
         m_drawStep.clear();
-        qInfo() << "--------------------------count>"<<m_vDrawed.count();
+        //qInfo() << "--------------------------count>"<<m_vDrawed.count();
 
         int i = 1;
         for (XDrawStep it : m_vDrawed) {

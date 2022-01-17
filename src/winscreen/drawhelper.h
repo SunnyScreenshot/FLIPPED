@@ -81,6 +81,7 @@ struct  XDrawStep
 	QVector<QPoint> custPath;                 // 手绘路径
 
 	// Texts ---------------------
+	QPoint editPos;                           // 显示控件
     QString text = "==Test Text==";
 	QFont font = QFont();
 	int fontSize = 16;

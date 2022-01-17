@@ -8,6 +8,7 @@
 #include "rectcalcu.h"
 #include "drawtoolbar.h"
 #include "drawhelper.h"
+#include "../widget/xtextwidget.h"
 #include "../xglobal.h"
 #include <QWidget>
 #include <QList>
@@ -87,6 +88,9 @@ private:
 
     QVector<XDrawStep> m_vDrawed;    // 已绘步骤
     QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
+
+	// test
+	XTextWidget* m_textEdit;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H
