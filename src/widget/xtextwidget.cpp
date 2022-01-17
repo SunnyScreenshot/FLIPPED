@@ -27,7 +27,7 @@ XTextWidget::~XTextWidget()
 void XTextWidget::adjustSize()
 {
 	qInfo() << "###############> adjustSize";
-	QString& text = this->toPlainText();
+    const QString& text = this->toPlainText();
 	QFontMetrics fm(this->font());
 	QRect bound = fm.boundingRect(QRect(), Qt::AlignLeft, text); // 需要再研究下
 
