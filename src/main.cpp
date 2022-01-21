@@ -4,17 +4,17 @@
 #include <QDebug>
 #include <QtGlobal>
 #include <QObject>
-#include "winscreen/screenshot.h"
-#include "winscreen/winsetting.h"
+#include "screen/screenshot.h"
+#include "screen/winsetting.h"
 #include "logger.h"
 #include "logmanager.h"
 #include "propertyconfigurator.h"
 
 // test
 //#include <QHotkey>
-#include "./winscreen/winresetbtn.h"
-#include "./winscreen/tray.h"
-//#include "./syswininfo/syswininfo_win.h"
+#include "./screen/winresetbtn.h"
+#include "./screen/tray.h"
+//#include "./wininfo/syswininfo_win.h"
 #include "widget/xroundwidget.h"
 
 #include "./wininfo/wininfo_win.h"

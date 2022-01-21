@@ -26,7 +26,7 @@ FILE(GLOB SRCS_MAIN
     "./*.cpp"
     )
 
-# syswininfo
+# wininfo
 FILE(GLOB_RECURSE SRCS_SYSWININFO
     "./wininfo/*.h"
     "./wininfo/*.cpp"
@@ -38,10 +38,10 @@ FILE(GLOB_RECURSE SRCS_WIDGET
     "./widget/*.cpp"
     )
 
-# winscreen
+# screen
 FILE(GLOB_RECURSE SRCS_WINSCREEN
-    "./winscreen/*.h"
-    "./winscreen/*.cpp"
+    "./screen/*.h"
+    "./screen/*.cpp"
 )
 
 set(SRCS_RESOURCES
@@ -93,7 +93,7 @@ target_link_libraries(${PROJECT_NAME}
         )
 
 source_group("" FILES ${SRCS_MAIN})
-source_group("syswininfo" FILES ${SRCS_SYSWININFO})
+source_group("wininfo" FILES ${SRCS_SYSWININFO})
 source_group("widget" FILES ${SRCS_WIDGET})
-source_group("winscreen" FILES ${SRCS_WINSCREEN})
+source_group("screen" FILES ${SRCS_WINSCREEN})
 
