@@ -64,8 +64,8 @@ void WinMain::init()
 	tabWidget->addTab(tabAbout(), tr("About"));
 
 	QVBoxLayout* vLayout = new QVBoxLayout(this);
-	//vLayout->setMargin(4);
-	//vLayout->setSpacing(0);
+	vLayout->setMargin(0);
+	vLayout->setSpacing(0);
     vLayout->addWidget(tabWidget);
 }
 
@@ -175,32 +175,41 @@ QWidget * WinMain::tabScreenShot()
 QWidget * WinMain::tabOutput()
 {
 	QGridLayout* girdLayout = new QGridLayout();
-	girdLayout->addWidget(new QLabel(tr("File Name")), 0, 0, Qt::AlignLeft);
+	girdLayout->addWidget(new QLabel(tr("File Name")), 0, 0);  //  Qt::AlignLeft 带上的话，就不会拉伸；坑死了，查好久
 	m_leFileName = new QLineEdit("PicShot_xxxxx.png");
-	girdLayout->addWidget(m_leFileName, 0, 1, Qt::AlignLeft);
+	girdLayout->addWidget(m_leFileName, 0, 1);
 	m_tbFileName = new QToolButton();
-	girdLayout->addWidget(m_tbFileName, 0, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Screen Path")), 1, 0, Qt::AlignLeft);
+	girdLayout->addWidget(m_tbFileName, 0, 2);
+	girdLayout->addWidget(new QLabel(tr("Screen Path")), 1, 0);
 	m_leScrnPath = new QLineEdit("path/1111");
-	girdLayout->addWidget(m_leScrnPath, 1, 1, Qt::AlignLeft);
+	girdLayout->addWidget(m_leScrnPath, 1, 1);
 	m_tbScrnPath = new QToolButton();
-	girdLayout->addWidget(m_tbScrnPath, 1, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Config Path")), 2, 0, Qt::AlignLeft);
+	girdLayout->addWidget(m_tbScrnPath, 1, 2);
+	girdLayout->addWidget(new QLabel(tr("Config Path")), 2, 0);
 	m_leConfPath = new QLineEdit("path/1112");
-	girdLayout->addWidget(m_leConfPath, 2, 1, Qt::AlignLeft);
+	girdLayout->addWidget(m_leConfPath, 2, 1);
 	m_tbConfPath = new QToolButton();
-	girdLayout->addWidget(m_tbConfPath, 2, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Log Path")), 3, 0, Qt::AlignLeft);
+	girdLayout->addWidget(m_tbConfPath, 2, 2);
+	girdLayout->addWidget(new QLabel(tr("Log Path")), 3, 0);
 	m_leLogPath = new QLineEdit("path/1113");
-	girdLayout->addWidget(m_leLogPath, 3, 1, Qt::AlignLeft);
+	girdLayout->addWidget(m_leLogPath, 3, 1);
 	m_tbLogPath = new QToolButton();
-    girdLayout->addWidget(m_tbLogPath, 3, 2, Qt::AlignLeft);
+    girdLayout->addWidget(m_tbLogPath, 3, 2);
+
+	girdLayout->setColumnStretch(0, 1);
+	girdLayout->setColumnStretch(1, 8);
+	girdLayout->setColumnStretch(2, 1);
+
+	QHBoxLayout* hlGirdParent = new QHBoxLayout();
+	hlGirdParent->setMargin(0);
+	hlGirdParent->addLayout(girdLayout);
+	hlGirdParent->setStretch(0, 1);  // 比例 1:0
+	hlGirdParent->addStretch(0);
 
 	// 整体布局 ------------------------------------
 	QWidget* outputWidget = new QWidget();
 	QVBoxLayout* mainVLayout = new QVBoxLayout(outputWidget);
-	girdLayout->addWidget(m_tbLogPath, 3, 2, Qt::AlignLeft);
-	mainVLayout->addLayout(girdLayout);
+	mainVLayout->addLayout(hlGirdParent);
 	mainVLayout->addStretch(0);
 	mainVLayout->addWidget(new WinResetBtn());
 
@@ -211,9 +220,9 @@ QWidget * WinMain::tabShortcuts()
 {
 	QHBoxLayout* hLayout = new QHBoxLayout();
 	hLayout->setMargin(0);
-	hLayout->addWidget(new QLabel(tr("Global Shortcuts 1")), Qt::AlignLeft);
-	hLayout->addWidget(new QLabel(tr("ⓘ")), Qt::AlignLeft);
-	hLayout->addStretch(3);
+	hLayout->addWidget(new QLabel(tr("Global Shortcuts 1")));
+	hLayout->addWidget(new QLabel(tr("ⓘ")));
+	hLayout->addStretch(0);
 
 	QFrame* line = new QFrame();
 	line->setFrameShape(QFrame::HLine);
@@ -224,39 +233,39 @@ QWidget * WinMain::tabShortcuts()
 	QGridLayout* girdLayout = new QGridLayout();
     girdLayout->setObjectName("tabShortcutsGirdLayout");
 	girdLayout->setMargin(0);
-    const int keyEditWidget = 300;
-	girdLayout->addWidget(new QLabel(tr("Screenshots")), 0, 0, Qt::AlignLeft);
+    const int keyEditWidget = 200;
+	girdLayout->addWidget(new QLabel(tr("Screenshots")), 0, 0);
     m_scrnShot = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F1));
     m_scrnShot->setMinimumWidth(keyEditWidget);
-	girdLayout->addWidget(m_scrnShot, 0, 1, Qt::AlignLeft);
+	girdLayout->addWidget(m_scrnShot, 0, 1);
 	QLabel* labScrnShot = new QLabel("👀");
-	girdLayout->addWidget(labScrnShot, 0, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Time-lapse Screenshot")), 1, 0, Qt::AlignLeft);
+	girdLayout->addWidget(labScrnShot, 0, 2);
+	girdLayout->addWidget(new QLabel(tr("Time-lapse Screenshot")), 1, 0);
     m_scrnShotLater = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F2));
     m_scrnShotLater->setMinimumWidth(keyEditWidget);
-	girdLayout->addWidget(m_scrnShotLater, 1, 1, Qt::AlignLeft);
+	girdLayout->addWidget(m_scrnShotLater, 1, 1);
 	QLabel* labScrnShotLater = new QLabel("👀");
-	girdLayout->addWidget(labScrnShotLater, 1, 2, Qt::AlignLeft);
-	girdLayout->addWidget(new QLabel(tr("Rectangular Area")), 2, 0, Qt::AlignLeft);
+	girdLayout->addWidget(labScrnShotLater, 1, 2);
+	girdLayout->addWidget(new QLabel(tr("Rectangular Area")), 2, 0);
     m_scrnShotRect = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3));
     m_scrnShotRect->setMinimumWidth(keyEditWidget);
-	girdLayout->addWidget(m_scrnShotRect, 2, 1, Qt::AlignLeft);
+	girdLayout->addWidget(m_scrnShotRect, 2, 1);
 	QLabel* labScrnShotRect = new QLabel("👀");
-	girdLayout->addWidget(labScrnShotRect, 2, 2, Qt::AlignLeft);
-    girdLayout->addWidget(new QLabel(tr("Rectangular Area222")), 3, 0, Qt::AlignLeft);
+	girdLayout->addWidget(labScrnShotRect, 2, 2);
+    girdLayout->addWidget(new QLabel(tr("Rectangular Area222")), 3, 0);
 	m_scrnShotWhole = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3));
 	m_scrnShotWhole->setMinimumWidth(keyEditWidget);
-    girdLayout->addWidget(m_scrnShotWhole, 3, 1, Qt::AlignLeft);
+    girdLayout->addWidget(m_scrnShotWhole, 3, 1);
 	QLabel* labScrnShotWhole = new QLabel("👀");
-    girdLayout->addWidget(labScrnShotWhole, 3, 2, Qt::AlignLeft);
+    girdLayout->addWidget(labScrnShotWhole, 3, 2);
 
-    m_scrnShot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_scrnShotLater->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	m_scrnShotRect->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-	m_scrnShotWhole->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-//    girdLayout->setColumnStretch(0, 0);
-//    girdLayout->setColumnStretch(1, 0);
-//    girdLayout->setColumnStretch(2, 0);
+ //   m_scrnShot->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+ //   m_scrnShotLater->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	//m_scrnShotRect->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	//m_scrnShotWhole->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    girdLayout->setColumnStretch(0, 1);
+    girdLayout->setColumnStretch(1, 8);
+    girdLayout->setColumnStretch(2, 1);
 
 	// 整体布局 ------------------------------------
 	QVBoxLayout* mainVLayout = new QVBoxLayout();
