@@ -21,7 +21,6 @@ void XRoundWidget::initUI()
 {
     setWindowFlags(Qt::FramelessWindowHint);      // 去掉标题栏
     setAttribute(Qt::WA_TranslucentBackground);   // 设置透明，自绘画为圆角矩形
-    setContentsMargins(0, 0, 0, 0);
 }
 
 void XRoundWidget::paintEvent(QPaintEvent *event)

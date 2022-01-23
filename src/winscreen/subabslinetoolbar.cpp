@@ -78,7 +78,6 @@ QLine SubAbsLineToolBar::getShorterLine(QPoint p1, QPoint p2, const int thicknes
 
 void SubAbsLineToolBar::initUI()
 {
-    //setContentsMargins(0, 0, 0, 0);
     QHBoxLayout* hLayout = new QHBoxLayout();
     hLayout->setObjectName("hLayout");
     hLayout->setContentsMargins(0, 0, 0, 0);

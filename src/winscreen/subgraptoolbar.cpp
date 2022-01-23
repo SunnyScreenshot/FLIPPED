@@ -83,11 +83,9 @@ void SubGrapToolBar::initUI()
 #endif
 
     m_vecToolBar.fill(nullptr, m_toolBtnName.count());
-    //setContentsMargins(0, 0, 0, 0);
 
-    const int margin = 0;
     QHBoxLayout* hLayout = new QHBoxLayout();
-    hLayout->setContentsMargins(margin, margin, margin, margin);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     hLayout->setSpacing(0);
     setLayout(hLayout);
 

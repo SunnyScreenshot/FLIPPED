@@ -26,8 +26,6 @@ SubAbsToolBar::SubAbsToolBar(QWidget *parent)
 	m_tbFilledAbs->setCheckable(true);
     m_tbFilledAbs->setChecked(false);
 
-    //setContentsMargins(0, 0, 0, 0);
-    //const int margin = 0;
     QHBoxLayout* hLayout = new QHBoxLayout();
     hLayout->setObjectName("hLayout");
     hLayout->setContentsMargins(0, 0, 0, 0);

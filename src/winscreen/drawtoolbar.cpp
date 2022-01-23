@@ -39,9 +39,9 @@ DrawToolBar::DrawToolBar(QWidget *parent)
 
 void DrawToolBar::initUI()
 {
-    const int margin = 0;
+    const int margin = 4;
     setContentsMargins(0, 0, 0, 0);
-    m_vLayout->setContentsMargins(margin, margin, margin, margin);
+    m_vLayout->setContentsMargins(0, margin, 0, margin);
     m_vLayout->setSpacing(0);
     m_vLayout->addWidget(m_subGrapBar);
     m_subGrapBar->show();
