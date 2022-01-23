@@ -44,10 +44,11 @@ public slots:
 
 private:
 	// tab shortcut
-    XKeySequenceEdit* m_scrnShot;        // 截图
-    XKeySequenceEdit* m_scrnShotLater;   // 延时截图
-    XKeySequenceEdit* m_scrnShotRect;    // 矩形区域截图
-    XKeySequenceEdit* m_scrnShotWhole;   // 整个屏幕截图
+	XKeySequenceEdit* m_scrnShot;            // 截图（手动矩形）
+	XKeySequenceEdit* m_scrnShotWinObj;      // 窗口/对象截图
+	XKeySequenceEdit* m_scrnShotDelay;       // 延时截图
+	XKeySequenceEdit* m_scrnShotFixedSize;   // 固定区域截图
+    XKeySequenceEdit* m_scrnShotFullScreen;       // 整个屏幕截图
 
 	// tab optput
 	QLineEdit* m_leFileName;        // 文件名称
