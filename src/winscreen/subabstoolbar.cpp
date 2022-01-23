@@ -26,16 +26,16 @@ SubAbsToolBar::SubAbsToolBar(QWidget *parent)
 	m_tbFilledAbs->setCheckable(true);
     m_tbFilledAbs->setChecked(false);
 
-    setContentsMargins(0, 0, 0, 0);
-    const int margin = 0;
+    //setContentsMargins(0, 0, 0, 0);
+    //const int margin = 0;
     QHBoxLayout* hLayout = new QHBoxLayout();
     hLayout->setObjectName("hLayout");
-    hLayout->setContentsMargins(margin, margin, margin, margin);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     hLayout->setSpacing(0);
     hLayout->addWidget(m_tbAbs);
     hLayout->addWidget(m_tbFilledAbs);
 
-    const int spacing = 4; // 分割线周围的间距
+    const int spacing = 0; // 分割线周围的间距
     hLayout->addSpacing(spacing);
     hLayout->addWidget(new XVerticalLine(iconWidth, this));
     hLayout->addSpacing(spacing);

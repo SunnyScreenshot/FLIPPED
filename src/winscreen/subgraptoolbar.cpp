@@ -14,7 +14,7 @@
 SubGrapToolBar::SubGrapToolBar(QWidget *parent)
     : QWidget(parent)
 {
-    init();
+    initUI();
 }
 
 SubGrapToolBar::~SubGrapToolBar()
@@ -45,7 +45,7 @@ QToolButton* SubGrapToolBar::getCheckedToolBtn(int ignoreLastBtnNum)
     return nullptr;
 }
 
-void SubGrapToolBar::init()
+void SubGrapToolBar::initUI()
 {
     m_toolBtnName << "rectangle"
                << "ellipse"
@@ -83,7 +83,7 @@ void SubGrapToolBar::init()
 #endif
 
     m_vecToolBar.fill(nullptr, m_toolBtnName.count());
-    setContentsMargins(0, 0, 0, 0);
+    //setContentsMargins(0, 0, 0, 0);
 
     const int margin = 0;
     QHBoxLayout* hLayout = new QHBoxLayout();

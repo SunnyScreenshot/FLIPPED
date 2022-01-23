@@ -37,7 +37,6 @@ signals:
 	void sigLineEndsChange(LineEnds end);
 	void sigLineDasheChange(Qt::PenStyle dashe);
 
-
     //
     void sigIsFill(bool bFill);
 

@@ -3,6 +3,8 @@
 //
 #include "subabslinetoolbar.h"
 #include "drawhelper.h"
+#include "../xglobal.h"
+#include "screenshot.h"
 #include <QBoxLayout>
 #include <QLabel>
 #include <QComboBox>
@@ -76,11 +78,10 @@ QLine SubAbsLineToolBar::getShorterLine(QPoint p1, QPoint p2, const int thicknes
 
 void SubAbsLineToolBar::initUI()
 {
-    setContentsMargins(0, 0, 0, 0);
-    const int margin = 0;
+    //setContentsMargins(0, 0, 0, 0);
     QHBoxLayout* hLayout = new QHBoxLayout();
     hLayout->setObjectName("hLayout");
-    hLayout->setContentsMargins(margin, margin, margin, margin);
+    hLayout->setContentsMargins(0, 0, 0, 0);
     hLayout->setSpacing(4);
 
 	QMap<QString, LineEnds> mapEnds = { {"EmptyToEmpty", LineEnds::EmptyToEmpty}
@@ -99,7 +100,11 @@ void SubAbsLineToolBar::initUI()
         QString path = QString(":/resources/icons/line/") + it.key() + ".svg";
         m_cbEnds->addItem(QIcon(path), it.key(), QVariant::fromValue(it.value()));
     }
-    hLayout->addWidget(new QLabel(tr("Ends"), this), Qt::AlignLeft);
+
+	const int iconEdge = ICON_HEIGHT * ScreenShot::getScale();
+	QLabel *labEnd = new QLabel(tr("Ends"));
+	labEnd->setMaximumHeight(iconEdge);
+    hLayout->addWidget(labEnd, Qt::AlignLeft);
     hLayout->addWidget(m_cbEnds, 2);
 
 	QMap<QString, Qt::PenStyle> mapDashes = {{"SolidLine", Qt::SolidLine}
@@ -114,7 +119,10 @@ void SubAbsLineToolBar::initUI()
 		QString path = QString(":/resources/icons/line/") + it.key() +".svg";
 		m_cbDashes->addItem(QIcon(path), it.key(), QVariant::fromValue(it.value()));
 	}
-    hLayout->addWidget(new QLabel(tr("Dashes"), this), Qt::AlignLeft);
+
+	QLabel* labDashes = new QLabel(tr("Dashes"));
+	labDashes->setMaximumHeight(iconEdge);
+    hLayout->addWidget(labDashes, Qt::AlignLeft);
     hLayout->addWidget(m_cbDashes, 2);
 
     hLayout->addStretch(2);

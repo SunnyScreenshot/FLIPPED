@@ -26,7 +26,7 @@ public:
     QToolButton* getCheckedToolBtn(int ignoreLastBtnNum = 4);
 
 private:
-    void init();
+    void initUI();
 
 signals:
     void sigDrawStart();       // 处于绘画状态

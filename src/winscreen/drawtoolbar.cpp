@@ -1,13 +1,14 @@
 ﻿#include "drawtoolbar.h"
 #include "../widget/xhorizontalline.h"
+#include "screenshot.h"
 #include <QBoxLayout>
 #include <QVector>
 
 DrawToolBar::DrawToolBar(QWidget *parent)
     : XRoundWidget(parent)
     , m_subGrapBar(new SubGrapToolBar(this))
-    , m_subRectBar(new SubRectToolBar(this))
-    , m_subEllipseBar(new SubEllipseToolBar(this))
+	, m_subRectBar(new SubRectToolBar(this))
+	, m_subEllipseBar(new SubEllipseToolBar(this))
     , m_subArrowBar(new SubAbsLineToolBar(this))
 	, m_subBrushBar(new SubAbsLineToolBar(this))
     , m_subMosaicBar(new SubMosaicToolBar(this))
@@ -38,7 +39,7 @@ DrawToolBar::DrawToolBar(QWidget *parent)
 
 void DrawToolBar::initUI()
 {
-    const int margin = 4;
+    const int margin = 0;
     setContentsMargins(0, 0, 0, 0);
     m_vLayout->setContentsMargins(margin, margin, margin, margin);
     m_vLayout->setSpacing(0);
@@ -51,8 +52,8 @@ void DrawToolBar::initUI()
 	m_subArrowBar->hide();
 	m_subBrushBar->hide();
     m_subMosaicBar->hide();
-    m_hLine = new XHorizontalLine(m_subGrapBar->width() - margin * 2, this);
-    m_hLine->hide();
+	m_hLine = new XHorizontalLine(m_subGrapBar->width() - margin * 2, this);
+	m_hLine->hide();
 
     connect(m_subGrapBar, &SubGrapToolBar::sigDrawShape, this, &DrawToolBar::onDrawShape);
 }
@@ -82,8 +83,8 @@ void DrawToolBar::removeSubBar(QWidget* subBar)
 
 void DrawToolBar::removeAllSubBar()
 {
-    // m_subGrapTb 不移除
-    QVector<QWidget *> vec = {m_subRectBar
+    // m_subGrapBar 不移除
+    QVector<QWidget *> vec = { m_subRectBar
                              , m_subEllipseBar
                              , m_subArrowBar
 							 , m_subBrushBar
@@ -130,12 +131,12 @@ void DrawToolBar::onDrawShape(DrawShape shape, bool checked)
         break;
     }
 
-    // TODO 2021.12.14:可优化，暂固定死不同状态的高度
-    setFixedHeight(50);
+    // TODO 2022.01.23:可优化，暂固定死不同状态的高度，需要抽离出来
+    setFixedHeight(26 * ScreenShot::getScale());
 
     if (checked) {
         insertSubBar(m_hLine);
-        setFixedHeight(100);
+        setFixedHeight((26 * 2 + 2 * 2) * ScreenShot::getScale() + m_hLine->height());
     } else {
         removeSubBar(m_hLine);
     }

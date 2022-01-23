@@ -22,6 +22,8 @@ void SubEllipseToolBar::initUI()
 	initFilledAbsTb(":/resources/icons/normal/fill-ellipse.svg", tr("Filled Ellipse"));
 
 	QLabel* labBorder = new QLabel(tr("Border"), this);
+	const int iconEdge = ICON_HEIGHT * ScreenShot::getScale();
+	labBorder->setMaximumHeight(iconEdge);
 	addWidget(labBorder);
 
 	m_spBorder->setValue(2);
