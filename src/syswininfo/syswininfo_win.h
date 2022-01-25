@@ -1,43 +1,43 @@
-//
-// Created by xmuli on 2021/10/15.
-//
+/*******************************************************************
+ * Copyright (C)  2021~2022  偕臧  All rights reserved.
+ *
+ * GitHub:  https://github.com/xmuli
+ * Author:  偕臧 <xmulitech@gmail.com>
+ *
+ * Create: 2021.10.15
+ * Modify: 2022.01.14
+ * Description: 获取 Windows 下桌面的所有窗口矩形信息
+ * Analysis: 参考 https://blog.csdn.net/yp18792574062/article/details/109279577
+ *                https://www.cnblogs.com/zjutlitao/p/3889900.html
+ *
+ ******************************************************************/
 
 #ifndef SYSWININFO_WIN_H
 #define SYSWININFO_WIN_H
 
-#ifdef Q_OS_WIN
-//#include <windows.h>
-#endif
+ //#ifdef _WIN32
+ ////#include <windows.h>
+ ////#include <winuser.h>
+ //#endif
 
-//#include <stdio.h>
-////#include <tchar.h>
-////#include <string.h>
-////#include <iostream>
-////using namespace std;
-
-//// https://blog.csdn.net/vevenlcf/article/details/80206457
-////    EnumWindows(EnumWindowsProc, NULL);
-////EnumDesktopWindows(hDesktop, EnumWindowsProc, NULL);  // 在 mac 上或许可用该函数?
-
-//BOOL CALLBACK EnumChildWindowsProc(HWND hWnd, LPARAM lParam);
-//BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam);
-
-//void getAllTopWinRect();
-
-//bool isValue(RECT rect);
+#include <atlstr.h>
+#include <psapi.h>
+#include <iostream>
 
 
-////HWND hd = GetDesktopWindow();        //得到桌面窗口
-////hd = GetWindow(hd, GW_CHILD);        //得到屏幕上第一个子窗口
-////char s[200] = { 0 };
-////int num = 1;
-////while (hd != NULL)                    //循环得到所有的子窗口
-////{
-////    memset(s, 0, 200);
-////    GetWindowText(hd, s, 200);
-////    cout << num++ << ": " << s << endl;
-////    hd = GetNextWindow(hd, GW_HWNDNEXT);
-////}
+class SysWinInfo
+{
+public:
+	SysWinInfo();
+	~SysWinInfo();
+
+	void getWindowList();                                 // 获取所有桌面的窗口
+
+private:
+	CString getWindowName(HWND hwnd, DWORD processId);    // 获取窗口名称
+	bool checkWindowValid(HWND hwnd);                     // 窗口客户区域不为零且可见
+	bool checkWindowTitleValid(TCHAR* winName);
+};
 
 
 #endif // SYSWININFO_WIN_H

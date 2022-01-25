@@ -11,18 +11,19 @@
 #include "propertyconfigurator.h"
 
 // test
-#include <QHotkey>
+//#include <QHotkey>
 #include "./winscreen/winresetbtn.h"
 #include "./winscreen/tray.h"
 #include "./syswininfo/syswininfo_win.h"
 #include "widget/xroundwidget.h"
-
-#include <string>
-#include <iostream>
+//
+//#include <string>
+//#include <iostream>
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+	
     // getAllTopWinRect();
 
     // TODO 2021-10-08 高分屏适配的许多尝试: QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -51,6 +52,10 @@ int main(int argc, char *argv[])
  
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray* tary = new Tray();
+
+
+	SysWinInfo info;
+	info.getWindowList();
     //qInfo()<<QObject::tr("Program running program end.");
 
     return QApplication::exec();

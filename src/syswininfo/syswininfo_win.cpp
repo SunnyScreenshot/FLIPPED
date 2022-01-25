@@ -1,64 +1,126 @@
-﻿//
-// Created by xmuli on 2021/10/15.
-//
+﻿/*******************************************************************
+ * Copyright (C)  2021~2022  偕臧  All rights reserved.
+ *
+ * GitHub:  https://github.com/xmuli
+ * Author:  偕臧 <xmulitech@gmail.com>
+ *
+ * Create: 2021.10.15
+ * Modify: 2022.01.14
+ * Description: 获取 Windows 下桌面的所有窗口矩形信息
+ * Analysis: 参考 https://blog.csdn.net/yp18792574062/article/details/109279577
+ *                https://www.cnblogs.com/zjutlitao/p/3889900.html
+ *
+ ******************************************************************/
 #include "syswininfo_win.h"
+#include <tchar.h>
 
-////#include <winuser.h>
-//#include <math.h>
+SysWinInfo::SysWinInfo()
+{
+}
 
-//INT Pnum = 0;
-//INT Cnum = 0; //父窗口数量，每一级父窗口的子窗口数量
-//RECT g_Rect;
+SysWinInfo::~SysWinInfo()
+{
+}
 
-//// EnumChildWindows 回调函数，hwnd为指定的父窗口
-//BOOL CALLBACK EnumChildWindowsProc(HWND hWnd, LPARAM lParam)
-//{
-//    char WindowTitle[100] = { 0 };
-//    Cnum++;
-//    RECT rect;
-//    ::GetWindowText(hWnd, WindowTitle, 100);
-//    ::GetWindowRect(hWnd, &rect);
-//    if (isValue(rect))
-//        printf("--|%d :%s %d %d %d %d\n", Cnum, WindowTitle, rect.left, rect.top, rect.right, rect.bottom);
+// 获取桌面下的所有窗口（条件过滤）
+void SysWinInfo::getWindowList()
+{
+	HWND desktopWin = ::GetDesktopWindow();
+	TCHAR winTitle[MAX_PATH] = { 0 };
+	DWORD nSize = 0;
+	CString exeName;
+	HWND hwnd = ::GetWindow(desktopWin, GW_CHILD);
 
-//    return true;
-//}
+	if (hwnd != NULL) {
+		DWORD procId;
+		RECT rect;
+		::GetWindowThreadProcessId(hwnd, &procId);
+		::GetWindowRect(hwnd, &rect);
+		::GetWindowText(hwnd, winTitle, MAX_PATH);
+
+		exeName = getWindowName(hwnd, procId);
+		//TCHAR name[MAX_PATH] = { 0 };
+		//_tcscpy(name, exeName);
+		//if (exeName.IsEmpty() || !checkWindowValid(hwnd) /*|| !checkWindowTitleValid(name)*/)
+		//	continue;
+
+	}
 
 
-//// EnumWindows 回调函数，hwnd为发现的顶层窗口
-//BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam)
-//{
-//    if (GetParent(hWnd) == NULL && IsWindowVisible(hWnd)) {  //判断是否顶层窗口并且可见
-//        Pnum++;
-//        Cnum = 0;
-//        char WindowTitle[100] = { 0 };
-//        RECT rect;
-//        ::GetWindowText(hWnd, WindowTitle, 100);
-//        ::GetWindowRect(hWnd, &g_Rect);
+	while (hwnd != NULL) {
+		hwnd = GetNextWindow(hwnd, GW_HWNDNEXT);
+		DWORD procId;
+		RECT rect;
+		::GetWindowThreadProcessId(hwnd, &procId);
+		::GetWindowRect(hwnd, &rect);
+		::GetWindowText(hwnd, winTitle, MAX_PATH);
 
-//        if (isValue(g_Rect)) {
-//            printf("-------------------------------------------\n");
+		exeName = getWindowName(hwnd, procId);
+		//TCHAR name[MAX_PATH] = { 0 };
+		//_tcscpy(name, exeName);
+		//if (!exeName.IsEmpty() || !checkWindowValid(hwnd) /*|| !checkWindowTitleValid(name)*/)
+		//	continue;
 
-//            printf("%d: %s %d %d %d %d\n", Pnum, WindowTitle, g_Rect.left, g_Rect.top, rect.right, rect.bottom);
-//            EnumChildWindows(hWnd, EnumChildWindowsProc, NULL); //获取父窗口的所有子窗口
-//        }
-//    }
+		std::cout << "windowTitle:" << winTitle << std::endl;
+		//std::cout << "exename:" << exeName.GetBuffer() << std::endl;
 
-//    return true;
-//}
+	}
+}
 
-//// 获取所有顶层窗口矩形，包含子窗口（0*0大小则略过）
-//void getAllTopWinRect()
-//{
-//    // 获取屏幕上所有的顶层窗口,每发现一个窗口就调用回调函数一次
-//    EnumWindows(EnumWindowsProc, NULL);
-//}
+// 获取当前窗口名称
+CString SysWinInfo::getWindowName(HWND hwnd, DWORD processId)
+{
+	CString rt = _T("");
+	if (!hwnd)
+		return rt;
 
-//// 判断该矩形是否有效
-//bool isValue(RECT rect)
-//{
-//    if (rect.right - rect.left > 0 && rect.bottom - rect.top > 0)
-//        return true;
-//    else
-//        return false;
-//}
+	TCHAR exeName[MAX_PATH] = { 0 };
+	DWORD nSize = 0;
+	HANDLE hProc = ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
+	::GetProcessImageFileName(hProc, exeName, MAX_PATH);
+	::CloseHandle(hProc);
+
+	rt.Format(_T("%s"), exeName);
+	auto pos = rt.ReverseFind(_T('/'));
+
+	int nn = rt.GetLength();
+	if (pos == -1)
+		pos = rt.ReverseFind(_T('\\'));
+
+	if (pos == -1)
+		return  _T("");
+	else
+		return rt;
+}
+
+// 过滤不可见的窗体
+bool SysWinInfo::checkWindowValid(HWND hwnd)
+{
+	if (!hwnd)
+		return false;
+
+	RECT rect;
+	::GetClientRect(hwnd, &rect); // 获取客户区域
+
+	if (rect.right - rect.left <= 0 || rect.bottom - rect.top <= 0)
+		return false;
+
+	DWORD exStyles = static_cast<DWORD>(::GetWindowLongPtr(hwnd, GWL_EXSTYLE));
+	DWORD styles = static_cast<DWORD>(::GetWindowLongPtr(hwnd, GWL_STYLE));
+	if (exStyles & WS_EX_TOOLWINDOW || styles & WS_CHILD)
+		return false;
+
+	if (!IsWindowVisible(hwnd))
+		return false;
+	else
+		return true;
+}
+
+// 过滤指定标题的窗口
+bool SysWinInfo::checkWindowTitleValid(TCHAR * winName)
+{
+	if (!winName || _tcslen(winName) || _tcscmp(winName, _T("Microsoft Store")))
+		return false;
+
+	return false;
+}
