@@ -16,6 +16,7 @@
 #include <QFileDialog>
 #include <QImage>
 #include <QTextEdit>
+#include "../syswininfo/syswininfo_win.h"
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -38,7 +39,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
-#if 0
+#if 1
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
     setFixedSize(geom.size());
 	move(geom.topLeft());
@@ -204,10 +205,10 @@ QPixmap* ScreenShot::getVirtualScreen()
 	if (!m_currPixmap) {
 		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 
-#if 0
-		//const QRect geom = desktop->geometry(); // 多屏的矩形取并集
-		//qInfo() << "------------------------------->" << geom << desktop->screenGeometry() << desktop->availableGeometry();
-		//m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
+#if 1
+		const QRect geom = desktop->geometry(); // 多屏的矩形取并集
+		qInfo() << "------------------------------->" << geom << desktop->screenGeometry() << desktop->availableGeometry();
+		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
 #else
 		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
 #endif
@@ -496,6 +497,13 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         topLeft.setY(rtSel.bottomRight().y() + width + space);
         m_tbDrawBar->move(topLeft);
     }
+
+
+
+
+	//for (auto it = m_vectest->cbegin(); it != m_vectest->cend(); ++it)
+	//	pa.drawRect(*it);
+
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
