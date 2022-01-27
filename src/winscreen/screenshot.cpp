@@ -16,7 +16,7 @@
 #include <QFileDialog>
 #include <QImage>
 #include <QTextEdit>
-#include "../syswininfo/syswininfo_win.h"
+#include "../wininfo/wininfo_win.h"
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 

@@ -28,8 +28,8 @@ FILE(GLOB SRCS_MAIN
 
 # syswininfo
 FILE(GLOB_RECURSE SRCS_SYSWININFO
-    "./syswininfo/*.h"
-    "./syswininfo/*.cpp"
+    "./wininfo/*.h"
+    "./wininfo/*.cpp"
     )
 
 # widget

@@ -14,12 +14,10 @@
 //#include <QHotkey>
 #include "./winscreen/winresetbtn.h"
 #include "./winscreen/tray.h"
-#include "./syswininfo/syswininfo_win.h"
+//#include "./syswininfo/syswininfo_win.h"
 #include "widget/xroundwidget.h"
-//
-//#include <string>
-//#include <iostream>
-using namespace std;
+
+#include "./wininfo/wininfo_win.h"
 
 int main(int argc, char *argv[])
 {
@@ -51,12 +49,19 @@ int main(int argc, char *argv[])
  //   qInfo()<<QObject::tr("Program running program start.");
  
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
-    Tray* tary = new Tray();
+    //Tray* tary = new Tray();
+
+	setlocale(LC_CTYPE, "");
+	WinInfoWin info;
+	std::vector<WinInfo> vec;
+	info.getAllWinInfo(vec);
+
+	std::cout << "-------------------------" << std::endl << std::endl;
 
 
-	SysWinInfo info;
-	info.getWindowList();
     //qInfo()<<QObject::tr("Program running program end.");
+
+	std::cout << "hello word" << std::endl;
 
     return QApplication::exec();
 }
