@@ -21,6 +21,7 @@ public:
 		top = rt.top;
 		width = rt.right - rt.left;
 		height = rt.bottom - rt.top;
+		this->procPath = procPath;
 	}
 
 //private:

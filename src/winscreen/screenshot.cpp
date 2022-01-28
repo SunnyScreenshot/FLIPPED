@@ -35,7 +35,8 @@ ScreenShot::ScreenShot(QWidget *parent)
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 
-	qInfo() << "#-------------------------->" << geom << m_screens[0]->size() << m_screens[1]->size();
+	qInfo() << "#-------------------------->" << geom << m_screens[0]->size() << m_screens[0]->geometry()
+		<< m_screens[0]->size() << m_screens[1]->geometry();
 
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
@@ -51,7 +52,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	//int x2 = 0;
 	//int y1 = 0;
 	//int y2 = 0;
-	//m_screens[0]->virtualGeometry().getRect(&x1, &y1, &x2, &y2);
+	//m_screens[0]->virtualGeometry().getRect(&x1, &y1, &x2,  &y2) ;
 	//QRect rt(x1, y1, x2, y2);
 	qInfo() << "-------->" << m_screens[0]->virtualGeometry() << "  " << QApplication::desktop()->rect() << "   " << m_screens[0]->virtualGeometry().topLeft();
 
@@ -418,6 +419,7 @@ void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 	}
 }
 
+#include <atlstr.h>
 // 效果：绘画的顺序重要
 void ScreenShot::paintEvent(QPaintEvent *event)
 {
@@ -441,9 +443,19 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	m_rtCalcu.limitBound(rtSel, rect());
 	modifyRectSize(rtSel);  // 拉伸选中矩形大小
 
+	// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
+	// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
+	pen.setColor(Qt::red);
+	pa.setPen(pen);
 	if (m_vec.size() > 0) {
-		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it)
-			pa.drawRect(QRect(it->left, it->top, it->width, it->height));
+		const QRect geom = QApplication::desktop()->geometry();
+		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
+			pa.drawRect(QRect(it->left - geom.left(), it->top- geom.top(), it->width, it->height));
+			qInfo() << "--------------->@:" << geom << it->left << geom.left() << it->left - geom.left() << it->top << geom.top() << it->top - geom.left();
+			CString path = it->procPath;
+			pa.drawText(QPoint(it->left - geom.left(), it->top - geom.top()) , QString("%1, %2, %3, %4, %5").arg(path.GetBuffer(path.GetLength())).arg(it->left - geom.left()).arg(it->top - geom.top()).arg(it->width).arg(it->height));
+
+		}
 	}
 
 

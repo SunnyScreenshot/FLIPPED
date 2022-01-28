@@ -43,7 +43,10 @@ bool WinInfoWin::checkWindowValid(HWND hwnd)
 bool WinInfoWin::checkWindowTitleValid(CString tile)
 {
 	TCHAR storeName[] = _T("Microsoft Store");
-	if (/*tile.IsEmpty() ||*/ _tcscmp(tile, storeName) == 0)
+	if (tile.IsEmpty() || _tcscmp(tile, storeName) == 0
+		|| _tcscmp(tile, _T("设置")) == 0
+		|| _tcscmp(tile, _T("Nahimic")) == 0
+		|| _tcscmp(tile, _T("Microsoft Text Input Application")) == 0)
 		return false;
 	else
 		return true;

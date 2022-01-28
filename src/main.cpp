@@ -48,13 +48,15 @@ int main(int argc, char *argv[])
 
  //   qInfo()<<QObject::tr("Program running program start.");
  
-    // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
-    Tray* tary = new Tray();
-
 	setlocale(LC_CTYPE, "");
 	WinInfoWin info;
 	std::vector<WinInfo> vec;
 	info.getAllWinInfo(vec);
+
+    // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
+    Tray* tary = new Tray();
+
+
 
 	std::cout << "-------------------------" << std::endl << std::endl;
 
