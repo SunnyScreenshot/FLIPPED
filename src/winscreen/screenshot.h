@@ -10,9 +10,11 @@
 #include "drawhelper.h"
 #include "../widget/xtextwidget.h"
 #include "../xglobal.h"
+#include "../wininfo/wininfo_win.h"
 #include <QWidget>
 #include <QList>
 #include <QColor>
+#include <vector>
 
 QT_BEGIN_NAMESPACE
 class QScreen;
@@ -91,6 +93,7 @@ private:
 
 	// test
 	XTextWidget* m_textEdit;
+	std::vector<WinInfo> m_vec;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

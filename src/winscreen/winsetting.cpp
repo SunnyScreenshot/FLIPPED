@@ -2,7 +2,7 @@
 // Created by XMuli <xmulitech@gmail.com> on 2021/10/05.
 //
 
-#include "winmain.h"
+#include "winsetting.h"
 #include "winresetbtn.h"
 #include "screenshot.h"
 #include "../widget/xkeysequenceedit.h"
@@ -27,7 +27,7 @@
 #include <QTimer>
 #include <QColorDialog>
 
-WinMain::WinMain(QWidget *parent) 
+WinSetting::WinSetting(QWidget *parent) 
 	: QWidget(parent)
 	, m_scrnShot(new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_T)))
 	, m_scrnShotWinObj(new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F2)))
@@ -53,11 +53,11 @@ WinMain::WinMain(QWidget *parent)
     resize(800, 400);
 }
 
-WinMain::~WinMain()
+WinSetting::~WinSetting()
 {
 }
 
-void WinMain::initUI()
+void WinSetting::initUI()
 {
 	QTabWidget* tabWidget = new QTabWidget();
 	tabWidget->addTab(tabScreenShot(), tr("ScreenShot"));
@@ -71,24 +71,24 @@ void WinMain::initUI()
     vLayout->addWidget(tabWidget);
 }
 
-void WinMain::hotKeyInit()
+void WinSetting::hotKeyInit()
 {
     // hotKey connect ------------------------------------
 //    qDebug() << "Is Registered: " << m_hkScnShot->isRegistered();
-    connect(m_hkScrnShot, &QHotkey::activated, this, &WinMain::onScrnShot);
-	connect(m_hkScrnShotWinObj, &QHotkey::activated, this, &WinMain::onScrnShot);
-    connect(m_hkScrnShotDelay, &QHotkey::activated, this, &WinMain::onScrnShotDelay);
-    connect(m_hkScrnShotFixedSize, &QHotkey::activated, this, &WinMain::onScrnShotFixedSize);
-    connect(m_hkScrnShotFullScreen, &QHotkey::activated, this, &WinMain::onScrnShotFullScreen);
+    connect(m_hkScrnShot, &QHotkey::activated, this, &WinSetting::onScrnShot);
+	connect(m_hkScrnShotWinObj, &QHotkey::activated, this, &WinSetting::onScrnShot);
+    connect(m_hkScrnShotDelay, &QHotkey::activated, this, &WinSetting::onScrnShotDelay);
+    connect(m_hkScrnShotFixedSize, &QHotkey::activated, this, &WinSetting::onScrnShotFixedSize);
+    connect(m_hkScrnShotFullScreen, &QHotkey::activated, this, &WinSetting::onScrnShotFullScreen);
 
-    connect(m_scrnShot, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
-	connect(m_scrnShotWinObj, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
-	connect(m_scrnShotDelay, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
-	connect(m_scrnShotFixedSize, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
-	connect(m_scrnShotFullScreen, &XKeySequenceEdit::sigKeySeqChanged, this, &WinMain::onKeySeqChanged);
+    connect(m_scrnShot, &XKeySequenceEdit::sigKeySeqChanged, this, &WinSetting::onKeySeqChanged);
+	connect(m_scrnShotWinObj, &XKeySequenceEdit::sigKeySeqChanged, this, &WinSetting::onKeySeqChanged);
+	connect(m_scrnShotDelay, &XKeySequenceEdit::sigKeySeqChanged, this, &WinSetting::onKeySeqChanged);
+	connect(m_scrnShotFixedSize, &XKeySequenceEdit::sigKeySeqChanged, this, &WinSetting::onKeySeqChanged);
+	connect(m_scrnShotFullScreen, &XKeySequenceEdit::sigKeySeqChanged, this, &WinSetting::onKeySeqChanged);
 }
 // 更新当前热键状态时候注册成功
-bool WinMain::hotKeyStateUpdate(QLabel* lab, QHotkey* hotKey)
+bool WinSetting::hotKeyStateUpdate(QLabel* lab, QHotkey* hotKey)
 {
 	if (!lab || !hotKey)
 		return false;
@@ -101,7 +101,7 @@ bool WinMain::hotKeyStateUpdate(QLabel* lab, QHotkey* hotKey)
 	return true;
 }
 
-QWidget * WinMain::tabScreenShot()
+QWidget * WinSetting::tabScreenShot()
 {
 	// 边框颜色组 ------------------------------------
 	QHBoxLayout* vlBorderCol = new QHBoxLayout();
@@ -185,7 +185,7 @@ QWidget * WinMain::tabScreenShot()
 	return tabScreenShot;
 }
 
-QWidget * WinMain::tabOutput()
+QWidget * WinSetting::tabOutput()
 {
 	QGridLayout* girdLayout = new QGridLayout();
 	girdLayout->addWidget(new QLabel(tr("File Name")), 0, 0);  //  Qt::AlignLeft 带上的话，就不会拉伸；坑死了，查好久
@@ -227,7 +227,7 @@ QWidget * WinMain::tabOutput()
 	return outputWidget;
 }
 
-QWidget * WinMain::tabShortcuts()
+QWidget * WinSetting::tabShortcuts()
 {
 	QHBoxLayout* hLayout = new QHBoxLayout();
 	hLayout->setMargin(0);
@@ -308,7 +308,7 @@ QWidget * WinMain::tabShortcuts()
     return tabOneShortcuts;
 }
 
-QWidget* WinMain::tabAbout()
+QWidget* WinSetting::tabAbout()
 {
 	QWidget* aboutWidget = new QWidget();
 	QHBoxLayout* mainHLayout = new QHBoxLayout(aboutWidget);
@@ -330,12 +330,12 @@ QWidget* WinMain::tabAbout()
     return aboutWidget;
 }
 
-void WinMain::onScrnShot()
+void WinSetting::onScrnShot()
 {
     ScreenShot::instance().getScrnShots();
 }
 
-void WinMain::onScrnShotDelay()
+void WinSetting::onScrnShotDelay()
 {
 	ScreenShot& instance = ScreenShot::instance();
 	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
@@ -346,12 +346,12 @@ void WinMain::onScrnShotDelay()
 	});
 }
 
-void WinMain::onScrnShotFixedSize()
+void WinSetting::onScrnShotFixedSize()
 {
 	//TODO:2021.11.2 截图预设的固定大小的矩形
 }
 
-void WinMain::onScrnShotFullScreen()
+void WinSetting::onScrnShotFullScreen()
 {
 	ScreenShot& instance = ScreenShot::instance();
 	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
@@ -359,7 +359,7 @@ void WinMain::onScrnShotFullScreen()
 	instance.getScrnShots();
 }
 
-void WinMain::onKeySeqChanged(const QKeySequence &keySequence)
+void WinSetting::onKeySeqChanged(const QKeySequence &keySequence)
 {
     XKeySequenceEdit* obj = qobject_cast<XKeySequenceEdit *>(sender());
     if (!obj)
@@ -408,7 +408,7 @@ void WinMain::onKeySeqChanged(const QKeySequence &keySequence)
 }
 
 // see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
-bool WinMain::eventFilter(QObject *watched, QEvent *event)
+bool WinSetting::eventFilter(QObject *watched, QEvent *event)
 {
     QLabel* lab = qobject_cast<QLabel *>(watched);
 

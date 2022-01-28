@@ -441,6 +441,12 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	m_rtCalcu.limitBound(rtSel, rect());
 	modifyRectSize(rtSel);  // 拉伸选中矩形大小
 
+	if (m_vec.size() > 0) {
+		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it)
+			pa.drawRect(QRect(it->left, it->top, it->width, it->height));
+	}
+
+
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
     // 注意独立屏幕缩放比（eg: macox = 2）
 	if (rtSel.width() > 0 && rtSel.height() > 0){
@@ -499,10 +505,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     }
 
 
-
-
-	//for (auto it = m_vectest->cbegin(); it != m_vectest->cend(); ++it)
-	//	pa.drawRect(*it);
 
 
 #if 0
@@ -800,6 +802,10 @@ ScreenShot &ScreenShot::instance()
 
 void ScreenShot::getScrnShots()
 {
+	m_vec.clear();
+	WinInfoWin info;
+	info.getAllWinInfo(m_vec);
+
     this->getScrnInfo();
     this->show();
 }

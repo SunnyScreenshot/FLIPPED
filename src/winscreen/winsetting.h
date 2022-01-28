@@ -17,12 +17,12 @@ class QLineEdit;
 class QToolButton;
 QT_END_NAMESPACE
 
-class WinMain : public QWidget
+class WinSetting : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WinMain(QWidget *parent = nullptr);
-    virtual ~WinMain();
+    explicit WinSetting(QWidget *parent = nullptr);
+    virtual ~WinSetting();
 
 private:
 	void initUI();

@@ -45,7 +45,7 @@ void Tray::init()
 	m_sysTary->setContextMenu(m_menuTary);
 	m_sysTary->setVisible(true);
 
-    m_winMain = new WinMain();
+    m_winMain = new WinSetting();
 
 	connect(m_screenShot, &QAction::triggered, this, &Tray::onScreenShot);
 	connect(m_showWinConfig, &QAction::triggered, this, &Tray::onShowWinConfig);

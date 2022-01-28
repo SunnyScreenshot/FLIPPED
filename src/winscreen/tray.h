@@ -7,7 +7,7 @@
 
 #include <QObject>
 #include <QHotkey>
-#include "winmain.h"
+#include "winsetting.h"
 #include "screenshot.h"
 
 QT_BEGIN_NAMESPACE
@@ -38,7 +38,7 @@ private:
 	QMenu* m_menuTary;
 	QSystemTrayIcon* m_sysTary;
 
-    WinMain* m_winMain;
+    WinSetting* m_winMain;
 };
 
 #endif // TARY_H

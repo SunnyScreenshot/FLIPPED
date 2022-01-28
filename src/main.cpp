@@ -5,7 +5,7 @@
 #include <QtGlobal>
 #include <QObject>
 #include "winscreen/screenshot.h"
-#include "winscreen/winmain.h"
+#include "winscreen/winsetting.h"
 #include "logger.h"
 #include "logmanager.h"
 #include "propertyconfigurator.h"
