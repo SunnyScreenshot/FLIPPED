@@ -63,9 +63,6 @@ void WinInfoWin::getAllWinInfo(std::vector<WinInfo>& vec)
 		GetWindowText(hwnd, windowTitle, MAX_PATH);
 		exename = getWindowNameT(hwnd, processId);
 
-		if (!checkWindowTitleValid(windowTitle))
-			tcout << hwnd << _T("--------------------------") << std::endl;
-
 		if (exename.IsEmpty() || !checkWindowValid(hwnd) || !checkWindowTitleValid(windowTitle)) {
 			hwnd = GetNextWindow(hwnd, GW_HWNDNEXT);
 			continue;
