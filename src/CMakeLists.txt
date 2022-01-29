@@ -26,8 +26,14 @@ FILE(GLOB SRCS_MAIN
     "./*.cpp"
     )
 
+# core
+FILE(GLOB_RECURSE SRCS_CORE
+    "./core/*.h"
+    "./core/*.cpp"
+    )
+
 # wininfo
-FILE(GLOB_RECURSE SRCS_SYSWININFO
+FILE(GLOB_RECURSE SRCS_WININFO
     "./wininfo/*.h"
     "./wininfo/*.cpp"
     )
@@ -80,7 +86,8 @@ link_directories(${CMAKE_BINARY_DIR}/bin
 
 add_executable(${PROJECT_NAME}
     ${SRCS_MAIN}
-    ${SRCS_SYSWININFO}
+    ${SRCS_WININFO}
+    ${SRCS_CORE}
     ${SRCS_WIDGET}
     ${SRCS_WINSCREEN}
     ${SRCS_RESOURCES}
@@ -93,7 +100,8 @@ target_link_libraries(${PROJECT_NAME}
         )
 
 source_group("" FILES ${SRCS_MAIN})
-source_group("wininfo" FILES ${SRCS_SYSWININFO})
+source_group("core" FILES ${SRCS_CORE})
+source_group("wininfo" FILES ${SRCS_WININFO})
 source_group("widget" FILES ${SRCS_WIDGET})
 source_group("screen" FILES ${SRCS_WINSCREEN})
 
