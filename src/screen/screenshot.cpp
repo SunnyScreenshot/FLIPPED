@@ -16,7 +16,7 @@
 #include <QFileDialog>
 #include <QImage>
 #include <QTextEdit>
-#include "../wininfo/wininfo_win.h"
+//#include "../wininfo/wininfo_win.h"
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -445,18 +445,18 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
 	// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
 	// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
-	pen.setColor(Qt::red);
-	pa.setPen(pen);
-	if (m_vec.size() > 0) {
-		const QRect geom = QApplication::desktop()->geometry();
-		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
-			pa.drawRect(QRect(it->left - geom.left(), it->top- geom.top(), it->width, it->height));
-			qInfo() << "--------------->@:" << geom << it->left << geom.left() << it->left - geom.left() << it->top << geom.top() << it->top - geom.left();
-			CString path = it->procPath;
-			pa.drawText(QPoint(it->left - geom.left(), it->top - geom.top()) , QString("%1, %2, %3, %4, %5").arg(path.GetBuffer(path.GetLength())).arg(it->left - geom.left()).arg(it->top - geom.top()).arg(it->width).arg(it->height));
+//	pen.setColor(Qt::red);
+//	pa.setPen(pen);
+//	if (m_vec.size() > 0) {
+//		const QRect geom = QApplication::desktop()->geometry();
+//		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
+//			pa.drawRect(QRect(it->left - geom.left(), it->top- geom.top(), it->width, it->height));
+//			qInfo() << "--------------->@:" << geom << it->left << geom.left() << it->left - geom.left() << it->top << geom.top() << it->top - geom.left();
+//			CString path = it->procPath;
+//			pa.drawText(QPoint(it->left - geom.left(), it->top - geom.top()) , QString("%1, %2, %3, %4, %5").arg(path.GetBuffer(path.GetLength())).arg(it->left - geom.left()).arg(it->top - geom.top()).arg(it->width).arg(it->height));
 
-		}
-	}
+//		}
+//	}
 
 
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
@@ -814,9 +814,9 @@ ScreenShot &ScreenShot::instance()
 
 void ScreenShot::getScrnShots()
 {
-	m_vec.clear();
-	WinInfoWin info;
-	info.getAllWinInfo(m_vec);
+//	m_vec.clear();
+//	WinInfoWin info;
+//	info.getAllWinInfo(m_vec);
 
     this->getScrnInfo();
     this->show();

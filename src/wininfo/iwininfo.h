@@ -1,42 +1,54 @@
-﻿#pragma once
-#include <windows.h>
-#include <atlstr.h>
+﻿/*******************************************************************
+ * Copyright (C)  2022  偕臧  All rights reserved.
+ *
+ * Author: 偕臧 <xmulitech@gmail.com>
+ * GitHub: https://github.com/xmuli
+ *
+ * Create: 2022.01.29
+ * Modify: 2022.01.29
+ * Description: 实现一个模板的静态单例
+ ******************************************************************/
+#ifndef IWININFO_H
+#define IWININFO_H
+
+#if _WIN32
+    #include <windows.h>
+    #include <atlstr.h>
+#else
+    //
+#endif
+
 #include <vector>
 
 class WinInfo
 {
 public:
-	WinInfo() {
-		left = 0;
-		top = 0;
-		width = 0;
-		height = 0;
-		hwnd = nullptr;
-		procPath = _T("");
-		procName = _T("");
-	}
+    WinInfo() : hWnd(nullptr)
+      , rect({0, 0, 0, 0})
+      , level(-1)
+      , procPath(_T(""))
+      , procName(_T("")) {
+    }
 
-	WinInfo(const RECT rt, const HWND hwnd, const CString procPath) {
-		left = rt.left;
-		top = rt.top;
-		width = rt.right - rt.left;
-		height = rt.bottom - rt.top;
-		this->procPath = procPath;
-	}
+    WinInfo(const HWND hWnd, const RECT rect, const int32_t level, const CString procPath, const CString procName) {
+        this->rect = rect;
+        this->hWnd = hWnd;
+        this->level = level;
+        this->procPath = procPath;
+        this->procName = procName;
+    }
 
-//private:
-	int32_t left;
-	int32_t top;
-	int32_t width;
-	int32_t height;
-	HWND hwnd;
-	CString procPath;
-	CString procName;
+    HWND hWnd;
+    RECT rect;
+    int32_t level;
+    CString procName;
+    CString procPath;
 };
 
-class ISysWinInfo
-{
-public:
-	virtual void getAllWinInfo(std::vector<WinInfo>& vec) = 0;
-};
+//class IWinInfo
+//{
+//public:
+//    virtual void getAllWinInfo(std::vector<WinInfo>& vec) = 0;
+//};
+#endif // IWININFO_H
 

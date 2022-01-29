@@ -6,18 +6,18 @@
 #include <QObject>
 #include "screen/screenshot.h"
 #include "screen/winsetting.h"
-#include "logger.h"
-#include "logmanager.h"
-#include "propertyconfigurator.h"
+//#include "logger.h"
+//#include "logmanager.h"
+//#include "propertyconfigurator.h"
 
 // test
 //#include <QHotkey>
 #include "./screen/winresetbtn.h"
 #include "./screen/tray.h"
-//#include "./wininfo/syswininfo_win.h"
 #include "widget/xroundwidget.h"
 
-#include "./wininfo/wininfo_win.h"
+//#include "./wininfo/wininfo_win.h"
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
@@ -43,22 +43,20 @@ int main(int argc, char *argv[])
 #else
     // 改变缺省消息处理程序的输出（终端调试）
 //    qSetMessagePattern("%{appname} %{type} %{time [yyyy-MM-dd hh:mm:ss]} %{pid} %{threadid} %{qthreadptr} (%{file} %{line}) %{function} %{message}");
-    qSetMessagePattern("%{type} %{time [yyyy-MM-dd hh:mm:ss]} (%{file} %{line}) %{function} %{message}");
+//    qSetMessagePattern("%{type} %{time [yyyy-MM-dd hh:mm:ss]} (%{file} %{line}) %{function} %{message}");
 #endif
 
  //   qInfo()<<QObject::tr("Program running program start.");
  
-	setlocale(LC_CTYPE, "");
-	WinInfoWin info;
-	std::vector<WinInfo> vec;
-	info.getAllWinInfo(vec);
+//	setlocale(LC_CTYPE, "");
+//	WinInfoWin info;
+//	std::vector<WinInfo> vec;
+//	info.getAllWinInfo(vec);
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray* tary = new Tray();
 
-
-
-	std::cout << "-------------------------" << std::endl << std::endl;
+//	std::cout << "-------------------------" << std::endl << std::endl;
 
 
     //qInfo()<<QObject::tr("Program running program end.");

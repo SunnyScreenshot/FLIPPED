@@ -29,7 +29,7 @@ FILE(GLOB SRCS_MAIN
 # core
 FILE(GLOB_RECURSE SRCS_CORE
     "./core/*.h"
-    "./core/*.cpp"
+#    "./core/*.cpp"
     )
 
 # wininfo
@@ -54,7 +54,7 @@ set(SRCS_RESOURCES
     Resources.qrc
     )
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
@@ -95,7 +95,7 @@ add_executable(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
         ${QT5_LIBS_LINK}
-        log4qt
+#        log4qt
         qhotkey
         )
 
