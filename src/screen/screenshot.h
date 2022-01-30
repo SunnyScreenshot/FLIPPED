@@ -93,7 +93,7 @@ private:
 
 	// test
 	XTextWidget* m_textEdit;
-//	std::vector<WinInfo> m_vec;
+	std::vector<WinInfo> m_vec;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

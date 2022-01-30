@@ -30,10 +30,12 @@ public:
       , procName(_T("")) {
     }
 
-    WinInfo(const HWND hWnd, const RECT rect, const int32_t level, const CString procPath, const CString procName) {
+    WinInfo(const HWND hWnd, const RECT rect, const int32_t level, 
+        const CString procTitle, const CString procPath, const CString procName) {
         this->rect = rect;
         this->hWnd = hWnd;
         this->level = level;
+        this->procTitle = procTitle;
         this->procPath = procPath;
         this->procName = procName;
     }
@@ -41,6 +43,7 @@ public:
     HWND hWnd;
     RECT rect;
     int32_t level;
+    CString procTitle;
     CString procName;
     CString procPath;
 };

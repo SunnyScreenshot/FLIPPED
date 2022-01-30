@@ -35,7 +35,7 @@ std::vector<WinInfo> WinInfoWin::m_vWinInfo;
 //bool WinInfoWin::checkWindowValid(HWND hWnd)
 //{
 //	RECT rect;
-//	GetClientRect(hWnd, &rect);
+//	GetWindowRect(hWnd, &rect);
 //	if (rect.bottom == 0 || rect.right == 0)
 //		return false;
 
@@ -89,68 +89,151 @@ std::vector<WinInfo> WinInfoWin::m_vWinInfo;
 //	}
 //}
 
-//void WinInfoWin::getAllWinInfo()
-//{
+#include <iostream>  // cout <<用
+void WinInfoWin::getAllWinInfoCache()
+{
+	::EnumWindows(WinInfoWin::EnumWindowsProc, 0); // 0 为 z 序
 
-//}
+	int i = 0;
+	setlocale(LC_ALL, "");
+	for (auto it = WinInfoWin::m_vWinInfo.cbegin(); it != WinInfoWin::m_vWinInfo.cend(); ++it) {
+		//std::string str = CT2A(it->procPath.GetString());
+		tcout << i++ << _T("   ") << it->hWnd
+			<< _T("   ") << it->procPath.GetString()
+			<< _T("   ") << it->procName.GetString()
+			<< _T("   ") << it->procTitle.GetString()
+			<< _T("   (") << it->rect.left << _T(", ") << it->rect.top << _T(", ")
+			<< it->rect.right - it->rect.left << _T(" * ") << it->rect.bottom - it->rect.top << _T(")")
+			<< std::endl;
+	}
+}
 
+void WinInfoWin::getAllWinInfoRealTime()
+{ 
+	POINT pt;
+	::GetCursorPos(&pt);
+	::EnumWindows(WinInfoWin::EnumRealTimeWindowsProc, MAKELPARAM(pt.x, pt.y));
+}
+
+BOOL WinInfoWin::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
+{
+	POINT pos;
+    pos.x = ((int)(short)LOWORD(lParam));
+    pos.y = ((int)(short)HIWORD(lParam));
+
+	if (WindowsContainsPoint(hWnd, pos) && WindowsFilter(hWnd)) {
+		RECT rect;
+		DWORD processId;
+		int32_t nLevel = 0;
+		TCHAR windowTitle[MAX_PATH] = _T("");
+		::GetWindowRect(hWnd, &rect);
+		::GetWindowThreadProcessId(hWnd, &processId);
+		::GetWindowText(hWnd, windowTitle, MAX_PATH);
+		CString procPath = getWindowPath(processId);
+		CString procName = windowPath2Name(procPath);
+
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
+
+		m_hWndTarget = hWnd;
+		EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
+	}
+
+	return TRUE;
+}
+
+BOOL WinInfoWin::EnumChildRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
+{
+	POINT pos;
+	pos.x = ((int)(short)LOWORD(lParam));
+	pos.y = ((int)(short)HIWORD(lParam));
+
+	if (WindowsContainsPoint(hWnd, pos) && WindowsFilter(hWnd)) {
+		RECT rect;
+		DWORD processId;
+		int32_t nLevel = 0;
+		TCHAR windowTitle[MAX_PATH] = _T("");
+		::GetWindowRect(hWnd, &rect);
+		::GetWindowThreadProcessId(hWnd, &processId);
+		::GetWindowText(hWnd, windowTitle, MAX_PATH);
+		CString procPath = getWindowPath(processId);
+		CString procName = windowPath2Name(procPath);
+
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
+
+		m_hWndTarget = hWnd;
+		//EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
+	}
+
+	return TRUE;
+}
 
 BOOL WinInfoWin::EnumChildWindowsProc(HWND hWnd, LPARAM level)
 {
-    if (!hWnd || !WindowsFilter(hWnd))
-        return false;
+    //if (hWnd && WindowsFilter(hWnd)) {
+		RECT rect;
+		DWORD processId;
+		int32_t nLevel = level;
+		TCHAR windowTitle[MAX_PATH] = _T("");
+		::GetWindowRect(hWnd, &rect);  // GetWindowRect
+		::GetWindowThreadProcessId(hWnd, &processId);
+		::GetWindowText(hWnd, windowTitle, MAX_PATH);
+		CString procPath = getWindowPath(processId);
+		CString procName = windowPath2Name(procPath);
 
-    RECT rect;
-    DWORD processId;
-    int32_t nLevel = level;
-    ::GetClientRect(hWnd, &rect);
-    ::GetWindowThreadProcessId(hWnd, &processId);
-    CString exePath = getWindowPath(processId);
-    CString exeName = windowPath2Name(exePath);
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
 
-    m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, exePath, exeName));
+		//::EnumChildWindows(hWnd, EnumChildWindowsProc, ++nLevel);
+    //}
 
-    ::EnumChildWindows(hWnd, EnumChildWindowsProc, ++nLevel);
-
-    return true;
+    return TRUE;
 }
 
+// MSDN !!!: EnumWindows continues until the last top-level window is enumerated or the callback function returns FALSE.
 BOOL WinInfoWin::EnumWindowsProc(HWND hWnd, LPARAM level)
 {
-    if (!hWnd || !WindowsFilter(hWnd))
-        return false;
+	if (hWnd && WindowsFilter(hWnd)) {  // 句柄存在且可见
+		RECT rect;
+		DWORD processId;
+		int32_t nLevel = level;
+		TCHAR windowTitle[MAX_PATH] = _T("");
+		::GetWindowRect(hWnd, &rect);
+		::GetWindowThreadProcessId(hWnd, &processId);
+		::GetWindowText(hWnd, windowTitle, MAX_PATH);
+		CString procPath = getWindowPath(processId);
+		CString procName = windowPath2Name(procPath);
 
-    RECT rect;
-    DWORD processId;
-    int32_t nLevel = level;
-    ::GetClientRect(hWnd, &rect);
-    ::GetWindowThreadProcessId(hWnd, &processId);
-    CString exePath = getWindowPath(processId);
-    CString exeName = windowPath2Name(exePath);
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
+		//::EnumChildWindows(hWnd, EnumChildWindowsProc, ++nLevel); // 设置开关时候开启便利子窗口
+	}
 
-    m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, exePath, exeName));
-
-    ::EnumChildWindows(hWnd, EnumChildWindowsProc, ++nLevel);
-
-    return true;
+    return TRUE;
 }
 
 
-// 过滤不可见等的窗口
-bool WinInfoWin::WindowsFilter(HWND hWnd)
+BOOL WinInfoWin::WindowsContainsPoint(HWND hWnd, POINT pt)
 {
-    if (hWnd && hWnd == m_hWndFilter)
-        return false;
+    RECT rtWin = { 0, 0, 0, 0};
+	::GetWindowRect(hWnd, &rtWin);
+	return PtInRect(&rtWin, pt);
+}
+
+// 过滤不可见等的窗口
+BOOL WinInfoWin::WindowsFilter(HWND hWnd)
+{
+    if (!hWnd /*&& hWnd == m_hWndFilter*/)
+        return FALSE;
 
     RECT rect;
-    ::GetClientRect(hWnd, &rect);
-    if (rect.bottom == 0 || rect.right == 0)
-        return false;
+    ::GetWindowRect(hWnd, &rect);
+
+    if (rect.left == -32000 && rect.top == -32000   // 最小化
+		|| rect.bottom == 0 || rect.right == 0)     // 宽度不存在
+        return FALSE;
 
     DWORD styles = ::GetWindowLong(hWnd, GWL_STYLE);
     DWORD ex_styles = ::GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (styles & WS_VISIBLE || ex_styles & WS_EX_TOOLWINDOW)
-        return false;
+    if (styles & WS_CHILD || ex_styles & WS_EX_TOOLWINDOW)
+        return FALSE;
 
     return ::IsWindowVisible(hWnd);
 }
@@ -175,5 +258,5 @@ CString WinInfoWin::windowPath2Name(CString path)
     if (pos == -1)
         return _T("");
 
-    return path.Right(path.GetLength() - pos);
+    return path.Right(path.GetLength() - (pos + 1));
 }
