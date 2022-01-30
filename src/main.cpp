@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
     //qInfo()<<QObject::tr("Program running program end.");
 
 	std::cout << "hello word" << std::endl;
+	QApplication::setQuitOnLastWindowClosed(false);
 
     return QApplication::exec();
 }

@@ -21,6 +21,7 @@ class QScreen;
 class QPixmap;
 QT_END_NAMESPACE
 
+
 class ScreenShot : public  QWidget
 {
     Q_OBJECT
@@ -34,6 +35,9 @@ private:
     void getScrnInfo();
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
+
+	void updateGetWindowsInfo();
+
 
 signals:
 	void sigClearScreen();
@@ -93,6 +97,7 @@ private:
 
 	// test
 	XTextWidget* m_textEdit;
+	QRect m_rtTest;
 	std::vector<WinInfo> m_vec;
 };
 

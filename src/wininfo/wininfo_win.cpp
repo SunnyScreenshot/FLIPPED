@@ -3,7 +3,7 @@
 //#include <atlstr.h>
 //#include <string>
 #include <psapi.h>
-//#include <iostream>
+#include <iostream>
 
 #if defined(UNICODE) || defined(_UNICODE)
 #define tcout std::wcout
@@ -15,81 +15,11 @@ HWND WinInfoWin::m_hWndTarget = NULL;
 HWND WinInfoWin::m_hWndFilter = NULL;
 std::vector<WinInfo> WinInfoWin::m_vWinInfo;
 
-//CString WinInfoWin::getWindowNameT(HWND hWnd, DWORD processId)
-//{
-//	TCHAR exename[MAX_PATH] = _T("");
-//	HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
-//	GetProcessImageFileName(hProc, exename, MAX_PATH);
-//	CloseHandle(hProc);
-//	CString windowName(exename);
-//	auto pos = windowName.ReverseFind(_T('/'));
-//	if (pos == -1)
-//		pos = windowName.ReverseFind(_T('\\'));
-//	if (pos == -1)
-//		return _T("");
+WinInfoWin::WinInfoWin()
+{
+}
 
-//	//return windowName.Right(windowName.GetLength() - pos);
-//	return windowName;
-//}
-
-//bool WinInfoWin::checkWindowValid(HWND hWnd)
-//{
-//	RECT rect;
-//	GetWindowRect(hWnd, &rect);
-//	if (rect.bottom == 0 || rect.right == 0)
-//		return false;
-
-//	DWORD ex_styles = (DWORD)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
-//	DWORD styles = (DWORD)GetWindowLongPtr(hWnd, GWL_STYLE);
-//	if (ex_styles & WS_EX_TOOLWINDOW || styles & WS_CHILD)
-//		return false;
-
-//	return IsWindowVisible(hWnd);
-//}
-
-//bool WinInfoWin::checkWindowTitleValid(CString tile)
-//{
-//	TCHAR storeName[] = _T("Microsoft Store");
-//	if (tile.IsEmpty() || _tcscmp(tile, storeName) == 0
-//		|| _tcscmp(tile, _T("设置")) == 0
-//		|| _tcscmp(tile, _T("Nahimic")) == 0
-//		|| _tcscmp(tile, _T("Microsoft Text Input Application")) == 0)
-//		return false;
-//	else
-//		return true;
-//}
-
-//void WinInfoWin::getAllWinInfo(std::vector<WinInfo>& vec)
-//{
-//	HWND desktopHwnd = GetDesktopWindow();
-//	TCHAR windowTitle[MAX_PATH] = _T("");
-//	CString exename = _T("");
-//	HWND hWnd = GetWindow(desktopHwnd, GW_CHILD);
-//	while (hWnd != NULL) {
-//		RECT rect;
-//		DWORD processId;
-//		GetWindowThreadProcessId(hWnd, &processId);
-//		GetWindowRect(hWnd, &rect);
-//		GetWindowText(hWnd, windowTitle, MAX_PATH);
-//		exename = getWindowNameT(hWnd, processId);
-
-//		if (exename.IsEmpty() || !checkWindowValid(hWnd) || !checkWindowTitleValid(windowTitle)) {
-//			hWnd = GetNextWindow(hWnd, GW_HWNDNEXT);
-//			continue;
-//		}
-//		vec.push_back(WinInfo(rect, hWnd, exename));
-//		hWnd = GetNextWindow(hWnd, GW_HWNDNEXT);
-
-//		static int i = 0;
-//		tcout << i++ << _T("   windowTitle:") << windowTitle << "  hWnd:" << hWnd
-//			<< _T("   (") << rect.left << _T(", ") << rect.top << _T(", ") << rect.right - rect.left << _T(" * ") << rect.bottom - rect.top << _T(")")
-//			<< std::endl;
-//		//std::cout << "windowTitle:" << windowTitle << std::endl;
-//		//std::cout << "exename:" << exename << std::endl;
-//	}
-//}
-
-#include <iostream>  // cout <<用
+// cout <<用
 void WinInfoWin::getAllWinInfoCache()
 {
 	::EnumWindows(WinInfoWin::EnumWindowsProc, 0); // 0 为 z 序
@@ -108,11 +38,36 @@ void WinInfoWin::getAllWinInfoCache()
 	}
 }
 
-void WinInfoWin::getAllWinInfoRealTime()
+HWND WinInfoWin::getAllWinInfoRealTime(POINT pt)
 { 
-	POINT pt;
-	::GetCursorPos(&pt);
+	m_hWndTarget = nullptr;
 	::EnumWindows(WinInfoWin::EnumRealTimeWindowsProc, MAKELPARAM(pt.x, pt.y));
+	return m_hWndTarget;
+}
+
+// 过滤指定窗口
+void WinInfoWin::setWindowsFilter(HWND hWnd)
+{
+	if (hWnd)   
+		m_hWndFilter = hWnd;
+}
+
+// bSmartDetection: true 及时自动获取； false 缓存所有获取
+RECT WinInfoWin::getWindowsRectFromPoint(POINT pt, BOOL bSmartDetection)
+{
+	RECT rect = { 0, 0, 0, 0 };
+	if (bSmartDetection) {
+		HWND hWndTarget = getAllWinInfoRealTime(pt);
+
+		if (hWndTarget)
+			::GetWindowRect(hWndTarget, &rect);
+	} else {
+		getAllWinInfoCache();
+		getRectFromCache(pt, rect);
+	}
+
+
+	return rect;
 }
 
 BOOL WinInfoWin::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
@@ -132,7 +87,7 @@ BOOL WinInfoWin::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
-		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel + 22, windowTitle, procPath, procName));
 
 		m_hWndTarget = hWnd;
 		EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
@@ -217,10 +172,36 @@ BOOL WinInfoWin::WindowsContainsPoint(HWND hWnd, POINT pt)
 	return PtInRect(&rtWin, pt);
 }
 
+BOOL WinInfoWin::getRectFromCache(POINT pt, RECT & rect)
+{
+	WinInfo winInfo;
+
+	for (const auto& it : m_vWinInfo) {
+		if (winInfo.hWnd && it.level <= winInfo.level)
+			break;
+
+		if (PtInRect(&it.rect, pt)) {
+			if (winInfo.hWnd == NULL) {
+				winInfo = it;
+			} else {
+				if (it.level > winInfo.level)
+					winInfo = it;;
+			}
+		}
+	}
+
+	if (winInfo.hWnd) {
+		rect = winInfo.rect;
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
 // 过滤不可见等的窗口
 BOOL WinInfoWin::WindowsFilter(HWND hWnd)
 {
-    if (!hWnd /*&& hWnd == m_hWndFilter*/)
+    if (!hWnd && hWnd == m_hWndFilter)
         return FALSE;
 
     RECT rect;

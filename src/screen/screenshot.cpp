@@ -18,7 +18,21 @@
 #include <QTextEdit>
 #include "../wininfo/wininfo_win.h"
 
+//#define _DEBUG
+
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
+
+namespace Util {
+	bool getRectFromCurrentPoint(HWND hWndMySelf, QRect &out_rect)
+	{
+		POINT pt;
+		::GetCursorPos(&pt);
+		WinInfoWin::instance().setWindowsFilter(hWndMySelf);
+		RECT rect = WinInfoWin::instance().getWindowsRectFromPoint(pt, TRUE);
+		out_rect = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+		return out_rect.isValid();
+	}
+}
 
 ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
@@ -40,12 +54,14 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
-#if 1
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-    setFixedSize(geom.size());
-	move(geom.topLeft());
+#ifdef _DEBUG
+	setFixedSize(3000, 2000);
+	move(-3000, 0);
 #else
-	resize(1920, 1080);
+	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+	setFixedSize(geom.size());
+	move(geom.topLeft());
+
 #endif
 
 	//int x1 = 0;
@@ -206,12 +222,12 @@ QPixmap* ScreenShot::getVirtualScreen()
 	if (!m_currPixmap) {
 		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 
-#if 1
+#ifdef _DEBUG
+		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), -3000, 170, desktop->width(), desktop->height()));
+#else
 		const QRect geom = desktop->geometry(); // 多屏的矩形取并集
 		qInfo() << "------------------------------->" << geom << desktop->screenGeometry() << desktop->availableGeometry();
 		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
-#else
-		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), 0, 0, desktop->width(), desktop->height()));
 #endif
     }
 
@@ -443,7 +459,12 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	m_rtCalcu.limitBound(rtSel, rect());
 	modifyRectSize(rtSel);  // 拉伸选中矩形大小
 
-	// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
+
+
+#ifdef _DEBUG
+	int offsetX = -3000;
+	int offsetY = 0;
+		// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
 	// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
 	pen.setColor(Qt::red);
 	pa.setPen(pen);
@@ -451,14 +472,57 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 		const QRect geom = QApplication::desktop()->geometry();
 		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
 			QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
-			pa.drawRect(QRect(rt.left() - geom.left(), rt.top() - geom.top(), rt.width(), rt.height()));
-			qInfo() << "--------------->@:" << geom << rt.left() << geom.left() << rt.left() - geom.left() << rt.top() << geom.top() << rt.top() - geom.left();
+
+			QRect rtDraw(rt.left() - offsetX, rt.top() - offsetY, rt.width(), rt.height());
+			pa.drawRect(rtDraw);
+			qInfo() << "--------------->@geom:" << geom << "  rt:" << rt << "  rtDraw:" << rtDraw;
 			CString path = it->procPath;
-			pa.drawText(QPoint(rt.left() - geom.left(), rt.top() - geom.top()), QString("%1, %2, %3, %4, %5")
+			pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5")
 				.arg(path.GetBuffer(path.GetLength())).arg(rt.left() - geom.left()).arg(rt.top() - geom.top()).arg(rt.width()).arg(rt.height()));
 
 		}
 	}
+
+	//if (!m_rtTest.isEmpty()) {
+	pen.setColor(Qt::blue);
+	pa.setPen(pen);
+	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
+	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
+	qInfo() << "--------------->@##:" << m_rtTest;
+
+	//}
+#else
+	const QRect geom = QApplication::desktop()->geometry();
+	int offsetX = geom.left();
+	int offsetY = geom.top();
+	// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
+// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
+	pen.setColor(Qt::red);
+	pa.setPen(pen);
+	if (m_vec.size() > 0) {
+		const QRect geom = QApplication::desktop()->geometry();
+		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
+			QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
+
+			QRect rtDraw(rt.left() - offsetX, rt.top() - offsetY, rt.width(), rt.height());
+			pa.drawRect(rtDraw.adjusted(20, 20, -20, -20));
+			qInfo() << "--------------->@geom:" << geom << "  rt:" << rt << "  rtDraw:" << rtDraw;
+			CString path = it->procPath;
+			pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5")
+				.arg(path.GetBuffer(path.GetLength())).arg(rt.left() - geom.left()).arg(rt.top() - geom.top()).arg(rt.width()).arg(rt.height()));
+
+		}
+	}
+
+	//if (!m_rtTest.isEmpty()) {
+	pen.setColor(Qt::blue);
+	pa.setPen(pen);
+	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
+	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
+	qInfo() << "--------------->@##:" << m_rtTest;
+
+	//}
+#endif // _DEBUG
 
 
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
@@ -667,9 +731,11 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
              << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
              << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();;
 
+	
 	switch (m_rtCalcu.m_cursorType)
 	{
 	case Select: {
+
 		m_rtCalcu.m_EndPos = event->pos();
 		setCursor(Qt::ArrowCursor);
 		qDebug() << "【mouseMoveEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
@@ -684,7 +750,9 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 	}
 	case Move: {
         m_rtCalcu.m_moveEndPos = event->pos();
+		updateGetWindowsInfo();
 		break;
+		
 	}
 	case Waiting: {
 		switch (m_rtCalcu.getCursorArea(event->pos()))
@@ -817,15 +885,16 @@ ScreenShot &ScreenShot::instance()
 void ScreenShot::getScrnShots()
 {
 	m_vec.clear();
-	//WinInfoWin::instance().getAllWinInfoCache();
+	WinInfoWin::instance().getAllWinInfoCache();
 
-	WinInfoWin::instance().getAllWinInfoRealTime();
+	//WinInfoWin::instance().getAllWinInfoRealTime();
 
 	m_vec = WinInfoWin::instance().m_vWinInfo;
 
 
 
     this->getScrnInfo();
+	setFocus(Qt::MouseFocusReason);
     this->show();
 }
 
@@ -858,6 +927,12 @@ double ScreenShot::getDevicePixelRatio(QScreen * screen)
 		return 0.0;
 	else
         return screen->devicePixelRatio();
+}
+
+// 随着光标移动，更新获取桌面所有窗口信息
+void ScreenShot::updateGetWindowsInfo()
+{
+	Util::getRectFromCurrentPoint((HWND)winId(), m_rtTest);
 }
 
 double ScreenShot::getScale(QScreen * screen)

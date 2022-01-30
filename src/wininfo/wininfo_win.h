@@ -9,14 +9,15 @@
 // 窗口信息_win 版本
 class WinInfoWin : public TSingleton<WinInfoWin>// , IWinInfo
 {
-//private:
-//	CString getWindowNameT(HWND hwnd, DWORD processId);      // 获取窗口名称
-//	bool checkWindowValid(HWND hwnd);                        // 过滤可见窗口
-//	bool checkWindowTitleValid(CString tile);                // 过滤指定名称窗口
+private:
+	WinInfoWin();
 
 public:
     void getAllWinInfoCache();
-    void getAllWinInfoRealTime();
+	HWND getAllWinInfoRealTime(POINT pt);
+
+	void setWindowsFilter(HWND hWnd);
+	RECT getWindowsRectFromPoint(POINT pt, BOOL bSmartDetection = TRUE);
 
 //
 protected:
@@ -31,6 +32,7 @@ public:
     static BOOL CALLBACK EnumChildWindowsProc(HWND hWnd, LPARAM level);
 
     static BOOL WindowsContainsPoint(HWND hWnd, POINT pt);
+	static BOOL getRectFromCache(POINT pt, RECT& rect);
     static BOOL WindowsFilter(HWND hWnd);
     static CString getWindowPath(DWORD processId);
     static CString windowPath2Name(CString path);
