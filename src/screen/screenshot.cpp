@@ -484,7 +484,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	}
 
 	//if (!m_rtTest.isEmpty()) {
-	pen.setColor(Qt::blue);
+	pen.setColor(Qt::yellow);
 	pa.setPen(pen);
 	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
 	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
@@ -508,21 +508,25 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 			pa.drawRect(rtDraw.adjusted(20, 20, -20, -20));
 			qInfo() << "--------------->@geom:" << geom << "  rt:" << rt << "  rtDraw:" << rtDraw;
 			CString path = it->procPath;
-			pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5")
-				.arg(path.GetBuffer(path.GetLength())).arg(rt.left() - geom.left()).arg(rt.top() - geom.top()).arg(rt.width()).arg(rt.height()));
-
+			pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5, index=%6")
+				.arg(path.GetBuffer(path.GetLength()))
+				.arg(rt.left() - geom.left())
+				.arg(rt.top() - geom.top())
+				.arg(rt.width())
+				.arg(rt.height())
+				.arg(it->index));
 		}
 	}
 
 	//if (!m_rtTest.isEmpty()) {
-	pen.setColor(Qt::blue);
+	pen.setColor(Qt::yellow);
 	pa.setPen(pen);
 	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
 	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
 	qInfo() << "--------------->@##:" << m_rtTest;
 
 	//}
-#endif // _DEBUG
+#endif // 
 
 
 	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
@@ -885,7 +889,7 @@ ScreenShot &ScreenShot::instance()
 void ScreenShot::getScrnShots()
 {
 	m_vec.clear();
-	WinInfoWin::instance().getAllWinInfoCache();
+	//WinInfoWin::instance().getAllWinInfoCache();
 
 	//WinInfoWin::instance().getAllWinInfoRealTime();
 

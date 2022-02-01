@@ -40,8 +40,39 @@ void WinInfoWin::getAllWinInfoCache()
 
 HWND WinInfoWin::getAllWinInfoRealTime(POINT pt)
 { 
+	m_vWinInfo.clear();
 	m_hWndTarget = nullptr;
 	::EnumWindows(WinInfoWin::EnumRealTimeWindowsProc, MAKELPARAM(pt.x, pt.y));
+
+	int i = 0;
+	setlocale(LC_ALL, "");
+	for (auto it = WinInfoWin::m_vWinInfo.cbegin(); it != WinInfoWin::m_vWinInfo.cend(); ++it) {
+		//std::string str = CT2A(it->procPath.GetString());
+		tcout << i++ << _T("   ") << it->hWnd
+			<< _T("   ") << it->index
+			<< _T("   ") << it->procPath.GetString()
+			<< _T("   ") << it->procName.GetString()
+			<< _T("   ") << it->procTitle.GetString()
+			<< _T("   (") << it->rect.left << _T(", ") << it->rect.top << _T(", ")
+			<< it->rect.right - it->rect.left << _T(" * ") << it->rect.bottom - it->rect.top << _T(")")
+			<< std::endl;
+	}
+
+	// 其中第一个为 Z 序最上层;
+	if (m_vWinInfo.size() >= 1)
+		m_hWndTarget = m_vWinInfo.at(0).hWnd;
+
+	for (const auto& it : m_vWinInfo) {
+		HWND hwnd1 = ::GetWindow(it.hWnd, GW_HWNDFIRST);
+		HWND hwnd2 = ::GetTopWindow(it.hWnd);
+		HWND hwnd3 = ::GetTopWindow(nullptr);
+		HWND hwnd4 = ::GetNextWindow(it.hWnd, GW_HWNDFIRST);
+		HWND hwnd5 = ::GetNextWindow(it.hWnd, GW_HWNDLAST);
+		std::wcout << L"it.hWnd:" << it.hWnd 
+			<< L"  " << hwnd1 << L"  " << hwnd2 
+			<< L"  " << hwnd3 << L"  " << hwnd4 
+			<< L"  " << hwnd5 << std::endl;
+	}
 	return m_hWndTarget;
 }
 
@@ -70,6 +101,8 @@ RECT WinInfoWin::getWindowsRectFromPoint(POINT pt, BOOL bSmartDetection)
 	return rect;
 }
 
+static int g_index = 0;
+
 BOOL WinInfoWin::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 {
 	POINT pos;
@@ -87,9 +120,7 @@ BOOL WinInfoWin::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
-		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel + 22, windowTitle, procPath, procName));
-
-		m_hWndTarget = hWnd;
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, g_index ++, windowTitle, procPath, procName));
 		EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
 	}
 
@@ -113,9 +144,7 @@ BOOL WinInfoWin::EnumChildRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
-		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
-
-		m_hWndTarget = hWnd;
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, -4, windowTitle, procPath, procName));
 		//EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
 	}
 
@@ -135,7 +164,7 @@ BOOL WinInfoWin::EnumChildWindowsProc(HWND hWnd, LPARAM level)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
-		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, -2,  windowTitle, procPath, procName));
 
 		//::EnumChildWindows(hWnd, EnumChildWindowsProc, ++nLevel);
     //}
@@ -146,6 +175,7 @@ BOOL WinInfoWin::EnumChildWindowsProc(HWND hWnd, LPARAM level)
 // MSDN !!!: EnumWindows continues until the last top-level window is enumerated or the callback function returns FALSE.
 BOOL WinInfoWin::EnumWindowsProc(HWND hWnd, LPARAM level)
 {
+	
 	if (hWnd && WindowsFilter(hWnd)) {  // 句柄存在且可见
 		RECT rect;
 		DWORD processId;
@@ -157,7 +187,7 @@ BOOL WinInfoWin::EnumWindowsProc(HWND hWnd, LPARAM level)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
-		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, windowTitle, procPath, procName));
+		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, g_index++, windowTitle, procPath, procName));
 		//::EnumChildWindows(hWnd, EnumChildWindowsProc, ++nLevel); // 设置开关时候开启便利子窗口
 	}
 
@@ -201,19 +231,22 @@ BOOL WinInfoWin::getRectFromCache(POINT pt, RECT & rect)
 // 过滤不可见等的窗口
 BOOL WinInfoWin::WindowsFilter(HWND hWnd)
 {
-    if (!hWnd && hWnd == m_hWndFilter)
+    if (!hWnd)
         return FALSE;
+
+	if (hWnd == m_hWndFilter)
+		return FALSE;
 
     RECT rect;
     ::GetWindowRect(hWnd, &rect);
 
     if (rect.left == -32000 && rect.top == -32000   // 最小化
-		|| rect.bottom == 0 || rect.right == 0)     // 宽度不存在
+		|| rect.bottom - rect.top <= 0 || rect.right - rect.left <= 0)     // 宽度不存在
         return FALSE;
 
     DWORD styles = ::GetWindowLong(hWnd, GWL_STYLE);
     DWORD ex_styles = ::GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (styles & WS_CHILD || ex_styles & WS_EX_TOOLWINDOW)
+    if (styles & WS_EX_TOOLWINDOW || ex_styles & WS_EX_TRANSPARENT) // TODO: 看下使用什么合适
         return FALSE;
 
     return ::IsWindowVisible(hWnd);
