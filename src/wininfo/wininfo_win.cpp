@@ -58,9 +58,9 @@ HWND WinInfoWin::getAllWinInfoRealTime(POINT pt)
 			<< std::endl;
 	}
 
-	// 其中第一个为 Z 序最上层;
-	if (m_vWinInfo.size() >= 1)
-		m_hWndTarget = m_vWinInfo.at(0).hWnd;
+	//// 其中第一个为 Z 序最上层;
+	//if (m_vWinInfo.size() >= 1)
+	//	m_hWndTarget = m_vWinInfo.at(0).hWnd;
 
 	for (const auto& it : m_vWinInfo) {
 		HWND hwnd1 = ::GetWindow(it.hWnd, GW_HWNDFIRST);
@@ -120,8 +120,10 @@ BOOL WinInfoWin::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
+		m_hWndTarget = hWnd;
 		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, g_index ++, windowTitle, procPath, procName));
 		EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
+		return FALSE;
 	}
 
 	return TRUE;
@@ -144,8 +146,10 @@ BOOL WinInfoWin::EnumChildRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
+		m_hWndTarget = hWnd;
 		m_vWinInfo.push_back(WinInfo(hWnd, rect, nLevel, -4, windowTitle, procPath, procName));
-		//EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
+		EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
+		return FALSE;
 	}
 
 	return TRUE;

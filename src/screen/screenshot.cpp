@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../wininfo/wininfo_win.h"
 
-//#define _DEBUG
+#define _DEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -49,14 +49,20 @@ ScreenShot::ScreenShot(QWidget *parent)
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 
-	qInfo() << "#-------------------------->" << geom << m_screens[0]->size() << m_screens[0]->geometry()
-		<< m_screens[0]->size() << m_screens[1]->geometry();
+	QApplication::desktop()->rect();
+	for (const auto& scrn : m_screens) {
+
+		qInfo() << "#------------------------------------------->\n" 
+			<< "屏幕详细信息：index:" << m_screens.indexOf(scrn) << "   size:" << scrn->size() << "   geometry:" << scrn->geometry()
+			<< "   virtualGeometry:" << scrn->virtualGeometry() << "   desktop()->rect():" << QApplication::desktop()->rect();
+	}
+	
 
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
 #ifdef _DEBUG
-	setFixedSize(3000, 2000);
-	move(-3000, 0);
+	setFixedSize(m_screens.at(0)->size());
+	move(desktop->geometry().topLeft());
 #else
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 	setFixedSize(geom.size());
@@ -70,7 +76,6 @@ ScreenShot::ScreenShot(QWidget *parent)
 	//int y2 = 0;
 	//m_screens[0]->virtualGeometry().getRect(&x1, &y1, &x2,  &y2) ;
 	//QRect rt(x1, y1, x2, y2);
-	qInfo() << "-------->" << m_screens[0]->virtualGeometry() << "  " << QApplication::desktop()->rect() << "   " << m_screens[0]->virtualGeometry().topLeft();
 
 
 //    m_draw = new XDraw(this);
@@ -220,15 +225,9 @@ QPixmap* ScreenShot::getVirtualScreen()
 	// TODO 2021-09-29:
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
 	if (!m_currPixmap) {
-		QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
-
-#ifdef _DEBUG
-		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), -3000, 170, desktop->width(), desktop->height()));
-#else
-		const QRect geom = desktop->geometry(); // 多屏的矩形取并集
-		qInfo() << "------------------------------->" << geom << desktop->screenGeometry() << desktop->availableGeometry();
-		m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
-#endif
+	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
+	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
+	m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
     }
 
     return m_currPixmap;
@@ -462,20 +461,20 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
 
 #ifdef _DEBUG
-	int offsetX = -3000;
-	int offsetY = 0;
+	const QRect geom = QApplication::desktop()->geometry();
+	int offsetX = geom.x();
+	int offsetY = geom.y();
 		// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
 	// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
 	pen.setColor(Qt::red);
 	pa.setPen(pen);
 	if (m_vec.size() > 0) {
-		const QRect geom = QApplication::desktop()->geometry();
 		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
 			QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
 
 			QRect rtDraw(rt.left() - offsetX, rt.top() - offsetY, rt.width(), rt.height());
 			pa.drawRect(rtDraw);
-			qInfo() << "--------------->@geom:" << geom << "  rt:" << rt << "  rtDraw:" << rtDraw;
+			qInfo() << "--------------->@geom:" << geom << "  m_vec 中 it 矩形:" << rt << "  it 偏移之后的绘画矩形 rtDraw:" << rtDraw;
 			CString path = it->procPath;
 			pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5")
 				.arg(path.GetBuffer(path.GetLength())).arg(rt.left() - geom.left()).arg(rt.top() - geom.top()).arg(rt.width()).arg(rt.height()));
@@ -489,42 +488,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
 	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
 	qInfo() << "--------------->@##:" << m_rtTest;
-
-	//}
-#else
-	const QRect geom = QApplication::desktop()->geometry();
-	int offsetX = geom.left();
-	int offsetY = geom.top();
-	// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
-// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
-	pen.setColor(Qt::red);
-	pa.setPen(pen);
-	if (m_vec.size() > 0) {
-		const QRect geom = QApplication::desktop()->geometry();
-		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
-			QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
-
-			QRect rtDraw(rt.left() - offsetX, rt.top() - offsetY, rt.width(), rt.height());
-			pa.drawRect(rtDraw.adjusted(20, 20, -20, -20));
-			qInfo() << "--------------->@geom:" << geom << "  rt:" << rt << "  rtDraw:" << rtDraw;
-			CString path = it->procPath;
-			pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5, index=%6")
-				.arg(path.GetBuffer(path.GetLength()))
-				.arg(rt.left() - geom.left())
-				.arg(rt.top() - geom.top())
-				.arg(rt.width())
-				.arg(rt.height())
-				.arg(it->index));
-		}
-	}
-
-	//if (!m_rtTest.isEmpty()) {
-	pen.setColor(Qt::yellow);
-	pa.setPen(pen);
-	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
-	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
-	qInfo() << "--------------->@##:" << m_rtTest;
-
 	//}
 #endif // 
 
@@ -888,14 +851,11 @@ ScreenShot &ScreenShot::instance()
 
 void ScreenShot::getScrnShots()
 {
-	m_vec.clear();
 	//WinInfoWin::instance().getAllWinInfoCache();
-
 	//WinInfoWin::instance().getAllWinInfoRealTime();
 
+	m_vec.clear();
 	m_vec = WinInfoWin::instance().m_vWinInfo;
-
-
 
     this->getScrnInfo();
 	setFocus(Qt::MouseFocusReason);
@@ -912,7 +872,7 @@ void ScreenShot::getScrnInfo()
 
 	for (QScreen* it : m_screens) {
         qInfo() << "----------------------------------------------------------------------------\n"
-			<< "count:" << it << "  devicePixelRatio:" << it->devicePixelRatio() << "  manufacturer:" << it->manufacturer()
+			<< "Screen:" << it << "   devicePixelRatio:" << it->devicePixelRatio() << "  manufacturer:" << it->manufacturer()
 			<< "  model:" << it->model() << "  name:" << it->name() << "  physicalSize:" << it->physicalSize() << "  refreshRate:" << it->refreshRate()
 			<< "  serialNumber:" << it->serialNumber() << "  size:" << it->size() << "  Scale:" << getScale(it) << "  virtualGeometry:" << it->virtualGeometry() << "\n"
 			"Physical DPI:" << it->physicalDotsPerInch() << "  DPIX:" << it->physicalDotsPerInchX() << "  DPIY:" << it->physicalDotsPerInchY() << "\n"
