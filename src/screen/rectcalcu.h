@@ -17,58 +17,39 @@ QT_END_NAMESPACE
 
 namespace XC {
 
-// TODO 2021.11.09 后优化为 emun class、或写进 class 里面定，而非此全局形式(那就需要重载 qDebug() 的 << 函数了，输出类)
-enum CursorType {                                  // ------------（矩形区域）------------
-    Select,                                        // 选中
-    Move,                                          // 移动
-    Waiting,                                       // 等待（未有，和已有矩形局域）
-    ModifWidth,                                    // 拉伸左、右
-    ModifHeight,                                   // 拉伸上、下
-    ModifBorderSize = ModifWidth | ModifHeight,    // 拉伸任意一边（左、右、上、下）
+	enum class ScrnType {
+		// 基础的几种状态
+		Wait,                                // 基础的等待状态（未有，和已有矩形局域）
+		Select,                              // 基础的选中状态
+		Move,                                // 基础的移动状态
+		Draw,                                // 基础的绘画状态    
+		Stretch,                             // 基础的拉伸状态
+	};
 
-    ModifyTLAndBR,                                 // 拉伸斜对角（左上、右下）
-    ModifyTRAndBL,                                 // 拉伸斜对角（右上、左下）
-    ModifyCorner = ModifyTLAndBR | ModifyTRAndBL,  // 拉伸斜任意一斜角（左上、右下、右上、左下）
-    ModifySize = ModifBorderSize | ModifyCorner,   // 拉伸矩形任意一边或一斜角（左、右、上、下；左上、右下、右上、左下）
-
-                                                   // ------------（绘画栏状态）------------
-    Drawing,                                       // 绘画中（绘画按钮有处于点击状态）
-    DrawSelect,                                    // 绘画时选中的绘画元素
-    DrawMove,                                      // 绘画时移动的绘画元素
-    DrawWaiting,                                   // 绘画时等待
-
-                                                   // ------------（未知）------------
-    UnknowCursorType                               // 未知
-};
-Q_DECLARE_FLAGS(CursorTypes, CursorType)     // 枚举 CursorType 生成宏 CursorTypes
-Q_DECLARE_OPERATORS_FOR_FLAGS(CursorTypes)  // 重载宏 CursorType 的 |() 函数
-
-enum CursorArea {
-    CursorCrossLeft = 0x00000000,
-    CursorCrossTop = 0x00000001,
-    CursorCrossRight = 0x00000002,
-    CursorCrossBottom = 0x00000004,
-    CursorCrossHorizontal = CursorCrossLeft | CursorCrossRight,
-    CursorCrossVertical = CursorCrossTop | CursorCrossBottom,
-    CursorCrossBorder = CursorCrossHorizontal | CursorCrossVertical,
-
-    CursorCrossTopLeft = 0x00000010,
-    CursorCrossTopRight = 0x00000020,
-    CursorCrossBottomLeft = 0x00000040,
-    CursorCrossBottomRight = 0x00000080,
-    CursorCrossTL2BR = CursorCrossTopLeft | CursorCrossBottomRight,
-    CursorCrossTR2BL = CursorCrossTopRight | CursorCrossBottomLeft,
-    CursorCrossCorner = CursorCrossTL2BR | CursorCrossTR2BL,
-    CursorCross = CursorCrossBorder | CursorCrossCorner,
-
-    CursorOutSize = 0x00000100,
-    CursorInner = 0x00000200,
-
-    UnknowCursorArea
-};
-Q_DECLARE_FLAGS(CursorAreas, CursorArea)
-//Q_DECLARE_OPERATORS_FOR_FLAGS(CursorAreas)
-
+	enum class CursorArea {
+	   Left = 0x00000001,
+	   Top = 0x00000002,
+	   Right = 0x00000004,
+	   Bottom = 0x00000008,
+	   Horizontal = Left | Right,
+	   Vertical = Top | Bottom,
+	   Edga = Horizontal | Vertical,
+	
+	   TopLeft = 0x00000010,
+	   TopRight = 0x00000020,
+	   BottomLeft = 0x00000040,
+	   BottomRight = 0x00000080,
+	   TLAndBR = TopLeft | BottomRight,
+	   TRAndBL = TopRight | BottomLeft,
+	   Corner = TLAndBR | TRAndBL,
+	
+	   Border = Edga | Corner,               // 边框
+	   External = 0x00000100,                // 外部
+	   Internal = 0x00000200,                // 内部
+	   Unknow
+	};
+	//Q_DECLARE_FLAGS(CursorAreas, CursorArea)
+	//Q_DECLARE_OPERATORS_FOR_FLAGS(CursorAreas)
 }
 
 // ** 方便使用枚举 **
@@ -81,37 +62,34 @@ public:
 	RectCalcu();
 	~RectCalcu();
 
-	QRect& getSelRect();
-	QRect getOuterSelRect(QRect& rect, int interval = HAIF_INTERVAL);
-	QRect getInnerSelRect(QRect& rect, int interval = HAIF_INTERVAL);
-	int getMoveWidth();
-	int getMoveHeight();
-	int getModifyWidth();
-	int getModifyHeight();
+    static QRect getRect(QPoint pos1, QPoint pos2);
+
+	const QRect& getSelRect();
+	QRect getExteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取外部矩形
+	QRect getInteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取内部矩形
+
 	void clear();
 	void setClear(bool clear);
 	bool isClear();
-    const CursorArea getCursorArea(QPoint pos, bool details = false);
+    const CursorArea getCursorArea(const QPoint pos, bool details = false);
 
-    static QRect getRect(QPoint pos1, QPoint pos2);
-	QRect getRect(QRect rect, int px, CursorArea area);
 	QRect& limitBound(QRect& rt, QRect rtDesktop = QApplication::desktop()->rect());
 
-private:
-	QRect& setSelRect(QPoint pos1, QPoint pos2);
-	
-public:
-	QPoint m_startPos;
-	QPoint m_EndPos;
-	QPoint m_moveStartPos;
-	QPoint m_moveEndPos;
-	QPoint m_modifyStartPos;
-	QPoint m_modifyEndPos;
-    CursorType m_cursorType = CursorType::UnknowCursorType;     // 程序状态（对应此时鼠标的操作类型）
+	void calcurRsultOnce();
 
 private:
-	QRect m_rtSel;
-	bool m_bClear;  // 当前清理状态
+	const QRect& setSelRect();
+	const QRect setStretchRect(); // 仅拉伸时使用
+	
+public:
+	QPoint pos1;
+	QPoint pos2;
+	ScrnType scrnType;          // 程序状态（对应此时鼠标的操作类型）
+
+private:
+	QRect  rtSel;               // 由 pos1, pos2 所得
+	bool m_bClear;              // 当前清理状态
+	CursorArea cursArea;        // 光标对应区域
 };
 
 #endif //PICSHOT_RECTCALCU_H

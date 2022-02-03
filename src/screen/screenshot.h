@@ -63,8 +63,9 @@ private:
     ScreenShot(QWidget *parent = nullptr);
     ~ScreenShot() override;
 
+	ScrnType updateScrnType(const QPoint pos);
+
     QPixmap* getVirtualScreen();
-	void modifyRectSize(QRect& rtSel);
 
 	// 绘画边框样式
     void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
@@ -86,7 +87,6 @@ private:
 	QPixmap* m_currPixmap;       // 当前屏幕截图
     QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
 	RectCalcu m_rtCalcu;         // 选中矩形区域
-	CursorArea m_cursorArea;     // 光标所在区域
 
     DrawToolBar* m_tbDrawBar;    // 工具栏
     XDrawStep m_drawStep;        // 当前绘画一步骤

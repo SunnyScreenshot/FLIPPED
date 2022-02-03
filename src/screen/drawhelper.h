@@ -11,6 +11,43 @@
 #include <QPainterPath>
 
 namespace XC {
+	//enum ScrnStatus {
+	//	// 基础的几种状态
+	//	SS_WaitBase,                                // 基础的等待状态（未有，和已有矩形局域）
+	//	SS_SelectBase,                              // 基础的选中状态
+	//	SS_MoveBase,                                // 基础的移动状态
+	//	SS_DrawBase,                                // 基础的绘画状态    
+	//	SS_StretchBase,                             // 基础的拉伸状态
+	//};
+
+	//enum ScreenStatus {                                  // ------------（矩形区域）------------
+	//	Auto,     // 自动检测
+	//	Custom,   // 手动拖曳
+
+	//	Left,
+	//	Right,
+	//	Top,
+	//	Bottom,
+	//	TopLeft,
+	//	TopRight,
+	//	BottomLeft,
+	//	BottomRight,
+
+	//	Width = Left | Right,                    // 左、右
+	//	Height = Top | Bottom,                   // 上、下
+	//	Edge = Width | Height,                   // 任意一边（左、右、上、下）
+	//	TLAndBR = TopLeft | BottomRight,         // 斜对角（左上、右下）
+	//	TRAndBL = TopRight | BottomLeft,         // 斜对角（右上、左下）
+	//	Corner = TLAndBR | TRAndBL,              // 斜任意一斜角（左上、右下、右上、左下）
+	//	Frame = Edge | Corner,                   // 矩形任意一边或一斜角（左、右、上、下；左上、右下、右上、左下）         
+
+	//	UnknowCursorType                         // 未知
+	//};
+	//Q_DECLARE_FLAGS(CursorTypes, ScreenStatus)     // 枚举 ScrnType 生成宏 CursorTypes
+	//	Q_DECLARE_OPERATORS_FOR_FLAGS(CursorTypes)   // 重载宏 ScrnType 的 |() 函数
+
+
+
 	// C++11 新增带作用域的枚举，用 enum class  或enum struct（两者等价）声明。
 	// https://blog.csdn.net/luckysym/article/details/1666114
 	enum class DrawState {

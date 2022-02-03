@@ -39,7 +39,6 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
 	, m_rtCalcu()
-    , m_cursorArea(CursorArea::UnknowCursorArea)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
 {
@@ -102,6 +101,22 @@ ScreenShot::~ScreenShot()
 {
 }
 
+ScrnType ScreenShot::updateScrnType(const QPoint pos)
+{
+	CursorArea cursArea = m_rtCalcu.getCursorArea(pos);
+
+	// 后面加上绘画和选择
+	if (cursArea == CursorArea::Internal) {
+		return ScrnType::Move;
+	} else if (cursArea == CursorArea::External) {
+		return ScrnType::Wait;
+	} else if (cursArea == CursorArea::Border) {
+		return ScrnType::Stretch;
+	}
+}
+
+
+
 // 清空截图内容（当关闭 Esc、或完成截图时）
 void ScreenShot::onClearScreen()
 {
@@ -113,7 +128,6 @@ void ScreenShot::onClearScreen()
 	m_vDrawUndo.clear();
 
 	m_rtCalcu.clear();
-    m_cursorArea = CursorArea::UnknowCursorArea;
 };
 
 void ScreenShot::onDrawShape(DrawShape shape)
@@ -197,16 +211,16 @@ void ScreenShot::onCopy()
 
 void ScreenShot::onDrawStart()
 {
-    m_rtCalcu.m_cursorType = CursorType::Drawing;
+    m_rtCalcu.scrnType = ScrnType::Draw;
     setMouseTracking(false);  // Fix: 鼠标移动中会被自动绘画矩形，副作用绘画状态的光标不完美了(选中框内外的光标被固定了)，严格不算 bug，一种外观特效
-//    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.m_cursorType;
+//    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.scrnType;
 }
 
 void ScreenShot::onDrawEnd()
 {
-    m_rtCalcu.m_cursorType = CursorType::Waiting;
+    m_rtCalcu.scrnType = ScrnType::Wait;
     setMouseTracking(true);  // 等待状态开启鼠标跟踪
-//    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.m_cursorType;
+//    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.scrnType;
 }
 
 void ScreenShot::onLineEndsChange(LineEnds ends)
@@ -231,31 +245,6 @@ QPixmap* ScreenShot::getVirtualScreen()
     }
 
     return m_currPixmap;
-}
-
-// 修改拉伸选中矩形的大小
-void ScreenShot::modifyRectSize(QRect& rt)
-{
-	int width = m_rtCalcu.getModifyWidth();
-	int height = m_rtCalcu.getModifyHeight();
-	if (m_cursorArea == CursorArea::CursorCrossLeft) {
-		rt = m_rtCalcu.getRect(rt, width, m_cursorArea);
-	} else if (m_cursorArea == CursorArea::CursorCrossRight) {
-		rt = m_rtCalcu.getRect(rt, width, m_cursorArea);
-	} else if (m_cursorArea == CursorArea::CursorCrossTop) {
-		rt = m_rtCalcu.getRect(rt, height, m_cursorArea);
-	} else if (m_cursorArea == CursorArea::CursorCrossBottom) {
-		rt = m_rtCalcu.getRect(rt, height, m_cursorArea);
-	} else if (m_cursorArea == CursorArea::CursorCrossTopLeft) {
-		rt = m_rtCalcu.getRect(rt.topLeft() + QPoint(width, height), rt.bottomRight());
-	} else if (m_cursorArea == CursorArea::CursorCrossTopRight) {
-		rt = m_rtCalcu.getRect(rt.topRight() + QPoint(width, height), rt.bottomLeft());
-	} else if (m_cursorArea == CursorArea::CursorCrossBottomLeft) {
-		rt = m_rtCalcu.getRect(rt.bottomLeft() + QPoint(width, height), rt.topRight());
-	} else if (m_cursorArea == CursorArea::CursorCrossBottomRight) {
-		rt = m_rtCalcu.getRect(rt.bottomRight() + QPoint(width, height), rt.topLeft());
-	} else {
-	}
 }
 
 void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
@@ -454,18 +443,45 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.setBrush(Qt::transparent);
     pa.drawPixmap(QApplication::desktop()->rect(), *m_currPixmap);
 
-	QRect rtSel(m_rtCalcu.getSelRect().translated(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight()));  // 移动选中矩形
-	m_rtCalcu.limitBound(rtSel, rect());
-	modifyRectSize(rtSel);  // 拉伸选中矩形大小
+	QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
+	m_rtCalcu.limitBound(rtSel);           // 修复边缘时图片被拉伸
+
+	//qDebug() << "【paintEvent】  :" << m_rtCalcu.scrnType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.selEndPos << "  " << m_basePixmap << "  " << QRect();
+    // 注意独立屏幕缩放比（eg: macox = 2）
+	if (rtSel.width() > 0 && rtSel.height() > 0){
+        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
+        pa.drawPixmap(rtSel, m_savePixmap);
+
+        //qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
+        qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
+	}
+
+	// 绘画图案
+    for (XDrawStep& it : m_vDrawed)
+        drawStep(pa, it);
+
+	pen.setWidth(width / 2);
+	pen.setColor(Qt::yellow);
+	pa.setPen(pen);
+	drawStep(pa, m_drawStep, false);
+
+    // 屏幕遮罩
+    QPainterPath path;
+    path.addRect(QApplication::desktop()->rect());
+    path.addRect(rtSel);
+    path.setFillRule(Qt::OddEvenFill);
+    pa.setPen(Qt::NoPen);
+    pa.setBrush(QColor(0, 0, 0, 0.5 * 255));
+    pa.drawPath(path);
 
 
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	const QRect geom = QApplication::desktop()->geometry();
 	int offsetX = geom.x();
 	int offsetY = geom.y();
-		// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
-	// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
+	// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
+// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
 	pen.setColor(Qt::red);
 	pa.setPen(pen);
 	if (m_vec.size() > 0) {
@@ -487,38 +503,23 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	pa.setPen(pen);
 	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
 	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
+
 	qInfo() << "--------------->@##:" << m_rtTest;
-	//}
-#endif // 
 
-
-	//qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();
-    // 注意独立屏幕缩放比（eg: macox = 2）
-	if (rtSel.width() > 0 && rtSel.height() > 0){
-        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
-        pa.drawPixmap(rtSel, m_savePixmap);
-
-        //qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
-        //qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
-	}
-
-	// 绘画图案
-    for (XDrawStep& it : m_vDrawed)
-        drawStep(pa, it);
-
-	pen.setWidth(width / 2);
-	pen.setColor(Qt::yellow);
+	pen.setColor(Qt::red);
 	pa.setPen(pen);
-	drawStep(pa, m_drawStep, false);
 
-    // 屏幕遮罩
-    QPainterPath path;
-    path.addRect(QApplication::desktop()->rect());
-    path.addRect(rtSel);
-    path.setFillRule(Qt::OddEvenFill);
-    pa.setPen(Qt::NoPen);
-    pa.setBrush(QColor(0, 0, 0, 0.5 * 255));
-    pa.drawPath(path);
+	const int space = 20;
+	QPoint posText(0, 50);
+	pa.drawText(posText + QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
+		.arg(int(m_rtCalcu.scrnType)));
+	pa.drawText(posText + QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
+		.arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
+	pa.drawText(posText + QPoint(0, space * 2), QString("m_rtSel: (%1, %2, %3 * %4)")
+		.arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
+	//}
+//#endif // 
+
 
     // 边框
     if (rtSel.width() > 0 && rtSel.height() > 0){
@@ -577,7 +578,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	pa.drawRect(rtBottomLeft);
 	pa.drawRect(rtBottomRight);
 
-	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.m_cursorType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.m_EndPos << "  " << m_basePixmap << "  " << QRect();*/
+	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.scrnType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.selEndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
 #endif // 1
 }
@@ -597,177 +598,45 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
 void ScreenShot::mousePressEvent(QMouseEvent *event)
 {
-    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
-             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos;
-
-    bool bDrawing = false;
-    if (m_rtCalcu.m_cursorType == CursorType::Drawing) {
-        bDrawing = true;
-    } else {
-        m_rtCalcu.m_cursorType = CursorType::Waiting;
-    }
+	if (event->button() != Qt::LeftButton)
+		return;
 
 	setMouseTracking(false);
 
 	if (m_rtCalcu.getSelRect().isEmpty()) {
 		m_rtCalcu.clear();
-		m_rtCalcu.m_cursorType = CursorType::Select;
-	} else {  // 可能是添加编辑画图、或者移动等模式
-		if (event->button() == Qt::LeftButton)
-		{
-            if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorInner && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::Move;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossLeft && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifWidth;
-				m_cursorArea = CursorArea::CursorCrossLeft;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossRight && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifWidth;
-				m_cursorArea = CursorArea::CursorCrossRight;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTop && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifHeight;
-				m_cursorArea = CursorArea::CursorCrossTop;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottom && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifHeight;
-				m_cursorArea = CursorArea::CursorCrossBottom;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopLeft && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifyTLAndBR;
-				m_cursorArea = CursorArea::CursorCrossTopLeft;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossTopRight && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifyTRAndBL;
-				m_cursorArea = CursorArea::CursorCrossTopRight;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomLeft && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifyTRAndBL;
-				m_cursorArea = CursorArea::CursorCrossBottomLeft;
-            } else if (m_rtCalcu.getCursorArea(event->pos(), true) == CursorArea::CursorCrossBottomRight && !bDrawing) {
-				m_rtCalcu.m_cursorType = CursorType::ModifyTLAndBR;
-				m_cursorArea = CursorArea::CursorCrossBottomRight;
-			} else {
-			}
-		}
+		m_rtCalcu.scrnType = ScrnType::Select;
+	} else { // 则可能为 绘画、移动、拉伸、等待状态
+		m_rtCalcu.scrnType = updateScrnType(event->pos());
 	}
 
-    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
-             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();
-
-	switch (m_rtCalcu.m_cursorType)
-	{
-	case Select: {
-		m_rtCalcu.m_startPos = event->pos();
-        m_rtCalcu.m_EndPos = event->pos();
-		break;
-	}
-	case ModifWidth:
-	case ModifHeight:
-	case ModifyTLAndBR:
-	case ModifyTRAndBL: {
-		m_rtCalcu.m_modifyStartPos = event->pos();
-		m_rtCalcu.m_modifyEndPos = event->pos();
-		break;
-	}
-	case Move: {
-		setCursor(Qt::ArrowCursor);
-		m_rtCalcu.m_moveStartPos = event->pos();
-		m_rtCalcu.m_moveEndPos = event->pos();
-		break;
-	}
-	case Waiting: {
-		break;
-	}
-    case Drawing: {
-		//if (!m_rtCalcu.getSelRect().contains(event->pos(), true))
-		//	return;
-        m_drawStep.startPos = event->pos();
-        m_drawStep.endPos = event->pos();
-		m_drawStep.editPos = event->pos(); // TODO 2022.01.16 可优化: 某些状态不用保存，对应移动和按下
-        break;
-    }
-	case UnknowCursorType:
-		break;
-	default:
-		break;
-	}
+	if (m_rtCalcu.scrnType == ScrnType::Wait) {
+	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
+		m_rtCalcu.pos1 = event->pos();
+		m_rtCalcu.pos2 = event->pos();
+	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
+		m_rtCalcu.pos1 = event->pos();
+		m_rtCalcu.pos2 = event->pos();
+	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
+	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
+		m_rtCalcu.pos1 = event->pos();
+		m_rtCalcu.pos2 = event->pos();
+	} 
 
 	update();
 }
 
 void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 {
-    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
-             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();;
-
-	
-	switch (m_rtCalcu.m_cursorType)
-	{
-	case Select: {
-
-		m_rtCalcu.m_EndPos = event->pos();
-		setCursor(Qt::ArrowCursor);
-		qDebug() << "【mouseMoveEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
-		break;
-	}
-	case ModifWidth:
-	case ModifHeight:
-	case ModifyTLAndBR:
-	case ModifyTRAndBL: {
-		m_rtCalcu.m_modifyEndPos = event->pos();
-		break;
-	}
-	case Move: {
-        m_rtCalcu.m_moveEndPos = event->pos();
-		updateGetWindowsInfo();
-		break;
-		
-	}
-	case Waiting: {
-		switch (m_rtCalcu.getCursorArea(event->pos()))
-		{
-		case CursorCrossHorizontal:
-            setCursor(Qt::SizeHorCursor);
-			break;
-		case CursorCrossVertical:
-			setCursor(Qt::SizeVerCursor);
-			break;
-		case CursorCrossTL2BR:
-			setCursor(Qt::SizeFDiagCursor);
-			break;
-		case CursorCrossTR2BL:
-			setCursor(Qt::SizeBDiagCursor);
-			break;
-		case CursorInner:
-			setCursor(Qt::SizeAllCursor);
-			break;
-		default:
-			setCursor(Qt::ArrowCursor);
-			break;
-		}
-		break;
-	}
-    case Drawing: {
-       if (m_rtCalcu.getSelRect().contains(event->pos(), false))
-          setCursor(Qt::CrossCursor);
-       else
-           setCursor(Qt::ArrowCursor);
-
-       m_drawStep.endPos = event->pos();
-	   m_drawStep.editPos = event->pos();
-       m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
-
-	   //if (/*选中为画刷*/)
-	   //{
-	   m_drawStep.custPath.append(event->pos());
-	   //}
-
-//       qDebug() << "-----MOVE------Drawing->:" << m_drawStep.rt << (int)m_drawStep.shape;
-// << m_rtCalcu.getSelRect() << pos() << "【" << m_rtCalcu.getSelRect().contains(pos(), false) << cursor();
-        break;
-    }
-	case UnknowCursorType:
-		break;
-	default:
-		break;
+	// 此时为 Qt::NoButton
+	if (m_rtCalcu.scrnType == ScrnType::Wait) {
+	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
+		m_rtCalcu.pos2 = event->pos();
+	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
+		m_rtCalcu.pos2 = event->pos();
+	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
+	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
+		m_rtCalcu.pos2 = event->pos();
 	}
 
 	update();
@@ -775,64 +644,23 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
 void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 {
-    qDebug() << "event->pos():" << event->pos() << "m_rtCalcu.m_cursorType:" << m_rtCalcu.m_cursorType
-             << "m_rtCalcu.m_startPos:" << m_rtCalcu.m_startPos
-             << "m_rtCalcu.m_EndPos:" << m_rtCalcu.m_EndPos << hasMouseTracking();
-
-	switch (m_rtCalcu.m_cursorType)
-	{
-	case Select: {
-		m_rtCalcu.m_EndPos = event->pos();
-		//m_rectCalcu.clear();
-		qDebug() << "【mouseReleaseEvent】 Select :" << m_rtCalcu.m_startPos << "   " << m_rtCalcu.m_EndPos;
-		break;
-	}
-	case ModifWidth:
-	case ModifHeight:
-	case ModifyTLAndBR:
-	case ModifyTRAndBL: {
-		modifyRectSize(m_rtCalcu.getSelRect());
-
-		m_rtCalcu.m_modifyStartPos = QPoint();
-		m_rtCalcu.m_modifyEndPos = QPoint();
-		m_cursorArea = CursorArea::UnknowCursorArea;
-		//qDebug() << "【mouseMoveEvent】ModifWidth :" << m_rtCalcu.getSelRect() << m_rtCalcu.getSelRect() << m_rtCalcu.getModifyWidth() << m_rtCalcu.getModifyHeight();
-		break;
-	}
-	case Move: {
-		m_rtCalcu.getSelRect().translate(m_rtCalcu.getMoveWidth(), m_rtCalcu.getMoveHeight());
-		m_rtCalcu.limitBound(m_rtCalcu.getSelRect());
-		m_rtCalcu.m_moveStartPos = QPoint();
-		m_rtCalcu.m_moveEndPos = QPoint();
-		break;
-	}
-    case Waiting: {
-		break;
-	}
-    case Drawing: {
-        m_drawStep.endPos = event->pos();
-        m_drawStep.rt = RectCalcu::getRect(m_drawStep.startPos, m_drawStep.endPos);
-        m_vDrawed.push_back(m_drawStep); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
-
-        m_drawStep.clear();
-        //qInfo() << "--------------------------count>"<<m_vDrawed.count();
-
-        int i = 1;
-        for (XDrawStep it : m_vDrawed) {
-            qDebug() << i++ << "  rt:" << it.rt << "  shape:" << int(it.shape) << endl;
-        }
-        break;
-    }
-	case UnknowCursorType:
-		break;
-	default:
-		break;
+	qInfo() << "###############>" << event->button();
+	if (m_rtCalcu.scrnType == ScrnType::Wait) {
+	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
+		m_rtCalcu.pos2 = event->pos();
+	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
+		m_rtCalcu.pos2 = event->pos();
+	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
+	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
+		m_rtCalcu.pos2 = event->pos();
 	}
 
-    if (m_rtCalcu.m_cursorType != CursorType::Drawing) {
-        m_rtCalcu.m_cursorType = CursorType::Waiting;
-        setMouseTracking(true);
-    }
+	m_rtCalcu.calcurRsultOnce();
+
+	if (m_rtCalcu.scrnType != ScrnType::Draw) {
+		m_rtCalcu.scrnType = ScrnType::Wait;
+		setMouseTracking(true);
+	}
 
 	update();
 }
