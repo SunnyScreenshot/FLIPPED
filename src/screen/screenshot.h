@@ -64,7 +64,8 @@ private:
     ~ScreenShot() override;
 
 	ScrnType updateScrnType(const QPoint pos);
-
+	void updateCursorShape(const QPoint pos);
+    void updateBorderCursorShape(const CursorArea& cursArea);
     QPixmap* getVirtualScreen();
 
 	// 绘画边框样式

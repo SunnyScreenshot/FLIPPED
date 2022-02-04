@@ -6,23 +6,23 @@
 #include <QRect>
 #include <QPoint>
 
-// 通过任意两点获取一个选中矩形
-const QRect& RectCalcu::setSelRect()
-{
-	if (scrnType == ScrnType::Move) {
-		rtSel.translate(pos2 - pos1);
-	} else if (scrnType == ScrnType::Stretch) {
-		if (!rtSel.isValid())
-			return QRect();
-
-		rtSel = setStretchRect();
-	}
-
-	return  rtSel;
-}
+//// 通过任意两点获取一个选中矩形
+//const QRect& RectCalcu::setSelRect()
+//{
+//	if (scrnType == ScrnType::Move) {
+//		rtSel.translate(pos2 - pos1);
+//	} else if (scrnType == ScrnType::Stretch) {
+//		if (!rtSel.isValid())
+//			rtSel = QRect();
+//		else
+//			rtSel = getStretchRect();
+//	}
+//
+//	return  rtSel;
+//}
 
 // 返回副本
-const QRect RectCalcu::setStretchRect()
+const QRect RectCalcu::getStretchRect()
 {
 	QRect rt;
 	if (scrnType != ScrnType::Stretch)
@@ -32,7 +32,7 @@ const QRect RectCalcu::setStretchRect()
 	const int width = pos2.x() - pos1.x();
 	const int height = pos2.y() - pos1.y();
 	const QPoint offset(pos2 - pos1);
-	const CursorArea& cursArea = getCursorArea(pos1, true);
+	const CursorArea cursArea = getCursorArea(pos1, true);
 
 	if (cursArea == CursorArea::Left) {
 		rt.setLeft(rt.left() + width);
@@ -52,6 +52,15 @@ const QRect RectCalcu::setStretchRect()
 		rt.setBottomRight(rt.bottomRight() + offset);
 	} else {
 	}
+
+    // 修复拉伸矩形为负数但却可以绘画的场景
+    if (!rt.isValid()) {
+        if (rt.width() <= 0 || rt.height() <= 0) {
+            QPoint p1(rt.topLeft());
+            QPoint p2(rt.topLeft() + QPoint(rt.width(), rt.height()));
+            rt = getRect(p1, p2);
+        }
+    }
 	return rt;
 }
 
@@ -59,6 +68,7 @@ const QRect RectCalcu::setStretchRect()
 void RectCalcu::calcurRsultOnce()
 {
 	rtSel = getSelRect();
+
 	pos1 = QPoint();
 	pos2 = QPoint();
 }
@@ -85,11 +95,12 @@ QRect& RectCalcu::limitBound(QRect& rt, QRect rtDesktop)
 // 判断当前鼠标所在区域; false 为大概区域（用来粗略计算显示光标区域即可）; true 为详细区域（精确计算所在区域，需要修改矩形大小做准备，显示不同光标）
 const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details)
 {
-	if (!rtSel.isValid())
+    QRect rt(rtSel);
+	if (!rt.isValid() || !rt.isValid())
 		return CursorArea::External;
 
-	QRect rtOuter = getExteRect(rtSel);
-	QRect rtInner = getInteRect(rtSel);
+	QRect rtOuter = getExteRect(rt);
+	QRect rtInner = getInteRect(rt);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
 
 	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
@@ -126,6 +137,9 @@ const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details)
 				return CursorArea::TopRight;
 			else if (rtBottomLeft.contains(pos, true))
 				return CursorArea::BottomLeft;
+            else
+                return CursorArea::Unknow;
+
 		}
 	} else {
 		return CursorArea::Unknow;
@@ -157,14 +171,14 @@ RectCalcu::~RectCalcu()
 }
 
 // 此时并不修改其 resel 数值
-const QRect& RectCalcu::getSelRect()
+const QRect RectCalcu::getSelRect()
 {
 	if (scrnType == ScrnType::Select)
 		return getRect(pos1, pos2);
 	else if (scrnType == ScrnType::Move)
 		return rtSel.translated(pos2 - pos1);
 	else if (scrnType == ScrnType::Stretch)
-		return setStretchRect(); // 返回副本
+		return getStretchRect(); // 返回副本
 	else
 		return rtSel;
 }

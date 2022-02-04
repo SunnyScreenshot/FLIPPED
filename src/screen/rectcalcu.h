@@ -63,10 +63,7 @@ public:
 	~RectCalcu();
 
     static QRect getRect(QPoint pos1, QPoint pos2);
-
-	const QRect& getSelRect();
-	QRect getExteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取外部矩形
-	QRect getInteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取内部矩形
+	const QRect getSelRect();
 
 	void clear();
 	void setClear(bool clear);
@@ -78,8 +75,12 @@ public:
 	void calcurRsultOnce();
 
 private:
-	const QRect& setSelRect();
-	const QRect setStretchRect(); // 仅拉伸时使用
+	//const QRect& setSelRect();
+	const QRect getStretchRect(); // 仅拉伸时使用
+
+	QRect getExteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取外部矩形
+	QRect getInteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取内部矩形
+
 	
 public:
 	QPoint pos1;

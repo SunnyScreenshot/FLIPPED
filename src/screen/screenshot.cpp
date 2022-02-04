@@ -60,7 +60,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
 #ifdef _DEBUG
-	setFixedSize(m_screens.at(0)->size());
+	setFixedSize(m_screens.at(1)->size());
 	move(desktop->geometry().topLeft());
 #else
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
@@ -112,8 +112,52 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
 		return ScrnType::Wait;
 	} else if (cursArea == CursorArea::Border) {
 		return ScrnType::Stretch;
-	}
+    } /*else {
+        return ScrnType::Stretch;
+    }*/
+
 }
+
+void ScreenShot::updateCursorShape(const QPoint pos) 
+{
+	CursorArea cursArea = m_rtCalcu.getCursorArea(pos, true);
+
+    if (m_rtCalcu.scrnType == ScrnType::Move) {
+        //if (cursArea == CursorArea::External)
+        //    setCursor(Qt::ForbiddenCursor);
+        //else
+        //    setCursor(Qt::SizeAllCursor);
+    } else if (m_rtCalcu.scrnType == ScrnType::Draw) {
+        setCursor(Qt::ArrowCursor);
+    } else if (m_rtCalcu.scrnType == ScrnType::Select) {
+        setCursor(Qt::CrossCursor);
+    } else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
+
+    } else if (m_rtCalcu.scrnType == ScrnType::Wait) {
+        if (cursArea == CursorArea::External) {
+            setCursor(Qt::ForbiddenCursor);
+        } else if (cursArea == CursorArea::Internal){
+            setCursor(Qt::SizeAllCursor);
+        } else {
+            updateBorderCursorShape(cursArea);
+        }
+    }
+}
+
+// 功能函数，仅考虑边框状态
+void ScreenShot::updateBorderCursorShape(const CursorArea & cursArea)
+{
+    if (cursArea == CursorArea::Top || cursArea == CursorArea::Bottom)
+        setCursor(Qt::SizeVerCursor);
+    else if (cursArea == CursorArea::Left || cursArea == CursorArea::Right)
+        setCursor(Qt::SizeHorCursor);
+    else if (cursArea == CursorArea::TopLeft || cursArea == CursorArea::BottomRight)
+        setCursor(Qt::SizeFDiagCursor);
+    else if (cursArea == CursorArea::TopRight || cursArea == CursorArea::BottomLeft)
+        setCursor(Qt::SizeBDiagCursor);
+}
+
+
 
 
 
@@ -474,6 +518,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.setBrush(QColor(0, 0, 0, 0.5 * 255));
     pa.drawPath(path);
 
+    
+
 
 
 //#ifdef _DEBUG
@@ -484,6 +530,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 // TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
 	pen.setColor(Qt::red);
 	pa.setPen(pen);
+    pa.setBrush(Qt::NoBrush);
 	if (m_vec.size() > 0) {
 		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
 			QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
@@ -504,22 +551,30 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
 	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
 
-	qInfo() << "--------------->@##:" << m_rtTest;
+	qInfo() << "--------------->@##:" << m_rtTest << font().pointSize();
 
-	pen.setColor(Qt::red);
+	pen.setColor(Qt::white);
 	pa.setPen(pen);
 
-	const int space = 20;
-	QPoint posText(0, 50);
+    QFont font(font());
+    font.setPointSize(16);  // 默认大小为 9
+    pa.setFont(font);
+	const int space = font.pointSize() * 2.5;
+	QPoint posText(0, m_screens[1]->size().height() / 2);
 	pa.drawText(posText + QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
-		.arg(int(m_rtCalcu.scrnType)));
+                .arg(int(m_rtCalcu.scrnType)));
 	pa.drawText(posText + QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
-		.arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
-	pa.drawText(posText + QPoint(0, space * 2), QString("m_rtSel: (%1, %2, %3 * %4)")
-		.arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
+                .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
+    pa.drawText(posText + QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
+                .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
+	pa.drawText(posText + QPoint(0, space * 3), QString("m_rtSel: (%1, %2, %3 * %4)")
+                .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
+    pa.drawText(posText + QPoint(0, space * 4), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
+                .arg(m_rtCalcu.getSelRect().x()).arg(m_rtCalcu.getSelRect().y())
+                .arg(m_rtCalcu.getSelRect().width()).arg(m_rtCalcu.getSelRect().height()));
+
 	//}
 //#endif // 
-
 
     // 边框
     if (rtSel.width() > 0 && rtSel.height() > 0){
@@ -549,9 +604,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         topLeft.setY(rtSel.bottomRight().y() + width + space);
         m_tbDrawBar->move(topLeft);
     }
-
-
-
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
@@ -623,6 +675,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 		m_rtCalcu.pos2 = event->pos();
 	} 
 
+    updateCursorShape(event->pos());
 	update();
 }
 
@@ -639,6 +692,7 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 		m_rtCalcu.pos2 = event->pos();
 	}
 
+    updateCursorShape(event->pos());
 	update();
 }
 
