@@ -33,8 +33,8 @@ void DrawHelper::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush br
 
 void XDrawStep::clear()
 {
-	startPos = QPoint();
-	endPos = QPoint();
+	pos1 = QPoint();
+	pos2 = QPoint();
 	rt = QRect();
 	//shape = DrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
 	//pen = QPen(Qt::red);

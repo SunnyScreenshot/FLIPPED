@@ -39,6 +39,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
 	, m_rtCalcu()
+    , bMonitorWindows(true)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
 {
@@ -76,6 +77,9 @@ ScreenShot::ScreenShot(QWidget *parent)
 	//m_screens[0]->virtualGeometry().getRect(&x1, &y1, &x2,  &y2) ;
 	//QRect rt(x1, y1, x2, y2);
 
+    setMouseTracking(true);
+    m_rtCalcu.scrnType = ScrnType::Wait;
+    
 
 //    m_draw = new XDraw(this);
     connect(m_tbDrawBar, &DrawToolBar::sigDownload, this, &ScreenShot::onDownload);
@@ -88,7 +92,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_tbDrawBar, &DrawToolBar::sigRedo, this, &ScreenShot::onRedo);
 
     connect(m_tbDrawBar, &DrawToolBar::sigIsFill, this, [&](bool bFill) {
-        m_drawStep.bFill = bFill;
+        m_step.bFill = bFill;
     });
 
 	connect(m_tbDrawBar, &DrawToolBar::sigLineEndsChange, this, &ScreenShot::onLineEndsChange);
@@ -120,6 +124,11 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
 
 void ScreenShot::updateCursorShape(const QPoint pos) 
 {
+    if (m_rtCalcu.scrnType == ScrnType::Draw) {
+        setCursor(Qt::UpArrowCursor);
+        return;
+    }
+    
 	CursorArea cursArea = m_rtCalcu.getCursorArea(pos, true);
 
     if (m_rtCalcu.scrnType == ScrnType::Move) {
@@ -127,15 +136,13 @@ void ScreenShot::updateCursorShape(const QPoint pos)
         //    setCursor(Qt::ForbiddenCursor);
         //else
         //    setCursor(Qt::SizeAllCursor);
-    } else if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        setCursor(Qt::ArrowCursor);
     } else if (m_rtCalcu.scrnType == ScrnType::Select) {
         setCursor(Qt::CrossCursor);
     } else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 
     } else if (m_rtCalcu.scrnType == ScrnType::Wait) {
         if (cursArea == CursorArea::External) {
-            setCursor(Qt::ForbiddenCursor);
+            setCursor(Qt::ArrowCursor);
         } else if (cursArea == CursorArea::Internal){
             setCursor(Qt::SizeAllCursor);
         } else {
@@ -176,8 +183,8 @@ void ScreenShot::onClearScreen()
 
 void ScreenShot::onDrawShape(DrawShape shape)
 {
-    m_drawStep.shape = shape;
-    qDebug() << "--------@onDrawShape:" << int(m_drawStep.shape);
+    m_step.shape = shape;
+    qDebug() << "--------@onDrawShape:" << int(m_step.shape);
 }
 
 // 点击一次，撤销一步
@@ -256,6 +263,7 @@ void ScreenShot::onCopy()
 void ScreenShot::onDrawStart()
 {
     m_rtCalcu.scrnType = ScrnType::Draw;
+
     setMouseTracking(false);  // Fix: 鼠标移动中会被自动绘画矩形，副作用绘画状态的光标不完美了(选中框内外的光标被固定了)，严格不算 bug，一种外观特效
 //    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.scrnType;
 }
@@ -269,12 +277,12 @@ void ScreenShot::onDrawEnd()
 
 void ScreenShot::onLineEndsChange(LineEnds ends)
 {
-	m_drawStep.lineEnds = ends;
+	m_step.lineEnds = ends;
 }
 
 void ScreenShot::onLineDasheChange(Qt::PenStyle dashes)
 {
-	m_drawStep.lineDashes = dashes;
+	m_step.lineDashes = dashes;
 }
 
 // 获取虚拟屏幕截图
@@ -391,9 +399,9 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		step.brush.setStyle(Qt::SolidPattern);
 		pa.setBrush(step.brush);
 
-		QPainterPath arrowPath = SubAbsLineToolBar::getArrowHead(step.startPos, step.endPos);
+		QPainterPath arrowPath = SubAbsLineToolBar::getArrowHead(step.pos1, step.pos2);
 		pa.fillPath(arrowPath, step.brush);
-		pa.drawLine(SubAbsLineToolBar::getShorterLine(step.startPos, step.endPos));
+		pa.drawLine(SubAbsLineToolBar::getShorterLine(step.pos1, step.pos2));
 
 		//QPoint offset(0, 20);
 		//pa.setPen(Qt::green);
@@ -478,36 +486,39 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 原始图案
     QPainter pa(this);
-    pa.setRenderHint(QPainter::Antialiasing, true);
-    const int width = HAIF_INTERVAL;  // 画笔宽度
-    QPen pen(QColor("#01bdff"));
-    pen.setWidth(width);
-    pa.setPen(pen);
-    pa.setOpacity(1);
-    pa.setBrush(Qt::transparent);
+    pa.setBrush(Qt::NoBrush);
+    pa.setPen(Qt::NoPen);
     pa.drawPixmap(QApplication::desktop()->rect(), *m_currPixmap);
 
-	QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
-	m_rtCalcu.limitBound(rtSel);           // 修复边缘时图片被拉伸
-
-	//qDebug() << "【paintEvent】  :" << m_rtCalcu.scrnType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.selEndPos << "  " << m_basePixmap << "  " << QRect();
-    // 注意独立屏幕缩放比（eg: macox = 2）
-	if (rtSel.width() > 0 && rtSel.height() > 0){
-        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));
+    // 选中矩形图片
+    QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
+    m_rtCalcu.limitBound(rtSel);           // 修复边界时图片被拉伸
+    if (rtSel.width() > 0 && rtSel.height() > 0) {
+        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
         pa.drawPixmap(rtSel, m_savePixmap);
 
         //qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
-        qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
-	}
+        //qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
+    }
+
+    // 画家准备
+    pa.setRenderHint(QPainter::Antialiasing, true);
+    const int penWidth = HAIF_INTERVAL;  // 画笔宽度
+    QPen pen(QColor("#01bdff"));
+    pen.setWidth(penWidth);
+    pa.setPen(pen);
+    pa.setOpacity(1);
+    pa.setBrush(Qt::transparent);
 
 	// 绘画图案
     for (XDrawStep& it : m_vDrawed)
         drawStep(pa, it);
 
-	pen.setWidth(width / 2);
-	pen.setColor(Qt::yellow);
+    // 绘画当前步
+	pen.setWidth(penWidth / 2);
+	pen.setColor(Qt::green);
 	pa.setPen(pen);
-	drawStep(pa, m_drawStep, false);
+	drawStep(pa, m_step, false);
 
     // 屏幕遮罩
     QPainterPath path;
@@ -518,69 +529,11 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.setBrush(QColor(0, 0, 0, 0.5 * 255));
     pa.drawPath(path);
 
-    
-
-
-
-//#ifdef _DEBUG
-	const QRect geom = QApplication::desktop()->geometry();
-	int offsetX = geom.x();
-	int offsetY = geom.y();
-	// 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
-// TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
-	pen.setColor(Qt::red);
-	pa.setPen(pen);
-    pa.setBrush(Qt::NoBrush);
-	if (m_vec.size() > 0) {
-		for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
-			QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
-
-			QRect rtDraw(rt.left() - offsetX, rt.top() - offsetY, rt.width(), rt.height());
-			pa.drawRect(rtDraw);
-			qInfo() << "--------------->@geom:" << geom << "  m_vec 中 it 矩形:" << rt << "  it 偏移之后的绘画矩形 rtDraw:" << rtDraw;
-			CString path = it->procPath;
-			pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5")
-				.arg(path.GetBuffer(path.GetLength())).arg(rt.left() - geom.left()).arg(rt.top() - geom.top()).arg(rt.width()).arg(rt.height()));
-
-		}
-	}
-
-	//if (!m_rtTest.isEmpty()) {
-	pen.setColor(Qt::yellow);
-	pa.setPen(pen);
-	m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
-	pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
-
-	qInfo() << "--------------->@##:" << m_rtTest << font().pointSize();
-
-	pen.setColor(Qt::white);
-	pa.setPen(pen);
-
-    QFont font(font());
-    font.setPointSize(16);  // 默认大小为 9
-    pa.setFont(font);
-	const int space = font.pointSize() * 2.5;
-	QPoint posText(0, m_screens[1]->size().height() / 2);
-	pa.drawText(posText + QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
-                .arg(int(m_rtCalcu.scrnType)));
-	pa.drawText(posText + QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
-                .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
-    pa.drawText(posText + QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
-                .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
-	pa.drawText(posText + QPoint(0, space * 3), QString("m_rtSel: (%1, %2, %3 * %4)")
-                .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
-    pa.drawText(posText + QPoint(0, space * 4), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
-                .arg(m_rtCalcu.getSelRect().x()).arg(m_rtCalcu.getSelRect().y())
-                .arg(m_rtCalcu.getSelRect().width()).arg(m_rtCalcu.getSelRect().height()));
-
-	//}
-//#endif // 
-
     // 边框
     if (rtSel.width() > 0 && rtSel.height() > 0){
         pen.setColor(QColor("#01bdff"));
         pen.setStyle(Qt::SolidLine);
-        pen.setWidth(width);
+        pen.setWidth(penWidth);
         pa.setPen(pen);
         pa.setBrush(Qt::NoBrush);
 
@@ -601,9 +554,66 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         QPoint topLeft;
         const int space = 8;
         topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
-        topLeft.setY(rtSel.bottomRight().y() + width + space);
+        topLeft.setY(rtSel.bottomRight().y() + penWidth + space);
         m_tbDrawBar->move(topLeft);
     }
+
+
+    //#ifdef _DEBUG  调试信息
+    // 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
+    // TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
+    const QRect geom = QApplication::desktop()->geometry();
+    int offsetX = geom.x();
+    int offsetY = geom.y();
+
+    pen.setColor(Qt::red);
+    pa.setPen(pen);
+    pa.setBrush(Qt::NoBrush);
+    if (m_vec.size() > 0) {
+        for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
+            QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
+
+            QRect rtDraw(rt.left() - offsetX, rt.top() - offsetY, rt.width(), rt.height());
+            pa.drawRect(rtDraw);
+            qInfo() << "--------------->@geom:" << geom << "  m_vec 中 it 矩形:" << rt << "  it 偏移之后的绘画矩形 rtDraw:" << rtDraw;
+            CString path = it->procPath;
+            pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5")
+                        .arg(path.GetBuffer(path.GetLength())).arg(rt.left() - geom.left()).arg(rt.top() - geom.top()).arg(rt.width()).arg(rt.height()));
+
+        }
+    }
+
+    //if (!m_rtTest.isEmpty()) {
+    pen.setColor(Qt::yellow);
+    pa.setPen(pen);
+    m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
+    pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
+
+    pen.setColor(Qt::white);
+    pa.setPen(pen);
+
+    // 调试的实时数据
+    QFont font(font());
+    font.setPointSize(16);  // 默认大小为 9
+    pa.setFont(font);
+    const int space = font.pointSize() * 2.5;
+    QPoint posText(0, m_screens[1]->size().height() / 2);
+    QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
+    pa.drawText(posText + QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
+                .arg(int(m_rtCalcu.scrnType)));
+    pa.drawText(posText + QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
+                .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
+    pa.drawText(posText + QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
+                .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
+    pa.drawText(posText + QPoint(0, space * 3), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
+                .arg(m_rtCalcu_selRect.x()).arg(m_rtCalcu_selRect.y()).arg(m_rtCalcu_selRect.width()).arg(m_rtCalcu_selRect.height()));
+    pa.drawText(posText + QPoint(0, space * 4), QString("rtSel: (%1, %2, %3 * %4)")
+                .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
+    pa.drawText(posText + QPoint(0, space * 5), QString("pos(): (%1, %2)")
+                .arg(pos().x()).arg(pos().y()));
+
+    //}
+//#endif //
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
@@ -654,22 +664,24 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 		return;
 
 	setMouseTracking(false);
-
-	if (m_rtCalcu.getSelRect().isEmpty()) {
+	if (m_rtCalcu.getSelRect().isEmpty() && m_rtCalcu.scrnType == ScrnType::Wait) {
 		m_rtCalcu.clear();
-		m_rtCalcu.scrnType = ScrnType::Select;
-	} else { // 则可能为 绘画、移动、拉伸、等待状态
-		m_rtCalcu.scrnType = updateScrnType(event->pos());
-	}
+        bMonitorWindows = false;
 
-	if (m_rtCalcu.scrnType == ScrnType::Wait) {
-	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
+		m_rtCalcu.scrnType = ScrnType::Select;
+        m_rtCalcu.pos1 = event->pos();
+        m_rtCalcu.pos2 = event->pos();
+	} else if (m_rtCalcu.scrnType == ScrnType::Draw) { 
+        m_step.pos1 = event->pos();
+        m_step.pos2 = event->pos();
+        m_step.editPos = event->pos();
+	} else {  // 则可能为移动、拉伸、等待状态
+		m_rtCalcu.scrnType = updateScrnType(event->pos());
+    }
+
+	if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos1 = event->pos();
 		m_rtCalcu.pos2 = event->pos();
-	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
-		m_rtCalcu.pos1 = event->pos();
-		m_rtCalcu.pos2 = event->pos();
-	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos1 = event->pos();
 		m_rtCalcu.pos2 = event->pos();
@@ -681,13 +693,25 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 
 void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 {
+    qInfo() << "--------mouseMoveEvent()--->" << event->pos();
 	// 此时为 Qt::NoButton
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
+        if (bMonitorWindows)
+            updateGetWindowsInfo();
+
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
+
+
 		m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
+        m_step.pos2 = event->pos();
+        m_step.editPos = event->pos();
+
+        m_step.custPath.append(event->pos());
+        m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
+
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos2 = event->pos();
 	}
@@ -705,6 +729,12 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
+        m_step.pos2 = event->pos();
+        m_step.custPath.append(event->pos());
+        m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
+
+        m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
+        m_step.clear();
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos2 = event->pos();
 	}

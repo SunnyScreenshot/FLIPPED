@@ -88,9 +88,10 @@ private:
 	QPixmap* m_currPixmap;       // 当前屏幕截图
     QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
 	RectCalcu m_rtCalcu;         // 选中矩形区域
+    bool bMonitorWindows;        // 智能选中窗口
 
     DrawToolBar* m_tbDrawBar;    // 工具栏
-    XDrawStep m_drawStep;        // 当前绘画一步骤
+    XDrawStep m_step;        // 当前绘画一步骤
 //    XDraw* m_draw;             // 绘画 Helper
 
     QVector<XDrawStep> m_vDrawed;    // 已绘步骤

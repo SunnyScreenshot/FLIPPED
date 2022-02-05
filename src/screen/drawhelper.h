@@ -94,8 +94,8 @@ using namespace XC;
 //NoDraw
 struct  XDrawStep
 {   // 公共元素 ------------------
-	QPoint startPos;                         // 起点
-	QPoint endPos;                           // 终点
+	QPoint pos1;                             // 起点
+	QPoint pos2;                             // 终点
 	QRect rt;                                // 初始绘画位置
     DrawShape shape = DrawShape::NoDraw;     // 绘画形状
 	bool bFill = false;                      // 绘画类型
