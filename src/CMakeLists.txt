@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.20)
+﻿cmake_minimum_required(VERSION 3.3)
 set(PROJECT_NAME PicShot)
 #set(PROJECT_VERSION_MAJOR 0)
 #set(PROJECT_VERSION_MINOR 1)
@@ -21,9 +21,9 @@ endif()
 
 # Sources files
 # main
-FILE(GLOB SRCS_MAIN
-    "./*.h"
-    "./*.cpp"
+set(SRCS_MAIN
+    "xglobal.h"
+    "main.cpp"
     )
 
 # core
@@ -33,15 +33,23 @@ FILE(GLOB_RECURSE SRCS_CORE
     )
 
 # wininfo
-FILE(GLOB_RECURSE SRCS_WININFO
-    "./wininfo/*.h"
-    "./wininfo/*.cpp"
+set(SRCS_WININFO
+    "wininfo/iwininfo.h"
+    "wininfo/iwininfo.cpp"
     )
 
 # widget
-FILE(GLOB_RECURSE SRCS_WIDGET
-    "./widget/*.h"
-    "./widget/*.cpp"
+set(SRCS_WIDGET
+    "widget/xhorizontalline.h"
+    "widget/xhorizontalline.cpp"
+    "widget/xverticalline.h"
+    "widget/xverticalline.cpp"
+    "widget/xkeysequenceedit.h"
+    "widget/xkeysequenceedit.cpp"
+    "widget/xroundwidget.h"
+    "widget/xroundwidget.cpp"
+    "widget/xtextwidget.h"
+    "widget/xtextwidget.cpp"
     )
 
 # screen
@@ -98,6 +106,30 @@ target_link_libraries(${PROJECT_NAME}
 #        log4qt
         qhotkey
         )
+
+if(APPLE)
+#    find_library(CARBON_LIBRARY Carbon)
+#    mark_as_advanced(CARBON_LIBRARY)
+
+#    target_sources(qhotkey PRIVATE QHotkey/qhotkey_mac.cpp)
+#    target_link_libraries(qhotkey PRIVATE ${CARBON_LIBRARY})
+elseif(WIN32)
+    target_sources(${PROJECT_NAME} PRIVATE wininfo/wininfo_win.h wininfo/wininfo_win.cpp)
+else()
+#    find_package(X11 REQUIRED)
+#    if(QT_MAJOR GREATER_EQUAL 6)
+#        target_link_libraries(qhotkey PRIVATE ${X11_LIBRARIES})
+#    else()
+#        find_package(Qt${QT_MAJOR} COMPONENTS X11Extras REQUIRED)
+#        target_link_libraries(qhotkey
+#            PRIVATE
+#                ${X11_LIBRARIES}
+#                Qt${QT_MAJOR}::X11Extras)
+#    endif()
+
+#    include_directories(${X11_INCLUDE_DIR})
+#    target_sources(qhotkey PRIVATE QHotkey/qhotkey_x11.cpp)
+endif()
 
 source_group("" FILES ${SRCS_MAIN})
 source_group("core" FILES ${SRCS_CORE})

@@ -1,11 +1,48 @@
 ﻿#ifndef WININFO_WIN_H
 #define WININFO_WIN_H
-#include "iwininfo.h"
 #include "../core/tsingleton.h"
 
 #include <windows.h>
 #include <atlstr.h>
 #include <vector>
+
+class WinInfo
+{
+public:
+    WinInfo() : hWnd(nullptr)
+      , rect({0, 0, 0, 0})
+      , level(-1)
+      , index(-1)
+      , procTitle(_T(""))
+      , procPath(_T(""))
+      , procName(_T("")) {
+    }
+
+    WinInfo(const HWND hWnd, const RECT rect, const int32_t level, const int32_t index,
+        const CString procTitle, const CString procPath, const CString procName) {
+        this->rect = rect;
+        this->hWnd = hWnd;
+        this->level = level;
+        this->procTitle = procTitle;
+        this->procPath = procPath;
+        this->procName = procName;
+    }
+
+    HWND hWnd;
+    RECT rect;
+    int32_t level;
+    int32_t index;
+    CString procTitle;
+    CString procName;
+    CString procPath;
+};
+
+//class IWinInfo
+//{
+//public:
+//    virtual void getAllWinInfo(std::vector<WinInfo>& vec) = 0;
+//};
+
 // 窗口信息_win 版本
 class WinInfoWin : public TSingleton<WinInfoWin>// , IWinInfo
 {
@@ -45,6 +82,5 @@ public:
     static HWND m_hWndFilter;
     static std::vector<WinInfo> m_vWinInfo;
 };
-
 
 #endif // WININFO_WIN_H

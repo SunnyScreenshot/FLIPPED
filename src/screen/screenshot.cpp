@@ -16,22 +16,27 @@
 #include <QFileDialog>
 #include <QImage>
 #include <QTextEdit>
-#include "../wininfo/wininfo_win.h"
 
 #define _DEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
 namespace Util {
-	bool getRectFromCurrentPoint(HWND hWndMySelf, QRect &out_rect)
-	{
-		POINT pt;
-		::GetCursorPos(&pt);
-		WinInfoWin::instance().setWindowsFilter(hWndMySelf);
-		RECT rect = WinInfoWin::instance().getWindowsRectFromPoint(pt, TRUE);
-		out_rect = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-		return out_rect.isValid();
-	}
+
+#ifdef Q_OS_WIN
+    bool getRectFromCurrentPoint(HWND hWndMySelf, QRect &out_rect)
+    {
+        POINT pt;
+        ::GetCursorPos(&pt);
+        WinInfoWin::instance().setWindowsFilter(hWndMySelf);
+        RECT rect = WinInfoWin::instance().getWindowsRectFromPoint(pt, TRUE);
+        out_rect = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+        return out_rect.isValid();
+    }
+#elif  defined(Q_OS_MAC)
+#elif  defined(Q_OS_LINUX)
+#endif
+
 }
 
 ScreenShot::ScreenShot(QWidget *parent)
@@ -61,7 +66,10 @@ ScreenShot::ScreenShot(QWidget *parent)
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
 #ifdef _DEBUG
-	setFixedSize(m_screens.at(1)->size());
+    if (m_screens.size() >= 2)
+        setFixedSize(m_screens.at(1)->size());
+    else
+        setFixedSize(m_screens.at(0)->size());
 	move(desktop->geometry().topLeft());
 #else
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
@@ -475,7 +483,7 @@ void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 	}
 }
 
-#include <atlstr.h>
+//#include <atlstr.h>
 // 效果：绘画的顺序重要
 void ScreenShot::paintEvent(QPaintEvent *event)
 {
@@ -569,6 +577,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::red);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
+#ifdef Q_OS_WIN
     if (m_vec.size() > 0) {
         for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
             QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
@@ -582,6 +591,9 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
         }
     }
+#elif  defined(Q_OS_MAC)
+#elif  defined(Q_OS_LINUX)
+#endif
 
     //if (!m_rtTest.isEmpty()) {
     pen.setColor(Qt::yellow);
@@ -593,11 +605,19 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.setPen(pen);
 
     // 调试的实时数据
-    QFont font(font());
+    QFont font;//(font());
     font.setPointSize(16);  // 默认大小为 9
     pa.setFont(font);
     const int space = font.pointSize() * 2.5;
-    QPoint posText(0, m_screens[1]->size().height() / 2);
+
+    int32_t posTextTop = 0;
+    if (m_screens.size() >= 2)
+        posTextTop = m_screens[1]->size().height() / 2;
+    else
+        posTextTop = m_screens[0]->size().height() / 2;
+
+    QPoint posText(0, posTextTop);
+
     QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
     pa.drawText(posText + QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
                 .arg(int(m_rtCalcu.scrnType)));
@@ -693,6 +713,9 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 
 void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 {
+//    if (event->button() != Qt::LeftButton)
+//        return;
+
     qInfo() << "--------mouseMoveEvent()--->" << event->pos();
 	// 此时为 Qt::NoButton
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
@@ -722,6 +745,9 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
 void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 {
+    if (event->button() != Qt::LeftButton)
+        return;
+
 	qInfo() << "###############>" << event->button();
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
@@ -766,8 +792,12 @@ void ScreenShot::getScrnShots()
 	//WinInfoWin::instance().getAllWinInfoCache();
 	//WinInfoWin::instance().getAllWinInfoRealTime();
 
-	m_vec.clear();
-	m_vec = WinInfoWin::instance().m_vWinInfo;
+#ifdef Q_OS_WIN
+    m_vec.clear();
+    m_vec = WinInfoWin::instance().m_vWinInfo;
+#elif  defined(Q_OS_MAC)
+#elif  defined(Q_OS_LINUX)
+#endif
 
     this->getScrnInfo();
 	setFocus(Qt::MouseFocusReason);
@@ -808,12 +838,17 @@ double ScreenShot::getDevicePixelRatio(QScreen * screen)
 // 随着光标移动，更新获取桌面所有窗口信息
 void ScreenShot::updateGetWindowsInfo()
 {
-	Util::getRectFromCurrentPoint((HWND)winId(), m_rtTest);
+#ifdef Q_OS_WIN
+    Util::getRectFromCurrentPoint((HWND)winId(), m_rtTest);
+#elif  defined(Q_OS_MAC)
+#elif  defined(Q_OS_LINUX)
+#endif
 }
 
 double ScreenShot::getScale(QScreen * screen)
 {
-#ifdef Q_OS_WIN
+// or defined(Q_WS_WIN) || defined(Q_WS_X11)
+#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
 	double scale = screen->logicalDotsPerInch() / 96.0;
 	if (scale < 1.25)
 		return 1;
@@ -837,7 +872,8 @@ double ScreenShot::getScale(QScreen * screen)
 		return scale;
 #elif  defined(Q_OS_MAC)
     double scale = screen->logicalDotsPerInch() / 72.0;
-
-#elif  defined(Q_OS_LINUX)
+    return scale;
+#else
+    return screen->logicalDotsPerInch() / 96.0;  //
 #endif
 }
