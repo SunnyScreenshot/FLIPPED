@@ -1,6 +1,6 @@
 ﻿#ifndef WININFO_WIN_H
 #define WININFO_WIN_H
-#include "../core/tsingleton.h"
+#include "../core/isingleton.h"
 
 #include <windows.h>
 #include <atlstr.h>
@@ -44,7 +44,7 @@ public:
 //};
 
 // 窗口信息_win 版本
-class WinInfoWin : public TSingleton<WinInfoWin>// , IWinInfo
+class WinInfoWin : public ISingleton<WinInfoWin>// , IWinInfo
 {
 private:
 	WinInfoWin();
@@ -58,7 +58,7 @@ public:
 
 //
 protected:
-	friend class TSingleton<WinInfoWin>;
+	friend class ISingleton<WinInfoWin>;
 //
 //protected:
 public:

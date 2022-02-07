@@ -12,7 +12,7 @@
 #define TSINGLETON_H
 
 template<typename T>
-class TSingleton
+class ISingleton
 {
 public:
     static T& instance() {
@@ -20,13 +20,13 @@ public:
         return instance;
     }
 
-    TSingleton(T&&) = delete;
-    TSingleton(const T&) = delete;
+    ISingleton(T&&) = delete;
+    ISingleton(const T&) = delete;
     void operator= (const T&) = delete;
 
 protected:
-    TSingleton() = default;
-    virtual ~TSingleton() = default;
+    ISingleton() = default;
+    virtual ~ISingleton() = default;
 };
 
 #endif // TSINGLETON_H
