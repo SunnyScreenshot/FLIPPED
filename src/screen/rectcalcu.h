@@ -73,6 +73,7 @@ public:
 	QRect& limitBound(QRect& rt, QRect rtDesktop = QApplication::desktop()->rect());
 
 	void calcurRsultOnce();
+    void setRtSel(const QRect rt);
 
 private:
 	//const QRect& setSelRect();

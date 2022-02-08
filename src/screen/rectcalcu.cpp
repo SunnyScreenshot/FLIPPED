@@ -73,6 +73,12 @@ void RectCalcu::calcurRsultOnce()
 	pos2 = QPoint();
 }
 
+// 仅被智能窗口选中时候使用，不要随意修改此数值;
+void RectCalcu::setRtSel(const QRect rt)
+{
+    rtSel = rt;
+}
+
 // 限制选中矩形不超过虚拟屏幕的边界， rect 为当前选中矩形
 QRect& RectCalcu::limitBound(QRect& rt, QRect rtDesktop)
 {
@@ -153,7 +159,11 @@ QRect RectCalcu::getRect(QPoint pos1, QPoint pos2)
 	int yMin = qMin<int>(pos1.y(), pos2.y());
 	int yMax = qMax<int>(pos1.y(), pos2.y());
 
-	return  QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
+    if (xMin == xMax && yMin == yMax) // 若是重复点，则会返回 QRect(0, 0, 1, 1);
+        return QRect(0, 0, -1, -1);
+    else
+        return QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
+	
 }
 
 RectCalcu::RectCalcu()

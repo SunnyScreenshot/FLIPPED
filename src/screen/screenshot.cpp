@@ -767,6 +767,12 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 
 	m_rtCalcu.calcurRsultOnce();
 
+    // 智能窗口赋值给手动选中 rtsel ,即表示手动选中了
+    if (m_rtCalcu.scrnType == ScrnType::Select) {
+        if (m_rtCalcu.pos1 == m_rtCalcu.pos2)
+            m_rtCalcu.setRtSel(QRect(m_rtTest));
+    }
+
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
 		m_rtCalcu.scrnType = ScrnType::Wait;
 		setMouseTracking(true);
