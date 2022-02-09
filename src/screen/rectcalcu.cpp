@@ -67,10 +67,15 @@ const QRect RectCalcu::getStretchRect()
 // 计算后得出结果数据，其余归零
 void RectCalcu::calcurRsultOnce()
 {
-	rtSel = getSelRect();
+    auto rt = getSelRect();
+    rtSel = rt;
 
-	pos1 = QPoint();
-	pos2 = QPoint();
+    if (bSmartMonitor)
+        return;
+
+    pos1 = QPoint();
+    pos2 = QPoint();
+
 }
 
 // 仅被智能窗口选中时候使用，不要随意修改此数值;
@@ -171,9 +176,9 @@ RectCalcu::RectCalcu()
 	, pos2(0, 0)
 	, rtSel(0, 0, -1, -1)
 	, m_bClear(false)
+    , bSmartMonitor(true)
 	, scrnType(ScrnType::Wait)
 {
-	clear();
 }
 
 RectCalcu::~RectCalcu()
@@ -216,6 +221,7 @@ void RectCalcu::clear()
 	rtSel = QRect();
 	scrnType = ScrnType::Wait;
 	m_bClear = true;
+    bSmartMonitor = false;
 }
 
 void RectCalcu::setClear(bool clear)

@@ -44,7 +44,6 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
 	, m_rtCalcu()
-    , bMonitorWindows(true)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
 {
@@ -487,6 +486,8 @@ void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 // 效果：绘画的顺序重要
 void ScreenShot::paintEvent(QPaintEvent *event)
 {
+
+    qInfo() << "############paintEvent()" << endl;
 	Q_UNUSED(event);
 
     if (!m_currPixmap)
@@ -598,8 +599,10 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     //if (!m_rtTest.isEmpty()) {
     pen.setColor(Qt::yellow);
     pa.setPen(pen);
-    m_rtTest.moveTo(m_rtTest.topLeft() - QPoint(offsetX, offsetY));
-    pa.drawRect(m_rtTest.adjusted(10, 10, -10, -10));
+    QRect rtTest(m_rtTest);  // 特地使用副本，保留原来数值避免被修改，也是按下和松开判断时候数据保持一致
+    rtTest.moveTo(rtTest.topLeft() - QPoint(offsetX, offsetY));
+    if (m_rtCalcu.bSmartMonitor) 
+        pa.drawRect(rtTest.adjusted(10, 10, -10, -10));
 
     pen.setColor(Qt::white);
     pa.setPen(pen);
@@ -631,7 +634,10 @@ void ScreenShot::paintEvent(QPaintEvent *event)
                 .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
     pa.drawText(posText + QPoint(0, space * 5), QString("pos(): (%1, %2)")
                 .arg(pos().x()).arg(pos().y()));
+    pa.drawText(posText + QPoint(0, space * 6), QString("m_rtTest: (%1, %2), rtTest: (%3, %4)")
+                .arg(m_rtTest.x()).arg(m_rtTest.y()).arg(rtTest.x()).arg(rtTest.y()));
 
+    
     //}
 //#endif //
 
@@ -680,14 +686,14 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
 void ScreenShot::mousePressEvent(QMouseEvent *event)
 {
+    qInfo() << "############mousePressEvent()" << endl;
 	if (event->button() != Qt::LeftButton)
 		return;
 
 	setMouseTracking(false);
 	if (m_rtCalcu.getSelRect().isEmpty() && m_rtCalcu.scrnType == ScrnType::Wait) {
-		m_rtCalcu.clear();
-        bMonitorWindows = false;
-
+		//m_rtCalcu.clear();
+        
 		m_rtCalcu.scrnType = ScrnType::Select;
         m_rtCalcu.pos1 = event->pos();
         m_rtCalcu.pos2 = event->pos();
@@ -719,13 +725,16 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
     qInfo() << "--------mouseMoveEvent()--->" << event->pos();
 	// 此时为 Qt::NoButton
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
-        if (bMonitorWindows)
+        if (m_rtCalcu.bSmartMonitor)
             updateGetWindowsInfo();
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
+        m_rtCalcu.pos2 = event->pos();
 
-
-		m_rtCalcu.pos2 = event->pos();
+        //if (m_rtCalcu.pos1 != m_rtCalcu.pos2)
+        //  不显示 TODO: 2022.02.10 再添加一个变量即可
+            
+        
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
@@ -752,6 +761,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
 		m_rtCalcu.pos2 = event->pos();
+
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
@@ -769,8 +779,15 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 
     // 智能窗口赋值给手动选中 rtsel ,即表示手动选中了
     if (m_rtCalcu.scrnType == ScrnType::Select) {
-        if (m_rtCalcu.pos1 == m_rtCalcu.pos2)
-            m_rtCalcu.setRtSel(QRect(m_rtTest));
+        m_rtCalcu.bSmartMonitor = false;
+        if (m_rtCalcu.pos1 != m_rtCalcu.pos2) { // 手动选择
+
+        } else { // 点击一个点，视作智能检测窗口
+            const QRect geom = QApplication::desktop()->geometry();
+            int offsetX = geom.x();
+            int offsetY = geom.y();
+            m_rtCalcu.setRtSel(QRect(m_rtTest).translated(- offsetX, -offsetY));
+        }
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
