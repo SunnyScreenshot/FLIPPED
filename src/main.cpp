@@ -8,9 +8,9 @@
 #include "screen/winsetting.h"
 
 // qtlog4
-#include "logger.h"
-#include "logmanager.h"
-#include "propertyconfigurator.h"
+//#include "logger.h"
+//#include "logmanager.h"
+//#include "propertyconfigurator.h"
 
 // test
 //#include <QHotkey>
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
     Log4Qt::LogManager::setHandleQtMessages(true);
 #else
     // 改变缺省消息处理程序的输出（终端调试）
-    qSetMessagePattern("%{appname} %{type} %{time [yyyy-MM-dd hh:mm:ss]} %{pid} %{threadid} %{qthreadptr} (%{file} %{line}) %{function} %{message}");
-    qSetMessagePattern("%{type} %{time [yyyy-MM-dd hh:mm:ss]} (%{file} %{line}) %{function} %{message}");
+    //qSetMessagePattern("%{appname} %{type} %{time [yyyy-MM-dd hh:mm:ss]} %{pid} %{threadid} %{qthreadptr} (%{file} %{line}) %{function} %{message}");
+    //qSetMessagePattern("%{type} %{time [yyyy-MM-dd hh:mm:ss]} (%{file} %{line}) %{function} %{message}");
 #endif
 
  //   qInfo()<<QObject::tr("Program running program start.");

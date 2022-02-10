@@ -17,7 +17,7 @@
 #include <QImage>
 #include <QTextEdit>
 
-#define _DEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -64,7 +64,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
-#ifdef _DEBUG
+#ifdef _MYDEBUG
     if (m_screens.size() >= 2)
         setFixedSize(m_screens.at(1)->size());
     else
@@ -261,7 +261,7 @@ void ScreenShot::onCopy()
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setPixmap(m_savePixmap);
 
-    qDebug()<<"--------------onCopy"<<parent();
+    qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
 
     emit sigClearScreen();
     hide();
@@ -298,9 +298,9 @@ QPixmap* ScreenShot::getVirtualScreen()
 	// TODO 2021-09-29:
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
 	if (!m_currPixmap) {
-	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
-	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
-	m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
+        QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
+	    const QRect geom = desktop->geometry();             // 多屏的矩形取并集
+	    m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
     }
 
     return m_currPixmap;
@@ -482,12 +482,9 @@ void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 	}
 }
 
-//#include <atlstr.h>
 // 效果：绘画的顺序重要
 void ScreenShot::paintEvent(QPaintEvent *event)
 {
-
-    qInfo() << "############paintEvent()" << endl;
 	Q_UNUSED(event);
 
     if (!m_currPixmap)
@@ -686,7 +683,6 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
 void ScreenShot::mousePressEvent(QMouseEvent *event)
 {
-    qInfo() << "############mousePressEvent()" << endl;
 	if (event->button() != Qt::LeftButton)
 		return;
 
@@ -722,7 +718,6 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 //    if (event->button() != Qt::LeftButton)
 //        return;
 
-    qInfo() << "--------mouseMoveEvent()--->" << event->pos();
 	// 此时为 Qt::NoButton
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
         if (m_rtCalcu.bSmartMonitor)
@@ -757,7 +752,6 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() != Qt::LeftButton)
         return;
 
-	qInfo() << "###############>" << event->button();
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
 		m_rtCalcu.pos2 = event->pos();

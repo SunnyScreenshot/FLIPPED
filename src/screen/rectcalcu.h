@@ -90,6 +90,7 @@ public:
     bool bSmartMonitor;          // 是否制智能获取窗口
 
 private:
+
 	QRect  rtSel;               // 由 pos1, pos2 所得
 	bool m_bClear;              // 当前清理状态
 	CursorArea cursArea;        // 光标对应区域
