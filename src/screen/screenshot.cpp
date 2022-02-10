@@ -301,6 +301,8 @@ QPixmap* ScreenShot::getVirtualScreen()
         QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	    const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 	    m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
+
+        m_currPixmap->save("123456.png");
     }
 
     return m_currPixmap;
@@ -486,9 +488,6 @@ void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 void ScreenShot::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
-
-    if (!m_currPixmap)
-        getVirtualScreen();
 
     // 原始图案
     QPainter pa(this);
@@ -818,6 +817,11 @@ void ScreenShot::getScrnShots()
 
     this->getScrnInfo();
 	setFocus(Qt::MouseFocusReason);
+
+    // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
+    if (!m_currPixmap)
+        getVirtualScreen();
+
     this->show();
 }
 
