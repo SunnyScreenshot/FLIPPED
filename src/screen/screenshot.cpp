@@ -433,17 +433,19 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		if (!m_currPixmap)
 			return;
 
-		if (!step.bFill) {
-			// setMosaicSmooth
+        // TODO: 多绘画几个就略有点卡顿，一切到此处便会内存先增加后恢复
+        if (step.rt.isEmpty())  // 优化，删除就很明显
+            break;
+        
+        QPixmap mosaicPixmap = m_currPixmap->copy(QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
+        if (step.bFill) { 
+            const QImage img = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
+            pa.drawImage(step.rt, img);
 		} else {
-			// TODO: 多绘画几个就略有点卡顿，一切到此处便会内存先增加后恢复
-			if (step.rt.isEmpty())  // 优化，删除就很明显
-				break;
-
-			QPixmap mosaicPixmap = m_currPixmap->copy(QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
-            const QImage image = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
-            pa.drawImage(step.rt, image);
+            const QPixmap* pix = SubMosaicToolBar::setMosaicSmooth(&mosaicPixmap, step.mscPx);
+            pa.drawPixmap(step.rt, *pix);
 		}
+
         break;
     }
     default:

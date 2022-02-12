@@ -12,8 +12,8 @@ public:
 
     virtual void initUI() override;
 
-	QImage setMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
-	static QImage setMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
+    static const QPixmap* setMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
+	static const QImage setMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
 };
 
 #endif // SUBMOSAICTOOLBAR_H

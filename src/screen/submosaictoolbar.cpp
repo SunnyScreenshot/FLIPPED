@@ -3,6 +3,10 @@
 #include <QLabel>
 #include <QSlider>
 #include <QImage>
+#include <QGraphicsBlurEffect>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+#include <QPainter>
 
 SubMosaicToolBar::SubMosaicToolBar(QWidget *parent)
     : SubAbsToolBar(parent)
@@ -22,14 +26,34 @@ void SubMosaicToolBar::initUI()
 	addStretch(0);
 }
 
-QImage SubMosaicToolBar::setMosaicSmooth(QPixmap * pixmap, int px)
+const QPixmap* SubMosaicToolBar::setMosaicSmooth(QPixmap * pixmap, int px)
 {
+    if (!pixmap)
+        return nullptr;
+
+    QGraphicsBlurEffect* blur = new QGraphicsBlurEffect;
+    blur->setBlurRadius(10);
+    QGraphicsPixmapItem* item =
+        new QGraphicsPixmapItem(*pixmap);
+    item->setGraphicsEffect(blur);
+
+    QGraphicsScene scene;
+    scene.addItem(item);
+
+    QPainter painter(pixmap);
+    scene.render(&painter, pixmap->rect(), QRectF());
+    blur->setBlurRadius(12);
+    // multiple repeat for make blur effect stronger
+    scene.render(&painter, pixmap->rect(), QRectF());
+
+    //pixmap->save("hahhaha.png");
+
 	// TODO 2022-01-09:  QGraphicsBlurEffect
 	// key: qt 截图 毛玻璃效果
-	return QImage();
+	return pixmap;
 }
 
-QImage SubMosaicToolBar::setMosaicPixlelated(QPixmap* pixmap, int px)
+const QImage SubMosaicToolBar::setMosaicPixlelated(QPixmap* pixmap, int px)
 {
 	if (!pixmap)
 		return QImage();
@@ -60,5 +84,5 @@ QImage SubMosaicToolBar::setMosaicPixlelated(QPixmap* pixmap, int px)
 		}
 	}
 
-	return *pImage;  // TODO 可优化: 值传递
+	return image;  // TODO 可优化: 值传递
 }
