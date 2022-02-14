@@ -423,7 +423,8 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		break;
 	}
     case DrawShape::Text: {
-		m_textEdit->move(step.editPos);
+        m_textEdit->move(step.editPos);
+
 		//m_textEdit->show();
 		// TODO: 使用编辑框
         //pa.drawText(step.rt.topLeft(), step.text);

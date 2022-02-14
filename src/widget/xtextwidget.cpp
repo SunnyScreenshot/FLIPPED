@@ -10,9 +10,10 @@ XTextWidget::XTextWidget(QWidget *parent)
 	, m_baseSize()
 	, m_minSize()
 {
-	//setStyleSheet(QStringLiteral("TextWidget { background: transparent; }"));
+    qInfo() << "###############> [XTextWidget::resizeEvent()]";
+    setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
 	connect(this, &XTextWidget::textChanged, this, &XTextWidget::adjustSize);
-	// connect(this, &TextWidget::textChanged, this, &TextWidget::emitTextUpdated);
+	connect(this, &XTextWidget::textChanged, this, &XTextWidget::emitTextUpdated);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setContextMenuPolicy(Qt::NoContextMenu);
@@ -20,13 +21,13 @@ XTextWidget::XTextWidget(QWidget *parent)
 
 XTextWidget::~XTextWidget()
 {
+    qInfo() << "###############> [XTextWidget::~XTextWidget()]";
 }
 
-// 
 // https://blog.csdn.net/kenfan1647/article/details/115171891
 void XTextWidget::adjustSize()
 {
-	qInfo() << "###############> adjustSize";
+    qInfo() << "###############> [XTextWidget::adjustSize()]";
     const QString& text = this->toPlainText();
 	QFontMetrics fm(this->font());
 	QRect bound = fm.boundingRect(QRect(), Qt::AlignLeft, text); // 需要再研究下
@@ -51,17 +52,43 @@ void XTextWidget::setFont(const QFont & font)
 	adjustSize();
 }
 
+
 void XTextWidget::showEvent(QShowEvent *e)
 {
-	qInfo() << "###############> showEvent";
+    QFont font;
+    QFontMetrics fm(font);  // 赋值一个初始的宽高
+    qInfo() << "###############> [XTextWidget::showEvent()]" << size() << fm.lineSpacing();
+    setFixedWidth(fm.lineSpacing() * 6);
+    setFixedHeight(fm.lineSpacing() * 2.5);
+    m_baseSize = size();
+    m_minSize = m_baseSize;
+
 	QTextEdit::showEvent(e);
 	adjustSize();
 }
 
+// 当 widget 大小被重新设置的时候就会被调用
 void XTextWidget::resizeEvent(QResizeEvent *e)
 {
-	qInfo() << "###############> resizeEvent";
+    qInfo() << "###############> [XTextWidget::resizeEvent()]";
 	m_minSize.setHeight(qMin(m_baseSize.height(), height()));
 	m_minSize.setWidth(qMin(m_baseSize.width(), width()));
 	QTextEdit::resizeEvent(e);
+}
+
+void XTextWidget::setTextColor(const QColor & c)
+{
+    QString s(QStringLiteral("XTextWidget { background: transparent; color: %1; }"));
+    setStyleSheet(s.arg(c.name()));
+}
+
+void XTextWidget::setAlignment(Qt::AlignmentFlag alignment)
+{
+    QTextEdit::setAlignment(alignment);
+    adjustSize();
+}
+
+void XTextWidget::emitTextUpdated()
+{
+    emit textUpdated(this->toPlainText());
 }

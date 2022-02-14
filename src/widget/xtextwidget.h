@@ -20,15 +20,15 @@ protected:
 	void showEvent(QShowEvent *e) override;
 	void resizeEvent(QResizeEvent *e) override;
 
-//signals:
-//	void textUpdated(const QString& s);
-//
-//public slots:
-//	void setTextColor(const QColor& c);
-//	void setAlignment(Qt::AlignmentFlag alignment);
-//
-//private slots:
-//	void emitTextUpdated();
+signals:
+    void textUpdated(const QString& s);
+
+public /*slots*/:
+    void setTextColor(const QColor& c);
+    void setAlignment(Qt::AlignmentFlag alignment);
+
+private slots:
+	void emitTextUpdated();
 
 private:
 	QSize m_baseSize;
