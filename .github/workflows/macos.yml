@@ -37,28 +37,31 @@ jobs:
           git submodule update
       - name: build macos
         run: |
-          cmake .
-          make
+          pwd
+          make build
+          cd build
+          cmake ..
+          make -j8
           ls -al
           cd bin
           ls -al
-      # 打包
-      - name: package
-        run: |
-          # 拷贝依赖
-          macdeployqt ./${targetName} -qmldir=. -verbose=1 -dmg
-      # 上传artifacts          
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.targetName }}_${{ matrix.os }}_${{matrix.qt_ver}}.zip
-          path: ./${{ env.targetName }}
-      # tag 上传Release
-      - name: uploadRelease
-        if: startsWith(github.event.ref, 'refs/tags/')
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./${{ env.targetName }}.dmg
-          asset_name: ${{ env.targetName }}_${{ matrix.os }}_${{ matrix.qt_ver }}.dmg
-          tag: ${{ github.ref }}
-          overwrite: true
+      # # 打包
+      # - name: package
+      #   run: |
+      #     # 拷贝依赖
+      #     macdeployqt ./${targetName} -qmldir=. -verbose=1 -dmg
+      # # 上传artifacts          
+      # - uses: actions/upload-artifact@v2
+      #   with:
+      #     name: ${{ env.targetName }}_${{ matrix.os }}_${{matrix.qt_ver}}.zip
+      #     path: ./${{ env.targetName }}
+      # # tag 上传Release
+      # - name: uploadRelease
+      #   if: startsWith(github.event.ref, 'refs/tags/')
+      #   uses: svenstaro/upload-release-action@v2
+      #   with:
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
+      #     file: ./${{ env.targetName }}.dmg
+      #     asset_name: ${{ env.targetName }}_${{ matrix.os }}_${{ matrix.qt_ver }}.dmg
+      #     tag: ${{ github.ref }}
+      #     overwrite: true
