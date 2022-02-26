@@ -179,7 +179,17 @@ void ScreenShot::updateBorderCursorShape(const CursorArea & cursArea)
 // 清空截图内容（当关闭 Esc、或完成截图时）
 void ScreenShot::onClearScreen()
 {
+#ifdef Q_OS_WIN
     m_vec.clear();
+
+    //if (m_rtCalcu.bSmartMonitor)  // 存储所需要全部窗口信息
+    //    m_vec = WinInfoWin::instance().m_vWinInfo;
+
+#elif  defined(Q_OS_MAC)
+#elif  defined(Q_OS_LINUX)
+#endif
+    
+
     m_vWholeScrn.clear();
 
 	//m_screens、m_primaryScreen 还保留
@@ -835,6 +845,7 @@ void ScreenShot::getScrnShots()
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
 #endif
+
 
     this->getScrnInfo();
 	setFocus(Qt::MouseFocusReason);
