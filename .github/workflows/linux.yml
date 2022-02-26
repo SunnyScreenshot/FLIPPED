@@ -1,4 +1,4 @@
-name: Linux(Debian)
+name: Linux
 on: 
   # push代码时触发workflow
   push:
@@ -60,11 +60,12 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ../src
-          make -j8
+          cmake ..
+          make
      
       - name: NameVersion
         id: NameVersion
+        if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
           $productVersion="${{ github.ref }}".substring("refs/tags/".length)
