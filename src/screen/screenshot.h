@@ -13,6 +13,7 @@
 #include <QWidget>
 #include <QList>
 #include <QColor>
+#include <QVector>
 #include <vector>
 
 #ifdef Q_OS_WIN
@@ -72,6 +73,7 @@ private:
 	void updateCursorShape(const QPoint pos);
     void updateBorderCursorShape(const CursorArea& cursArea);
     QPixmap* getVirtualScreen();
+    bool drawToCurrPixmap();
 
 	// 绘画边框样式
     void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
@@ -101,12 +103,13 @@ private:
 
     QVector<XDrawStep> m_vDrawed;    // 已绘步骤
     QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
+    QVector<QRect> m_vWholeScrn;      // 特殊矩形，全屏大小
 
 	// test
 	XTextWidget* m_textEdit;
-	QRect m_rtTest;
+	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
 #ifdef Q_OS_WIN
-    std::vector<WinInfo> m_vec;
+    std::vector<WinInfo> m_vec;      // 智能检测窗口信息存储
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
 #endif

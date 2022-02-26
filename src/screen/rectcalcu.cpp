@@ -221,7 +221,7 @@ void RectCalcu::clear()
 	rtSel = QRect();
 	scrnType = ScrnType::Wait;
 	m_bClear = true;
-    bSmartMonitor = false;
+    bSmartMonitor = true;
 }
 
 void RectCalcu::setClear(bool clear)

@@ -24,14 +24,14 @@
 namespace Util {
 
 #ifdef Q_OS_WIN
-    bool getRectFromCurrentPoint(HWND hWndMySelf, QRect &out_rect)
+    bool getRectFromCurrentPoint(HWND hWndMySelf, QRect &outRect)
     {
         POINT pt;
         ::GetCursorPos(&pt);
         WinInfoWin::instance().setWindowsFilter(hWndMySelf);
         RECT rect = WinInfoWin::instance().getWindowsRectFromPoint(pt, TRUE);
-        out_rect = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-        return out_rect.isValid();
+        outRect = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+        return outRect.isValid();
     }
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
@@ -53,13 +53,18 @@ ScreenShot::ScreenShot(QWidget *parent)
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 
+    m_vWholeScrn.clear();
 	QApplication::desktop()->rect();
 	for (const auto& scrn : m_screens) {
-
 		qInfo() << "#------------------------------------------->\n" 
 			<< "屏幕详细信息：index:" << m_screens.indexOf(scrn) << "   size:" << scrn->size() << "   geometry:" << scrn->geometry()
 			<< "   virtualGeometry:" << scrn->virtualGeometry() << "   desktop()->rect():" << QApplication::desktop()->rect();
+
+        m_vWholeScrn.push_back(scrn->geometry());
 	}
+
+    m_vWholeScrn.push_back(m_screens[0]->virtualGeometry());
+    m_vWholeScrn.push_back(QApplication::desktop()->rect());
 	
 
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
@@ -171,13 +176,12 @@ void ScreenShot::updateBorderCursorShape(const CursorArea & cursArea)
         setCursor(Qt::SizeBDiagCursor);
 }
 
-
-
-
-
 // 清空截图内容（当关闭 Esc、或完成截图时）
 void ScreenShot::onClearScreen()
 {
+    m_vec.clear();
+    m_vWholeScrn.clear();
+
 	//m_screens、m_primaryScreen 还保留
 	delete m_currPixmap;
 	m_currPixmap = nullptr;
@@ -219,23 +223,17 @@ void ScreenShot::onRedo()
 
 void ScreenShot::onDownload()
 {
-    if (!m_savePixmap || !m_currPixmap)
-        return;
+    if (drawToCurrPixmap()) {
+        QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
+        QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
 
-    QPainter pa;
-    pa.begin(m_currPixmap);
-    for (XDrawStep& it : m_vDrawed)
-        drawStep(pa, it);
-    pa.end();
-
-    QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files件(*.*)"));
-    QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
-
-    QTime startTime = QTime::currentTime();
-    m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
-    QTime stopTime = QTime::currentTime();
-    int elapsed = startTime.msecsTo(stopTime);
-    qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
+        QTime startTime = QTime::currentTime();
+        m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
+        QTime stopTime = QTime::currentTime();
+        int elapsed = startTime.msecsTo(stopTime);
+        qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
+        m_currPixmap->save("a2.png");
+    }
 
     emit sigClearScreen();
     hide();
@@ -243,26 +241,12 @@ void ScreenShot::onDownload()
 
 void ScreenShot::onCopy()
 {
-    if (!m_savePixmap || !m_currPixmap)
-        return;
+    if (drawToCurrPixmap()) {
+        if (!m_savePixmap.isNull())
+            QApplication::clipboard()->setPixmap(m_savePixmap);
+    }
 
-    QPainter pa;
-    pa.begin(m_currPixmap);
-    for (XDrawStep& it : m_vDrawed)
-        drawStep(pa, it);
-    pa.end();
-
-    // TODO: 2021.12.02, 为何添加 QFileDialog::getSaveFileName (此两行)即可顺利保存绘画后的文件，复制到剪切板中？
-    // 可能？sleep(1000) x;  update(); 都不是原因，不对
-//    QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files件(*.*)"));
-//    QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png");
-
-
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setPixmap(m_savePixmap);
-
-    qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
-
+    //qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
     emit sigClearScreen();
     hide();
 }
@@ -306,6 +290,25 @@ QPixmap* ScreenShot::getVirtualScreen()
     }
 
     return m_currPixmap;
+}
+
+bool ScreenShot::drawToCurrPixmap()
+{
+    if (!m_savePixmap || !m_currPixmap)
+        return false;
+
+    QPainter pa;
+    pa.begin(m_currPixmap);
+    for (XDrawStep& it : m_vDrawed)
+        drawStep(pa, it);
+    pa.end();
+
+    QRect rtSel(m_rtCalcu.getSelRect());
+    m_rtCalcu.limitBound(rtSel);
+    if (rtSel.width() > 0 && rtSel.height() > 0)
+        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
+
+    return (!m_savePixmap.isNull() && m_currPixmap);
 }
 
 void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
@@ -505,6 +508,11 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
         pa.drawPixmap(rtSel, m_savePixmap);
 
+        // m_savePixmap 和 m_currPixmap 的地址没有改变，但前者的 cacheKey 总在变化???
+        //qInfo() << "ScreenShot::paintEvent()";
+        //qInfo() << "---------##-> m_savePixmap:[" << m_savePixmap << "],   &m_savePixmap:[" << &m_savePixmap << "]";
+        //qInfo() << "---------##->*m_currPixmap:[" << *m_currPixmap << "],   m_currPixmap:[" << m_currPixmap << "]";
+
         //qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
         //qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
     }
@@ -598,10 +606,17 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     //if (!m_rtTest.isEmpty()) {
     pen.setColor(Qt::yellow);
     pa.setPen(pen);
-    QRect rtTest(m_rtTest);  // 特地使用副本，保留原来数值避免被修改，也是按下和松开判断时候数据保持一致
-    rtTest.moveTo(rtTest.topLeft() - QPoint(offsetX, offsetY));
-    if (m_rtCalcu.bSmartMonitor) 
-        pa.drawRect(rtTest.adjusted(10, 10, -10, -10));
+    QRect rtAtuoMonitor(m_rtAtuoMonitor);  // 特地使用副本，保留原来数值避免被修改，也是按下和松开判断时候数据保持一致
+    rtAtuoMonitor.moveTo(rtAtuoMonitor.topLeft() - QPoint(offsetX, offsetY));
+    if (m_rtCalcu.bSmartMonitor) {
+        
+        for (const auto & it : m_vWholeScrn) {
+            if (it == rtAtuoMonitor)
+                rtAtuoMonitor.adjust(10, 10, -10, -10);
+        }
+
+        pa.drawRect(rtAtuoMonitor);
+    }
 
     pen.setColor(Qt::white);
     pa.setPen(pen);
@@ -633,8 +648,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
                 .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
     pa.drawText(posText + QPoint(0, space * 5), QString("pos(): (%1, %2)")
                 .arg(pos().x()).arg(pos().y()));
-    pa.drawText(posText + QPoint(0, space * 6), QString("m_rtTest: (%1, %2), rtTest: (%3, %4)")
-                .arg(m_rtTest.x()).arg(m_rtTest.y()).arg(rtTest.x()).arg(rtTest.y()));
+    pa.drawText(posText + QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2), rtAtuoMonitor: (%3, %4)")
+                .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(rtAtuoMonitor.x()).arg(rtAtuoMonitor.y()));
 
     
     //}
@@ -677,7 +692,7 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 		emit sigClearScreen();
 		hide();
 		//close();   // 销毁会有问题,已经排查：1. tray 有关，改用 qpushbutton 和 close即可； 2.单例有关，该市建议修改为 new 指针的比较合适
-	}
+    }
 }
 
 // 注意: 1. 按下、松开时候会切换状态；点击绘画按钮也会切换状态
@@ -782,7 +797,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
             const QRect geom = QApplication::desktop()->geometry();
             int offsetX = geom.x();
             int offsetY = geom.y();
-            m_rtCalcu.setRtSel(QRect(m_rtTest).translated(- offsetX, -offsetY));
+            m_rtCalcu.setRtSel(QRect(m_rtAtuoMonitor).translated(- offsetX, -offsetY));
         }
     }
 
@@ -813,7 +828,10 @@ void ScreenShot::getScrnShots()
 
 #ifdef Q_OS_WIN
     m_vec.clear();
-    m_vec = WinInfoWin::instance().m_vWinInfo;
+
+    //if (m_rtCalcu.bSmartMonitor)  // 存储所需要全部窗口信息
+    //    m_vec = WinInfoWin::instance().m_vWinInfo;
+
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
 #endif
@@ -863,7 +881,7 @@ double ScreenShot::getDevicePixelRatio(QScreen * screen)
 void ScreenShot::updateGetWindowsInfo()
 {
 #ifdef Q_OS_WIN
-    Util::getRectFromCurrentPoint((HWND)winId(), m_rtTest);
+    Util::getRectFromCurrentPoint((HWND)winId(), m_rtAtuoMonitor);
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
 #endif

@@ -22,7 +22,7 @@ WinInfoWin::WinInfoWin()
 // cout <<用
 void WinInfoWin::getAllWinInfoCache()
 {
-	::EnumWindows(WinInfoWin::EnumWindowsProc, 0); // 0 为 z 序
+	::EnumWindows(WinInfoWin::EnumWindowsProc, 0); // 0 为 z 序最顶层的
 
 	int i = 0;
 	setlocale(LC_ALL, "");
