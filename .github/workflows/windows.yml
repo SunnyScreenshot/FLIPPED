@@ -2,21 +2,22 @@ name: Windows
 on: 
   # push代码时触发workflow
   push:
-    paths:
-      - 'CMakeLists.txt'
-      - '**'
-      - 'src/**'
-      - '.github/workflows/windows.yml'
+    # paths:    # paths 和 paths-ignore 同时仅只能定义一个
+    #   - 'CMakeLists.txt'
+    #   - '**'
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'buildToVS2019.bat'
   pull_request:
-    paths:
-      - 'CMakeLists.txt'
-      - '**'
-      - 'src/**'
-      - '.github/workflows/windows.yml' 
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - 'buildToVS2019.bat'
 jobs:
   build:
     name: Build
-    # 运行平台， windows-latest目前是windows server 2019 
+    # 运行平台， windows-latest目前是windows server 2022
     # 参考文档 https://github.com/actions/virtual-environments/blob/main/images/win/Windows2019-Readme.md
     runs-on: windows-2019
     strategy:
@@ -84,7 +85,6 @@ jobs:
             devenv "${{ env.targetName }}.sln" /Build "Release|x64"
           )
           
-
           cd ${{ github.workspace }}/build/Release
           echo "333333333333333------------------a3"
           chdir
@@ -95,12 +95,13 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          $productVersion="${{ github.ref }}".substring("refs/tags/".length)
+          $systemInfo="${{ env.targetOS }}-${{ matrix.msvc_arch }}"
+          $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
+          $productName="${{ env.targetName }}-$productVersion-$systemInfo"
+
+          echo "systemInfo=$systemInfo" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "productVersion=$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          $productName="${{ env.targetName }}-${{ env.targetOS }}-${{ matrix.msvc_arch }}"
           echo "productName=$productName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          
-          echo "productNameVersion=$productName-$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       # tag打为.zip包 
       - name: Package
@@ -116,7 +117,7 @@ jobs:
           dir bin
           echo "--------------------------2"
 
-          Compress-Archive -Path ${{ github.workspace }}/bin/* -Destination ${{ env.productNameVersion }}.zip
+          Compress-Archive -Path ${{ github.workspace }}/bin/* -Destination ${{ env.productName }}.zip
           
           dir
         
@@ -130,6 +131,6 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ${{ env.productNameVersion }}.zip
+            ${{ env.productName }}.zip
           tag: ${{ github.ref }}
           overwrite: true 

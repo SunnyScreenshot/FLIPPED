@@ -2,15 +2,17 @@ name: Linux
 on: 
   # push代码时触发workflow
   push:
-    paths:
-      - 'CMakeLists.txt'
-      - '**'
-      - '.github/workflows/linux.yml'
+    paths-ignore:
+      - 'debian'
+      - 'README.md'
+      - 'LICENSE'
+      - 'buildToVS2019.bat'
   pull_request:
-    paths:
-      - 'CMakeLists.txt'
-      - 'src/**'
-      - '.github/workflows/linux.yml' 
+    paths-ignore:
+      - 'debian'
+      - 'README.md'
+      - 'LICENSE'
+      - 'buildToVS2019.bat'
 jobs:
   build:
     name: Build
@@ -86,7 +88,7 @@ jobs:
           cp -r debian/* bin
           
           sudo chmod 777 bin/ldd.sh
-          sudo chmod 777 bin/GitHubAction.sh
+          sudo chmod 777 bin/${{ env.targetName }}.sh
           
           cd bin
           ./ldd.sh ${{ env.targetName }}

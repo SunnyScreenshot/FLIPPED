@@ -4,9 +4,12 @@
 
 Lightweight screenshot tool
 
-![](https://img.shields.io/badge/language-c++-orange.svg) ![](https://img.shields.io/badge/language-Qt-orange.svg) ![macos-badge](https://github.com/xmuli/PicShot/workflows/MacOS/badge.svg) ![ubuntu-badge](https://github.com/xmuli/PicShot/workflows/Ubuntu/badge.svg)
+<br>
+![](https://img.shields.io/github/license/XMuli/PicShot) ![](https://img.shields.io/github/v/release/XMuli/PicShot?style=flat&color=birightgreen) ![](https://img.shields.io/badge/powered%20by-XMuli-ff69b4)  ![](https://img.shields.io/github/stars/XMuli/PicShot?style=social) ![](https://img.shields.io/github/forks/XMuli/PicShot?style=social&label=Fork)
 
+![](https://img.shields.io/github/workflow/status/XMuli/PicShot/Windows?style=flat&logo=windows) ![](https://img.shields.io/github/workflow/status/XMuli/PicShot/MacOS?style=flat&logo=apple) ![](https://img.shields.io/github/workflow/status/XMuli/PicShot/Linux?style=flat&logo=linux) ![](https://img.shields.io/github/languages/code-size/XMuli/PicShot)  ![](https://img.shields.io/github/downloads/XMuli/PicShot/total)
 
+<br>
 
 ## Clone
 
@@ -39,10 +42,10 @@ git submodule update
 mkdir build
 cd build
 
-# 打开 “x64_x86 Cross Tools Command Prompt for VS 2017"
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_PREFIX_PATH=C:/Qt/Qt5.12.11/5.12.11/msvc2017 -G "Visual Studio 15 2017" -A Win32 ..
+# 打开 “x64_x86 Cross Tools Command Prompt for VS 2019"
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_PREFIX_PATH=C:/Qt/Qt5.12.11/5.12.11/msvc2017 -G "Visual Studio 16 2019" -A Win32 ..
 
-# 使用 Visual Studio 2017 打开 .sln 解决方案
+# 使用 Visual Studio 2019 打开 .sln 解决方案
 ```
 
 

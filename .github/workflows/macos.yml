@@ -1,15 +1,17 @@
 name: MacOS
 on: 
   push:
-    paths:
-      - 'CMakeLists.txt'
-      - '**'
-      - '.github/workflows/macos.yml'
+    paths-ignore:
+      - 'debian'
+      - 'README.md'
+      - 'LICENSE'
+      - 'buildToVS2019.bat'
   pull_request:
-    paths:
-      - 'CMakeLists.txt'
-      - '**'
-      - '.github/workflows/macos.yml' 
+    paths-ignore:
+      - 'debian'
+      - 'README.md'
+      - 'LICENSE'
+      - 'buildToVS2019.bat'
 jobs:
   build:
     name: Build
