@@ -2,18 +2,15 @@ name: Windows
 on: 
   # push代码时触发workflow
   push:
-    # paths:    # paths 和 paths-ignore 同时仅只能定义一个
-    #   - 'CMakeLists.txt'
-    #   - '**'
-    paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - 'buildToVS2019.bat'
+    paths:
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - '.github/workflows/windows.yml'
   pull_request:
-    paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - 'buildToVS2019.bat'
+    paths:
+      - 'CMakeLists.txt'
+      - 'src/**'
+      - '.github/workflows/windows.yml' 
 jobs:
   build:
     name: Build
@@ -85,7 +82,8 @@ jobs:
             devenv "${{ env.targetName }}.sln" /Build "Release|x64"
           )
           
-          cd ${{ github.workspace }}/build/Release
+
+          cd ${{ github.workspace }}/bin/Release
           echo "333333333333333------------------a3"
           chdir
           dir
@@ -109,7 +107,7 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          Copy-Item -Path build/Release/* -Destination bin/
+          Copy-Item -Path build/bin/Release/* -Destination bin/
           dir bin
           echo "--------------------------1"
           windeployqt bin/${{ env.targetName }}.exe

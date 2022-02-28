@@ -24,20 +24,20 @@ jobs:
     env:
       targetName: PicShot
     steps:
-      - name: Cache Qt  # 使用缓存安装Qt模块
-        id: cache-qt
-        uses: actions/cache@v1  # not v2! 参见 https://github.com/jurplel/install-qt-action
-        with:
-          path: ../Qt
-          key: ${{ runner.os }}-QtCache
+      # - name: Cache Qt  # 使用缓存安装Qt模块
+      #   id: cache-qt
+      #   uses: actions/cache@v1  # not v2! 参见 https://github.com/jurplel/install-qt-action
+      #   with:
+      #     path: ../Qt
+      #     key: ${{ runner.os }}-QtCache
       
       - name: Install Qt
-        if: steps.WindowsCacheQt.outputs.cache-hit != 'true'
+        # if: steps.WindowsCacheQt.outputs.cache-hit != 'true'
         uses: jurplel/install-qt-action@v2
         with:
           version: ${{ matrix.qt_ver }}
           arch: ${{ matrix.qt_arch }}
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          # cached: ${{ steps.cache-qt.outputs.cache-hit }}
           set-env: true
           
       - uses: actions/checkout@v2
