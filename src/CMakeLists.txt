@@ -1,5 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.3)
 set(PROJECT_NAME PicShot)
+# SET(PROJECT_VERSION 0.0.13)
 #set(PROJECT_VERSION_MAJOR 0)
 #set(PROJECT_VERSION_MINOR 1)
 
@@ -92,7 +93,16 @@ link_directories(${CMAKE_BINARY_DIR}/bin
     ${CMAKE_BINARY_DIR}/3rdparty/QHotkey
     )
 
-add_executable(${PROJECT_NAME}
+if (APPLE)
+    set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.XMuli.PicShot")
+    set(MACOSX_BUNDLE_INFO_STRING "A cross-platform screenshot software")
+    # set(MACOSX_BUNDLE_ICON_FILE "shadowsocks-qt5.icns")
+    # set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
+    # set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
+    # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
+	
+	add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
     ${SRCS_MAIN}
     ${SRCS_WININFO}
     ${SRCS_CORE}
@@ -100,6 +110,16 @@ add_executable(${PROJECT_NAME}
     ${SRCS_WINSCREEN}
     ${SRCS_RESOURCES}
     )
+else()
+	add_executable(${PROJECT_NAME}
+    ${SRCS_MAIN}
+    ${SRCS_WININFO}
+    ${SRCS_CORE}
+    ${SRCS_WIDGET}
+    ${SRCS_WINSCREEN}
+    ${SRCS_RESOURCES}
+    )
+endif()
 
 target_link_libraries(${PROJECT_NAME}
         ${QT5_LIBS_LINK}

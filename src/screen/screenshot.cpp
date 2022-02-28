@@ -17,7 +17,7 @@
 #include <QImage>
 #include <QTextEdit>
 
-#define _MYDEBUG
+//#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
