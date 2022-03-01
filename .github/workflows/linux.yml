@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           mkdir bin
-          cp -r build/${{ env.targetName }} bin
+          cp -r build/bin/${{ env.targetName }} bin
           cp -r debian/* bin
           
           sudo chmod 777 bin/ldd.sh
