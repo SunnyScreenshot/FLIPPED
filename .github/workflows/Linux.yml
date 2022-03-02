@@ -96,7 +96,6 @@ jobs:
           cd ..
           zip -q -r ${{ env.productName }}.zip bin/*
 
-        
       # tag上传Release
       - name: uploadRelease
         if: startsWith(github.event.ref, 'refs/tags/')
