@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.15]
+        os: [macos-11.0]  # macos-10.15, macos-11.0
         qt_ver: [5.12.11]  # 参考: https://mirrors.cloud.tencent.com/qt/online/qtsdkrepository/mac_x64/desktop/qt5_5111
         qt_arch: [clang_64]
     env:
@@ -48,32 +48,99 @@ jobs:
           cd ${{github.workspace}}
           git submodule init
           git submodule update
+
+      # macos 11.0 默认环境变了,要指定
+      - name: prepare env
+        if: ${{ matrix.os == 'macos-11.0' }}
+        run: |
+          softwareupdate --all --install --force
+          sudo xcode-select --print-path
+          sudo xcode-select --switch /Library/Developer/CommandLineTools 
+
       - name: build macos
         run: |
           mkdir build
           cd build
           cmake ..
           make
+
+          echo "-------------------------a1"
+          pwd
           ls -al
+
+          echo "-------------------------a2"
           cd bin
           ls -al
-      # # 打包
-      # - name: package
-      #   run: |
-      #     # 拷贝依赖
-      #     macdeployqt ./${targetName} -qmldir=. -verbose=1 -dmg
-      # # 上传artifacts          
-      # - uses: actions/upload-artifact@v2
-      #   with:
-      #     name: ${{ env.targetName }}_${{ matrix.os }}_${{matrix.qt_ver}}.zip
-      #     path: ./${{ env.targetName }}
-      # # tag 上传Release
-      # - name: uploadRelease
-      #   if: startsWith(github.event.ref, 'refs/tags/')
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: ./${{ env.targetName }}.dmg
-      #     asset_name: ${{ env.targetName }}_${{ matrix.os }}_${{ matrix.qt_ver }}.dmg
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
+
+
+      - name: NameVersion
+        id: NameVersion
+        if: startsWith(github.event.ref, 'refs/tags/')
+        shell: pwsh
+        run: |
+          $systemInfo="${{ env.targetOS }}-${{ matrix.msvc_arch }}"
+          $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
+          $productName="${{ env.targetName }}-$productVersion-$systemInfo"
+
+          echo "systemInfo=$systemInfo" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "productVersion=$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "productName=$productName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+
+      # 打包
+      - name: package
+        id: package
+        if: startsWith(github.event.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          # 拷贝依赖
+          mkdir bin
+
+          echo "-------------------------a0"
+          pwd
+          ls -al
+
+
+          echo "-------------------------a1"
+          pwd
+          ls -al
+
+          cp -r build/bin/${{ env.targetName }} bin
+
+          echo "-------------------------a2"
+          pwd
+          ls -al
+
+          echo "-------------------------a3"
+          cd bin
+          pwd
+          ls -al
+          
+          macdeployqt PicShot -dmg
+
+
+          echo "-------------------------a4"
+          pwd
+          ls -al
+
+
+          echo "-------------------------a5"
+          cd ../
+          pwd
+          ls -al
+
+          echo "-------------------------a6"
+          cd bin
+          ls -al
+          pwd
+
+      # tag 上传Release
+      - name: uploadRelease
+        if: startsWith(github.event.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.targetName }}.dmg
+          asset_name: ${{ env.targetName }}_${{ matrix.os }}_${{ matrix.qt_ver }}.dmg
+          tag: ${{ github.ref }}
+          overwrite: true
