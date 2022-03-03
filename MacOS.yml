@@ -104,7 +104,7 @@ jobs:
           pwd
           ls -al
 
-          cp -r build/bin/${{ env.targetName }}.app bin/${{ env.productName }}.app
+          cp -r build/bin/${{ env.targetName }}.app bin
 
           echo "-------------------------a2"
           pwd
@@ -115,7 +115,9 @@ jobs:
           pwd
           ls -al
           
-          macdeployqt ${{ env.productName }}.app -dmg
+          macdeployqt ${{ env.targetName }}.app -dmg
+          mv ${{ env.targetName }}.dmg ../${{ env.productName }}.dmg
+
 
           echo "-------------------------a4"
           pwd
@@ -142,7 +144,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            bin/${{ env.productName }}.zip
+            ${{ env.productName }}.dmg
           tag: ${{ github.ref }}
           overwrite: true 
 
