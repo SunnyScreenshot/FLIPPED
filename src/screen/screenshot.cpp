@@ -442,14 +442,18 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
     case DrawShape::Text: {
         // 记住：这是每一个 step 都会绘画的
         if (step.bTextComplete && !step.bDisplay) {
-            pa.drawText(step.editPos, step.text);
+            pa.drawText(step.editPos, step.text);  // 若是尝试偏移，则 + QPoint(0, step.rt.height() 居然有 bug ？？？
         }
         qInfo() << "[ScreenShot::drawStep]: m_textEdit.isVisible():" << m_textEdit->isVisible()
-            << "  step.pos1:" << step.pos1
+            << "  m_step.pos1:" << m_step.pos1
             << "  m_step.editPos:" << m_step.editPos
+            << "  m_step.text:" << m_step.text
+            << "  step.pos1:" << step.pos1
+            << "  step.editPos:" << step.editPos
+            << "  step.text:" << step.text
             << "  m_textEdit->rect():" << m_textEdit->rect()
-            << "  m_textEdit->toPlainText():" << m_textEdit->toPlainText()
-            << "  m_step.text:" << m_step.text;
+            << "  m_textEdit->toPlainText():" << m_textEdit->toPlainText();
+            
         break;
     }
     case DrawShape::Mosaics: {
