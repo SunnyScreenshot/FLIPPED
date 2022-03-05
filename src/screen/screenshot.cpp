@@ -65,15 +65,19 @@ ScreenShot::ScreenShot(QWidget *parent)
 
     m_vWholeScrn.push_back(m_screens[0]->virtualGeometry());
     m_vWholeScrn.push_back(QApplication::desktop()->rect());
-	
 
+    m_textEdit->hide();
+	
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 
 #ifdef _MYDEBUG
-    if (m_screens.size() >= 2)
+    if (m_screens.size() >= 2) {
         setFixedSize(m_screens.at(1)->size());
-    else
-        setFixedSize(m_screens.at(0)->size());
+    } else {
+        QSize size(m_screens.at(0)->size());
+        resize(size.width() / 2.0, size.height());
+    }
+        
 	move(desktop->geometry().topLeft());
 #else
 	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
@@ -137,7 +141,7 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
 void ScreenShot::updateCursorShape(const QPoint pos) 
 {
     if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        setCursor(Qt::UpArrowCursor);
+        setCursor(Qt::ArrowCursor);
         return;
     }
     
@@ -375,13 +379,13 @@ void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
     pa.restore();
 }
 
-// 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；false 使用上一个环境的
-void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
+// 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；true 使用上一个环境的
+void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 {
     if (DrawShape::NoDraw == step.shape)
         return;
 
-    if (isUseOwn) {
+    if (!isUseEnvContext) {
         QPen pen(step.pen);
         pen.setWidth(step.penWidth);
 		pen.setStyle(step.lineDashes);
@@ -436,11 +440,16 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseOwn)
 		break;
 	}
     case DrawShape::Text: {
-        m_textEdit->move(step.editPos);
-
-		//m_textEdit->show();
-		// TODO: 使用编辑框
-        //pa.drawText(step.rt.topLeft(), step.text);
+        // 记住：这是每一个 step 都会绘画的
+        if (step.bTextComplete && !step.bDisplay) {
+            pa.drawText(step.editPos, step.text);
+        }
+        qInfo() << "[ScreenShot::drawStep]: m_textEdit.isVisible():" << m_textEdit->isVisible()
+            << "  step.pos1:" << step.pos1
+            << "  m_step.editPos:" << m_step.editPos
+            << "  m_textEdit->rect():" << m_textEdit->rect()
+            << "  m_textEdit->toPlainText():" << m_textEdit->toPlainText()
+            << "  m_step.text:" << m_step.text;
         break;
     }
     case DrawShape::Mosaics: {
@@ -636,7 +645,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     font.setPointSize(16);  // 默认大小为 9
     pa.setFont(font);
     const int space = font.pointSize() * 2.5;
-
     int32_t posTextTop = 0;
     if (m_screens.size() >= 2)
         posTextTop = m_screens[1]->size().height() / 2;
@@ -722,8 +730,52 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
         m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) { 
         m_step.pos1 = event->pos();
-        m_step.pos2 = event->pos();
-        m_step.editPos = event->pos();
+        m_step.pos2 = event->pos(); 
+       
+        if (m_step.shape == DrawShape::Text) {
+            QPoint perviousPos = m_step.editPos;   // 修改之前的显示坐标
+
+            m_step.editPos = event->pos();
+            m_step.rt = m_textEdit->rect();
+            m_step.rt.setTopLeft(m_step.editPos);
+
+
+            if (m_step.bDisplay) {  // 输入框显示中
+                //m_step.editPos = event->pos(); // pos1、pos2 松开鼠标时候会重置，而editPos不会
+                //m_step.rt = m_textEdit->rect();
+                //m_step.rt.setTopLeft(m_step.editPos);
+                //m_textEdit->move(m_step.editPos);
+
+                if (!m_step.rt.contains(event->pos(), true)) {  // 编辑完成
+                    m_step.bTextComplete = true;
+                    m_step.bDisplay = false;
+                    m_step.text = m_textEdit->toPlainText();
+                    m_textEdit->clear();
+                    
+                    m_step.editPos = perviousPos;
+                    m_vDrawed.push_back(m_step);  // 绘画文字为单独处理【暂时特例】
+                } else {   // 编辑ing
+                    m_step.bTextComplete = false;
+                }
+            } else {  // 输入框未显示
+                m_step.bDisplay = true;
+                m_textEdit->clear();
+            }
+
+            m_textEdit->move(m_step.editPos);
+            m_textEdit->setVisible(m_step.bDisplay);
+
+            qInfo() << "[ScreenShot::mousePressEvent]: m_textEdit.isVisible():" << m_textEdit->isVisible()
+                << "  event->pos():" << event->pos()
+                << "  m_step.editPos:" << m_step.editPos
+                << "  perviousPos:" << perviousPos
+                << "  m_textEdit->rect():" << m_textEdit->rect()
+                << "  m_textEdit->toPlainText():" << m_textEdit->toPlainText()
+                << "  m_step.text:" << m_step.text;
+        }
+
+
+
 	} else {  // 则可能为移动、拉伸、等待状态
 		m_rtCalcu.scrnType = updateScrnType(event->pos());
     }
@@ -790,8 +842,13 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_step.custPath.append(event->pos());
         m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
 
-        m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
-        m_step.clear();
+        // DrawShape::Text  在按下时候单独处理 m_vDrawed.push_back
+        if (m_step.shape != DrawShape::Text
+            && m_step.shape != DrawShape::NoDraw) {
+            m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
+            m_step.clear();
+        }
+        
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos2 = event->pos();
 	}

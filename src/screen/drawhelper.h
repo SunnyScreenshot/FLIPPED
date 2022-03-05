@@ -118,6 +118,8 @@ struct  XDrawStep
 	QVector<QPoint> custPath;                 // 手绘路径
 
 	// Texts ---------------------
+	bool bDisplay = false;                       // true 准备显示，显示；false 显示结束，隐藏起来
+	bool bTextComplete = true;                // 文字编辑完成
 	QPoint editPos;                           // 显示控件
     QString text = "==Test Text==";
 	QFont font = QFont();

@@ -11,7 +11,7 @@ XTextWidget::XTextWidget(QWidget *parent)
 	, m_minSize()
 {
     qInfo() << "###############> [XTextWidget::resizeEvent()]";
-    setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
+    //setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
 	connect(this, &XTextWidget::textChanged, this, &XTextWidget::adjustSize);
 	connect(this, &XTextWidget::textChanged, this, &XTextWidget::emitTextUpdated);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -57,7 +57,7 @@ void XTextWidget::showEvent(QShowEvent *e)
 {
     QFont font;
     QFontMetrics fm(font);  // 赋值一个初始的宽高
-    qInfo() << "###############> [XTextWidget::showEvent()]" << size() << fm.lineSpacing();
+	qInfo() << "###############> [XTextWidget::showEvent()]" << size() << fm.lineSpacing();
     setFixedWidth(fm.lineSpacing() * 6);
     setFixedHeight(fm.lineSpacing() * 2.5);
     m_baseSize = size();
@@ -65,6 +65,8 @@ void XTextWidget::showEvent(QShowEvent *e)
 
 	QTextEdit::showEvent(e);
 	adjustSize();
+
+	qInfo() << "###############> [XTextWidget::showEvent()]  rect:" << rect();
 }
 
 // 当 widget 大小被重新设置的时候就会被调用

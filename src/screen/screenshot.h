@@ -80,7 +80,7 @@ private:
 	void drawBorderMac(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
 
     // 辅助（绘画）函数， TODO 可以迁移到 XDrawHelper 中？
-    void drawStep(QPainter& pa, XDrawStep &step, bool isUseOwn = true);
+    void drawStep(QPainter& pa, XDrawStep &step, bool isUseEnvContext = false);
 
 protected:
 	virtual void paintEvent(QPaintEvent *event) override;
