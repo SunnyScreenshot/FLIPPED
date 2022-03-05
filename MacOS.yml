@@ -116,7 +116,7 @@ jobs:
           pwd
           ls -al
           
-          macdeployqt PicShot -dmg
+          macdeployqt ${{ env.targetName }} -dmg
 
 
           echo "-------------------------a4"
