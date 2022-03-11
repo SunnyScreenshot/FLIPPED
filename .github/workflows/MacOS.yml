@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.14]  # macos-10.15, macos-11.0
+        os: [macos-11.6]  # macos-10.14 macos-10.15, macos-11.6  # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
         qt_ver: [5.12.11]  # 参考: https://mirrors.cloud.tencent.com/qt/online/qtsdkrepository/mac_x64/desktop/qt5_5111
         qt_arch: [clang_64]
     env:
@@ -26,9 +26,9 @@ jobs:
       targetOS: macos
     steps:
     
-      # macos 11.0 默认环境变了,要指定
+      # macos 11.0 后默认环境变了,要指定
       - name: prepare env
-        if: ${{ matrix.os == 'macos-11.0' }}
+        if: ${{ matrix.os == 'macos-11.6' }}
         run: |
           softwareupdate --all --install --force
           sudo xcode-select --print-path

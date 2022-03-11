@@ -56,8 +56,8 @@ jobs:
           fetch-depth: 1
           
       - name: pull 3rdparty code
+        id: pull-3rdparty-code
         run: |
-          cd ${{github.workspace}}
           git submodule init
           git submodule update
 
@@ -65,7 +65,6 @@ jobs:
         id: msvc-build
         shell: cmd
         run: |
-          cd ${{ github.workspace }}
           mkdir bin
           mkdir build
 
@@ -73,22 +72,22 @@ jobs:
           call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" ${{ matrix.msvc_arch }}
 
           if "${{ matrix.msvc_arch }}" == "x86" (
-            echo "1111111111------------"
+            echo "-------------- x86 --------------"
             cmake -G "Visual Studio 16 2019" -A Win32 ..
             devenv "${{ env.targetName }}.sln" /Build "Release|Win32"
           ) else (
-            echo "2222222222------------"
+            echo "-------------- x64 --------------"
             cmake -G "Visual Studio 16 2019" -A x64 ..
             devenv "${{ env.targetName }}.sln" /Build "Release|x64"
           )
           
           cd ${{ github.workspace }}/bin/Release
-          echo "333333333333333------------------a3"
+          echo "-------------- show dir --------------"
           chdir
           dir
      
-      - name: NameVersion
-        id: NameVersion
+      - name: name version
+        id: name-version
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
@@ -101,21 +100,20 @@ jobs:
           echo "productName=$productName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       # tag打为.zip包 
-      - name: Package
-        id: Package      
+      - name: package
+        id: package      
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
           Copy-Item -Path build/bin/Release/* -Destination bin/
           dir bin
-          echo "--------------------------1"
+          echo "-------------- debug 1 --------------"
           windeployqt bin/${{ env.targetName }}.exe
           
           dir bin
-          echo "--------------------------2"
+          echo "-------------- debug 2 --------------"
 
           Compress-Archive -Path ${{ github.workspace }}/bin/* -Destination ${{ env.productName }}.zip
-          
           dir
 
       - uses: actions/upload-artifact@v3
