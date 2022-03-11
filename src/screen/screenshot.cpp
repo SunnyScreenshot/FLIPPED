@@ -53,27 +53,37 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
-
-
     m_textEdit->hide();
 	
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
+#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+    #ifdef _MYDEBUG
+        if (m_screens.size() >= 2) {
+            setFixedSize(m_screens.at(1)->size());
+        } else {
+            QSize size(m_screens.at(0)->size());
+            resize(size.width() / 2.0, size.height());
+        }
+    #else
+        setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+        setFixedSize(geom.size());
+    #endif
 
-#ifdef _MYDEBUG
-    if (m_screens.size() >= 2) {
-        setFixedSize(m_screens.at(1)->size());
-    } else {
-        QSize size(m_screens.at(0)->size());
-        resize(size.width() / 2.0, size.height());
-    }
-        
-	move(desktop->geometry().topLeft());
-#else
-	setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-	setFixedSize(geom.size());
-	move(geom.topLeft());
-
+#else // Q_OS_MAC
+    #ifdef _MYDEBUG
+        if (m_screens.size() >= 2) {
+            setFixedSize(m_screens.at(1)->size());
+        } else {
+            QSize size(m_screens.at(0)->size());
+            resize(size.width() / 2.0, size.height());
+        }
+    #else
+        setWindowFlags(Qt::Window);
+        showFullScreen();
+    #endif
 #endif
+
+    move(geom.topLeft());
 
 	//int x1 = 0;
 	//int x2 = 0;
@@ -179,6 +189,8 @@ void ScreenShot::onClearScreen()
     //    m_vec = WinInfoWin::instance().m_vWinInfo;
 
 #elif  defined(Q_OS_MAC)
+    setWindowFlags(Qt::SubWindow);
+    showNormal();
 #elif  defined(Q_OS_LINUX)
 #endif
     
