@@ -46,6 +46,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_rtCalcu()
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
+    , m_rtDesktop(0, 0, 0, 0)
 {
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
@@ -53,18 +54,6 @@ ScreenShot::ScreenShot(QWidget *parent)
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 
-    m_vWholeScrn.clear();
-	QApplication::desktop()->rect();
-	for (const auto& scrn : m_screens) {
-		qInfo() << "#------------------------------------------->\n" 
-			<< "屏幕详细信息：index:" << m_screens.indexOf(scrn) << "   size:" << scrn->size() << "   geometry:" << scrn->geometry()
-			<< "   virtualGeometry:" << scrn->virtualGeometry() << "   desktop()->rect():" << QApplication::desktop()->rect();
-
-        m_vWholeScrn.push_back(scrn->geometry());
-	}
-
-    m_vWholeScrn.push_back(m_screens[0]->virtualGeometry());
-    m_vWholeScrn.push_back(QApplication::desktop()->rect());
 
     m_textEdit->hide();
 	
@@ -193,7 +182,6 @@ void ScreenShot::onClearScreen()
 #elif  defined(Q_OS_LINUX)
 #endif
     
-
     m_vWholeScrn.clear();
 
 	//m_screens、m_primaryScreen 还保留
@@ -318,7 +306,7 @@ bool ScreenShot::drawToCurrPixmap()
     pa.end();
 
     QRect rtSel(m_rtCalcu.getSelRect());
-    m_rtCalcu.limitBound(rtSel);
+    m_rtCalcu.limitBound(rtSel, m_rtDesktop);
     if (rtSel.width() > 0 && rtSel.height() > 0)
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
 
@@ -522,11 +510,11 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     QPainter pa(this);
     pa.setBrush(Qt::NoBrush);
     pa.setPen(Qt::NoPen);
-    pa.drawPixmap(QApplication::desktop()->rect(), *m_currPixmap);
+    pa.drawPixmap(m_rtDesktop, *m_currPixmap);
 
     // 选中矩形图片
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
-    m_rtCalcu.limitBound(rtSel);           // 修复边界时图片被拉伸
+    m_rtCalcu.limitBound(rtSel, m_rtDesktop);           // 修复边界时图片被拉伸
     if (rtSel.width() > 0 && rtSel.height() > 0) {
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
         pa.drawPixmap(rtSel, m_savePixmap);
@@ -561,7 +549,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 屏幕遮罩
     QPainterPath path;
-    path.addRect(QApplication::desktop()->rect());
+    path.addRect(m_rtDesktop);
     path.addRect(rtSel);
     path.setFillRule(Qt::OddEvenFill);
     pa.setPen(Qt::NoPen);
@@ -897,6 +885,21 @@ void ScreenShot::getScrnShots()
 	//WinInfoWin::instance().getAllWinInfoCache();
 	//WinInfoWin::instance().getAllWinInfoRealTime();
 
+
+    m_rtDesktop = QApplication::desktop()->rect();
+    m_vWholeScrn.clear();
+    for (const auto& scrn : m_screens) {
+        qInfo() << "#------------------------------------------->\n"
+            << "屏幕详细信息：index:" << m_screens.indexOf(scrn) << "   size:" << scrn->size() << "   geometry:" << scrn->geometry()
+            << "   virtualGeometry:" << scrn->virtualGeometry() << "   m_rtDesktop:" << m_rtDesktop;
+
+        m_vWholeScrn.push_back(scrn->geometry());
+    }
+
+    m_vWholeScrn.push_back(m_screens[0]->virtualGeometry());
+    m_vWholeScrn.push_back(m_rtDesktop);
+
+
 #ifdef Q_OS_WIN
     m_vec.clear();
 
@@ -907,10 +910,7 @@ void ScreenShot::getScrnShots()
 #elif  defined(Q_OS_LINUX)
 #endif
 
-
     this->getScrnInfo();
-	setFocus(Qt::MouseFocusReason);
-
     // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
     if (!m_currPixmap)
         getVirtualScreen();
