@@ -25,15 +25,6 @@ git submodule update
 
 
 
-## Build And Delete
-
-```bash
-1. build.bat 
-2. build.bat delete 
-```
-
-
-
 ## Build (MSCVC)
 
 ```bash
