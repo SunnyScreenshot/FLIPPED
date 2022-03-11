@@ -7,11 +7,6 @@
 #include "screen/screenshot.h"
 #include "screen/winsetting.h"
 
-// qtlog4
-//#include "logger.h"
-//#include "logmanager.h"
-//#include "propertyconfigurator.h"
-
 // test
 //#include <QHotkey>
 #include "./screen/winresetbtn.h"
@@ -38,15 +33,6 @@ int main(int argc, char *argv[])
     /* 枚举窗口的所有进程 */
     //获取屏幕上所有的顶层窗口,每发现一个窗口就调用回调函数一次
 
-#if  0
-    //配置文件路径（日志调试）
-    Log4Qt::PropertyConfigurator::configure(a.applicationDirPath() + "/../log4qt.conf");
-    Log4Qt::LogManager::setHandleQtMessages(true);
-#else
-    // 改变缺省消息处理程序的输出（终端调试）
-    //qSetMessagePattern("%{appname} %{type} %{time [yyyy-MM-dd hh:mm:ss]} %{pid} %{threadid} %{qthreadptr} (%{file} %{line}) %{function} %{message}");
-    //qSetMessagePattern("%{type} %{time [yyyy-MM-dd hh:mm:ss]} (%{file} %{line}) %{function} %{message}");
-#endif
 
  //   qInfo()<<QObject::tr("Program running program start.");
  
