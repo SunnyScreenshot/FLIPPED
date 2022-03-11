@@ -70,6 +70,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     #endif
 
 #else // Q_OS_MAC
+    setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
     #ifdef _MYDEBUG
         if (m_screens.size() >= 2) {
             setFixedSize(m_screens.at(1)->size());
@@ -78,7 +79,6 @@ ScreenShot::ScreenShot(QWidget *parent)
             resize(size.width() / 2.0, size.height());
         }
     #else
-        setWindowFlags(Qt::Window);
         showFullScreen();
     #endif
 #endif
@@ -950,7 +950,12 @@ void ScreenShot::getScrnInfo()
 
 double ScreenShot::getDevicePixelRatio()
 {
-	return m_primaryScreen->devicePixelRatio();
+#ifdef Q_OS_MAC
+    return 2;  // TODO 2022.03.11 无奈之举；使用 CMake MACOSX_BUNDLE 则返回的缩放比不正常
+#else
+    return m_primaryScreen->devicePixelRatio();
+#endif
+
 }
 
 double ScreenShot::getDevicePixelRatio(QScreen * screen)
