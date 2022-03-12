@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-10.15]  # macos-10.14 macos-10.15, macos-11.6  # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
+        os: [macos-10.15]  # macos-10.14 macos-10.15, macos-11.0  # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-11-Readme.md
         qt_ver: [5.12.11]  # 参考: https://mirrors.cloud.tencent.com/qt/online/qtsdkrepository/mac_x64/desktop/qt5_5111
         qt_arch: [clang_64]
     env:
@@ -42,7 +42,7 @@ jobs:
       #     key: ${{ runner.os }}-QtCache
       
       - name: Install Qt
-        if: steps.cache-qt.outputs.cache-hit != 'true'
+        # if: steps.cache-qt.outputs.cache-hit != 'true'
         uses: jurplel/install-qt-action@v2
         with:
           version: ${{ matrix.qt_ver }}
@@ -54,7 +54,6 @@ jobs:
 
       - name: pull 3rdparty code
         run: |
-          cd ${{github.workspace}}
           git submodule init
           git submodule update
 
@@ -65,11 +64,11 @@ jobs:
           cmake ..
           make
 
-          echo "-------------------------a1"
+          echo "-------------- debug 1 --------------"
           pwd
           ls -al
 
-          echo "-------------------------a2"
+          echo "-------------- debug 1 --------------"
           cd bin
           ls -al
 
@@ -86,7 +85,7 @@ jobs:
           echo "productVersion=$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "productName=$productName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      # 打包
+      # tag打为.zip包 
       - name: package
         id: package
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -95,22 +94,17 @@ jobs:
           # 拷贝依赖
           mkdir bin
 
-          echo "-------------------------a0"
-          pwd
-          ls -al
-
-
-          echo "-------------------------a1"
+          echo "-------------- debug 1 --------------"
           pwd
           ls -al
 
           cp -r build/bin/${{ env.targetName }}.app bin
 
-          echo "-------------------------a2"
+          echo "-------------- debug 2 --------------"
           pwd
           ls -al
 
-          echo "-------------------------a3"
+          echo "-------------- debug 3 --------------"
           cd bin
           pwd
           ls -al
@@ -119,17 +113,17 @@ jobs:
           mv ${{ env.targetName }}.dmg ../${{ env.productName }}.dmg
 
 
-          echo "-------------------------a4"
+          echo "-------------- debug 4 --------------"
           pwd
           ls -al
 
 
-          echo "-------------------------a5"
+          echo "-------------- debug 5 --------------"
           cd ../
           pwd
           ls -al
 
-          echo "-------------------------a6"
+          echo "-------------- debug 6 --------------"
           cd bin
           ls -al
           pwd
@@ -147,14 +141,3 @@ jobs:
             ${{ env.productName }}.dmg
           tag: ${{ github.ref }}
           overwrite: true 
-
-      # # tag 上传Release
-      # - name: uploadRelease
-      #   if: startsWith(github.event.ref, 'refs/tags/')
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     file: ${{ env.productName }}.dmg
-      #     asset_name: ${{ env.targetName }}_${{ matrix.os }}_${{ matrix.qt_ver }}.dmg
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
