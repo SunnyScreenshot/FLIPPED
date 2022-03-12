@@ -20,10 +20,6 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
-
-include_directories(../3rdparty/spdlog/include)  # spdlog路径
-
-
 # Sources files
 # main
 set(SRCS_MAIN
@@ -33,8 +29,9 @@ set(SRCS_MAIN
 
 # core
 FILE(GLOB_RECURSE SRCS_CORE
-    "./core/*.h"
-#    "./core/*.cpp"
+    "core/isingleton.h"
+    "core/xlog.h"
+    "core/xlog.cpp"
     )
 
 # wininfo
@@ -82,15 +79,13 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-configure_file(${CMAKE_SOURCE_DIR}/config/log4qt.conf ${CMAKE_BINARY_DIR} COPYONLY)
-
 #add_compile_definitions(QT_MESSAGELOGCONTEXT  # Release 版本下也能输出文件名、行号等
 #	QT_NO_DEBUG_OUTPUT     # 屏蔽 debug\info\warning 信息
 ##    QT_NO_INFO_OUTPUT
 ##    QT_NO_WARNING_OUTPUT
 #    )
 
-include_directories(${CMAKE_SOURCE_DIR}/3rdparty/Log4Qt/include
+include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
     ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey
     )
 link_directories(${CMAKE_BINARY_DIR}/bin
@@ -115,7 +110,7 @@ if (APPLE)
     ${SRCS_RESOURCES}
     )
 else()
-	add_executable(${PROJECT_NAME}
+	add_executable(${PROJECT_NAME} WIN32
     ${SRCS_MAIN}
     ${SRCS_WININFO}
     ${SRCS_CORE}

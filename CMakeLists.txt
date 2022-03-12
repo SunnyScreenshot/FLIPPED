@@ -2,4 +2,3 @@
 project(PicShot)
 add_subdirectory(3rdparty/QHotkey)
 add_subdirectory(src)
-add_subdirectory(test)
