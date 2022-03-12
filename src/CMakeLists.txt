@@ -20,6 +20,10 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
+
+include_directories(../3rdparty/spdlog/include)  # spdlog路径
+
+
 # Sources files
 # main
 set(SRCS_MAIN
@@ -125,6 +129,8 @@ target_link_libraries(${PROJECT_NAME}
         ${QT5_LIBS_LINK}
         qhotkey
         )
+
+#target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog_header_only)
 
 if(APPLE)
 #    find_library(CARBON_LIBRARY Carbon)
