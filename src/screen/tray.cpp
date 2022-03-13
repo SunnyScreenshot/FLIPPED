@@ -49,7 +49,9 @@ void Tray::init()
 
 	connect(m_screenShot, &QAction::triggered, this, &Tray::onScreenShot);
 	connect(m_showWinConfig, &QAction::triggered, this, &Tray::onShowWinConfig);
-	connect(m_quit, &QAction::triggered, this, &Tray::deleteLater); // 代替退出槽
+	connect(m_quit, &QAction::triggered, []() {
+		qApp->quit();
+		});
 }
 
 void Tray::onScreenShot()
