@@ -30,8 +30,7 @@ set(SRCS_MAIN
 # core
 FILE(GLOB_RECURSE SRCS_CORE
     "core/isingleton.h"
-    "core/xlog.h"
-    "core/xlog.cpp"
+    "core/log/xlog.h"
     )
 
 # wininfo
