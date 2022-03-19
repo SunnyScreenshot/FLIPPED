@@ -34,7 +34,11 @@ public:
 private:
     XLog() {
         m_logger = spdlog::rotating_logger_mt("fileLogger", "picshot.log", 1024 * 1024 * 20, 10, true);
-        //m_logger->set_pattern("%Y-%m-%d %H:%M:%S.%f <thread %t> [%l] [%@] %v");
+
+        // 默认类型：[2022-03-19 22:15:15.885] [fileLogger] [info] [screenshot.cpp:941]
+        // https://github.com/gabime/spdlog/wiki/3.-Custom-formatting
+        //m_logger->set_pattern("%Y-%m-%d %H:%M:%S %t %l [%@] [%!] %v");
+        m_logger->set_pattern("%Y-%m-%d %H:%M:%S %t %l [%!] %v");
 
         std::string level = "debug";
         if (level == "trace") {

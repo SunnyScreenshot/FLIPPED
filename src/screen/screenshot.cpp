@@ -16,8 +16,9 @@
 #include <QFileDialog>
 #include <QImage>
 #include <QTextEdit>
+#include "../core/xlog/xlog.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -934,18 +935,29 @@ void ScreenShot::getScrnShots()
 void ScreenShot::getScrnInfo()
 {
 	QDesktopWidget* desktopWidget = QApplication::desktop();
-	QRect deskRect = desktopWidget->availableGeometry();   //获取可用桌面大小
-	QRect screenRect = desktopWidget->screenGeometry();  //获取设备屏幕大小
-	qInfo() << "availableGeometry(可用桌面大小):" << deskRect << "  screenGeometry(设备屏幕大小):"<< screenRect;
+	QRect rtAvailableGeometry = desktopWidget->availableGeometry();   //获取可用桌面大小
+	QRect rtScreen = desktopWidget->screenGeometry();  //获取设备屏幕大小
 
-	for (QScreen* it : m_screens) {
-        qInfo() << "----------------------------------------------------------------------------\n"
-			<< "Screen:" << it << "   devicePixelRatio:" << it->devicePixelRatio() << "  manufacturer:" << it->manufacturer()
-			<< "  model:" << it->model() << "  name:" << it->name() << "  physicalSize:" << it->physicalSize() << "  refreshRate:" << it->refreshRate()
-			<< "  serialNumber:" << it->serialNumber() << "  size:" << it->size() << "  Scale:" << getScale(it) << "  virtualGeometry:" << it->virtualGeometry() << "\n"
-			"Physical DPI:" << it->physicalDotsPerInch() << "  DPIX:" << it->physicalDotsPerInchX() << "  DPIY:" << it->physicalDotsPerInchY() << "\n"
-			<< "Logical DPI:" << it->logicalDotsPerInch() << "  DPIX:" << it->logicalDotsPerInchX() << "  DPIY:" << it->logicalDotsPerInchY() << "\n";
-	}
+    XLOG_INFO("---------------QApplication::desktop() Info BEGIN----------------");
+    XLOG_INFO("可用区域 availableGeometry({}, {}, {} * {})", rtAvailableGeometry.left(), rtAvailableGeometry.top(), rtAvailableGeometry.width(), rtAvailableGeometry.height());
+    XLOG_INFO("屏幕区域（默认主屏） screenGeometry({}, {}, {} * {})", rtScreen.left(), rtScreen.top(), rtScreen.width(), rtScreen.height());
+    XLOG_INFO("是否开启虚拟桌面 isVirtualDesktop: {}", desktopWidget->isVirtualDesktop());
+    XLOG_INFO("---------------QApplication::desktop() Info END----------------");
+
+    XLOG_INFO("---------------Screen Infomation BEGIN----------------");
+    for (QScreen* it : m_screens) {
+        XLOG_INFO("设备像素比 devicePixelRatio[{}]  制造商 manufacturer[{}]  名称 name[{}]", it->devicePixelRatio(), it->manufacturer().toUtf8().data(), it->name().toUtf8().data());
+        XLOG_INFO("序号 serialNumber[{}]  刷新率 refreshRate[{}]  模式 model[{}]", it->serialNumber().toUtf8().data(), it->refreshRate(), it->model().toUtf8().data());
+
+        QRect rtT = it->virtualGeometry();
+        const auto rtPhysicalSize = it->physicalSize();
+        const auto rtSize = it->physicalSize();
+        XLOG_INFO("虚拟几何 virtualGeometry:({}, {}, {} * {})  缩放比 getScale[{}]", rtT.left(), rtT.top(), rtT.width(), rtT.height(), getScale(it));
+        XLOG_INFO("物理几何 physicalSize:({} * {})  大小 size({} * {})", rtPhysicalSize.width(), rtPhysicalSize.height(), rtSize.width(), rtSize.height());
+        XLOG_INFO("物理 DPI physicalDotsPerInch: {}  DPIX: {}  DPIY: {} ", it->physicalDotsPerInch(), it->physicalDotsPerInchX(), it->physicalDotsPerInchY());
+        XLOG_INFO("逻辑 DPI logicalDotsPerInch: {}  DPIX: {}  DPIY: {}\n", it->logicalDotsPerInch(), it->logicalDotsPerInchX(), it->logicalDotsPerInchX());
+    }
+    XLOG_INFO("---------------Screen Infomation End----------------");
 }
 
 double ScreenShot::getDevicePixelRatio()
