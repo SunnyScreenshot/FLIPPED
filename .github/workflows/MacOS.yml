@@ -2,7 +2,7 @@ name: MacOS
 on: 
   push:
     paths-ignore:
-      - *.*
+      - '**'
   pull_request:
     paths-ignore:
       - 'debian'
