@@ -6,10 +6,14 @@ Lightweight screenshot tool
 
 <br>
 ![](https://img.shields.io/github/license/XMuli/PicShot) 
+
 ![](https://img.shields.io/github/v/release/XMuli/PicShot?style=flat&color=birightgreen) 
+
 ![](https://img.shields.io/badge/powered%20by-XMuli-ff69b4) 
+
 ![](https://img.shields.io/github/stars/XMuli/PicShot?style=social) 
-![](https://img.shields.io/github/forks/XMuli/PicShot?style=social&label=Fork)
+
+ ![](https://img.shields.io/github/forks/XMuli/PicShot?style=social&label=Fork)
 
 ![](https://img.shields.io/github/workflow/status/XMuli/PicShot/Windows?style=flat&logo=windows) ![](https://img.shields.io/github/workflow/status/XMuli/PicShot/MacOS?style=flat&logo=apple) ![](https://img.shields.io/github/workflow/status/XMuli/PicShot/Linux?style=flat&logo=linux) ![](https://img.shields.io/github/languages/code-size/XMuli/PicShot)  ![](https://img.shields.io/github/downloads/XMuli/PicShot/total)
 

@@ -103,11 +103,6 @@ jobs:
             cmake -G "Visual Studio 16 2019" -A x64 ..
             devenv "${{ env.targetName }}.sln" /Build "Release|x64"
           )
-          
-          cd ${{ github.workspace }}/bin/Release
-          echo "-------------- show dir --------------"
-          chdir
-          dir
      
       - name: name version
         id: name-version
@@ -130,14 +125,13 @@ jobs:
         run: |
           Copy-Item -Path build/bin/Release/* -Destination bin/
           dir bin
-          echo "-------------- debug 1 --------------"
-          windeployqt bin/${{ env.targetName }}.exe
-          
-          dir bin
-          echo "-------------- debug 2 --------------"
 
+          echo "-------------- debug 1 --------------"
+          ${{ env.GITHUB_PATH }}/windeployqt bin/${{ env.targetName }}.exe
+          
+          echo "-------------- debug 2 --------------"
           Compress-Archive -Path ${{ github.workspace }}/bin/* -Destination ${{ env.productName }}.zip
-          dir
+          dir ${{ github.workspace }}/bin
 
       - uses: actions/upload-artifact@v3
         with:

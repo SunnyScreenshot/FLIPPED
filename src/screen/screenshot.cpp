@@ -132,9 +132,9 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
 		return ScrnType::Wait;
 	} else if (cursArea == CursorArea::Border) {
 		return ScrnType::Stretch;
-    } /*else {
-        return ScrnType::Stretch;
-    }*/
+    } else {
+        return ScrnType::Wait; // 避免警告，不会运行到此
+    }
 
 }
 
@@ -723,6 +723,7 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
 void ScreenShot::mousePressEvent(QMouseEvent *event)
 {
+    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
 	if (event->button() != Qt::LeftButton)
 		return;
 
@@ -770,13 +771,11 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
             m_textEdit->move(m_step.editPos);
             m_textEdit->setVisible(m_step.bDisplay);
 
-            qInfo() << "[ScreenShot::mousePressEvent]: m_textEdit.isVisible():" << m_textEdit->isVisible()
-                << "  event->pos():" << event->pos()
-                << "  m_step.editPos:" << m_step.editPos
-                << "  perviousPos:" << perviousPos
-                << "  m_textEdit->rect():" << m_textEdit->rect()
-                << "  m_textEdit->toPlainText():" << m_textEdit->toPlainText()
-                << "  m_step.text:" << m_step.text;
+            XLOG_DEBUG("m_textEdit是否显示[{}]  event->pos({}, {})  m_step.editPos({}, {})  perviousPos({}, {}) m_textEdit->rect({}, {}, {} * {}) m_textEdit->toPlainText[{}]  m_step.text[{}]"
+                , m_textEdit->isVisible(), event->pos().x(), event->pos().y(), m_step.editPos.x(), m_step.editPos.y(), perviousPos.x(), perviousPos.y()
+                , m_textEdit->rect().left(), m_textEdit->rect().top(), m_textEdit->rect().width(), m_textEdit->rect().height()
+                , m_textEdit->toPlainText().toUtf8().data()
+                , m_step.text.toUtf8().data());
         }
 
 
@@ -795,10 +794,13 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 
     updateCursorShape(event->pos());
 	update();
+
+    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
 }
 
 void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 {
+    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
 //    if (event->button() != Qt::LeftButton)
 //        return;
 
@@ -829,10 +831,13 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
     updateCursorShape(event->pos());
 	update();
+
+    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
 }
 
 void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 {
+    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
     if (event->button() != Qt::LeftButton)
         return;
 
@@ -879,6 +884,8 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	}
 
 	update();
+
+    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
 }
 
 /*!

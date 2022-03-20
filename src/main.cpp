@@ -35,28 +35,8 @@ int main(int argc, char *argv[])
     /* 枚举窗口的所有进程 */
     //获取屏幕上所有的顶层窗口,每发现一个窗口就调用回调函数一次
 
-
-    XLOG_DEBUG("1Welcome to spdlog!");
-    XLOG_DEBUG("1Support 测试中文for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-    XLOG_INFO("3Welcome to spdlog!");
-    XLOG_INFO("4Support 测试中文for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-
-#ifdef Q_OS_WIN
-    XLOG_DEBUG(L"2Welcome to spdlog!");
-    XLOG_INFO(L"3Welcome to spdlog!");
-    XLOG_DEBUG(L"2Support 测试中文for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-    XLOG_INFO(L"4Support 测试中文for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
-#endif
-
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray* tary = new Tray();
-
-//	std::cout << "-------------------------" << std::endl << std::endl;
-
-
-    //qInfo()<<QObject::tr("Program running program end.");
-
-	std::cout << "hello word" << std::endl;
 	QApplication::setQuitOnLastWindowClosed(false);
 
     return QApplication::exec();
