@@ -67,21 +67,19 @@ const QRect RectCalcu::getStretchRect()
 // 计算后得出结果数据，其余归零
 void RectCalcu::calcurRsultOnce()
 {
-    auto rt = getSelRect();
-    rtSel = rt;
-
-    if (bSmartMonitor)
-        return;
+    rtSel = getSelRect();
 
     pos1 = QPoint();
     pos2 = QPoint();
-
 }
 
 // 仅被智能窗口选中时候使用，不要随意修改此数值;
 void RectCalcu::setRtSel(const QRect rt)
 {
     rtSel = rt;
+
+	pos1 = rtSel.topLeft();
+	pos2 = rtSel.bottomRight();
 }
 
 // 限制选中矩形不超过虚拟屏幕的边界， rect 为当前选中矩形

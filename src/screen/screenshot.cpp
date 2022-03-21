@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-#define _MYDEBUG
+//#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -822,6 +822,7 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
         m_rtCalcu.pos2 = event->pos();
 
+        m_rtCalcu.bSmartMonitor = false;
         //if (m_rtCalcu.pos1 != m_rtCalcu.pos2)
         //  不显示 TODO: 2022.02.10 再添加一个变量即可
             
@@ -855,6 +856,15 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
 		m_rtCalcu.pos2 = event->pos();
 
+        if (m_rtCalcu.pos1 == m_rtCalcu.pos2) {  // 点击到一个点，视作智能检测窗口； 否则就是手动选择走下面逻辑
+            const QRect geom = QApplication::desktop()->geometry();
+            int offsetX = geom.x();
+            int offsetY = geom.y();
+            m_rtCalcu.setRtSel(QRect(m_rtAtuoMonitor).translated(-offsetX, -offsetY));
+        }
+
+        m_rtCalcu.bSmartMonitor = false; // 自动选择也结束
+
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
@@ -874,19 +884,6 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	}
 
 	m_rtCalcu.calcurRsultOnce();
-
-    // 智能窗口赋值给手动选中 rtsel ,即表示手动选中了
-    if (m_rtCalcu.scrnType == ScrnType::Select) {
-        m_rtCalcu.bSmartMonitor = false;
-        if (m_rtCalcu.pos1 != m_rtCalcu.pos2) { // 手动选择
-
-        } else { // 点击一个点，视作智能检测窗口
-            const QRect geom = QApplication::desktop()->geometry();
-            int offsetX = geom.x();
-            int offsetY = geom.y();
-            m_rtCalcu.setRtSel(QRect(m_rtAtuoMonitor).translated(- offsetX, -offsetY));
-        }
-    }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
 		m_rtCalcu.scrnType = ScrnType::Wait;
@@ -944,8 +941,7 @@ void ScreenShot::getScrnShots()
 
     this->getScrnInfo();
     // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
-    if (!m_currPixmap)
-        getVirtualScreen();
+    getVirtualScreen();
 
     this->show();
 }
