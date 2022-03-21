@@ -49,6 +49,18 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_textEdit(new XTextWidget(this))
     , m_rtDesktop(0, 0, 0, 0)
 {
+    XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
+    XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
+    XLOG_INFO("buildCpuArchitecture[{}]", QSysInfo::buildCpuArchitecture().toUtf8().data());
+    XLOG_INFO("currentCpuArchitecture[{}]", QSysInfo::currentCpuArchitecture().toUtf8().data());
+    XLOG_INFO("kernelType[{}]", QSysInfo::kernelType().toUtf8().data());
+    XLOG_INFO("kernelVersion[{}]", QSysInfo::kernelVersion().toUtf8().data());
+    XLOG_INFO("machineHostName[{}]", QSysInfo::machineHostName().toUtf8().data());
+    XLOG_INFO("machineUniqueId[{}]", QSysInfo::machineUniqueId().data());
+    XLOG_INFO("prettyProductName[{}]", QSysInfo::prettyProductName().toUtf8().data());
+    XLOG_INFO("productType[{}]", QSysInfo::productType().toUtf8().data());
+    XLOG_INFO("productVersion[{}]", QSysInfo::productVersion().toUtf8().data());
+
 	m_primaryScreen = QApplication::primaryScreen();
 	m_screens = QApplication::screens();
 
@@ -647,34 +659,32 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 调试的实时数据
     QFont font;//(font());
-    font.setPointSize(16);  // 默认大小为 9
+    font.setPointSize(12);  // 默认大小为 9
     pa.setFont(font);
     const int space = font.pointSize() * 2.5;
     int32_t posTextTop = 0;
     if (m_screens.size() >= 2)
-        posTextTop = m_screens[1]->size().height() / 2;
+        posTextTop = m_screens[1]->size().height();
     else
-        posTextTop = m_screens[0]->size().height() / 2;
+        posTextTop = m_screens[0]->size().height();
 
-    QPoint posText(0, posTextTop);
+    QPoint posText(0, posTextTop - space);
 
     QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
-    pa.drawText(posText + QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
+    pa.drawText(posText - QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
                 .arg(int(m_rtCalcu.scrnType)));
-    pa.drawText(posText + QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
+    pa.drawText(posText - QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
                 .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
-    pa.drawText(posText + QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
+    pa.drawText(posText - QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
                 .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
-    pa.drawText(posText + QPoint(0, space * 3), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
+    pa.drawText(posText - QPoint(0, space * 3), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
                 .arg(m_rtCalcu_selRect.x()).arg(m_rtCalcu_selRect.y()).arg(m_rtCalcu_selRect.width()).arg(m_rtCalcu_selRect.height()));
-    pa.drawText(posText + QPoint(0, space * 4), QString("rtSel: (%1, %2, %3 * %4)")
+    pa.drawText(posText - QPoint(0, space * 4), QString("rtSel: (%1, %2, %3 * %4)")
                 .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
-    pa.drawText(posText + QPoint(0, space * 5), QString("pos(): (%1, %2)")
+    pa.drawText(posText - QPoint(0, space * 5), QString("pos(): (%1, %2)")
                 .arg(pos().x()).arg(pos().y()));
-    pa.drawText(posText + QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2), rtAtuoMonitor: (%3, %4)")
+    pa.drawText(posText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2), rtAtuoMonitor: (%3, %4)")
                 .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(rtAtuoMonitor.x()).arg(rtAtuoMonitor.y()));
-
-    
     //}
 //#endif //
 
@@ -902,29 +912,31 @@ ScreenShot &ScreenShot::instance()
 
 void ScreenShot::getScrnShots()
 {
-	//WinInfoWin::instance().getAllWinInfoCache();
+	
 	//WinInfoWin::instance().getAllWinInfoRealTime();
-
 
     m_rtDesktop = QApplication::desktop()->rect();
     m_vWholeScrn.clear();
     for (const auto& scrn : m_screens) {
-        qInfo() << "#------------------------------------------->\n"
-            << "屏幕详细信息：index:" << m_screens.indexOf(scrn) << "   size:" << scrn->size() << "   geometry:" << scrn->geometry()
-            << "   virtualGeometry:" << scrn->virtualGeometry() << "   m_rtDesktop:" << m_rtDesktop;
+        XLOG_DEBUG("屏幕详细信息：index[{}]", m_screens.indexOf(scrn));
+        XLOG_DEBUG("size({}, {})", scrn->size().width(), scrn->size().height());
+        XLOG_DEBUG("geometry({}, {}, {} * {})", scrn->geometry().left(), scrn->geometry().top(), scrn->geometry().width(), scrn->geometry().height());
+        XLOG_DEBUG("virtualGeometry({}, {}, {} * {})", scrn->virtualGeometry().left(), scrn->virtualGeometry().top(), scrn->virtualGeometry().width(), scrn->virtualGeometry().height());
+        XLOG_DEBUG("m_rtDesktop({}, {}, {} * {})\n", m_rtDesktop.left(), m_rtDesktop.top(), m_rtDesktop.width(), m_rtDesktop.height());
 
         m_vWholeScrn.push_back(scrn->geometry());
+        m_vWholeScrn.push_back(scrn->virtualGeometry());
     }
 
-    m_vWholeScrn.push_back(m_screens[0]->virtualGeometry());
     m_vWholeScrn.push_back(m_rtDesktop);
-
 
 #ifdef Q_OS_WIN
     m_vec.clear();
 
+    //WinInfoWin::instance().getAllWinInfoCache();
+
     //if (m_rtCalcu.bSmartMonitor)  // 存储所需要全部窗口信息
-    //    m_vec = WinInfoWin::instance().m_vWinInfo;
+        //m_vec = WinInfoWin::instance().m_vWinInfo;
 
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
