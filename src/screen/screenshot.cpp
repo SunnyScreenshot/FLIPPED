@@ -313,11 +313,23 @@ QPixmap* ScreenShot::getVirtualScreen()
 	// TODO 2021-09-29:
 	// 万一虚拟屏幕没开启，优先截取当前鼠标所在的屏幕
 	if (!m_currPixmap) {
-        QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
-	    const QRect geom = desktop->geometry();             // 多屏的矩形取并集
-	    m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
+        QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
 
-        m_currPixmap->save("123456.png");
+#if defined(Q_OS_MAC)
+        if (!desktop)
+            return nullptr;
+
+        QRect rtScrn = desktop->screen(desktop->screenNumber(QCursor::pos()))->rect();
+        m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), rtScrn.x(), rtScrn.y(), rtScrn.width(), rtScrn.height()));
+
+        XLOG_DEBUG("rtScrn({}, {}, {} * {})", rtScrn.x(), rtScrn.y(), rtScrn.width(), rtScrn.height());
+#else
+        const QRect geom = desktop->geometry();             // 多屏的矩形取并集
+        m_currPixmap = new QPixmap(m_primaryScreen->grabWindow(desktop->winId(), geom.x(), geom.y(), desktop->width(), desktop->height()));
+
+#endif
+
+        //m_currPixmap->save("123456.png");
     }
 
     return m_currPixmap;
