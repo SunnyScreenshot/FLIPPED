@@ -217,6 +217,10 @@ void ScreenShot::onClearScreen()
 	m_vDrawUndo.clear();
 
 	m_rtCalcu.clear();
+
+    m_rtAtuoMonitor = QRect();
+    if (m_rtCalcu.scrnType == ScrnType::Wait) // 状态重置
+        setMouseTracking(true);
 };
 
 void ScreenShot::onDrawShape(DrawShape shape)
@@ -685,6 +689,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
                 .arg(pos().x()).arg(pos().y()));
     pa.drawText(posText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2), rtAtuoMonitor: (%3, %4)")
                 .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(rtAtuoMonitor.x()).arg(rtAtuoMonitor.y()));
+    pa.drawText(posText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
+        .arg(m_rtCalcu.bSmartMonitor));
     //}
 //#endif //
 
