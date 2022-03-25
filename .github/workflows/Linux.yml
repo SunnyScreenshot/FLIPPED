@@ -3,13 +3,11 @@ on:
   # push代码时触发workflow
   push:
     paths-ignore:
-      - 'debian'
       - 'README.md'
       - 'LICENSE'
       - 'buildToVS2019.bat'
   pull_request:
     paths-ignore:
-      - 'debian'
       - 'README.md'
       - 'LICENSE'
       - 'buildToVS2019.bat'
@@ -86,7 +84,7 @@ jobs:
         run: |
           mkdir bin
           cp -r build/bin/${{ env.targetName }} bin
-          cp -r debian/* bin
+          cp -r debian_portable/* bin
           
           sudo chmod 777 bin/ldd.sh
           sudo chmod 777 bin/${{ env.targetName }}.sh
