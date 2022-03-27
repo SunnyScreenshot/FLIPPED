@@ -1,0 +1,15 @@
+Source: picshot
+Section: unknown
+Priority: optional
+Maintainer: XMuli <xmulitech@gmail.com>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/picshot
+#Vcs-Git: https://salsa.debian.org/debian/picshot.git
+
+Package: picshot
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
