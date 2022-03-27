@@ -1,11 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: picshot
-Upstream-Contact: <preferred name and address to reach the upstream project>
-Source: <url://example.com>
+Upstream-Contact: https://github.com/XMuli/PicShot
+Source: https://github.com/XMuli/PicShot
 
 Files: *
-Copyright: <years> <put author's name and email here>
-           <years> <likewise for another author>
+Copyright: 2022 XMuli <xmulitech@gmail.com>
 License: MIT
 
 Files: debian/*

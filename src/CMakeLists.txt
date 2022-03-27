@@ -156,3 +156,12 @@ source_group("wininfo" FILES ${SRCS_WININFO})
 source_group("widget" FILES ${SRCS_WIDGET})
 source_group("screen" FILES ${SRCS_WINSCREEN})
 
+
+#  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
+if(APPLE)
+
+elseif(WIN32)
+    # install(TARGETS ${PROJECT_NAME} RUNTIME)
+else()
+    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)
+endif()

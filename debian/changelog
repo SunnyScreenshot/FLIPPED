@@ -1,5 +1,5 @@
 picshot (0.1.2-1) unstable; urgency=medium
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * try build .deb on Linux(ubuntu 20.04)
 
- -- XMuli <xmulitech@gmail.com>  Sun, 27 Mar 2022 22:09:47 +0800
+ -- XMuli <xmulitech@gmail.com>  Sun, 27 Mar 2022 16:16:38 +0800
