@@ -2,13 +2,10 @@ name: MacOS
 on: 
   push:
     paths-ignore:
-      - '**'
+      - 'README.md'
   pull_request:
     paths-ignore:
-      - 'debian'
       - 'README.md'
-      - 'LICENSE'
-      - 'buildToVS2019.bat'
 jobs:
   build:
     name: Build

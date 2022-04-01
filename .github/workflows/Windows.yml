@@ -1,6 +1,5 @@
 name: Windows
 on: 
-  # push代码时触发workflow
   push:
     paths:
       - 'CMakeLists.txt'
@@ -43,7 +42,7 @@ jobs:
           key: ${{ runner.os }}-QtCache
 
       - name: setupQt
-        if: steps.WindowsCacheQt.outputs.cache-hit != 'true'
+        if: steps.cache-qt.outputs.cache-hit == 'true'
         shell: pwsh
         env:
             QtPath: ${{ github.workspace }}/../Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch_install }}
