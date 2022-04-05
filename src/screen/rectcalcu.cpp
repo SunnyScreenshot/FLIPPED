@@ -188,9 +188,13 @@ const QRect RectCalcu::getSelRect()
 {
 	if (scrnType == ScrnType::Select)
 		return getRect(pos1, pos2);
-	else if (scrnType == ScrnType::Move)
+	else if (scrnType == ScrnType::Move) {
+		// TODO: 2022.04.05 判断移动的为选择框，还是哪一个已经绘画的矩形？
+
+		//TODO: getDrawedSharpRect();  按下时刻的点，所处于的位置是否为矩形？还有移动检测？也给添加上？ 参考 火焰截图和 QQ 截图
+
 		return rtSel.translated(pos2 - pos1);
-	else if (scrnType == ScrnType::Stretch)
+	} else if (scrnType == ScrnType::Stretch)
 		return getStretchRect(); // 返回副本
 	else
 		return rtSel;

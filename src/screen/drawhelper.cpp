@@ -31,6 +31,7 @@ void DrawHelper::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush br
     pa.setBrush(brush);
 }
 
+int XDrawStep::g_index = 0;
 void XDrawStep::clear()
 {
 	pos1 = QPoint();
@@ -51,5 +52,9 @@ void XDrawStep::clear()
 	//font = QFont();
 	//fontSize = 16;
 	//mscPx = 3;
+
+
+	index = -1;
+	//g_index = -1;  永不重置
 }
 

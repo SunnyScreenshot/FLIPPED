@@ -74,6 +74,7 @@ private:
     void updateBorderCursorShape(const CursorArea& cursArea);
     QPixmap* getVirtualScreen();
     bool drawToCurrPixmap();
+    bool getDrawedShapeRect();
 
 	// 绘画边框样式
     void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);
@@ -81,6 +82,13 @@ private:
 
     // 辅助（绘画）函数， TODO 可以迁移到 XDrawHelper 中？
     void drawStep(QPainter& pa, XDrawStep &step, bool isUseEnvContext = false);
+    bool isDrawShape(XDrawStep& step);
+
+
+
+    //--------------test begin-------------
+    void showAllDrawedShape(QPainter& pa);
+    //--------------test end-------------
 
 protected:
 	virtual void paintEvent(QPaintEvent *event) override;

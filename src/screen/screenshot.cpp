@@ -354,6 +354,12 @@ bool ScreenShot::drawToCurrPixmap()
     return (!m_savePixmap.isNull() && m_currPixmap);
 }
 
+// 获取已绘画形状的矩形，准备拖曳移动其
+bool ScreenShot::getDrawedShapeRect()
+{
+    return false;
+}
+
 void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
 {
 	if (num == 0)
@@ -509,6 +515,29 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
     }
 }
 
+bool ScreenShot::isDrawShape(XDrawStep& step)
+{
+    if (step.pos1 == step.pos2)
+        return false;
+
+    //if (step.shape == DrawShape::Rectangles) {
+    //} else if (step.shape == DrawShape::Ellipses) {
+
+    //} else if (step.shape == DrawShape::Brush) {
+
+    //} else if (step.shape == DrawShape::Arrows) {
+
+    //} else if (step.shape == DrawShape::Mosaics) {
+
+    //} else if (step.shape == DrawShape::Text || step.shape == DrawShape::NoDraw) {
+    //    return false; // 特殊处理，或者不处理
+    //} else {
+    //    return true; // 避免警告
+    //}
+
+    return true;
+}
+
 // 样式一: 浅蓝色
 void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 {
@@ -540,6 +569,40 @@ void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
         pa.drawPixmap(QPoint(x1, (y1 + y2) / 2) - offsetPos, pixmap);
         pa.drawPixmap(QPoint(x2, (y1 + y2) / 2) - offsetPos, pixmap);
 	}
+}
+
+void ScreenShot::showAllDrawedShape(QPainter& pa)
+{
+    QPoint posText(0, 100);
+    const int space = 15;
+    QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
+
+    int i = 0;
+    pa.drawText(posText + QPoint(0, space * i), QString("m_vDrawed:%0").arg(m_vDrawed.count()));
+
+    //for (const auto& it : m_vDrawed){
+    //    pa.drawText(posText + QPoint(0, space * i), QString("m_vDrawed[%0]:[%1]")
+    //        .arg(i++).arg(it.shape));
+    //}
+
+
+
+
+
+    //pa.drawText(posText + QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
+    //    .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
+    //pa.drawText(posText + QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
+    //    .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
+    //pa.drawText(posText + QPoint(0, space * 3), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
+    //    .arg(m_rtCalcu_selRect.x()).arg(m_rtCalcu_selRect.y()).arg(m_rtCalcu_selRect.width()).arg(m_rtCalcu_selRect.height()));
+    //pa.drawText(posText + QPoint(0, space * 4), QString("rtSel: (%1, %2, %3 * %4)")
+    //    .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
+    //pa.drawText(posText + QPoint(0, space * 5), QString("pos(): (%1, %2)")
+    //    .arg(pos().x()).arg(pos().y()));
+    //pa.drawText(posText + QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2), rtAtuoMonitor: (%3, %4)")
+    //    .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(rtAtuoMonitor.x()).arg(rtAtuoMonitor.y()));
+    //pa.drawText(posText + QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
+    //    .arg(m_rtCalcu.bSmartMonitor));
 }
 
 // 效果：绘画的顺序重要
@@ -703,6 +766,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
                 .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(rtAtuoMonitor.x()).arg(rtAtuoMonitor.y()));
     pa.drawText(posText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
         .arg(m_rtCalcu.bSmartMonitor));
+    pa.drawText(posText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
     //}
 //#endif //
 
@@ -788,6 +852,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
                     
                     m_step.editPos = perviousPos;
                     m_vDrawed.push_back(m_step);  // 绘画文字为单独处理【暂时特例】
+                    m_step.index = m_step.g_index++;
                 } else {   // 编辑ing
                     m_step.bTextComplete = false;
                 }
@@ -891,10 +956,12 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
 
         // DrawShape::Text  在按下时候单独处理 m_vDrawed.push_back
-        if (m_step.shape != DrawShape::Text
-            && m_step.shape != DrawShape::NoDraw) {
-            m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
-            m_step.clear();
+        if (m_step.shape != DrawShape::Text && m_step.shape != DrawShape::NoDraw) {
+            if (isDrawShape(m_step)) {
+                m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
+                m_step.index = m_step.g_index++;
+                m_step.clear();
+            }
         }
         
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {

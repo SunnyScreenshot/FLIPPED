@@ -92,6 +92,7 @@ using namespace XC;
 //Texts,
 //Mosaics,
 //NoDraw
+
 struct  XDrawStep
 {   // 公共元素 ------------------
 	QPoint pos1;                             // 起点
@@ -99,6 +100,8 @@ struct  XDrawStep
 	QRect rt;                                // 初始绘画位置
     DrawShape shape = DrawShape::NoDraw;     // 绘画形状
 	bool bFill = false;                      // 绘画类型
+	int index = -1;                          // 序号，亦 z 轴，越大越顶层
+	static int g_index;
 
 	QPen pen = QPen(Qt::red);
 	int penWidth = 2;                         // 画笔宽度
