@@ -37,12 +37,15 @@ public:
     void getScrnShots();
     static double getScale(QScreen *screen = QApplication::primaryScreen());
 
+    bool isSelBorder();
+
 private:
     void getScrnInfo();
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
 
 	void updateGetWindowsInfo();
+    void whichShape();
 
 
 signals:
@@ -112,6 +115,7 @@ private:
     QVector<XDrawStep> m_vDrawed;    // 已绘步骤
     QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
     QVector<QRect> m_vWholeScrn;      // 特殊矩形，全屏大小
+    XDrawStep* m_pCurrShape;         // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
 
 	// test
 	XTextWidget* m_textEdit;

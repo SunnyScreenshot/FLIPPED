@@ -45,6 +45,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_primaryScreen(nullptr)
 	, m_currPixmap(nullptr)
 	, m_rtCalcu()
+    , m_pCurrShape(nullptr)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
     , m_rtDesktop(0, 0, 0, 0)
@@ -417,7 +418,7 @@ void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
 // 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；true 使用上一个环境的
 void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 {
-    if (DrawShape::NoDraw == step.shape)
+    if (DrawShape::NoDraw == step.shape || m_pCurrShape == &step) // 选中图形移动时刻，跳过这不绘画
         return;
 
     if (!isUseEnvContext) {
@@ -538,6 +539,18 @@ bool ScreenShot::isDrawShape(XDrawStep& step)
     return true;
 }
 
+
+void ScreenShot::whichShape()
+{
+    QPoint pos(QCursor::pos());
+    for (auto it = m_vDrawed.rbegin(); it != m_vDrawed.rend(); ++it) {
+        if (!m_pCurrShape && it->rt.contains(pos, true)) {
+            m_pCurrShape = &(*it);
+            break;
+        }
+    }
+}
+
 // 样式一: 浅蓝色
 void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 {
@@ -651,6 +664,17 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	pa.setPen(pen);
 	drawStep(pa, m_step, false);
 
+    // 测试
+    QRect rtMoveTest;
+    if (m_rtCalcu.scrnType == ScrnType::Move && m_pCurrShape) {
+        // TODO: 2022.04.05 判断移动的为选择框，还是哪一个已经绘画的矩形？
+        //TODO: getDrawedSharpRect();  按下时刻的点，所处于的位置是否为矩形？还有移动检测？也给添加上？ 参考 火焰截图和 QQ 截图
+
+        rtMoveTest = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
+        pa.drawRect(rtMoveTest);
+
+    }
+
     // 屏幕遮罩
     QPainterPath path;
     path.addRect(m_rtDesktop);
@@ -747,7 +771,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     else
         posTextTop = m_screens[0]->size().height();
 
-    QPoint posText(0, posTextTop - space);
+    QPoint posText(0, posTextTop - 5 * space);
 
     QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
     pa.drawText(posText - QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
@@ -767,6 +791,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.drawText(posText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
         .arg(m_rtCalcu.bSmartMonitor));
     pa.drawText(posText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
+    pa.drawText(posText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtMoveTest.x()).arg(rtMoveTest.y())
+        .arg(rtMoveTest.width()).arg(rtMoveTest.height()));
     //}
 //#endif //
 
@@ -880,6 +906,8 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 	if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos1 = event->pos();
 		m_rtCalcu.pos2 = event->pos();
+
+        whichShape(); // 判定移动选中的已绘图形
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos1 = event->pos();
 		m_rtCalcu.pos2 = event->pos();
@@ -950,6 +978,12 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->pos();
+
+        // 移动选中的图形
+        if (m_pCurrShape) {
+            m_pCurrShape->rt.translate(m_rtCalcu.pos2 - m_rtCalcu.pos1);
+        }
+
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
         m_step.pos2 = event->pos();
         m_step.custPath.append(event->pos());
@@ -969,6 +1003,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	}
 
 	m_rtCalcu.calcurRsultOnce();
+    m_pCurrShape = nullptr; // 此计算依次结果之后
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
 		m_rtCalcu.scrnType = ScrnType::Wait;
@@ -1119,4 +1154,12 @@ double ScreenShot::getScale(QScreen * screen)
 #else
     return screen->logicalDotsPerInch() / 96.0;  //
 #endif
+}
+
+bool ScreenShot::isSelBorder()
+{
+    if (m_pCurrShape)
+        return false;
+    else
+        return true;
 }
