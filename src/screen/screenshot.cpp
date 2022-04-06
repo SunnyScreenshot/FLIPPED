@@ -631,6 +631,10 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 选中矩形图片
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
+
+    if (m_rtCalcu.bSmartMonitor)
+        rtSel = m_rtAtuoMonitor;
+
     m_rtCalcu.limitBound(rtSel, m_rtDesktop);           // 修复边界时图片被拉伸
     if (rtSel.width() > 0 && rtSel.height() > 0) {
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
