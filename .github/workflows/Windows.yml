@@ -33,39 +33,39 @@ jobs:
       targetOS: windows
     # 步骤
     steps:
-      - name: Cache Qt  # 使用缓存安装Qt模块
-        id: cache-qt
-        uses: actions/cache@v1  # not v2! 参见 https://github.com/jurplel/install-qt-action
-        with:
-          path: ../Qt
-          key: ${{ runner.os }}-QtCache
+      # - name: Cache Qt  # 使用缓存安装Qt模块
+      #   id: cache-qt
+      #   uses: actions/cache@v1  # not v2! 参见 https://github.com/jurplel/install-qt-action
+      #   with:
+      #     path: ../Qt
+      #     key: ${{ runner.os }}-QtCache-2
 
-      - name: setupQt
-        if: steps.cache-qt.outputs.cache-hit == 'true'
-        shell: pwsh
-        env:
-            QtPath: ${{ github.workspace }}/../Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch_install }}
-            QtPluginPath: ${{ github.workspace }}/../Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch_install }}/plugins
-            Qml2ImportPath: ${{ github.workspace }}/../Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch_install }}/qml
-        run: |
-          $Qt5_Dir="${{ env.QtPath }}"
-          $QT_PLUGIN_PATH="${{ env.QtPluginPath }}"
-          $QML2_IMPORT_PATH="${{ env.Qml2ImportPath }}"
+      # - name: setupQt
+      #   if: steps.cache-qt.outputs.cache-hit == 'true'
+      #   shell: pwsh
+      #   env:
+      #       QtPath: ${{ github.workspace }}/../Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch_install }}
+      #       QtPluginPath: ${{ github.workspace }}/../Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch_install }}/plugins
+      #       Qml2ImportPath: ${{ github.workspace }}/../Qt/${{ matrix.qt_ver }}/${{ matrix.qt_arch_install }}/qml
+      #   run: |
+      #     $Qt5_Dir="${{ env.QtPath }}"
+      #     $QT_PLUGIN_PATH="${{ env.QtPluginPath }}"
+      #     $QML2_IMPORT_PATH="${{ env.Qml2ImportPath }}"
           
-          echo "Qt5_Dir=$Qt5_Dir" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "QT_PLUGIN_PATH=$QT_PLUGIN_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "QML2_IMPORT_PATH=$QML2_IMPORT_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      #     echo "Qt5_Dir=$Qt5_Dir" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      #     echo "QT_PLUGIN_PATH=$QT_PLUGIN_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      #     echo "QML2_IMPORT_PATH=$QML2_IMPORT_PATH" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-          echo "GITHUB_PATH=$Qt5_Dir/bin" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      #     echo "GITHUB_PATH=$Qt5_Dir/bin" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Install Qt
-        if: steps.cache-qt.outputs.cache-hit != 'true'
+        # if: steps.cache-qt.outputs.cache-hit != 'true'
         uses: jurplel/install-qt-action@v2
         with:
           version: ${{ matrix.qt_ver }}
           arch: ${{ matrix.qt_arch }}
           set-env: true
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}  // 默认 'false'
+          # cached: ${{ steps.cache-qt.outputs.cache-hit }}  // 默认 'false'
 
       - uses: actions/checkout@v2
         with:
@@ -125,7 +125,8 @@ jobs:
           dir bin
 
           echo "-------------- debug 1 --------------"
-          ${{ env.GITHUB_PATH }}/windeployqt bin/${{ env.targetName }}.exe
+          # ${{ env.GITHUB_PATH }}/windeployqt bin/${{ env.targetName }}.exe # cache 时使用
+          windeployqt bin/${{ env.targetName }}.exe
           
           echo "-------------- debug 2 --------------"
           Compress-Archive -Path ${{ github.workspace }}/bin/* -Destination ${{ env.productName }}.zip
