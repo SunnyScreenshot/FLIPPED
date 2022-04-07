@@ -42,13 +42,14 @@ namespace Util {
 
 ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
-	, m_primaryScreen(nullptr)
+    , m_screens(QApplication::screens())
+	, m_primaryScreen(QApplication::primaryScreen())
 	, m_currPixmap(nullptr)
 	, m_rtCalcu()
     , m_pCurrShape(nullptr)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
-    , m_rtDesktop(0, 0, 0, 0)
+    , m_rtVirDesktop(0, 0, 0, 0)
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
     XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
@@ -62,8 +63,6 @@ ScreenShot::ScreenShot(QWidget *parent)
     XLOG_INFO("productType[{}]", QSysInfo::productType().toUtf8().data());
     XLOG_INFO("productVersion[{}]", QSysInfo::productVersion().toUtf8().data());
 
-	m_primaryScreen = QApplication::primaryScreen();
-	m_screens = QApplication::screens();
 
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
@@ -348,7 +347,8 @@ bool ScreenShot::drawToCurrPixmap()
     pa.end();
 
     QRect rtSel(m_rtCalcu.getSelRect());
-    m_rtCalcu.limitBound(rtSel, m_rtDesktop);
+    const QRect rtAppVirDesktop(QPoint(0, 0), m_rtVirDesktop.size());
+    m_rtCalcu.limitBound(rtSel, rtAppVirDesktop);
     if (rtSel.width() > 0 && rtSel.height() > 0)
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
 
@@ -625,19 +625,19 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 原始图案
     QPainter pa(this);
+    pa.translate(-1 * m_rtVirDesktop.topLeft()); // *** 偏移为显示器坐标下绘画 ***
     pa.setBrush(Qt::NoBrush);
     pa.setPen(Qt::NoPen);
-    pa.drawPixmap(m_rtDesktop, *m_currPixmap);
+    pa.drawPixmap(m_rtVirDesktop, *m_currPixmap);
 
     // 选中矩形图片
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
-
     if (m_rtCalcu.bSmartMonitor)
         rtSel = m_rtAtuoMonitor;
 
-    m_rtCalcu.limitBound(rtSel, m_rtDesktop);           // 修复边界时图片被拉伸
+    m_rtCalcu.limitBound(rtSel, m_rtVirDesktop);           // 修复边界时图片被拉伸
     if (rtSel.width() > 0 && rtSel.height() > 0) {
-        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
+        m_savePixmap = m_currPixmap->copy(QRect(mapFromGlobal(rtSel.topLeft()) * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
         pa.drawPixmap(rtSel, m_savePixmap);
 
         // m_savePixmap 和 m_currPixmap 的地址没有改变，但前者的 cacheKey 总在变化???
@@ -681,7 +681,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 屏幕遮罩
     QPainterPath path;
-    path.addRect(m_rtDesktop);
+    path.addRect(m_rtVirDesktop);
     path.addRect(rtSel);
     path.setFillRule(Qt::OddEvenFill);
     pa.setPen(Qt::NoPen);
@@ -714,7 +714,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         const int space = 8;
         topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
         topLeft.setY(rtSel.bottomRight().y() + penWidth + space);
-        m_tbDrawBar->move(topLeft);
+        m_tbDrawBar->move(mapFromGlobal(topLeft));
     }
 
 
@@ -728,6 +728,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::red);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
+
 #ifdef Q_OS_WIN
     if (m_vec.size() > 0) {
         for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
@@ -746,20 +747,18 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 #elif  defined(Q_OS_LINUX)
 #endif
 
-    //if (!m_rtTest.isEmpty()) {
-    pen.setColor(Qt::yellow);
-    pa.setPen(pen);
-    QRect rtAtuoMonitor(m_rtAtuoMonitor);  // 特地使用副本，保留原来数值避免被修改，也是按下和松开判断时候数据保持一致
-    rtAtuoMonitor.moveTo(rtAtuoMonitor.topLeft() - QPoint(offsetX, offsetY));
-    if (m_rtCalcu.bSmartMonitor) {
-        
-        for (const auto & it : m_vWholeScrn) {
-            if (it == rtAtuoMonitor)
-                rtAtuoMonitor.adjust(10, 10, -10, -10);
-        }
+    //pen.setColor(Qt::yellow);
+    //pa.setPen(pen);
+    //QRect rtAtuoMonitor(m_rtAtuoMonitor);  // 特地使用副本，保留原来数值避免被修改，也是按下和松开判断时候数据保持一致
+    //if (m_rtCalcu.bSmartMonitor) {
+    //    
+    //    for (const auto & it : m_vWholeScrn) {
+    //        if (it == rtAtuoMonitor)
+    //            rtAtuoMonitor.adjust(10, 10, -10, -10);
+    //    }
 
-        pa.drawRect(rtAtuoMonitor);
-    }
+    //    pa.drawRect(rtAtuoMonitor);
+    //}
 
     pen.setColor(Qt::white);
     pa.setPen(pen);
@@ -769,36 +768,38 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     font.setPointSize(12);  // 默认大小为 9
     pa.setFont(font);
     const int space = font.pointSize() * 2.5;
-    int32_t posTextTop = 0;
-    if (m_screens.size() >= 2)
-        posTextTop = m_screens[1]->size().height();
-    else
-        posTextTop = m_screens[0]->size().height();
 
-    QPoint posText(0, posTextTop - 5 * space);
+    QPoint tTopLeft;
+    if (m_screens.size() >= 2) {
+        tTopLeft.setX(m_screens[1]->geometry().x());
+        tTopLeft.setY(m_screens[1]->size().height());
+    } else {
+        tTopLeft.setX(m_screens[0]->geometry().x());
+        tTopLeft.setY(m_screens[0]->size().height());
+    }
+
+    QPoint tPosText(tTopLeft.x(), tTopLeft.y() - 5 * space);
 
     QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
-    pa.drawText(posText - QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
+    pa.drawText(tPosText - QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
                 .arg(int(m_rtCalcu.scrnType)));
-    pa.drawText(posText - QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
+    pa.drawText(tPosText - QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
                 .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
-    pa.drawText(posText - QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
+    pa.drawText(tPosText - QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
                 .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
-    pa.drawText(posText - QPoint(0, space * 3), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
+    pa.drawText(tPosText - QPoint(0, space * 3), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
                 .arg(m_rtCalcu_selRect.x()).arg(m_rtCalcu_selRect.y()).arg(m_rtCalcu_selRect.width()).arg(m_rtCalcu_selRect.height()));
-    pa.drawText(posText - QPoint(0, space * 4), QString("rtSel: (%1, %2, %3 * %4)")
+    pa.drawText(tPosText - QPoint(0, space * 4), QString("rtSel: (%1, %2, %3 * %4)")
                 .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
-    pa.drawText(posText - QPoint(0, space * 5), QString("pos(): (%1, %2)")
+    pa.drawText(tPosText - QPoint(0, space * 5), QString("pos(): (%1, %2)")
                 .arg(pos().x()).arg(pos().y()));
-    pa.drawText(posText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2), rtAtuoMonitor: (%3, %4)")
-                .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(rtAtuoMonitor.x()).arg(rtAtuoMonitor.y()));
-    pa.drawText(posText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
+    pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2)")
+        .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()));
+    pa.drawText(tPosText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
         .arg(m_rtCalcu.bSmartMonitor));
-    pa.drawText(posText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
-    pa.drawText(posText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtMoveTest.x()).arg(rtMoveTest.y())
+    pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
+    pa.drawText(tPosText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtMoveTest.x()).arg(rtMoveTest.y())
         .arg(rtMoveTest.width()).arg(rtMoveTest.height()));
-    //}
-//#endif //
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
@@ -845,7 +846,7 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
 void ScreenShot::mousePressEvent(QMouseEvent *event)
 {
-    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
+    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 	if (event->button() != Qt::LeftButton)
 		return;
 
@@ -854,27 +855,27 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 		//m_rtCalcu.clear();
         
 		m_rtCalcu.scrnType = ScrnType::Select;
-        m_rtCalcu.pos1 = event->pos();
-        m_rtCalcu.pos2 = event->pos();
+        m_rtCalcu.pos1 = event->globalPos();
+        m_rtCalcu.pos2 = event->globalPos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) { 
-        m_step.pos1 = event->pos();
-        m_step.pos2 = event->pos(); 
+        m_step.pos1 = event->globalPos();
+        m_step.pos2 = event->globalPos(); 
        
         if (m_step.shape == DrawShape::Text) {
             QPoint perviousPos = m_step.editPos;   // 修改之前的显示坐标
 
-            m_step.editPos = event->pos();
+            m_step.editPos = event->globalPos();
             m_step.rt = m_textEdit->rect();
             m_step.rt.setTopLeft(m_step.editPos);
 
 
             if (m_step.bDisplay) {  // 输入框显示中
-                //m_step.editPos = event->pos(); // pos1、pos2 松开鼠标时候会重置，而editPos不会
+                //m_step.editPos = event->globalPos(); // pos1、pos2 松开鼠标时候会重置，而editPos不会
                 //m_step.rt = m_textEdit->rect();
                 //m_step.rt.setTopLeft(m_step.editPos);
                 //m_textEdit->move(m_step.editPos);
 
-                if (!m_step.rt.contains(event->pos(), true)) {  // 编辑完成
+                if (!m_step.rt.contains(event->globalPos(), true)) {  // 编辑完成
                     m_step.bTextComplete = true;
                     m_step.bDisplay = false;
                     m_step.text = m_textEdit->toPlainText();
@@ -895,7 +896,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
             m_textEdit->setVisible(m_step.bDisplay);
 
             XLOG_DEBUG("m_textEdit是否显示[{}]  event->pos({}, {})  m_step.editPos({}, {})  perviousPos({}, {}) m_textEdit->rect({}, {}, {} * {}) m_textEdit->toPlainText[{}]  m_step.text[{}]"
-                , m_textEdit->isVisible(), event->pos().x(), event->pos().y(), m_step.editPos.x(), m_step.editPos.y(), perviousPos.x(), perviousPos.y()
+                , m_textEdit->isVisible(), event->globalPos().x(), event->globalPos().y(), m_step.editPos.x(), m_step.editPos.y(), perviousPos.x(), perviousPos.y()
                 , m_textEdit->rect().left(), m_textEdit->rect().top(), m_textEdit->rect().width(), m_textEdit->rect().height()
                 , m_textEdit->toPlainText().toUtf8().data()
                 , m_step.text.toUtf8().data());
@@ -904,28 +905,28 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 
 
 	} else {  // 则可能为移动、拉伸、等待状态
-		m_rtCalcu.scrnType = updateScrnType(event->pos());
+		m_rtCalcu.scrnType = updateScrnType(event->globalPos());
     }
 
 	if (m_rtCalcu.scrnType == ScrnType::Move) {
-		m_rtCalcu.pos1 = event->pos();
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos1 = event->globalPos();
+		m_rtCalcu.pos2 = event->globalPos();
 
         whichShape(); // 判定移动选中的已绘图形
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
-		m_rtCalcu.pos1 = event->pos();
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos1 = event->globalPos();
+		m_rtCalcu.pos2 = event->globalPos();
 	} 
 
-    updateCursorShape(event->pos());
+    updateCursorShape(event->globalPos());
 	update();
 
-    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
+    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 }
 
 void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 {
-    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
+    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 //    if (event->button() != Qt::LeftButton)
 //        return;
 
@@ -935,7 +936,7 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
             updateGetWindowsInfo();
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
-        m_rtCalcu.pos2 = event->pos();
+        m_rtCalcu.pos2 = event->globalPos();
 
         m_rtCalcu.bSmartMonitor = false;
         //if (m_rtCalcu.pos1 != m_rtCalcu.pos2)
@@ -943,45 +944,42 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
             
         
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = event->globalPos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        m_step.pos2 = event->pos();
-        m_step.editPos = event->pos();
+        m_step.pos2 = event->globalPos();
+        m_step.editPos = event->globalPos();
 
-        m_step.custPath.append(event->pos());
+        m_step.custPath.append(event->globalPos());
         m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = event->globalPos();
 	}
 
-    updateCursorShape(event->pos());
+    updateCursorShape(event->globalPos());
 	update();
 
-    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
+    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 }
 
 void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 {
-    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
+    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
     if (event->button() != Qt::LeftButton)
         return;
 
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = event->globalPos();
 
         if (m_rtCalcu.pos1 == m_rtCalcu.pos2) {  // 点击到一个点，视作智能检测窗口； 否则就是手动选择走下面逻辑
-            const QRect geom = QApplication::desktop()->geometry();
-            int offsetX = geom.x();
-            int offsetY = geom.y();
-            m_rtCalcu.setRtSel(QRect(m_rtAtuoMonitor).translated(-offsetX, -offsetY));
+            m_rtCalcu.setRtSel(m_rtAtuoMonitor);
         }
 
         m_rtCalcu.bSmartMonitor = false; // 自动选择也结束
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = event->globalPos();
 
         // 移动选中的图形
         if (m_pCurrShape) {
@@ -989,8 +987,8 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         }
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        m_step.pos2 = event->pos();
-        m_step.custPath.append(event->pos());
+        m_step.pos2 = event->globalPos();
+        m_step.custPath.append(event->globalPos());
         m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
 
         // DrawShape::Text  在按下时候单独处理 m_vDrawed.push_back
@@ -1003,7 +1001,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         }
         
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = event->globalPos();
 	}
 
 	m_rtCalcu.calcurRsultOnce();
@@ -1016,7 +1014,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 
 	update();
 
-    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->pos().x(), event->pos().y());
+    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 }
 
 /*!
@@ -1036,20 +1034,35 @@ void ScreenShot::getScrnShots()
 	
 	//WinInfoWin::instance().getAllWinInfoRealTime();
 
-    m_rtDesktop = QApplication::desktop()->rect();
+    if (m_primaryScreen) {
+        m_rtVirDesktop = m_primaryScreen->virtualGeometry();
+    } else {
+        m_rtVirDesktop = QApplication::desktop()->rect();
+
+        for (const auto& it : m_screens) {
+            if (m_rtVirDesktop.x() > it->geometry().x())
+                m_rtVirDesktop.setX(it->geometry().x());
+            if (m_rtVirDesktop.y() > it->geometry().y())
+                m_rtVirDesktop.setY(it->geometry().y());
+        }
+    }
+
+
+
+
     m_vWholeScrn.clear();
     for (const auto& scrn : m_screens) {
         XLOG_DEBUG("屏幕详细信息：index[{}]", m_screens.indexOf(scrn));
         XLOG_DEBUG("size({}, {})", scrn->size().width(), scrn->size().height());
         XLOG_DEBUG("geometry({}, {}, {} * {})", scrn->geometry().left(), scrn->geometry().top(), scrn->geometry().width(), scrn->geometry().height());
         XLOG_DEBUG("virtualGeometry({}, {}, {} * {})", scrn->virtualGeometry().left(), scrn->virtualGeometry().top(), scrn->virtualGeometry().width(), scrn->virtualGeometry().height());
-        XLOG_DEBUG("m_rtDesktop({}, {}, {} * {})\n", m_rtDesktop.left(), m_rtDesktop.top(), m_rtDesktop.width(), m_rtDesktop.height());
+        XLOG_DEBUG("m_rtDesktop({}, {}, {} * {})\n", m_rtVirDesktop.left(), m_rtVirDesktop.top(), m_rtVirDesktop.width(), m_rtVirDesktop.height());
 
         m_vWholeScrn.push_back(scrn->geometry());
         m_vWholeScrn.push_back(scrn->virtualGeometry());
     }
 
-    m_vWholeScrn.push_back(m_rtDesktop);
+    m_vWholeScrn.push_back(m_rtVirDesktop);
 
 #ifdef Q_OS_WIN
     m_vec.clear();
