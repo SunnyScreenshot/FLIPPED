@@ -3,11 +3,9 @@ on:
   push:
     paths-ignore:
       - 'README.md'
-      - 'buildToVS2019.bat'
   pull_request:
     paths-ignore:
       - 'README.md'
-      - 'buildToVS2019.bat'
 jobs:
   build:
     name: Build
