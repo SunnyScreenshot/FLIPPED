@@ -28,7 +28,7 @@ set(SRCS_MAIN
     )
 
 # core
-FILE(GLOB_RECURSE SRCS_CORE
+set(SRCS_CORE
     "core/isingleton.h"
     "core/xlog/xlog.h"
     )
@@ -53,16 +53,50 @@ set(SRCS_WIDGET
     "widget/xtextwidget.cpp"
     )
 
+# screen
+set(SRCS_WINSCREEN
+    "screen/drawhelper.h"
+    "screen/drawhelper.cpp"
+    "screen/drawtoolbar.h"
+    "screen/drawtoolbar.cpp"
+    "screen/rectcalcu.h"
+    "screen/rectcalcu.cpp"
+    "screen/screenshot.h"
+    "screen/screenshot.cpp"
+    "screen/subabslinetoolbar.h"
+    "screen/subabslinetoolbar.cpp"
+    "screen/subabstoolbar.h"
+    "screen/subabstoolbar.cpp"
+    "screen/subellipsetoolbar.h"
+    "screen/subellipsetoolbar.cpp"
+    "screen/subgraptoolbar.h"
+    "screen/subgraptoolbar.cpp"
+    "screen/submosaictoolbar.h"
+    "screen/submosaictoolbar.cpp"
+    "screen/submosaictoolbar.h"
+    "screen/submosaictoolbar.cpp"
+    "screen/subrecttoolbar.h"
+    "screen/subrecttoolbar.cpp"
+    "screen/subrecttoolbar.h"
+    "screen/subrecttoolbar.cpp"
+    "screen/subtexttoolbar.h"
+    "screen/subtexttoolbar.cpp"
+    "screen/tray.h"
+    "screen/tray.cpp"
+    "screen/wincolorpick.h"
+    "screen/wincolorpick.cpp"
+    "screen/winresetbtn.h"
+    "screen/winresetbtn.cpp"
+    "screen/winresetbtn.h"
+    "screen/winresetbtn.cpp"
+    "screen/winsetting.h"
+    "screen/winsetting.cpp"
+)
+
 set(SRCS_RESOURCES
     "Resources.qrc"
     "logo.rc"
     )
-
-# screen
-FILE(GLOB_RECURSE SRCS_WINSCREEN
-    "./screen/*.h"
-    "./screen/*.cpp"
-)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
@@ -79,12 +113,6 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-#add_compile_definitions(QT_MESSAGELOGCONTEXT  # Release 版本下也能输出文件名、行号等
-#	QT_NO_DEBUG_OUTPUT     # 屏蔽 debug\info\warning 信息
-##    QT_NO_INFO_OUTPUT
-##    QT_NO_WARNING_OUTPUT
-#    )
-
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
     ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey
     )
@@ -96,7 +124,7 @@ if (APPLE)
     set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
     set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.XMuli.PicShot")
     set(MACOSX_BUNDLE_INFO_STRING "A cross-platform screenshot software")
-    # set(MACOSX_BUNDLE_ICON_FILE "shadowsocks-qt5.icns")
+    # set(MACOSX_BUNDLE_ICON_FILE "xxx.icns")
     # set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
     # set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
     # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
