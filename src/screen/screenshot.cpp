@@ -493,14 +493,10 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         break;
     }
     case DrawShape::Mosaics: {
-		if (!m_currPixmap)
+		if (!m_currPixmap || step.rt.isEmpty())  // 优化，删除就很明显
 			return;
-
-        // TODO: 多绘画几个就略有点卡顿，一切到此处便会内存先增加后恢复
-        if (step.rt.isEmpty())  // 优化，删除就很明显
-            break;
         
-        QPixmap mosaicPixmap = m_currPixmap->copy(QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
+        QPixmap mosaicPixmap = m_currPixmap->copy(QRect(mapFromGlobal(step.rt.topLeft()) * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
         if (step.bFill) { 
             const QImage img = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
             pa.drawImage(step.rt, img);
