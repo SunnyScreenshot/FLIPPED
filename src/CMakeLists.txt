@@ -53,15 +53,16 @@ set(SRCS_WIDGET
     "widget/xtextwidget.cpp"
     )
 
+set(SRCS_RESOURCES
+    "Resources.qrc"
+    "logo.rc"
+    )
+
 # screen
 FILE(GLOB_RECURSE SRCS_WINSCREEN
     "./screen/*.h"
     "./screen/*.cpp"
 )
-
-set(SRCS_RESOURCES
-    Resources.qrc
-    )
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
