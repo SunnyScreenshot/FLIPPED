@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -70,6 +70,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
     #ifdef _MYDEBUG
         if (m_screens.size() >= 2) {
             setFixedSize(m_screens.at(1)->size());
@@ -478,7 +479,10 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
     case DrawShape::Text: {
         // 记住：这是每一个 step 都会绘画的
         if (step.bTextComplete && !step.bDisplay) {
-            pa.drawText(step.editPos, step.text);  // 若是尝试偏移，则 + QPoint(0, step.rt.height() 居然有 bug ？？？
+
+            QFontMetrics fm(m_textEdit->font());
+            QPoint pos(step.editPos.x(), step.editPos.y() + fm.ascent() + fm.leading()); // 偏移得到视觉的“正确”
+            pa.drawText(pos, step.text);  // TODO 2022.04.11: 编辑框中换行依旧被一行显示出来
         }
         qInfo() << "[ScreenShot::drawStep]: m_textEdit.isVisible():" << m_textEdit->isVisible()
             << "  m_step.pos1:" << m_step.pos1
@@ -796,6 +800,11 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
     pa.drawText(tPosText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtMoveTest.x()).arg(rtMoveTest.y())
         .arg(rtMoveTest.width()).arg(rtMoveTest.height()));
+    pa.drawText(tPosText - QPoint(0, space * 10), QString("m_step=>pos1(%1, %2)  pos2(%3 * %4) editPos(%5, %6)  rt(%7, %8, %9 * %10)  text:%11")
+        .arg(m_step.pos1.x()).arg(m_step.pos1.y()) .arg(m_step.pos2.x()).arg(m_step.pos2.y())
+        .arg(m_step.editPos.x()).arg(m_step.editPos.y())
+        .arg(m_step.rt.x()).arg(m_step.rt.y()).arg(m_step.rt.width()).arg(m_step.rt.height())
+        .arg(m_step.text));
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);

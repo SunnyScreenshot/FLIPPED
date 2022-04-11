@@ -4,14 +4,16 @@
 #include "xtextwidget.h"
 #include <QFontMetrics>
 #include <QDebug>
+#include "../core/xlog/xlog.h"
 
 XTextWidget::XTextWidget(QWidget *parent)
 	: QTextEdit(parent)
 	, m_baseSize()
 	, m_minSize()
 {
-    qInfo() << "###############> [XTextWidget::resizeEvent()]";
-    //setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
+	XLOG_DEBUG("rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
+	
+    setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
 	connect(this, &XTextWidget::textChanged, this, &XTextWidget::adjustSize);
 	connect(this, &XTextWidget::textChanged, this, &XTextWidget::emitTextUpdated);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -21,13 +23,13 @@ XTextWidget::XTextWidget(QWidget *parent)
 
 XTextWidget::~XTextWidget()
 {
-    qInfo() << "###############> [XTextWidget::~XTextWidget()]";
+	XLOG_DEBUG("rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
 }
 
 // https://blog.csdn.net/kenfan1647/article/details/115171891
 void XTextWidget::adjustSize()
 {
-    qInfo() << "###############> [XTextWidget::adjustSize()]";
+	XLOG_DEBUG("--a1--rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
     const QString& text = this->toPlainText();
 	QFontMetrics fm(this->font());
 	QRect bound = fm.boundingRect(QRect(), Qt::AlignLeft, text); // 需要再研究下
@@ -42,14 +44,24 @@ void XTextWidget::adjustSize()
 	if (pixelsHigh < m_minSize.height())
 		pixelsHigh = m_minSize.height();
 
-	qInfo() << "----------pixelsWide:" << pixelsWide << "  pixelsHigh:" << pixelsHigh;
+	XLOG_DEBUG("--a2--rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
 	setFixedSize(pixelsWide, pixelsHigh);
+
+	XLOG_DEBUG("--a3--rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
+	XLOG_DEBUG("bound({}, {}, {} * {})  lineSpacing[{}]  pixelsWide[{}]  pixelsHigh[{}]  m_minSize({}, {})", bound.left(), bound.top(), bound.width(), bound.height(), lineSpacing, pixelsWide, pixelsHigh
+	, m_minSize.width(), m_minSize.height());
 }
 
 void XTextWidget::setFont(const QFont & font)
 {
+	XLOG_DEBUG("rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
 	QTextEdit::setFont(font);
 	adjustSize();
+}
+
+int XTextWidget::lineSpacing()
+{
+	return 0;
 }
 
 
@@ -57,7 +69,9 @@ void XTextWidget::showEvent(QShowEvent *e)
 {
     QFont font;
     QFontMetrics fm(font);  // 赋值一个初始的宽高
-	qInfo() << "###############> [XTextWidget::showEvent()]" << size() << fm.lineSpacing();
+
+	XLOG_DEBUG("--a1--rect({}, {}, {} * {})  size({}，{})   fm.lineSpacing[{}]", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height(), fm.lineSpacing());
+
     setFixedWidth(fm.lineSpacing() * 6);
     setFixedHeight(fm.lineSpacing() * 2.5);
     m_baseSize = size();
@@ -66,16 +80,18 @@ void XTextWidget::showEvent(QShowEvent *e)
 	QTextEdit::showEvent(e);
 	adjustSize();
 
-	qInfo() << "###############> [XTextWidget::showEvent()]  rect:" << rect();
+	XLOG_DEBUG("--a2--rect({}, {}, {} * {})  size({}，{})   fm.lineSpacing[{}]", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height(), fm.lineSpacing());
 }
 
 // 当 widget 大小被重新设置的时候就会被调用
 void XTextWidget::resizeEvent(QResizeEvent *e)
 {
-    qInfo() << "###############> [XTextWidget::resizeEvent()]";
+	XLOG_DEBUG("--a1--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
 	m_minSize.setHeight(qMin(m_baseSize.height(), height()));
 	m_minSize.setWidth(qMin(m_baseSize.width(), width()));
 	QTextEdit::resizeEvent(e);
+
+	XLOG_DEBUG("--a2--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
 }
 
 void XTextWidget::setTextColor(const QColor & c)
@@ -92,5 +108,8 @@ void XTextWidget::setAlignment(Qt::AlignmentFlag alignment)
 
 void XTextWidget::emitTextUpdated()
 {
+	XLOG_DEBUG("--a1--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
     emit textUpdated(this->toPlainText());
+
+	XLOG_DEBUG("--a2--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
 }

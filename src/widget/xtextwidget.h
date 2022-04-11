@@ -16,6 +16,8 @@ public:
 	void adjustSize();
 	void setFont(const QFont& font);
 
+	int lineSpacing();
+
 protected:
 	void showEvent(QShowEvent *e) override;
 	void resizeEvent(QResizeEvent *e) override;
