@@ -120,6 +120,7 @@ private:
 	// test
 	XTextWidget* m_textEdit;
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
+    QString m_processName;           // 自动窗口的线程名
 
 
 #ifdef Q_OS_WIN

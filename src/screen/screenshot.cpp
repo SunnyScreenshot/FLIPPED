@@ -66,6 +66,8 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
+
+    m_textEdit->setTextColor(Qt::red);
     m_textEdit->hide();
 	
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
@@ -482,7 +484,15 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 
             QFontMetrics fm(m_textEdit->font());
             QPoint pos(step.editPos.x(), step.editPos.y() + fm.ascent() + fm.leading()); // 偏移得到视觉的“正确”
-            pa.drawText(pos, step.text);  // TODO 2022.04.11: 编辑框中换行依旧被一行显示出来
+
+            if (step.text > 0) {
+                QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
+                option.setWrapMode(QTextOption::WordWrap);
+
+                //TODO 2022.04.13: 待优化 http://qtdebug.com/qtbook-paint-text
+                //https://doc.qt.io/qt-5/qpainter.html#drawText-5
+                pa.drawText(QRect(pos, QSize(100, 100)), step.text, option);
+            }
         }
         qInfo() << "[ScreenShot::drawStep]: m_textEdit.isVisible():" << m_textEdit->isVisible()
             << "  m_step.pos1:" << m_step.pos1
@@ -883,6 +893,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
                 if (!m_step.rt.contains(event->globalPos(), true)) {  // 编辑完成
                     m_step.bTextComplete = true;
                     m_step.bDisplay = false;
+
                     m_step.text = m_textEdit->toPlainText();
                     m_textEdit->clear();
                     

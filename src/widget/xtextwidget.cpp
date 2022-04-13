@@ -59,12 +59,6 @@ void XTextWidget::setFont(const QFont & font)
 	adjustSize();
 }
 
-int XTextWidget::lineSpacing()
-{
-	return 0;
-}
-
-
 void XTextWidget::showEvent(QShowEvent *e)
 {
     QFont font;
