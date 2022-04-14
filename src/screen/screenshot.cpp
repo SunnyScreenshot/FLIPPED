@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-#define _MYDEBUG
+//#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -67,6 +67,8 @@ ScreenShot::ScreenShot(QWidget *parent)
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 
+    //QFont font("STXingkai", 40); // 设置默认值
+    //m_textEdit->setFont(font);
     m_textEdit->setTextColor(Qt::red);
     m_textEdit->hide();
 	
@@ -480,30 +482,22 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 	}
     case DrawShape::Text: {
         // 记住：这是每一个 step 都会绘画的
-        if (step.bTextComplete && !step.bDisplay) {
+        if (step.bTextComplete && !step.bDisplay && step.text > 0) {
+            QFontMetrics metrics(m_textEdit->font());
 
-            QFontMetrics fm(m_textEdit->font());
-            QPoint pos(step.editPos.x(), step.editPos.y() + fm.ascent() + fm.leading()); // 偏移得到视觉的“正确”
+            //QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
+            //QPoint pos(step.editPos.x(), step.editPos.y() + metrics.ascent() + metrics.leading()); // 偏移得到视觉的“正确”
 
-            if (step.text > 0) {
-                QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
-                option.setWrapMode(QTextOption::WordWrap);
+            int flags = Qt::TextWordWrap; // 自动换行
+            QRect textBoundingRect = metrics.boundingRect(QRect(0, 0, m_rtVirDesktop.width(), 0), flags, step.text);
 
-                //TODO 2022.04.13: 待优化 http://qtdebug.com/qtbook-paint-text
-                //https://doc.qt.io/qt-5/qpainter.html#drawText-5
-                pa.drawText(QRect(pos, QSize(100, 100)), step.text, option);
-            }
-        }
-        qInfo() << "[ScreenShot::drawStep]: m_textEdit.isVisible():" << m_textEdit->isVisible()
-            << "  m_step.pos1:" << m_step.pos1
-            << "  m_step.editPos:" << m_step.editPos
-            << "  m_step.text:" << m_step.text
-            << "  step.pos1:" << step.pos1
-            << "  step.editPos:" << step.editPos
-            << "  step.text:" << step.text
-            << "  m_textEdit->rect():" << m_textEdit->rect()
-            << "  m_textEdit->toPlainText():" << m_textEdit->toPlainText();
-            
+            //http://qtdebug.com/qtbook-paint-text
+            //https://doc.qt.io/qt-5/qpainter.html#drawText-5
+            const QFont font(pa.font());
+            pa.setFont(m_textEdit->font());
+            pa.drawText(QRect(step.editPos, textBoundingRect.size()), flags, step.text);
+            pa.setFont(font);
+        }   
         break;
     }
     case DrawShape::Mosaics: {
@@ -883,7 +877,6 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
             m_step.rt = m_textEdit->rect();
             m_step.rt.setTopLeft(m_step.editPos);
 
-
             if (m_step.bDisplay) {  // 输入框显示中
                 //m_step.editPos = event->globalPos(); // pos1、pos2 松开鼠标时候会重置，而editPos不会
                 //m_step.rt = m_textEdit->rect();
@@ -908,7 +901,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
                 m_textEdit->clear();
             }
 
-            m_textEdit->move(m_step.editPos);
+            m_textEdit->move(mapFromGlobal(m_step.editPos));
             m_textEdit->setVisible(m_step.bDisplay);
 
             XLOG_DEBUG("m_textEdit是否显示[{}]  event->pos({}, {})  m_step.editPos({}, {})  perviousPos({}, {}) m_textEdit->rect({}, {}, {} * {}) m_textEdit->toPlainText[{}]  m_step.text[{}]"
