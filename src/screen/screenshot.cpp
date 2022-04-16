@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -77,21 +77,39 @@ ScreenShot::ScreenShot(QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
     #ifdef _MYDEBUG
         if (m_screens.size() >= 2) {
-            setFixedSize(m_screens.at(1)->size());
+
+            int index = 0;   // 使用主屏的屏幕作为 Debug 测试
+            for (; index < m_screens.size(); ++index) {
+                if (m_primaryScreen == m_screens.at(index))
+                    break;
+            }
+            
+            setFixedSize(m_screens.at(index)->size());
+            //move(m_screens.at(index)->geometry().topLeft());
+
         } else {
             QSize size(m_screens.at(0)->size());
             resize(size.width() / 2.0, size.height());
+            move(m_screens.at(0)->geometry().topLeft());
         }
+
+        
     #else
         setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
         setFixedSize(geom.size());
+        
     #endif
 
 #else // Q_OS_MAC
     setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
     #ifdef _MYDEBUG
         if (m_screens.size() >= 2) {
-            setFixedSize(m_screens.at(1)->size());
+            int index = -1;   // 使用非主屏的一块屏幕作为 Debug 测试
+            for (; index < m_screens.size(); ++index) {
+                if (m_primaryScreen != m_screens.at(index))
+                    break;
+            }
+            
         } else {
             QSize size(m_screens.at(0)->size());
             resize(size.width() / 2.0, size.height());
@@ -100,8 +118,10 @@ ScreenShot::ScreenShot(QWidget *parent)
         showFullScreen();
     #endif
 #endif
-
+        
     move(geom.topLeft());
+
+    
 
 	//int x1 = 0;
 	//int x2 = 0;
@@ -1056,10 +1076,9 @@ void ScreenShot::getScrnShots()
         }
     }
 
-
-
-
     m_vWholeScrn.clear();
+    
+    XLOG_INFO("---------------m_screens[] Info BEGIN----------------");
     for (const auto& scrn : m_screens) {
         XLOG_DEBUG("屏幕详细信息：index[{}]", m_screens.indexOf(scrn));
         XLOG_DEBUG("size({}, {})", scrn->size().width(), scrn->size().height());
@@ -1070,6 +1089,7 @@ void ScreenShot::getScrnShots()
         m_vWholeScrn.push_back(scrn->geometry());
         m_vWholeScrn.push_back(scrn->virtualGeometry());
     }
+    XLOG_INFO("---------------m_screens[] Info END----------------");
 
     m_vWholeScrn.push_back(m_rtVirDesktop);
 
