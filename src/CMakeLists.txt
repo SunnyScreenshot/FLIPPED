@@ -93,6 +93,12 @@ set(SRCS_WINSCREEN
     "screen/winsetting.cpp"
 )
 
+# 插件模块
+set(SRCS_PLUGIN_INTERFACE
+    "pluginsinterface/iplugininterface.h"
+    "pluginsinterface/iplugininterface.cpp")
+
+# 资源模块
 set(SRCS_RESOURCES
     "Resources.qrc"
     "logo.rc"
@@ -135,6 +141,7 @@ if (APPLE)
     ${SRCS_CORE}
     ${SRCS_WIDGET}
     ${SRCS_WINSCREEN}
+    ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
     )
 else()
@@ -144,6 +151,7 @@ else()
     ${SRCS_CORE}
     ${SRCS_WIDGET}
     ${SRCS_WINSCREEN}
+    ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
     )
 endif()
@@ -184,6 +192,7 @@ source_group("core" FILES ${SRCS_CORE})
 source_group("wininfo" FILES ${SRCS_WININFO})
 source_group("widget" FILES ${SRCS_WIDGET})
 source_group("screen" FILES ${SRCS_WINSCREEN})
+source_group("pluginsinterface" FILES ${SRCS_PLUGIN_INTERFACE})
 
 
 #  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}

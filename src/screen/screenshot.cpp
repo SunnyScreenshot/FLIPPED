@@ -64,6 +64,19 @@ ScreenShot::ScreenShot(QWidget *parent)
     XLOG_INFO("productVersion[{}]", QSysInfo::productVersion().toUtf8().data());
 
 
+//    QPluginLoader plugin_loader("plugin.dll");
+//    QObject* plugin = plugin_loader.instance();
+//    if(plugin)
+//    {
+//        interface = qobject_cast<PluginInterface*>(plugin);
+//        if(interface)
+//        {
+//            interface->SayHello(this);
+//        }
+//        //delete plugin;
+//        plugin_loader.unload();
+//    }
+
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 

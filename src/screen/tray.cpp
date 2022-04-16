@@ -9,6 +9,10 @@
 #include <QMenu>
 #include <QIcon>
 #include <QCoreApplication>
+#include <QPluginLoader>
+#include "../pluginsinterface/iplugininterface.h"
+//#include "../../pluginsimpl/watemark/pluginwatemark.h"
+
 
 Tray::Tray(QObject *parent)
     : QObject(parent)
@@ -20,6 +24,22 @@ Tray::Tray(QObject *parent)
     , m_winMain(nullptr)
 {
 	init();
+
+    //调用部分
+    IPluginInterface* pDll = nullptr;
+    QPluginLoader plugin_loader("../pluginsimpl/watemark/watemark.dll");
+    QObject* plugin = plugin_loader.instance();
+    if(plugin)
+    {
+        pDll = qobject_cast<IPluginInterface*>(plugin);
+        if(pDll)
+        {
+            QString temp= pDll->plugName();
+        }
+        //delete plugin;
+        plugin_loader.unload();
+    }
+
 }
 
 Tray::~Tray()
