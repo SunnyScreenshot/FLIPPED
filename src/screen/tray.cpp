@@ -10,6 +10,8 @@
 #include <QIcon>
 #include <QCoreApplication>
 #include <QPluginLoader>
+#include <QDir>
+#include <QFileInfoList>
 #include "../pluginsinterface/iplugininterface.h"
 //#include "../../pluginsimpl/watemark/pluginwatemark.h"
 
@@ -25,20 +27,44 @@ Tray::Tray(QObject *parent)
 {
 	init();
 
-    //调用部分
-    IPluginInterface* pDll = nullptr;
-    QPluginLoader plugin_loader("../pluginsimpl/watemark/watemark.dll");
-    QObject* plugin = plugin_loader.instance();
-    if(plugin)
-    {
-        pDll = qobject_cast<IPluginInterface*>(plugin);
-        if(pDll)
-        {
-            QString temp= pDll->plugName();
+    QDir pluginsDir(QApplication::instance()->applicationDirPath()+"/../pluginsimpl/watemark");
+        QStringList nameFilters;
+        nameFilters<<"*.so"<<"*.dylib"<<"*.dll";
+        QFileInfoList plugins = pluginsDir.entryInfoList(nameFilters, QDir::NoDotAndDotDot | QDir::Files, QDir::Name);
+
+
+        foreach(QFileInfo plugin,plugins){
+            QPluginLoader pluginLoader(plugin.absoluteFilePath(), this);
+            IPluginInterface *pPlugin=qobject_cast<IPluginInterface *>(pluginLoader.instance());
+            if (pPlugin){
+                QString temp= pPlugin->plugName();
+//                QAction *action = new QAction(plugin_ptr->name());
+//                editMenu->addAction(action);
+//                editToolBar->addAction(action);
+//                editPlugins[plugin_ptr->name()]=plugin_ptr;
+//                connect(action,SIGNAL(triggered(bool)),this,SLOT(pluginPerform()));
+
+//                pPlugin.unload();
+            }else{
+                qDebug()<<"bad plugin:"<<plugin.absoluteFilePath();
+            }
+
+
         }
-        //delete plugin;
-        plugin_loader.unload();
-    }
+    //调用部分
+//    IPluginInterface* pDll = nullptr;
+//    QPluginLoader plugin_loader("../pluginsimpl/watemark/watemark.dll");
+//    QObject* plugin = plugin_loader.instance();
+//    if(plugin)
+//    {
+//        pDll = qobject_cast<IPluginInterface*>(plugin);
+//        if(pDll)
+//        {
+//            QString temp= pDll->plugName();
+//        }
+//        //delete plugin;
+//        plugin_loader.unload();
+//    }
 
 }
 
