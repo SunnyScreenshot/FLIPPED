@@ -844,13 +844,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     const int space = font.pointSize() * 2.5;
 
     QPoint tTopLeft;
-    if (m_screens.size() >= 2) {
-        tTopLeft.setX(m_screens[1]->geometry().x());
-        tTopLeft.setY(m_screens[1]->size().height());
-    } else {
-        tTopLeft.setX(m_screens[0]->geometry().x());
-        tTopLeft.setY(m_screens[0]->size().height());
-    }
+    tTopLeft.setX(m_primaryScreen->geometry().x());
+    tTopLeft.setY(m_primaryScreen->size().height());
 
     QPoint tPosText(tTopLeft.x(), tTopLeft.y() - 5 * space);
 
