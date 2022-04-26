@@ -726,7 +726,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         pa.save();
         rtCurMove = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
 
-        pa.setRenderHint(QPainter::Antialiasing, false);
+        pa.setRenderHint(QPainter::Antialiasing, true);
         pa.setBrush(Qt::NoBrush);
         QPen penWhite(QColor(255, 255, 255, 1 * 255), 1);
         penWhite.setStyle(Qt::CustomDashLine);

@@ -233,6 +233,23 @@ BOOL WinInfoWin::getRectFromCache(POINT pt, RECT & rect)
 }
 
 // 过滤不可见等的窗口
+/* spy 抓的 不可见窗口类型 参考
+WS_POPUP
+WS_CLIPSIBLINGS
+WS_EX_TOPMOST
+WS_BORDER
+WS_SIZEBOX
+
+WS_MINIMIZEBOX
+WS_SYSMENU
+WS_CLIPCHILDREN
+
+// 扩展类型
+WS_EX_TOPMOST
+WS_EX_TOOLWINDOW
+WS_EX_PALETTEWINDOW
+00080000
+*/
 BOOL WinInfoWin::WindowsFilter(HWND hWnd)
 {
     if (!hWnd)
