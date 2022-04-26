@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-#define _MYDEBUG
+//#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -874,6 +874,9 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         .arg(m_step.editPos.x()).arg(m_step.editPos.y())
         .arg(m_step.rt.x()).arg(m_step.rt.y()).arg(m_step.rt.width()).arg(m_step.rt.height())
         .arg(m_step.text));
+    pa.drawText(tPosText - QPoint(0, space * 11), QString("m_step.penWidth:%5").arg(m_step.penWidth));
+    //pa.drawText(tPosText - QPoint(0, space * 11), QString("m_numDegrees(%1, %2)  m_numPixels(%3 * %4)  m_step.penWidth:%5")
+    //    .arg(m_numDegrees.x()).arg(m_numDegrees.y()).arg(m_numPixels.x()).arg(m_numPixels.y()).arg(m_step.penWidth));
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
@@ -1089,6 +1092,26 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	update();
 
     XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
+}
+
+void ScreenShot::wheelEvent(QWheelEvent* event)
+{
+    // Note: On X11 this value is driver specific and unreliable, use angleDelta() instead    
+    //QPoint numPixels = event->pixelDelta();
+    QPoint numDegrees = event->angleDelta() / 8;
+    QPoint numSteps = numDegrees / 15;
+
+    if (numDegrees.isNull())
+        return;
+
+    m_step.penWidth += numSteps.y();
+    if (m_step.penWidth <= 0)
+        m_step.penWidth = 1;
+    if (m_step.penWidth >= 100)
+        m_step.penWidth = 100;
+
+    event->accept();
+    update(); // TODO 2022.04.27: 此行仅调试用
 }
 
 /*!
