@@ -72,7 +72,7 @@ public:
 
 	QRect& limitBound(QRect& rt, QRect rtDesktop);
 
-	void calcurRsultOnce();
+	const QRect calcurRsultOnce();
     void setRtSel(const QRect rt);
 
 private:

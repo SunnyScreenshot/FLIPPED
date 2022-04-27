@@ -108,6 +108,7 @@ private:
     QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
 	RectCalcu m_rtCalcu;         // 选中矩形区域
     QRect m_rtVirDesktop;        // 截图时刻的虚拟桌面的大小
+    bool m_bFirstSel;            // 初次选中 截图矩形 完成
 
     DrawToolBar* m_tbDrawBar;    // 工具栏
     XDrawStep m_step;        // 当前绘画一步骤

@@ -66,12 +66,14 @@ const QRect RectCalcu::getStretchRect()
 }
 
 // 计算后得出结果数据，其余归零
-void RectCalcu::calcurRsultOnce()
+const QRect RectCalcu::calcurRsultOnce()
 {
     rtSel = getSelRect();
 
     pos1 = QPoint();
     pos2 = QPoint();
+
+	return rtSel;
 }
 
 // 仅被智能窗口选中时候使用，不要随意修改此数值;

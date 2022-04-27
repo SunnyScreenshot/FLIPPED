@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -47,6 +47,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_currPixmap(nullptr)
 	, m_rtCalcu()
     , m_pCurrShape(nullptr)
+    , m_bFirstSel(false)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
     , m_rtVirDesktop(0, 0, 0, 0)
@@ -80,6 +81,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 
+    m_tbDrawBar->setVisible(false);
     //QFont font("STXingkai", 40); // 设置默认值
     //m_textEdit->setFont(font);
     m_textEdit->setTextColor(Qt::red);
@@ -251,10 +253,16 @@ void ScreenShot::onClearScreen()
 	delete m_currPixmap;
 	m_currPixmap = nullptr;
 
+    m_pCurrShape = nullptr;
+
 	m_vDrawed.clear();
 	m_vDrawUndo.clear();
 
 	m_rtCalcu.clear();
+
+    m_bFirstSel = false;
+    m_tbDrawBar->setVisible(false);
+    m_step.clear();
 
     m_rtAtuoMonitor = QRect();
     if (m_rtCalcu.scrnType == ScrnType::Wait) // 状态重置
@@ -726,7 +734,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         pa.save();
         rtCurMove = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
 
-        pa.setRenderHint(QPainter::Antialiasing, true);
+        pa.setRenderHint(QPainter::Antialiasing, false);
         pa.setBrush(Qt::NoBrush);
         QPen penWhite(QColor(255, 255, 255, 1 * 255), 1);
         penWhite.setStyle(Qt::CustomDashLine);
@@ -783,7 +791,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     }
 
     // 绘画工具栏
-    if (isVisible() && m_tbDrawBar) {
+
+    if (isVisible() && m_tbDrawBar && m_bFirstSel) {
         QPoint topLeft;
         const int space = 8;
         topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
@@ -1081,7 +1090,10 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 		m_rtCalcu.pos2 = event->globalPos();
 	}
 
-	m_rtCalcu.calcurRsultOnce();
+    if (!m_rtCalcu.calcurRsultOnce().isEmpty()) {  // 计算一次结果
+        m_bFirstSel = true;
+        m_tbDrawBar->setVisible(true);
+    }
     //m_pCurrShape = nullptr; // 此计算依次结果之后
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
