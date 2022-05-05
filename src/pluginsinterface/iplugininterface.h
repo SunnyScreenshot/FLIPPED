@@ -10,7 +10,7 @@ public:
     virtual ~IPluginInterface() {};
 
     virtual const QString plugName() const { return QString("test plugName");}
-    virtual QWidget*itemWidget(const QString &itemKey) { return nullptr;}
+    virtual QWidget*itemWidget() { return nullptr;}
 };
 
 

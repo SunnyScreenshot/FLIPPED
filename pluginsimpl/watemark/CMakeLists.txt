@@ -6,8 +6,10 @@ project(${PLUGIN_NAME})
 
 # Sources files
 set(SRCS_FILES
-    "pluginwatemark.h"
-    "pluginwatemark.cpp")
+    "watemarkplugin.h"
+    "watemarkplugin.cpp"
+    "watemarkitem.h"
+    "watemarkitem.cpp")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)

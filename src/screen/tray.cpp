@@ -27,7 +27,8 @@ Tray::Tray(QObject *parent)
 {
 	init();
 
-    QDir pluginsDir(QApplication::instance()->applicationDirPath()+"/../pluginsimpl/watemark");
+	QString t = QApplication::instance()->applicationDirPath() + "/../../pluginsimpl/watemark/RelWithDebInfo";
+    QDir pluginsDir(t);
         QStringList nameFilters;
         nameFilters<<"*.so"<<"*.dylib"<<"*.dll";
         QFileInfoList plugins = pluginsDir.entryInfoList(nameFilters, QDir::NoDotAndDotDot | QDir::Files, QDir::Name);
