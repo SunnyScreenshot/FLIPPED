@@ -36,8 +36,6 @@ if (WIN32)
     endif(MSVC)
 endif()
 
-
-
 # Sources files
 # main
 set(SRCS_MAIN

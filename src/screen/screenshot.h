@@ -31,7 +31,6 @@ QT_END_NAMESPACE
 class ScreenShot : public  QWidget
 {
     Q_OBJECT
-
 public:
     static ScreenShot& instance();
     void getScrnShots();
@@ -46,7 +45,6 @@ private:
 
 	void updateGetWindowsInfo();
     void whichShape();
-
 
 signals:
 	void sigClearScreen();
@@ -86,8 +84,6 @@ private:
     // 辅助（绘画）函数， TODO 可以迁移到 XDrawHelper 中？
     void drawStep(QPainter& pa, XDrawStep &step, bool isUseEnvContext = false);
     bool isDrawShape(XDrawStep& step);
-
-
 
     //--------------test begin-------------
     void showAllDrawedShape(QPainter& pa);
@@ -129,7 +125,6 @@ private:
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
 #endif
-
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

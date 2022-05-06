@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-#define _MYDEBUG
+//#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -63,20 +63,6 @@ ScreenShot::ScreenShot(QWidget *parent)
     XLOG_INFO("prettyProductName[{}]", QSysInfo::prettyProductName().toUtf8().data());
     XLOG_INFO("productType[{}]", QSysInfo::productType().toUtf8().data());
     XLOG_INFO("productVersion[{}]", QSysInfo::productVersion().toUtf8().data());
-
-
-//    QPluginLoader plugin_loader("plugin.dll");
-//    QObject* plugin = plugin_loader.instance();
-//    if(plugin)
-//    {
-//        interface = qobject_cast<PluginInterface*>(plugin);
-//        if(interface)
-//        {
-//            interface->SayHello(this);
-//        }
-//        //delete plugin;
-//        plugin_loader.unload();
-//    }
 
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
@@ -136,8 +122,6 @@ ScreenShot::ScreenShot(QWidget *parent)
         
     move(geom.topLeft());
 
-    
-
 	//int x1 = 0;
 	//int x2 = 0;
 	//int y1 = 0;
@@ -147,7 +131,6 @@ ScreenShot::ScreenShot(QWidget *parent)
 
     setMouseTracking(true);
     m_rtCalcu.scrnType = ScrnType::Wait;
-    
 
 //    m_draw = new XDraw(this);
     connect(m_tbDrawBar, &DrawToolBar::sigDownload, this, &ScreenShot::onDownload);
@@ -160,8 +143,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_tbDrawBar, &DrawToolBar::sigRedo, this, &ScreenShot::onRedo);
 
     connect(m_tbDrawBar, &DrawToolBar::sigIsFill, this, [&](bool bFill) {
-        m_step.bFill = bFill;
-    });
+        m_step.bFill = bFill;});
 
 	connect(m_tbDrawBar, &DrawToolBar::sigLineEndsChange, this, &ScreenShot::onLineEndsChange);
 	connect(m_tbDrawBar, &DrawToolBar::sigLineDasheChange, this, &ScreenShot::onLineDasheChange);
@@ -187,7 +169,6 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
     } else {
         return ScrnType::Wait; // 避免警告，不会运行到此
     }
-
 }
 
 void ScreenShot::updateCursorShape(const QPoint pos) 
@@ -658,10 +639,6 @@ void ScreenShot::showAllDrawedShape(QPainter& pa)
     //        .arg(i++).arg(it.shape));
     //}
 
-
-
-
-
     //pa.drawText(posText + QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
     //    .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
     //pa.drawText(posText + QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
@@ -791,7 +768,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     }
 
     // 绘画工具栏
-
     if (isVisible() && m_tbDrawBar && m_bFirstSel) {
         QPoint topLeft;
         const int space = 8;
@@ -799,7 +775,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         topLeft.setY(rtSel.bottomRight().y() + penWidth + space);
         m_tbDrawBar->move(mapFromGlobal(topLeft));
     }
-
 
     //#ifdef _DEBUG  调试信息
     // 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
@@ -988,8 +963,6 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
                 , m_step.text.toUtf8().data());
         }
 
-
-
 	} else {  // 则可能为移动、拉伸、等待状态
 		m_rtCalcu.scrnType = updateScrnType(event->globalPos());
     }
@@ -1027,8 +1000,6 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
         m_rtCalcu.bSmartMonitor = false;
         //if (m_rtCalcu.pos1 != m_rtCalcu.pos2)
         //  不显示 TODO: 2022.02.10 再添加一个变量即可
-            
-        
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->globalPos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
@@ -1037,7 +1008,6 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
         m_step.custPath.append(event->globalPos());
         m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
-
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos2 = event->globalPos();
 	}
@@ -1094,7 +1064,6 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_bFirstSel = true;
         m_tbDrawBar->setVisible(true);
     }
-    //m_pCurrShape = nullptr; // 此计算依次结果之后
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
 		m_rtCalcu.scrnType = ScrnType::Wait;
@@ -1102,7 +1071,6 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	}
 
 	update();
-
     XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 }
 
@@ -1140,7 +1108,6 @@ ScreenShot &ScreenShot::instance()
 
 void ScreenShot::getScrnShots()
 {
-	
 	//WinInfoWin::instance().getAllWinInfoRealTime();
 
     if (m_primaryScreen) {
@@ -1169,15 +1136,14 @@ void ScreenShot::getScrnShots()
         m_vWholeScrn.push_back(scrn->geometry());
         m_vWholeScrn.push_back(scrn->virtualGeometry());
     }
-    XLOG_INFO("---------------m_screens[] Info END----------------");
 
+    XLOG_INFO("---------------m_screens[] Info END----------------");
     m_vWholeScrn.push_back(m_rtVirDesktop);
 
 #ifdef Q_OS_WIN
     m_vec.clear();
 
     //WinInfoWin::instance().getAllWinInfoCache();
-
     //if (m_rtCalcu.bSmartMonitor)  // 存储所需要全部窗口信息
         //m_vec = WinInfoWin::instance().m_vWinInfo;
 
@@ -1228,7 +1194,6 @@ double ScreenShot::getDevicePixelRatio()
 #else
     return m_primaryScreen->devicePixelRatio();
 #endif
-
 }
 
 double ScreenShot::getDevicePixelRatio(QScreen * screen)

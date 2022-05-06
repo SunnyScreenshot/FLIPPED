@@ -104,7 +104,10 @@ void Tray::init()
 void Tray::onScreenShot()
 {
 	// TODO 2021-10-08 模拟按下快捷键或后续的封装函数
-    ScreenShot::instance().getScrnShots();
+	auto& ins = ScreenShot::instance();
+	ins.getScrnShots();
+	ins.activateWindow();
+	ins.setFocus();
 }
 
 void Tray::onShowWinConfig(bool checked)
