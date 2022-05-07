@@ -18,7 +18,7 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -1156,6 +1156,12 @@ void ScreenShot::getScrnShots()
     getVirtualScreen();
 
     this->show();
+
+    // fix: 初次使用全局热键召唤截图窗口，对 Esc 无响应。 考虑跨平台或需参考 https://zhuanlan.zhihu.com/p/161299504
+    if (!isActiveWindow()) {
+        activateWindow();
+        //setFocus()；
+    }
 }
 
 // 屏幕详细参数
