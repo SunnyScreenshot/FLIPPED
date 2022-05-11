@@ -13,10 +13,18 @@
 #include "./screen/tray.h"
 #include "widget/xroundwidget.h"
 
-//#include "./wininfo/wininfo_win.h"
 #include <iostream>
 
 #include "core/xlog/xlog.h"
+
+// test
+#ifdef Q_OS_WIN
+    //#include "./wininfo/wininfo_win.h"
+#elif  defined(Q_OS_MAC)
+#elif  defined(Q_OS_LINUX)
+    #include "./wininfo/wininfo_x11.h"
+#endif
+
 int main(int argc, char *argv[])
 {
 
@@ -38,6 +46,15 @@ int main(int argc, char *argv[])
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray* tary = new Tray();
 	QApplication::setQuitOnLastWindowClosed(false);
+
+#ifdef Q_OS_WIN
+#elif  defined(Q_OS_MAC)
+#elif  defined(Q_OS_LINUX)
+    WinInfo_x11 WinInfo;
+    WinInfo.test();
+#endif
+
+
 
     return QApplication::exec();
 }

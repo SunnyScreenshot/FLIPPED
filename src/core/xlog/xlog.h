@@ -5,7 +5,7 @@
  * Author: 偕臧 <xmulitech@gmail.com>
  *
  * Create: 2022.03.12
- * Modify: 2022.01.12
+ * Modify: 2022.03.12
  * Description: 使用 spdlog 来生成日志
  ******************************************************************/
 #ifndef XLOG_H
@@ -17,7 +17,6 @@
 
 #include <spdlog/spdlog.h>
 #include "spdlog/sinks/rotating_file_sink.h"
-#include <QString>
 
 class XLog
 {

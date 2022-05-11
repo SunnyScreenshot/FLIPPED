@@ -172,10 +172,18 @@ else()
     )
 endif()
 
-target_link_libraries(${PROJECT_NAME}
-        ${QT5_LIBS_LINK}
-        qhotkey
-        )
+if(UNIX)
+    target_link_libraries(${PROJECT_NAME}
+            ${QT5_LIBS_LINK}
+            qhotkey
+            X11)
+else()
+    target_link_libraries(${PROJECT_NAME}
+            ${QT5_LIBS_LINK}
+            qhotkey)
+endif()
+
+
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog_header_only)
 
@@ -188,19 +196,7 @@ if(APPLE)
 elseif(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE wininfo/wininfo_win.h wininfo/wininfo_win.cpp)
 else()
-#    find_package(X11 REQUIRED)
-#    if(QT_MAJOR GREATER_EQUAL 6)
-#        target_link_libraries(qhotkey PRIVATE ${X11_LIBRARIES})
-#    else()
-#        find_package(Qt${QT_MAJOR} COMPONENTS X11Extras REQUIRED)
-#        target_link_libraries(qhotkey
-#            PRIVATE
-#                ${X11_LIBRARIES}
-#                Qt${QT_MAJOR}::X11Extras)
-#    endif()
-
-#    include_directories(${X11_INCLUDE_DIR})
-#    target_sources(qhotkey PRIVATE QHotkey/qhotkey_x11.cpp)
+    target_sources(${PROJECT_NAME} PRIVATE wininfo/wininfo_x11.h wininfo/wininfo_x11.cpp)
 endif()
 
 source_group("" FILES ${SRCS_MAIN})
