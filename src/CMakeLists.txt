@@ -151,7 +151,7 @@ if (APPLE)
     # set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
     # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
 	
-	add_executable(${PROJECT_NAME} MACOSX_BUNDLE 
+    add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     ${SRCS_MAIN}
     ${SRCS_WININFO}
     ${SRCS_CORE}
@@ -161,7 +161,7 @@ if (APPLE)
     ${SRCS_RESOURCES}
     )
 else()
-	add_executable(${PROJECT_NAME} WIN32
+    add_executable(${PROJECT_NAME} WIN32
     ${SRCS_MAIN}
     ${SRCS_WININFO}
     ${SRCS_CORE}
@@ -183,29 +183,25 @@ else()
             qhotkey)
 endif()
 
-
-
 #target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog_header_only)
 
 if(APPLE)
-#    find_library(CARBON_LIBRARY Carbon)
-#    mark_as_advanced(CARBON_LIBRARY)
-
-#    target_sources(qhotkey PRIVATE QHotkey/qhotkey_mac.cpp)
-#    target_link_libraries(qhotkey PRIVATE ${CARBON_LIBRARY})
 elseif(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE wininfo/wininfo_win.h wininfo/wininfo_win.cpp)
 else()
     target_sources(${PROJECT_NAME} PRIVATE wininfo/wininfo_x11.h wininfo/wininfo_x11.cpp)
 endif()
 
-source_group("" FILES ${SRCS_MAIN})
+source_group("" FILES ${SRCS_MAIN} ${SRCS_RESOURCES})
 source_group("core" FILES ${SRCS_CORE})
-source_group("wininfo" FILES ${SRCS_WININFO})
 source_group("widget" FILES ${SRCS_WIDGET})
 source_group("screen" FILES ${SRCS_WINSCREEN})
 source_group("pluginsinterface" FILES ${SRCS_PLUGIN_INTERFACE})
-
+source_group("wininfo" FILES ${SRCS_WININFO}
+    wininfo/wininfo_x11.h
+    wininfo/wininfo_x11.cpp
+    wininfo/wininfo_win.h
+    wininfo/wininfo_win.cpp)
 
 #  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
 if(APPLE)
