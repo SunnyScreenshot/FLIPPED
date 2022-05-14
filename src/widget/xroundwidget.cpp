@@ -1,7 +1,13 @@
-//
-// Created by XMuli <xmulitech@gmail.com> on 2021/11/06.
-//
-#include "xroundwidget.h"
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date: 2021.11.06
+ * Description: 圆角矩形窗口
+ ******************************************************************/#include "xroundwidget.h"
 #include "../xglobal.h"
 #include <QColor>
 #include <QHBoxLayout>

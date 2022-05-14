@@ -1,4 +1,14 @@
-﻿#include <QApplication>
+﻿/*******************************************************************
+   * Copyright (c) 2021-2022 偕臧  All rights reserved.
+   *
+   * Author: XMuli <xmulitech@gmail.com>
+   * GitHub: https://github.com/XMuli
+   * Blog:   https://xmuli.tech
+   *
+   * Date:   2021.09.15
+   * Description: 
+   ******************************************************************/
+#include <QApplication>
 #include <QDir>
 #include <QPushButton>
 #include <QDebug>

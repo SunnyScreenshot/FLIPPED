@@ -1,6 +1,13 @@
-//
-// Created by XMuli <xmulitech@gmail.com> on 2022/01/16.
-//
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 ÙÉê°  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date: 2022.01.16
+ * Description: ÎÄ×Ö±à¼­´°¿Ú
+ ******************************************************************/
 #ifndef XTEXTWIDGET_H
 #define XTEXTWIDGET_H
 

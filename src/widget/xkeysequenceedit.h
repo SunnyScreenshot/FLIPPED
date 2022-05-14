@@ -1,7 +1,13 @@
-﻿//
-// Created by xmuli on 2021/10/10.
-//
-
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date: 2021.10.10
+ * Description: 快捷键编辑框
+ ******************************************************************/
 #ifndef XKEYSEQUENCEEDIT_H
 #define XKEYSEQUENCEEDIT_H
 

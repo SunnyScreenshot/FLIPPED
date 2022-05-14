@@ -1,3 +1,13 @@
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date: 2022.05.11
+ * Description: Linux 系统下智能窗口识别
+ ******************************************************************/
 #include "wininfo_x11.h"
 #include "../core/xlog/xlog.h"
 

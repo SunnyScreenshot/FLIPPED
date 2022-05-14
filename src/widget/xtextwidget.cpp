@@ -1,6 +1,13 @@
-﻿//
-// Created by XMuli <xmulitech@gmail.com> on 2022/01/16.
-//
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date: 2022.01.16
+ * Description: 文字编辑窗口
+ ******************************************************************/
 #include "xtextwidget.h"
 #include <QFontMetrics>
 #include <QDebug>

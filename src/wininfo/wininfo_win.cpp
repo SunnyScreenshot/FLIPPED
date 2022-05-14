@@ -1,4 +1,14 @@
-﻿#include "wininfo_win.h"
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date: 2022.01.30
+ * Description: Windows 系统下智能窗口识别
+ ******************************************************************/
+#include "wininfo_win.h"
 //#include <Windows.h>
 //#include <atlstr.h>
 //#include <string>

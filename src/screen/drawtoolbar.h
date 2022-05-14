@@ -1,4 +1,14 @@
-﻿#ifndef WINDRAWTOOL_H
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date:   2022.01.21
+ * Description:
+ ******************************************************************/
+#ifndef WINDRAWTOOL_H
 #define WINDRAWTOOL_H
 
 #include "../widget/xroundwidget.h"

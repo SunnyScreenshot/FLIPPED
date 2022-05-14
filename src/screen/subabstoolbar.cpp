@@ -1,6 +1,13 @@
-﻿//
-// Created by xmuli on 2021/12/27.
-//
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date:   2021.12.27
+ * Description:
+ ******************************************************************/
 #include "subabstoolbar.h"
 #include "screenshot.h"
 #include "../xglobal.h"

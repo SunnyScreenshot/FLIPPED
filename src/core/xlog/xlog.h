@@ -1,13 +1,13 @@
-﻿/*******************************************************************
- * Copyright (C)  2022  偕臧  All rights reserved.
- *
- * GitHub: https://github.com/XMuli
- * Author: 偕臧 <xmulitech@gmail.com>
- *
- * Create: 2022.03.12
- * Modify: 2022.03.12
- * Description: 使用 spdlog 来生成日志
- ******************************************************************/
+﻿ /*******************************************************************
+  * Copyright (c) 2021-2022 偕臧  All rights reserved.
+  *
+  * Author: XMuli <xmulitech@gmail.com>
+  * GitHub: https://github.com/XMuli
+  * Blog:   https://xmuli.tech
+  *
+  * Date:   2022.03.12
+  * Description: 使用 spdlog 来生成日志
+  ******************************************************************/
 #ifndef XLOG_H
 #define XLOG_H
 

@@ -1,7 +1,13 @@
-﻿//
-// Created by xmuli on 2021/9/29.
-//
-
+﻿/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date:   2021.09.29
+ * Description:
+ ******************************************************************/
 #ifndef PICSHOT_WINFULLSCREEN_H
 #define PICSHOT_WINFULLSCREEN_H
 
