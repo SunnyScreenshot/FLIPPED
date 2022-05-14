@@ -47,22 +47,16 @@ public:
     CString procPath;
 };
 
-//class IWinInfo
-//{
-//public:
-//    virtual void getAllWinInfo(std::vector<WinInfo>& vec) = 0;
-//};
-
 // 窗口信息_win 版本
 class WinInfoWin : public ISingleton<WinInfoWin>// , IWinInfo
 {
 private:
 	WinInfoWin();
 
-public:
     void getAllWinInfoCache();
 	HWND getAllWinInfoRealTime(POINT pt);
 
+public:
 	void setWindowsFilter(HWND hWnd);
 	RECT getWindowsRectFromPoint(POINT pt, BOOL bSmartDetection = TRUE);
 

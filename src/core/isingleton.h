@@ -29,4 +29,6 @@ protected:
     virtual ~ISingleton() = default;
 };
 
+#define FRIEND_CREAT_SINGLETION(_name)  friend class ISingleton<_name>;
+
 #endif // TSINGLETON_H
