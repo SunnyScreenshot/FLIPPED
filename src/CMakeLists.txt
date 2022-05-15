@@ -55,8 +55,8 @@ set(SRCS_WININFO
     "wininfo/xtype.cpp"
     "wininfo/iwininfo.h"
     "wininfo/iwininfo.cpp"
-    "wininfo/syswin.h"
-    "wininfo/syswin.cpp"
+    "wininfo/wininfo.h"
+    "wininfo/wininfo.cpp"
     )
 
 # widget

@@ -12,13 +12,24 @@
 #define IWININFO_H
 
 #include "xtype.h"
+#include <vector>
 
 class IWinInfo
 {
 public:
+    IWinInfo() = default;
+    virtual ~IWinInfo() = default;
+
     virtual void setWinFilter(void* target = nullptr) = 0;
-    virtual X_RECT getWinRectFromPoint(X_POINT pt, bool bPrevCache = false) = 0;
+    virtual void getWinInfoFromPoint(WinData& winData, X_POINT pt, bool bPrevCache = false) = 0;
+
+//protected:
+
+    static std::vector<WinData> m_vWinList;
+    static std::vector<void *> m_vHWndFilter;
 };
+
+
 
 #endif // IWININFO_H
 

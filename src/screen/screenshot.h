@@ -124,13 +124,6 @@ private:
 	// test
 	XTextWidget* m_textEdit;
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
-    QString m_processName;           // 自动窗口的线程名
-
-#ifdef Q_OS_WIN
-    std::vector<WinInfo> m_vec;      // 智能检测窗口信息存储
-#elif  defined(Q_OS_MAC)
-#elif  defined(Q_OS_LINUX)
-#endif
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

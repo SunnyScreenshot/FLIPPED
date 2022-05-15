@@ -10,4 +10,6 @@
  ******************************************************************/
 #include "iwininfo.h"
 
+std::vector<WinData> IWinInfo::m_vWinList;
+std::vector<void *> IWinInfo::m_vHWndFilter;
  

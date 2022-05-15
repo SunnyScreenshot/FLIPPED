@@ -24,6 +24,8 @@
 #include <QTextEdit>
 #include "../core/xlog/xlog.h"
 
+#include "../wininfo/wininfo.h"
+
 #define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
@@ -33,12 +35,14 @@ namespace Util {
 #ifdef Q_OS_WIN
     bool getRectFromCurrentPoint(HWND hWndMySelf, QRect &outRect)
     {
-        POINT pt;
-        ::GetCursorPos(&pt);
-        WinInfoWin::instance().setWindowsFilter(hWndMySelf);
-        RECT rect = WinInfoWin::instance().getWindowsRectFromPoint(pt, TRUE);
-        outRect = QRect(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-        return outRect.isValid();
+        const X_RECT xrect = WinInfo::instance().targWinRect((void *)hWndMySelf, false);
+
+        outRect.setLeft(xrect.left);
+        outRect.setTop(xrect.top);
+        outRect.setRight(xrect.right);
+        outRect.setBottom(xrect.bottom);
+
+        return true;
     }
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
@@ -223,10 +227,7 @@ void ScreenShot::updateBorderCursorShape(const CursorArea & cursArea)
 void ScreenShot::onClearScreen()
 {
 #ifdef Q_OS_WIN
-    m_vec.clear();
 
-    //if (m_rtCalcu.bSmartMonitor)  // 存储所需要全部窗口信息
-    //    m_vec = WinInfoWin::instance().m_vWinInfo;
 
 #elif  defined(Q_OS_MAC)
     setWindowFlags(Qt::SubWindow);
@@ -711,6 +712,18 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	pa.setPen(pen);
 	drawStep(pa, m_step, false);
 
+    // test 所有绘画的中那个
+    for (const WinData& it : IWinInfo::m_vWinList) {
+        const X_RECT& t = it.rect;
+        pa.drawRect(t.left, t.top, t.right, t.bottom);
+
+        //const auto pen = pa.pen();
+        //pa.setPen(QPen(Qt::black, 10));
+        pa.drawText(QPoint(t.left, t.top) + QPoint(0, 30), QString::fromStdWString(it.path));
+        //pa.setPen(pen);
+    }
+
+
     // flameshot 选中图形的效果
     QRect rtCurMove;
     if (m_pCurrShape && (m_rtCalcu.scrnType == ScrnType::Move || m_rtCalcu.scrnType == ScrnType::Wait)){
@@ -793,23 +806,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
-#ifdef Q_OS_WIN
-    if (m_vec.size() > 0) {
-        for (auto it = m_vec.cbegin(); it != m_vec.cend(); ++it) {
-            QRect rt(it->rect.left, it->rect.top, it->rect.right - it->rect.left, it->rect.bottom - it->rect.top);
-
-            QRect rtDraw(rt.left() - offsetX, rt.top() - offsetY, rt.width(), rt.height());
-            pa.drawRect(rtDraw);
-            qInfo() << "--------------->@geom:" << geom << "  m_vec 中 it 矩形:" << rt << "  it 偏移之后的绘画矩形 rtDraw:" << rtDraw;
-            CString path = it->procPath;
-            pa.drawText(rtDraw.topLeft() + QPoint(0, 50), QString("%1, %2, %3, %4, %5")
-                        .arg(path.GetBuffer(path.GetLength())).arg(rt.left() - geom.left()).arg(rt.top() - geom.top()).arg(rt.width()).arg(rt.height()));
-
-        }
-    }
-#elif  defined(Q_OS_MAC)
-#elif  defined(Q_OS_LINUX)
-#endif
 
     //pen.setColor(Qt::yellow);
     //pa.setPen(pen);
@@ -1147,7 +1143,6 @@ void ScreenShot::getScrnShots()
     m_vWholeScrn.push_back(m_rtVirDesktop);
 
 #ifdef Q_OS_WIN
-    m_vec.clear();
 
     //WinInfoWin::instance().getAllWinInfoCache();
     //if (m_rtCalcu.bSmartMonitor)  // 存储所需要全部窗口信息
