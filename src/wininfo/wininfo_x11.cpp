@@ -17,8 +17,41 @@
 const QSize IMAGE_SIZE(400, 300);
 const QSize ITEM_SIZE(400, 300);
 
+void WinInfo_x11::setWinFilter(WinID target)
+{
+    m_vHWndFilter.push_back(target);
+}
+
+void WinInfo_x11::getWinInfoFromPoint(WinData &winData, QPoint pt, bool bPrevCache)
+{
+    test();
+//    getWindowsList();
+//    test();
+//    POINT pos;
+//    pos.x = pt.x;
+//    pos.y = pt.y;
+
+//    HWND hWndTarget = nullptr;
+
+//    if (bPrevCache) {
+//        getAllWinInfoCache();
+//        hWndTarget = getWinInfoFromCache(pos);
+//    } else {
+//        hWndTarget = getAllWinInfoRealTime(pos);
+//    }
+
+    for (WinData& it : m_vWinList) {
+        const QRect rt(it.rect);
+        if (rt.contains(pt)) {
+            winData = it;
+            break;
+        }
+    }
+}
+
 WinInfo_x11::WinInfo_x11()
-    : m_pDisplay(XOpenDisplay(nullptr))
+    : IWinInfo()
+    , m_pDisplay(XOpenDisplay(nullptr))
 {
 
 }
@@ -38,12 +71,46 @@ std::list<Window> WinInfo_x11::getWindowsList()
     return m_listWin;
 }
 
+static int g_index = 0;
 void WinInfo_x11::test()
 {
+    m_listWin.clear();
+    m_vWinList.clear();
     // 将窗口显示到QListWidget中
     int index = 0;
-    QListWidget *listWidget = new QListWidget();
-    listWidget->setIconSize(QSize(400, 300));
+
+
+//    if (!m_listWidget) {
+//        m_listWidget= new QListWidget();
+//        m_listWidget->setIconSize(QSize(400, 300));
+//    }
+
+
+
+    for (Window win : getWindowsList()) {    //获取窗口属性
+        XWindowAttributes attrs;
+        XGetWindowAttributes(m_pDisplay, win, &attrs);    //XGetImage获取XImage，并通过转换得到QPixmap
+
+//        XTextProperty text;
+//        XGetWMName(m_pDisplay, win, &text);
+
+
+
+//        m_hWndTarget = hWnd;
+        WinID winId;
+        winId._xWindow = win;
+        m_vWinList.push_back(WinData(QRect(attrs.x, attrs.y, attrs.width, attrs.height)
+                                          , winId
+                                          , ""
+                                          , ""
+                                          , QString(getWindowAtom(win, "_NET_WM_NAME").c_str())
+                                          , ""
+                                          , 0
+                                          , g_index++
+                                          , 0));
+
+    }
+
     for (Window win : getWindowsList()) {    //获取窗口属性
         XWindowAttributes attrs;
         XGetWindowAttributes(m_pDisplay, win, &attrs);    //XGetImage获取XImage，并通过转换得到QPixmap
@@ -53,7 +120,19 @@ void WinInfo_x11::test()
        //将QPixmap和窗口名添加到QListWidgetItem中，并将item添加到QListWidget中
         QListWidgetItem *listWidgetItemScreen = new QListWidgetItem(QIcon(pixmap.scaled(IMAGE_SIZE)), getWindowName(win).c_str());
         listWidgetItemScreen->setSizeHint(ITEM_SIZE);
-        listWidget->insertItem(index++, listWidgetItemScreen);
+//        m_listWidget->insertItem(index++, listWidgetItemScreen);
+
+        WinID winId;
+        winId._xWindow = win;
+        m_vWinList.push_back(WinData(QRect(attrs.x, attrs.y, attrs.width, attrs.height)
+                                          , winId
+                                          , ""
+                                          , ""
+                                          , QString(getWindowAtom(win, "_NET_WM_NAME").c_str())
+                                          , ""
+                                          , 0
+                                          , g_index++
+                                          , 0));
     }
     // 获取整个屏幕图像并显示到QListWidget中
     //获取屏幕Window属性使用RootWindow函数获取
@@ -65,9 +144,10 @@ void WinInfo_x11::test()
     QPixmap pixmap = QPixmap::fromImage(image);
     QListWidgetItem *listWidgetItemScreen = new QListWidgetItem(QIcon(pixmap.scaled(IMAGE_SIZE)), "Screen");
     listWidgetItemScreen->setSizeHint(ITEM_SIZE);
-    listWidget->insertItem(index++, listWidgetItemScreen);
+//    m_listWidget->insertItem(index++, listWidgetItemScreen);
 
-    listWidget->show();
+//    if (m_listWidget)
+//        m_listWidget->show();
 }
 
 bool WinInfo_x11::bSupportQuery()

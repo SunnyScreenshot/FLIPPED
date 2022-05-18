@@ -26,27 +26,22 @@
 
 #include "../wininfo/wininfo.h"
 
-#define _MYDEBUG
+//#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
 namespace Util {
-
-#ifdef Q_OS_WIN
-    bool getRectFromCurrentPoint(HWND hWndMySelf, QRect &outRect)
+    bool getRectFromCurrentPoint(WinID winId, QRect &outRect)
     {
-        const X_RECT xrect = WinInfo::instance().targWinRect((void *)hWndMySelf, false);
+        const QRect xrect = WinInfo::instance().targWinRect(winId, false);
 
-        outRect.setLeft(xrect.left);
-        outRect.setTop(xrect.top);
-        outRect.setRight(xrect.right);
-        outRect.setBottom(xrect.bottom);
+        outRect.setLeft(xrect.left());
+        outRect.setTop(xrect.top());
+        outRect.setRight(xrect.right());
+        outRect.setBottom(xrect.bottom());
 
         return true;
     }
-#elif  defined(Q_OS_MAC)
-#elif  defined(Q_OS_LINUX)
-#endif
 
 }
 
@@ -108,6 +103,8 @@ ScreenShot::ScreenShot(QWidget *parent)
     #else
         setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
         setFixedSize(geom.size());
+
+//    showFullScreen();
         
     #endif
 
@@ -714,12 +711,12 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // test 所有绘画的中那个
     for (const WinData& it : IWinInfo::m_vWinList) {
-        const X_RECT& t = it.rect;
-        pa.drawRect(t.left, t.top, t.right, t.bottom);
+        const QRect& t = it.rect;
+        pa.drawRect(t);
 
         //const auto pen = pa.pen();
         //pa.setPen(QPen(Qt::black, 10));
-        pa.drawText(QPoint(t.left, t.top) + QPoint(0, 30), QString::fromStdWString(it.path));
+        pa.drawText(QPoint(t.topLeft()) + QPoint(0, 30), it.path);
         //pa.setPen(pen);
     }
 
@@ -1214,11 +1211,18 @@ double ScreenShot::getDevicePixelRatio(QScreen * screen)
 // 随着光标移动，更新获取桌面所有窗口信息
 void ScreenShot::updateGetWindowsInfo()
 {
+    WinID winId;
+
 #ifdef Q_OS_WIN
-    Util::getRectFromCurrentPoint((HWND)winId(), m_rtAtuoMonitor);
+    winId._hWnd = (void *)QWidget::winId();
+
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
+    winId._xWindow = (unsigned long)0;
 #endif
+
+    Util::getRectFromCurrentPoint(winId, m_rtAtuoMonitor);
+
 }
 
 double ScreenShot::getScale(QScreen * screen)

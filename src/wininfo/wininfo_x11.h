@@ -11,6 +11,7 @@
 #ifndef WININFO_X11_H
 #define WININFO_X11_H
 
+#include "iwininfo.h"
 #include <QImage>
 #include <QListWidget>
 #include <QListWidgetItem>
@@ -25,8 +26,12 @@
 #include <string>
 
 
-class WinInfo_x11
+class WinInfo_x11 : public IWinInfo
 {
+public:
+    virtual void setWinFilter(WinID target) override;
+    virtual void getWinInfoFromPoint(WinData &winData, QPoint pt, bool bPrevCache) override;
+
 public:
     WinInfo_x11();
     ~WinInfo_x11();
@@ -42,6 +47,8 @@ public:
 private:
     Display* m_pDisplay;
     std::list<Window> m_listWin;
+
+    QListWidget *m_listWidget = nullptr;
 };
 
 #endif // WININFO_X11_H

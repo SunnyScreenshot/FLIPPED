@@ -22,8 +22,6 @@
 #endif
 
 HWND WinInfo_Win::m_hWndTarget = NULL;
-//HWND WinInfo_Win::m_vHWndFilter = NULL;
-//std::vector<InfoDATA> WinInfo_Win::m_vWinInfo;
 
 WinInfo_Win::WinInfo_Win()
 {
@@ -31,7 +29,6 @@ WinInfo_Win::WinInfo_Win()
 
 WinInfo_Win::~WinInfo_Win()
 {
-
 }
 
 // cout <<用
@@ -41,19 +38,19 @@ void WinInfo_Win::getAllWinInfoCache()
     m_hWndTarget = nullptr;
     ::EnumWindows(WinInfo_Win::EnumWindowsProc, 0); // 0 为 z 序最顶层的
 
-    int i = 0;
-    setlocale(LC_ALL, "");
-    for (auto it = IWinInfo::m_vWinList.cbegin(); it != IWinInfo::m_vWinList.cend(); ++it) {
-        //std::string str = CT2A(it->procPath.GetString());
-        tcout << i++ << _T("   ") << it->hWnd
-            << _T("   ") << it->index
-            << _T("   ") << it->path
-            << _T("   ") << it->name
-            << _T("   ") << it->title
-            << _T("   (") << it->rect.left << _T(", ") << it->rect.top << _T(", ")
-            << it->rect.right - it->rect.left << _T(" * ") << it->rect.bottom - it->rect.top << _T(")")
-            << std::endl;
-    }
+//    int i = 0;
+//    setlocale(LC_ALL, "");
+//    for (auto it = IWinInfo::m_vWinList.cbegin(); it != IWinInfo::m_vWinList.cend(); ++it) {
+//        //std::string str = CT2A(it->procPath.GetString());
+//        tcout << i++ << _T("   ") << it->hWnd
+//            << _T("   ") << it->index
+//            << _T("   ") << it->path
+//            << _T("   ") << it->name
+//            << _T("   ") << it->title
+//            << _T("   (") << it->rect.left << _T(", ") << it->rect.top << _T(", ")
+//            << it->rect.right - it->rect.left << _T(" * ") << it->rect.bottom - it->rect.top << _T(")")
+//            << std::endl;
+//    }
 }
 
 HWND WinInfo_Win::getAllWinInfoRealTime(POINT pt)
@@ -62,50 +59,50 @@ HWND WinInfo_Win::getAllWinInfoRealTime(POINT pt)
     m_hWndTarget = nullptr;
     ::EnumWindows(WinInfo_Win::EnumRealTimeWindowsProc, MAKELPARAM(pt.x, pt.y));
 
-    int i = 0;
-    setlocale(LC_ALL, "");
-    for (auto it = IWinInfo::m_vWinList.cbegin(); it != IWinInfo::m_vWinList.cend(); ++it) {
-        //std::string str = CT2A(it->procPath.GetString());
-        tcout << i++ << _T("   ") << it->hWnd
-            << _T("   ") << it->index
-            << _T("   ") << it->path
-            << _T("   ") << it->name
-            << _T("   ") << it->title
-            << _T("   (") << it->rect.left << _T(", ") << it->rect.top << _T(", ")
-            << it->rect.right - it->rect.left << _T(" * ") << it->rect.bottom - it->rect.top << _T(")")
-            << std::endl;
-    }
+//    int i = 0;
+//    setlocale(LC_ALL, "");
+//    for (auto it = IWinInfo::m_vWinList.cbegin(); it != IWinInfo::m_vWinList.cend(); ++it) {
+//        //std::string str = CT2A(it->procPath.GetString());
+//        tcout << i++ << _T("   ") << it->hWnd
+//            << _T("   ") << it->index
+//            << _T("   ") << it->path
+//            << _T("   ") << it->name
+//            << _T("   ") << it->title
+//            << _T("   (") << it->rect.left << _T(", ") << it->rect.top << _T(", ")
+//            << it->rect.right - it->rect.left << _T(" * ") << it->rect.bottom - it->rect.top << _T(")")
+//            << std::endl;
+//    }
 
     // 其中第一个为 Z 序最上层;
     if (m_vWinList.size())
-        m_hWndTarget = static_cast<HWND>(m_vWinList.at(0).hWnd);  // m_vWinList.size() -1
+        m_hWndTarget = static_cast<HWND>(m_vWinList.at(0).id._hWnd);  // m_vWinList.size() -1
 
-    for (const auto& it : m_vWinList) {
-        HWND hwnd1 = ::GetWindow((HWND)it.hWnd, GW_HWNDFIRST);
-        HWND hwnd2 = ::GetTopWindow((HWND)it.hWnd);
-		HWND hwnd3 = ::GetTopWindow(nullptr);
-        HWND hwnd4 = ::GetNextWindow((HWND)it.hWnd, GW_HWNDFIRST);
-        HWND hwnd5 = ::GetNextWindow((HWND)it.hWnd, GW_HWNDLAST);
-        std::wcout << L"it.hWnd:" << (HWND)it.hWnd
-			<< L"  " << hwnd1 << L"  " << hwnd2 
-			<< L"  " << hwnd3 << L"  " << hwnd4 
-			<< L"  " << hwnd5 << std::endl;
-	}
+//    for (const auto& it : m_vWinList) {
+//        HWND hwnd1 = ::GetWindow((HWND)it.hWnd, GW_HWNDFIRST);
+//        HWND hwnd2 = ::GetTopWindow((HWND)it.hWnd);
+//		HWND hwnd3 = ::GetTopWindow(nullptr);
+//        HWND hwnd4 = ::GetNextWindow((HWND)it.hWnd, GW_HWNDFIRST);
+//        HWND hwnd5 = ::GetNextWindow((HWND)it.hWnd, GW_HWNDLAST);
+//        std::wcout << L"it.hWnd:" << (HWND)it.hWnd
+//			<< L"  " << hwnd1 << L"  " << hwnd2
+//			<< L"  " << hwnd3 << L"  " << hwnd4
+//			<< L"  " << hwnd5 << std::endl;
+//	}
     return m_hWndTarget;
 }
 
 // 设置窗口过滤
-void WinInfo_Win::setWinFilter(void* target /*= nullptr*/)
+void WinInfo_Win::setWinFilter(WinID target /*= nullptr*/)
 {
-	if (target)
+//    if (target)
         m_vHWndFilter.push_back(target);
 }
 
-void WinInfo_Win::getWinInfoFromPoint(WinData& winData, X_POINT pt, bool bPrevCache /*= false*/)
+void WinInfo_Win::getWinInfoFromPoint(WinData& winData, QPoint pt, bool bPrevCache /*= false*/)
 {
     POINT pos;
-	pos.x = pt.x;
-	pos.y = pt.y;
+    pos.x = pt.x();
+    pos.y = pt.y();
 
     HWND hWndTarget = nullptr;
 
@@ -117,7 +114,7 @@ void WinInfo_Win::getWinInfoFromPoint(WinData& winData, X_POINT pt, bool bPrevCa
     }
 
     for (WinData& it : m_vWinList) {
-        if (hWndTarget && hWndTarget == (HWND)(it.hWnd)) {
+        if (hWndTarget && hWndTarget == (HWND)(it.id._hWnd)) {
             winData = it;
             break;
         }
@@ -144,17 +141,17 @@ BOOL WinInfo_Win::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 		CString procName = windowPath2Name(procPath);
 
         m_hWndTarget = hWnd;
-        m_vWinList.push_back(WinData(X_RECT(rt.left, rt.top, rt.right, rt.bottom)
-                                     , static_cast<HWND>(hWnd)
-                                     , procPath.GetString()
-                                     , procName.GetString()
-                                     , windowTitle
-                                     , _T("")
-                                     , nLevel
-                                     , g_index++
-                                     , 0
-                                     , nullptr
-                                     , nullptr));
+        WinID winId;
+        winId._hWnd = (void *)hWnd;
+        m_vWinList.push_back(WinData(QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
+                                          , winId
+                                          , QString::fromStdWString(procPath.GetString())
+                                          , QString::fromStdWString(procName.GetString())
+                                          , QString::fromWCharArray(windowTitle)
+                                          , ""
+                                          , nLevel
+                                          , g_index++
+                                          , 0));
 
 		EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
 		return FALSE;
@@ -181,17 +178,17 @@ BOOL WinInfo_Win::EnumChildRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 		CString procName = windowPath2Name(procPath);
 
         m_hWndTarget = hWnd;
-        m_vWinList.push_back(WinData(X_RECT(rt.left, rt.top, rt.right, rt.bottom)
-                                     , static_cast<HWND>(hWnd)
-                                     , procPath.GetString()
-                                     , procName.GetString()
-                                     , windowTitle
-                                     , _T("")
+        WinID winId;
+        winId._hWnd = (void *)hWnd;
+        m_vWinList.push_back(WinData(QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
+                                     , winId
+                                     , QString::fromStdWString(procPath.GetString())
+                                     , QString::fromStdWString(procName.GetString())
+                                     , QString::fromWCharArray(windowTitle)
+                                     , ""
                                      , nLevel
                                      , g_index++
-                                     , 0
-                                     , nullptr
-                                     , nullptr));
+                                     , 0));
 
 		EnumChildWindows(hWnd, EnumChildRealTimeWindowsProc, lParam);
 		return FALSE;
@@ -213,17 +210,17 @@ BOOL WinInfo_Win::EnumChildWindowsProc(HWND hWnd, LPARAM level)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
-        m_vWinList.push_back(WinData(X_RECT(rt.left, rt.top, rt.right, rt.bottom)
-                                     , static_cast<HWND>(hWnd)
-                                     , procPath.GetString()
-                                     , procName.GetString()
-                                     , windowTitle
-                                     , _T("")
-                                     , -2
+        WinID winId;
+        winId._hWnd = (void *)hWnd;
+        m_vWinList.push_back(WinData(QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
+                                     , winId
+                                     , QString::fromStdWString(procPath.GetString())
+                                     , QString::fromStdWString(procName.GetString())
+                                     , QString::fromWCharArray(windowTitle)
+                                     , ""
+                                     , nLevel
                                      , g_index++
-                                     , 0
-                                     , nullptr
-                                     , nullptr));
+                                     , 0));
 //        m_vWinInfo.push_back(InfoDATA(hWnd, rect, nLevel, -2,  windowTitle, procPath, procName));
 
 
@@ -247,17 +244,17 @@ BOOL WinInfo_Win::EnumWindowsProc(HWND hWnd, LPARAM level)
 		CString procPath = getWindowPath(processId);
 		CString procName = windowPath2Name(procPath);
 
-        m_vWinList.push_back(WinData(X_RECT(rt.left, rt.top, rt.right, rt.bottom)
-                                     , static_cast<HWND>(hWnd)
-                                     , procPath.GetString()
-                                     , procName.GetString()
-                                     , windowTitle
-                                     , _T("")
+        WinID winId;
+        winId._hWnd = (void *)hWnd;
+        m_vWinList.push_back(WinData(QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
+                                     , winId
+                                     , QString::fromStdWString(procPath.GetString())
+                                     , QString::fromStdWString(procName.GetString())
+                                     , QString::fromWCharArray(windowTitle)
+                                     , ""
                                      , nLevel
                                      , g_index++
-                                     , 0
-                                     , nullptr
-                                     , nullptr));
+                                     , 0));
 
 		//::EnumChildWindows(hWnd, EnumChildWindowsProc, ++nLevel); // 设置开关时候开启便利子窗口
 	}
@@ -278,12 +275,11 @@ HWND WinInfo_Win::getWinInfoFromCache(POINT pt)
     WinData winData;
 
     for (const auto& it : m_vWinList) {
-        const X_RECT& xRect = it.rect;
         RECT rt;
-        rt.left = xRect.left;
-        rt.top = xRect.top;
-        rt.right = xRect.right;
-        rt.bottom = xRect.bottom;
+        rt.left = it.rect.left();
+        rt.top = it.rect.top();
+        rt.right = it.rect.right();
+        rt.bottom = it.rect.bottom();
 
 
         if (PtInRect(&rt, pt)) {
@@ -294,7 +290,7 @@ HWND WinInfo_Win::getWinInfoFromCache(POINT pt)
 		}
 	}
 
-    return (HWND)winData.hWnd;
+    return (HWND)winData.id._hWnd;
 }
 
 // 过滤不可见等的窗口
@@ -321,7 +317,7 @@ BOOL WinInfo_Win::WindowsFilter(HWND hWnd)
         return FALSE;
 
     for (auto& it : m_vHWndFilter) {
-        if (hWnd == static_cast<HWND>(it))
+        if (hWnd == static_cast<HWND>(it._hWnd))
             return FALSE;
     }
 

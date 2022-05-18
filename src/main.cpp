@@ -57,12 +57,12 @@ int main(int argc, char *argv[])
     Tray* tary = new Tray();
 	QApplication::setQuitOnLastWindowClosed(false);
 
-#ifdef Q_OS_WIN
-#elif  defined(Q_OS_MAC)
-#elif  defined(Q_OS_LINUX)
-    WinInfo_x11 WinInfo;
-    WinInfo.test();
-#endif
+//#ifdef Q_OS_WIN
+//#elif  defined(Q_OS_MAC)
+//#elif  defined(Q_OS_LINUX)
+//    WinInfo_x11 WinInfo;
+//    WinInfo.test();
+//#endif
 
 
 
