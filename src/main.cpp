@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray* tary = new Tray();
-	QApplication::setQuitOnLastWindowClosed(false);
+    QApplication::setQuitOnLastWindowClosed(false);
 
 //#ifdef Q_OS_WIN
 //#elif  defined(Q_OS_MAC)

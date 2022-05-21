@@ -12,8 +12,6 @@ public:
     const WinData*  targWinInfo(WinID hWnd, bool bPrevCache);
     const QRect targWinRect(WinID hWnd, bool bPrevCache = false);
 
-    void test();
-
 private:
     void winInfoAllCache();
     void winInfoRealTime();

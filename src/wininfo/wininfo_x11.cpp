@@ -11,27 +11,20 @@
 #include "wininfo_x11.h"
 #include "../core/xlog/xlog.h"
 
+#include <QString>
 #include <QLabel>
-
 
 const QSize IMAGE_SIZE(400, 300);
 const QSize ITEM_SIZE(400, 300);
 
-void WinInfo_x11::setWinFilter(WinID target)
+void WinInfo_x11::setWinIdFilter(WinID target)
 {
-    m_vHWndFilter.push_back(target);
+    m_vWinIdFilter.push_back(target);
 }
 
-void WinInfo_x11::getWinInfoFromPoint(WinData &winData, QPoint pt, bool bPrevCache)
+WinData* WinInfo_x11::getWinInfoFromPoint(QPoint pt, bool bPrevCache)
 {
-    test();
-//    getWindowsList();
-//    test();
-//    POINT pos;
-//    pos.x = pt.x;
-//    pos.y = pt.y;
-
-//    HWND hWndTarget = nullptr;
+    getAllWinInfo();
 
 //    if (bPrevCache) {
 //        getAllWinInfoCache();
@@ -40,13 +33,15 @@ void WinInfo_x11::getWinInfoFromPoint(WinData &winData, QPoint pt, bool bPrevCac
 //        hWndTarget = getAllWinInfoRealTime(pos);
 //    }
 
-    for (WinData& it : m_vWinList) {
+    for (WinData& it : m_vWinData) {
         const QRect rt(it.rect);
-        if (rt.contains(pt)) {
-            winData = it;
-            break;
+
+        if (rt.contains(pt) && !it.bFilter) {
+            return &it;
         }
     }
+
+    return nullptr;
 }
 
 WinInfo_x11::WinInfo_x11()
@@ -62,92 +57,130 @@ WinInfo_x11::~WinInfo_x11()
         XCloseDisplay(m_pDisplay);
 
     m_pDisplay = nullptr;
-    m_listWin.clear();
 }
 
-std::list<Window> WinInfo_x11::getWindowsList()
+void WinInfo_x11::getWinIdList(std::list<Window>& vec)
 {
-    getTopLevelWindows();
-    return m_listWin;
+    if (!bSupportQuery()) {
+        XLOG_ERROR("Unable to query window list because window manager does not support extended window manager Hints");
+        return;
+    }
+
+    Atom actualType = 0;
+    int format = 0;
+    unsigned long num = 0;
+    unsigned long bytes = 0;
+    Window *data = 0;
+    Atom netClList = XInternAtom(m_pDisplay, "_NET_CLIENT_LIST", true);
+    vec.clear();
+
+    for (int i = 0; i < ScreenCount(m_pDisplay); ++i) {
+        Window rootWin = RootWindow(m_pDisplay, i);
+
+        int status = XGetWindowProperty(m_pDisplay, rootWin, netClList, 0L, ~0L, false
+                                        , AnyPropertyType, &actualType, &format, &num, &bytes, (uint8_t **)&data);
+
+        if (status != Success) {
+            XLOG_ERROR("Failed getting root window properties");
+            continue;
+        }
+
+        for (unsigned long i = 0; i < num; ++i)
+            vec.push_back(data[i]);
+
+        XFree(data);
+    }
 }
 
-static int g_index = 0;
-void WinInfo_x11::test()
+
+void WinInfo_x11::getAllWinInfo()
 {
-    m_listWin.clear();
-    m_vWinList.clear();
-    // 将窗口显示到QListWidget中
+    m_vWinData.clear();
     int index = 0;
 
-
-//    if (!m_listWidget) {
-//        m_listWidget= new QListWidget();
-//        m_listWidget->setIconSize(QSize(400, 300));
-//    }
-
-
-
-    for (Window win : getWindowsList()) {    //获取窗口属性
-        XWindowAttributes attrs;
+    std::list<Window> vec;
+    getWinIdList(vec);
+    for (auto win : vec) {    //获取窗口属性
+        XWindowAttributes attrs;  // 调试发现 attrs.x和 attrs.y [some windows]都是 0
         XGetWindowAttributes(m_pDisplay, win, &attrs);    //XGetImage获取XImage，并通过转换得到QPixmap
 
-//        XTextProperty text;
-//        XGetWMName(m_pDisplay, win, &text);
+        // some bug: 只截屏显示在桌面的部分，截去在屏幕外的部分
+//        int width = DisplayWidth(m_pDisplay, 0);
+//        int height = DisplayHeight(m_pDisplay, 0);
+//        int x1 = attrs.x;
+//        int y1 = attrs.y;
+//        int x2 = attrs.width + x1;
+//        int y2 = attrs.height + y1;
+//        if (x1 < 0)
+//            x1 = 0;
+//        if (y1 < 0)
+//            y1 = 0;
+//        if (x2 > width)
+//            x2 = width;
+//        if (y2 > height)
+//            y2 = height;
 
-
-
-//        m_hWndTarget = hWnd;
-        WinID winId;
-        winId._xWindow = win;
-        m_vWinList.push_back(WinData(QRect(attrs.x, attrs.y, attrs.width, attrs.height)
-                                          , winId
-                                          , ""
-                                          , ""
-                                          , QString(getWindowAtom(win, "_NET_WM_NAME").c_str())
-                                          , ""
-                                          , 0
-                                          , g_index++
-                                          , 0));
-
-    }
-
-    for (Window win : getWindowsList()) {    //获取窗口属性
-        XWindowAttributes attrs;
-        XGetWindowAttributes(m_pDisplay, win, &attrs);    //XGetImage获取XImage，并通过转换得到QPixmap
-        XImage * pImage = XGetImage(m_pDisplay, win, 0, 0, attrs.width, attrs.height, AllPlanes, ZPixmap);
-        QImage image = QImage((const uchar *)(pImage->data), pImage->width, pImage->height, pImage->bytes_per_line, QImage::Format_RGB32);
-        QPixmap pixmap = QPixmap::fromImage(image);
-       //将QPixmap和窗口名添加到QListWidgetItem中，并将item添加到QListWidget中
-        QListWidgetItem *listWidgetItemScreen = new QListWidgetItem(QIcon(pixmap.scaled(IMAGE_SIZE)), getWindowName(win).c_str());
-        listWidgetItemScreen->setSizeHint(ITEM_SIZE);
-//        m_listWidget->insertItem(index++, listWidgetItemScreen);
+        // 获取当前窗口在屏幕上的坐标
+        Window child;
+        int x, y;
+        XTranslateCoordinates(m_pDisplay, win, attrs.root, 0, 0, &x, &y,&child);
 
         WinID winId;
         winId._xWindow = win;
-        m_vWinList.push_back(WinData(QRect(attrs.x, attrs.y, attrs.width, attrs.height)
-                                          , winId
-                                          , ""
-                                          , ""
-                                          , QString(getWindowAtom(win, "_NET_WM_NAME").c_str())
-                                          , ""
-                                          , 0
-                                          , g_index++
-                                          , 0));
+        m_vWinData.push_back(WinData(winId
+                                     , false
+                                     , QRect(x, y, attrs.width, attrs.height)
+                                     , ""
+                                     , ""
+                                     , QString(getWindowAtom(winId._xWindow, "_NET_WM_NAME").c_str())
+                                     , ""
+                                     , 0
+                                     , index++
+                                     , 0));
+
     }
+
     // 获取整个屏幕图像并显示到QListWidget中
     //获取屏幕Window属性使用RootWindow函数获取
-    Window rootwin = RootWindow(m_pDisplay,0);
+    Window rootwin = RootWindow(m_pDisplay, 0);
     XWindowAttributes attrs;
     XGetWindowAttributes(m_pDisplay, rootwin, &attrs);
-    XImage * pImage = XGetImage(m_pDisplay, rootwin, 0, 0, attrs.width, attrs.height, AllPlanes, ZPixmap);
-    QImage image = QImage((const uchar *)(pImage->data), pImage->width, pImage->height, pImage->bytes_per_line, QImage::Format_RGB32);
-    QPixmap pixmap = QPixmap::fromImage(image);
-    QListWidgetItem *listWidgetItemScreen = new QListWidgetItem(QIcon(pixmap.scaled(IMAGE_SIZE)), "Screen");
-    listWidgetItemScreen->setSizeHint(ITEM_SIZE);
+    WinID winId;
+    winId._xWindow = rootwin;
+    m_vWinData.push_back(WinData(winId
+                                 , false
+                                 , QRect(attrs.x, attrs.y, attrs.width, attrs.height)
+                                 , ""
+                                 , ""
+                                 , QString(getWindowAtom(winId._xWindow, "_NET_WM_NAME").c_str())
+                                 , ""
+                                 , 0
+                                 , index++
+                                 , 0));
+
+
+    for (const auto& it : m_vWinData) {
+        if (it.title.compare(QString("PicShot"))  == 0) {
+            m_vWinIdFilter.push_back(it.id);
+            break;
+        }
+    }
+
+    // delete fliter winInfo
+    for (auto& itData : m_vWinData) {
+        for (const auto& itFilter : m_vWinIdFilter) {
+            if (itData.id._xWindow == itFilter._xWindow)
+                itData.bFilter = true;
+        }
+    }
+
+//    XImage * pImage = XGetImage(m_pDisplay, rootwin, 0, 0, attrs.width, attrs.height, AllPlanes, ZPixmap);
+//    QImage image = QImage((const uchar *)(pImage->data), pImage->width, pImage->height, pImage->bytes_per_line, QImage::Format_RGB32);
+//    QPixmap pixmap = QPixmap::fromImage(image);
+//    QListWidgetItem *listWidgetItemScreen = new QListWidgetItem(QIcon(pixmap.scaled(IMAGE_SIZE)), "Screen");
+//    listWidgetItemScreen->setSizeHint(ITEM_SIZE);
 //    m_listWidget->insertItem(index++, listWidgetItemScreen);
 
-//    if (m_listWidget)
-//        m_listWidget->show();
 }
 
 bool WinInfo_x11::bSupportQuery()
@@ -185,38 +218,6 @@ bool WinInfo_x11::bSupportQuery()
     }
 
     return hWnd != 0;
-}
-
-void WinInfo_x11::getTopLevelWindows()
-{
-    if (!bSupportQuery()) {
-        XLOG_ERROR("Unable to query window list because window manager does not support extended window manager Hints");
-        return;
-    }
-
-    Atom actualType = 0;
-    int format = 0;
-    unsigned long num = 0;
-    unsigned long bytes = 0;
-    Window *data = 0;
-    Atom netClList = XInternAtom(m_pDisplay, "_NET_CLIENT_LIST", true);
-
-    for (int i = 0; i < ScreenCount(m_pDisplay); ++i) {
-        Window rootWin = RootWindow(m_pDisplay, i);
-
-        int status = XGetWindowProperty(m_pDisplay, rootWin, netClList, 0L, ~0L, false
-                                        , AnyPropertyType, &actualType, &format, &num, &bytes, (uint8_t **)&data);
-
-        if (status != Success) {
-            XLOG_ERROR("Failed getting root window properties");
-            continue;
-        }
-
-        for (unsigned long i = 0; i < num; ++i)
-            m_listWin.push_back(data[i]);
-
-        XFree(data);
-    }
 }
 
 std::string WinInfo_x11::getWindowAtom(Window win, const char *atom)

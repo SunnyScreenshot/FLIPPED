@@ -29,26 +29,24 @@
 class WinInfo_x11 : public IWinInfo
 {
 public:
-    virtual void setWinFilter(WinID target) override;
-    virtual void getWinInfoFromPoint(WinData &winData, QPoint pt, bool bPrevCache) override;
+    virtual void setWinIdFilter(WinID target) override;
+    virtual WinData* getWinInfoFromPoint(QPoint pt, bool bPrevCache) override;
 
 public:
     WinInfo_x11();
     ~WinInfo_x11();
 
-    std::list<Window> getWindowsList();
-    void test();
+    void getAllWinInfo();
+
+private:
+    void getWinIdList(std::list<Window>& vec);
 
     bool bSupportQuery();
-    void getTopLevelWindows();
     std::string getWindowAtom(Window win, const char *atom);
     inline std::string getWindowName(Window win);
 
 private:
     Display* m_pDisplay;
-    std::list<Window> m_listWin;
-
-    QListWidget *m_listWidget = nullptr;
 };
 
 #endif // WININFO_X11_H

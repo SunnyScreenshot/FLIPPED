@@ -20,14 +20,15 @@
 #include <vector>
 
 union WinID {
-    void* _hWnd;             // Windows OS
+    void* _hWnd;              // NT OS
     unsigned long _xWindow;   // X11 OS
 };
 
 struct WinData
 {
-    WinData(QRect tRect
-            , WinID tId
+    WinData(WinID tId
+            , bool bTFilter
+            , QRect tRect
             , QString tPath
             , QString tName
             , QString tTitle
@@ -35,8 +36,9 @@ struct WinData
             , int tLevel
             , int tIndex
             , int tChildCount)
-        : rect(tRect)
-        , id(tId)
+        : id(tId)
+        , bFilter(bTFilter)
+        , rect(tRect)
         , path(tPath)
         , name(tName)
         , title(tTitle)
@@ -46,8 +48,9 @@ struct WinData
         , childCount(tChildCount){}
 
     WinData()
-        : rect(0, 0, 0, 0)
-        , id()  // todo
+        : id()  // todo
+        , bFilter(false)
+        , rect(0, 0, 0, 0)
         , path("")
         , name("")
         , title("")
@@ -56,10 +59,8 @@ struct WinData
         , index(0)
         , childCount(0) {}
 
-//    WinData(const WinData &) = default;
-//    WinData& operator=(const WinData&) = default;
-
     WinID id;
+    bool bFilter;
     QRect rect;
     QString path;
     QString name;
@@ -76,13 +77,13 @@ public:
     IWinInfo() = default;
     virtual ~IWinInfo() = default;
 
-    virtual void setWinFilter(WinID target) = 0;
-    virtual void getWinInfoFromPoint(WinData& winData, QPoint pt, bool bPrevCache = false) = 0;
+    virtual void setWinIdFilter(WinID target) = 0;
+    virtual WinData* getWinInfoFromPoint(QPoint pt, bool bPrevCache = false) = 0;
 
 //protected:
 
-    static std::vector<WinData> m_vWinList;
-    static std::vector<WinID> m_vHWndFilter;
+    static std::vector<WinData> m_vWinData;
+    static std::vector<WinID> m_vWinIdFilter;
 };
 
 

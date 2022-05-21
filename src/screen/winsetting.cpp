@@ -35,7 +35,7 @@
 
 WinSetting::WinSetting(QWidget *parent) 
 	: QWidget(parent)
-	, m_scrnShot(new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_T)))
+    , m_scrnShot(new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)))
 	, m_scrnShotWinObj(new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F2)))
 	, m_scrnShotDelay(new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F3)))
 	, m_scrnShotFixedSize(new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_F4)))

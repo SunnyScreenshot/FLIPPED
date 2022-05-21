@@ -33,16 +33,14 @@
 namespace Util {
     bool getRectFromCurrentPoint(WinID winId, QRect &outRect)
     {
-        const QRect xrect = WinInfo::instance().targWinRect(winId, false);
+        const QRect rt = WinInfo::instance().targWinRect(winId, false);
 
-        outRect.setLeft(xrect.left());
-        outRect.setTop(xrect.top());
-        outRect.setRight(xrect.right());
-        outRect.setBottom(xrect.bottom());
-
+        outRect.setLeft(rt.left());
+        outRect.setTop(rt.top());
+        outRect.setRight(rt.right());
+        outRect.setBottom(rt.bottom());
         return true;
     }
-
 }
 
 ScreenShot::ScreenShot(QWidget *parent)
@@ -82,6 +80,10 @@ ScreenShot::ScreenShot(QWidget *parent)
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
     #ifdef _MYDEBUG
+
+//        QSize size(geom.size());
+//        resize(size.width(), size.height() / 4.0);
+        move(m_screens.at(0)->geometry().topLeft());
         if (m_screens.size() >= 2) {
 
             int index = 0;   // 使用主屏的屏幕作为 Debug 测试
@@ -98,7 +100,6 @@ ScreenShot::ScreenShot(QWidget *parent)
             resize(size.width() / 2.0, size.height());
             move(m_screens.at(0)->geometry().topLeft());
         }
-
         
     #else
         setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
@@ -710,13 +711,19 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	drawStep(pa, m_step, false);
 
     // test 所有绘画的中那个
-    for (const WinData& it : IWinInfo::m_vWinList) {
-        const QRect& t = it.rect;
-        pa.drawRect(t);
+    for (const WinData& it : IWinInfo::m_vWinData) {
+
 
         //const auto pen = pa.pen();
         //pa.setPen(QPen(Qt::black, 10));
-        pa.drawText(QPoint(t.topLeft()) + QPoint(0, 30), it.path);
+        if (!it.bFilter) {
+            const QRect& t = it.rect;
+            pa.drawRect(t);
+
+            pa.drawText(QPoint(t.topLeft()) + QPoint(0, 30), it.path);
+            pa.drawText(QPoint(t.topLeft()) + QPoint(0, 10), it.title);
+        }
+
         //pa.setPen(pen);
     }
 
@@ -845,8 +852,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
                 .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
     pa.drawText(tPosText - QPoint(0, space * 5), QString("pos(): (%1, %2)")
                 .arg(pos().x()).arg(pos().y()));
-    pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2)")
-        .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()));
+    pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2, %3 * %4)")
+        .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(m_rtAtuoMonitor.width()).arg(m_rtAtuoMonitor.height()));
     pa.drawText(tPosText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
         .arg(m_rtCalcu.bSmartMonitor));
     pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
@@ -1213,6 +1220,7 @@ void ScreenShot::updateGetWindowsInfo()
 {
     WinID winId;
 
+
 #ifdef Q_OS_WIN
     winId._hWnd = (void *)QWidget::winId();
 
@@ -1222,7 +1230,6 @@ void ScreenShot::updateGetWindowsInfo()
 #endif
 
     Util::getRectFromCurrentPoint(winId, m_rtAtuoMonitor);
-
 }
 
 double ScreenShot::getScale(QScreen * screen)

@@ -1,5 +1,8 @@
 ﻿#include "wininfo.h"
 
+#include <QWidget>
+#include <QCursor>
+
 #ifdef _WIN32
     //define something for Windows (32-bit and 64-bit, this part is common)
     #include "wininfo_win.h"
@@ -16,8 +19,8 @@ const WinData* WinInfo::targWinInfo(WinID hWnd, bool bPrevCache)
     if (!m_pWinList)
         return nullptr;
 
-    WinData* pData = new WinData();
-    QPoint pt;
+    WinData* pData = nullptr;
+    QPoint pt = QCursor::pos();
 
 #ifdef _WIN32
     POINT pos;
@@ -29,8 +32,8 @@ const WinData* WinInfo::targWinInfo(WinID hWnd, bool bPrevCache)
 #endif
 
     if (m_pWinList) {
-        m_pWinList->setWinFilter(hWnd);
-        m_pWinList->getWinInfoFromPoint(*pData, pt, bPrevCache);
+        m_pWinList->setWinIdFilter(hWnd);
+        pData = m_pWinList->getWinInfoFromPoint(pt, bPrevCache);
     }
 
     return pData;
@@ -44,13 +47,6 @@ const QRect WinInfo::targWinRect(WinID hWnd, bool bPrevCache)
         return pDate->rect;
     else
         return QRect();
-}
-
-void WinInfo::test()
-{
-    if (!m_pWinList) {
-//        m_pWinList->m_vWinList;
-    }
 }
 
 void WinInfo::winInfoAllCache()

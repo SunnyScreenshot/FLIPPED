@@ -24,8 +24,8 @@ public:
     virtual ~WinInfo_Win();
 
 public:
-    void setWinFilter(WinID target) override;
-    void getWinInfoFromPoint(WinData& winData, QPoint pt, bool bPrevCache = false) override;
+    virtual void setWinIdFilter(WinID target) override;
+    virtual WinData* getWinInfoFromPoint(QPoint pt, bool bPrevCache = false) override;
 
 private:
     void getAllWinInfoCache();
