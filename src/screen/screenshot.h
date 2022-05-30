@@ -91,6 +91,8 @@ private:
     void drawStep(QPainter& pa, XDrawStep &step, bool isUseEnvContext = false);
     bool isDrawShape(XDrawStep& step);
 
+    const QPoint drawBarPosition(Qt::Orientation orien = Qt:: Horizontal);
+
     //--------------test begin-------------
     void showAllDrawedShape(QPainter& pa);
     //--------------test end-------------

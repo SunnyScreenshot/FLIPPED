@@ -570,6 +570,40 @@ bool ScreenShot::isDrawShape(XDrawStep& step)
     return true;
 }
 
+const QPoint ScreenShot::drawBarPosition(Qt::Orientation orien)
+{
+    if (!m_tbDrawBar)
+        return QPoint();
+
+    const int space = 10;
+    const int barHeight = m_tbDrawBar->height();
+    QPoint topLeft;
+    const QRect rtSel(m_rtCalcu.getSelRect());
+    topLeft.setX(rtSel.right() - m_tbDrawBar->width());
+    
+    if (orien == Qt::Horizontal) {
+        const int barTop = rtSel.top() + space + barHeight;
+        const int barBottom = rtSel.bottom() + space + barHeight;
+        //QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
+        //QRect rtScn = desktop->screen(desktop->screenNumber(QCursor::pos()))->rect();
+        //const int scnBottom = rtScn.bottom();
+
+
+        if (barBottom < m_rtVirDesktop.bottom())
+            topLeft.setY(rtSel.bottom() + space);
+        else if (barTop < m_rtVirDesktop.top())
+            topLeft.setY(rtSel.top() + space);
+        else if (barTop < m_rtVirDesktop.top() && barBottom > m_rtVirDesktop.bottom())
+            topLeft.setY(rtSel.bottom() - space - barHeight);
+        else
+            ;
+    } else {
+
+    }
+        
+    return mapFromGlobal(topLeft);
+}
+
 
 void ScreenShot::whichShape()
 {
@@ -792,11 +826,13 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 绘画工具栏
     if (isVisible() && m_tbDrawBar && m_bFirstSel) {
-        QPoint topLeft;
-        const int space = 8;
-        topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
-        topLeft.setY(rtSel.bottomRight().y() + penWidth + space);
-        m_tbDrawBar->move(mapFromGlobal(topLeft));
+        //QPoint topLeft;
+        //const int space = 8;
+        //topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
+        //topLeft.setY(rtSel.bottomRight().y() + penWidth + space);
+        //m_tbDrawBar->move(mapFromGlobal(topLeft));
+
+        m_tbDrawBar->move(drawBarPosition());
     }
 
     //#ifdef _DEBUG  调试信息
