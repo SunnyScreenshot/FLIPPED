@@ -577,26 +577,26 @@ const QPoint ScreenShot::drawBarPosition(Qt::Orientation orien)
 
     const int space = 10;
     const int barHeight = m_tbDrawBar->height();
-    QPoint topLeft;
     const QRect rtSel(m_rtCalcu.getSelRect());
-    topLeft.setX(rtSel.right() - m_tbDrawBar->width());
+    QPoint topLeft(rtSel.right() - m_tbDrawBar->width(), rtSel.bottom() + space);
+
+    const int barMaxTop = rtSel.top() - space - barHeight;
+    const int barMaxBottom = rtSel.bottom() + space + barHeight;
     
+    QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
+    QRect rtScrn= desktop->screen(desktop->screenNumber(rtSel.bottomRight() - QPoint(0, 1)))->geometry();  // geometry 则左上角坐标非 0，0； (0, 1) 为修正底部置底后， 返回为（错的)另一个显示器
+
+    int topLimit = qMax(m_rtVirDesktop.top(), rtScrn.top());
+    int bottomLimit = qMin(m_rtVirDesktop.bottom(), rtScrn.bottom());
     if (orien == Qt::Horizontal) {
-        const int barTop = rtSel.top() + space + barHeight;
-        const int barBottom = rtSel.bottom() + space + barHeight;
-        //QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
-        //QRect rtScn = desktop->screen(desktop->screenNumber(QCursor::pos()))->rect();
-        //const int scnBottom = rtScn.bottom();
+        if (barMaxTop > topLimit) { // 上未触顶
+            if (barMaxBottom > bottomLimit) // 底部触顶
+                topLeft.setY(rtSel.top() - space - barHeight);
+        } else {
+            if (barMaxBottom > bottomLimit) // 底部触顶
+                topLeft.setY(rtSel.bottom() - space - barHeight);
+        }
 
-
-        if (barBottom < m_rtVirDesktop.bottom())
-            topLeft.setY(rtSel.bottom() + space);
-        else if (barTop < m_rtVirDesktop.top())
-            topLeft.setY(rtSel.top() + space);
-        else if (barTop < m_rtVirDesktop.top() && barBottom > m_rtVirDesktop.bottom())
-            topLeft.setY(rtSel.bottom() - space - barHeight);
-        else
-            ;
     } else {
 
     }
@@ -900,9 +900,25 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         .arg(m_step.editPos.x()).arg(m_step.editPos.y())
         .arg(m_step.rt.x()).arg(m_step.rt.y()).arg(m_step.rt.width()).arg(m_step.rt.height())
         .arg(m_step.text));
-    pa.drawText(tPosText - QPoint(0, space * 11), QString("m_step.penWidth:%5").arg(m_step.penWidth));
-    //pa.drawText(tPosText - QPoint(0, space * 11), QString("m_numDegrees(%1, %2)  m_numPixels(%3 * %4)  m_step.penWidth:%5")
-    //    .arg(m_numDegrees.x()).arg(m_numDegrees.y()).arg(m_numPixels.x()).arg(m_numPixels.y()).arg(m_step.penWidth));
+
+    const int tSpace = 10;
+    const int barHeight = m_tbDrawBar->height();
+    //const QRect rtSel(m_rtCalcu.getSelRect());
+    QPoint topLeft(rtSel.right() - m_tbDrawBar->width(), rtSel.bottom() + tSpace);
+    const int barMaxTop = rtSel.top() - tSpace - barHeight;
+    const int barMaxBottom = rtSel.bottom() + tSpace + barHeight;
+
+    QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
+    //QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight()))->geometry();  // geometry 则左上角坐标非 0，0
+    QRect rtScrn = m_screens.at(desktop->screenNumber(rtSel.bottomRight()))->geometry();
+    int topLimit = qMax(m_rtVirDesktop.top(), rtScrn.top());
+    int bottomLimit = qMin(m_rtVirDesktop.bottom(), rtScrn.bottom());
+
+    pa.drawText(tPosText - QPoint(0, space * 11), QString("barMaxTop:%1   barMaxBottom:%2  m_rtVirDesktop 左上右下(%3, %4, %5 * %6)")
+        .arg(barMaxTop).arg(barMaxBottom).arg(m_rtVirDesktop.left()).arg(m_rtVirDesktop.top()).arg(m_rtVirDesktop.right()).arg(m_rtVirDesktop.bottom()));
+    pa.drawText(tPosText - QPoint(0, space * 12), QString("rtScrn 左上右下(%1, %2, %3 * %4) topLimit:%5  bottomLimit:%6")
+        .arg(rtScrn.left()).arg(rtScrn.top()).arg(rtScrn.right()).arg(rtScrn.bottom()).arg(topLimit).arg(bottomLimit));
+
 
 #if 0
     QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
