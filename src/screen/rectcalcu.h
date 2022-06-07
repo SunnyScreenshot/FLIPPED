@@ -85,6 +85,8 @@ private:
 	//const QRect& setSelRect();
 	const QRect getStretchRect(); // 仅拉伸时使用
 
+
+public:
 	QRect getExteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取外部矩形
 	QRect getInteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取内部矩形
 

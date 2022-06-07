@@ -874,8 +874,9 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     tTopLeft.setY(m_primaryScreen->size().height());
 
     QPoint tPosText(tTopLeft.x(), tTopLeft.y() - 5 * space);
-
     QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
+
+    pa.drawText(tPosText - QPoint(0, space * -1), QString("Wait(0) Select(1) Move(2) Draw(3) Stretch(4)"));
     pa.drawText(tPosText - QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
                 .arg(int(m_rtCalcu.scrnType)));
     pa.drawText(tPosText - QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
@@ -921,8 +922,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
 
 #if 0
-    QRect rtOuter = m_rtCalcu.getOuterSelRect(rtSel, width);
-    QRect rtInner = m_rtCalcu.getInnerSelRect(rtSel, width);
+    QRect rtOuter = m_rtCalcu.getExteRect(rtSel);
+    QRect rtInner = m_rtCalcu.getInteRect(rtSel);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
 
 	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
@@ -934,12 +935,16 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	QRect rtBottomLeft(rtOuter.left(), rtInner.bottom(), interval, interval);
 	QRect rtBottomRight(rtInner.right(), rtInner.bottom(), interval, interval);
 
-	pa.setBrush(Qt::blue);
+	//pa.setBrush(Qt::blue);
+
+    pa.setBrush(Qt::NoBrush);
+    pa.setPen(Qt::blue);
 	pa.drawRect(rtLeft);
 	pa.drawRect(rtTop);
 	pa.drawRect(rtRight);
 	pa.drawRect(rtBottom);
-	pa.setBrush(Qt::yellow);
+	//pa.setBrush(Qt::yellow);
+    pa.setPen(Qt::white);
 	pa.drawRect(rtTopLeft);
 	pa.drawRect(rtTopRight);
 	pa.drawRect(rtBottomLeft);

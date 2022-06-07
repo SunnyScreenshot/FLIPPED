@@ -12,6 +12,7 @@
 #include <QRect>
 #include <QPoint>
 #include "screenshot.h"
+#include "../core/xlog/xlog.h"
 
 //// 通过任意两点获取一个选中矩形
 //const QRect& RectCalcu::setSelRect()
@@ -41,6 +42,9 @@ const QRect RectCalcu::getStretchRect()
 	const QPoint offset(pos2 - pos1);
 	const CursorArea cursArea = getCursorArea(pos1, true);
 
+	//XLOG_DEBUG("a1 拉伸返回副本 => cursArea[{}], offset({}, {})  rt({}, {}, {} * {})]  pos1({}, {})  pos2({}, {})"
+	//	, (int)cursArea, offset.x(), offset.y(), rt.x(), rt.y(), rt.width(), rt.height(), pos1.x(), pos1.y(), pos2.x(), pos2.y());
+
 	if (cursArea == CursorArea::Left) {
 		rt.setLeft(rt.left() + width);
 	} else if (cursArea == CursorArea::Top) {
@@ -58,8 +62,11 @@ const QRect RectCalcu::getStretchRect()
 	} else if (cursArea == CursorArea::BottomRight) {
 		rt.setBottomRight(rt.bottomRight() + offset);
 	} else {
+		XLOG_ERROR("此时处于未知状态 CursorArea::Unknow 513");
 	}
 
+    //XLOG_DEBUG("a2 拉伸返回副本 => cursArea[{}], offset({}, {})  rt({}, {}, {} * {})]  pos1({}, {})  pos2({}, {})"
+    //    , (int)cursArea, offset.x(), offset.y(), rt.x(), rt.y(), rt.width(), rt.height(), pos1.x(), pos1.y(), pos2.x(), pos2.y());
     // 修复拉伸矩形为负数但却可以绘画的场景
     if (!rt.isValid()) {
         if (rt.width() <= 0 || rt.height() <= 0) {
@@ -68,6 +75,9 @@ const QRect RectCalcu::getStretchRect()
             rt = getRect(p1, p2);
         }
     }
+
+    //XLOG_DEBUG("a3 拉伸返回副本 => cursArea[{}], offset({}, {})  rt({}, {}, {} * {})]  pos1({}, {})  pos2({}, {})"
+    //    , (int)cursArea, offset.x(), offset.y(), rt.x(), rt.y(), rt.width(), rt.height(), pos1.x(), pos1.y(), pos2.x(), pos2.y());
 	return rt;
 }
 
@@ -121,6 +131,20 @@ const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details)
 	QRect rtInner = getInteRect(rt);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
 
+
+  //  XLOG_DEBUG("矩形测试 rtOuter0({}, {}, {} * {})   rtOuter0({}, {}, {} * {})  rtOuter0({}, {}, {} * {})  rtOuter0({}, {}, {} * {})  rtOuter0({}, {}, {} * {})"
+  //      , rtOuter.x(), rtOuter.y(), rtOuter.width(), rt.height()
+		//, rtOuter.left(), rtOuter.top(), rtOuter.width(), rt.height()
+		//, rtOuter.topLeft().x(), rtOuter.topLeft().y(), rtOuter.width(), rt.height()
+		//, rtOuter.x(), rtOuter.y(), rtOuter.width(), rt.height()
+  //      , rtOuter.left(), rtOuter.left(), rtOuter.width(), rt.height()
+  //      , interval);
+
+	XLOG_DEBUG("区域分割 rtOuter({}, {}, {} * {})  rtInner({}, {}, {} * {})  interval{}"
+		, rtOuter.left() , rtOuter.left(), rtOuter.width(), rtOuter.height()
+		, rtInner.left(), rtInner.left(), rtInner.width(), rtInner.height()
+		, interval);
+
 	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
 	QRect rtTop(rtInner.left(), rtOuter.top(), rtInner.width(), interval);
 	QRect rtRight(rtInner.right(), rtInner.top(), interval, rtInner.height());
@@ -133,34 +157,32 @@ const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details)
 	// 内部、外部、边框
 	if (rtInner.contains(pos, true)) {
 		return CursorArea::Internal;
-	} else if (!rtOuter.contains(pos, false)) {
+	} else if (!rtOuter.contains(pos, true)) {
 		return CursorArea::External;
-	} else if (!rtInner.contains(pos, true) && rtOuter.contains(pos, false)) {
-		if (!details) {// 模糊区域
-			return CursorArea::Border;
-		} else {       // 需要更详细区域
-			if (rtLeft.contains(pos, true))
-				return CursorArea::Left;
-			else if (rtRight.contains(pos, true))
-				return CursorArea::Right;
-			else if (rtTop.contains(pos, true))
-				return CursorArea::Top;
-			else if (rtBottom.contains(pos, true))
-				return CursorArea::Bottom;
-			else if (rtTopLeft.contains(pos, true))
-				return CursorArea::TopLeft;
-			else if (rtBottomRight.contains(pos, true))
-				return CursorArea::BottomRight;
-			else if (rtTopRight.contains(pos, true))
-				return CursorArea::TopRight;
-			else if (rtBottomLeft.contains(pos, true))
-				return CursorArea::BottomLeft;
+	//} else if (!rtInner.contains(pos, true) && rtOuter.contains(pos, false)) {
+	} else {
+        if (!details) {// 模糊区域
+            return CursorArea::Border;
+        } else {       // 需要更详细区域
+            if (rtLeft.contains(pos, true))
+                return CursorArea::Left;
+            else if (rtRight.contains(pos, true))
+                return CursorArea::Right;
+            else if (rtTop.contains(pos, true))
+                return CursorArea::Top;
+            else if (rtBottom.contains(pos, true))
+                return CursorArea::Bottom;
+            else if (rtTopLeft.contains(pos, true))
+                return CursorArea::TopLeft;
+            else if (rtBottomRight.contains(pos, true))
+                return CursorArea::BottomRight;
+            else if (rtTopRight.contains(pos, true))
+                return CursorArea::TopRight;
+            else if (rtBottomLeft.contains(pos, true))
+                return CursorArea::BottomLeft;
             else
                 return CursorArea::Unknow;
-
-		}
-	} else {
-		return CursorArea::Unknow;
+        }
 	}
 }
 
@@ -195,9 +217,10 @@ RectCalcu::~RectCalcu()
 // 此时并不修改其 resel 数值
 const QRect RectCalcu::getSelRect()
 {
-	if (scrnType == ScrnType::Select)
+	if (scrnType == ScrnType::Select) {
 		return getRect(pos1, pos2);
-	else if (scrnType == ScrnType::Move) {
+
+	} else if (scrnType == ScrnType::Move) {
 
 		// TODO 2022.04.07: 可行，只是略感觉此获取方式有点不优雅
 		if (ScreenShot::instance().isSelBorder())
@@ -205,16 +228,18 @@ const QRect RectCalcu::getSelRect()
 		else
 			return rtSel;
 
-	} else if (scrnType == ScrnType::Stretch)
+	} else if (scrnType == ScrnType::Stretch) {
 		return getStretchRect(); // 返回副本
-	else
+
+	} else {
 		return rtSel;
+	}
 }
 
 QRect RectCalcu::getExteRect(QRect& rect, int interval)
 {
 	QPoint topLeft = rect.topLeft();
-	QPoint bottomRight = rect.bottomRight() + QPoint(1, 1);
+	QPoint bottomRight = rect.bottomRight();// +QPoint(1, 1);
 	return QRect(QPoint(topLeft.x() - interval, topLeft.y() - interval), QPoint(bottomRight.x() + interval, bottomRight.y() + interval));
 }
 
@@ -222,7 +247,7 @@ QRect RectCalcu::getInteRect(QRect& rect, int interval)
 {
 	// TODO 2021-10-01: 考虑 rect 的width 和 height 本身 <= 2 * HAIF_INTERVAL？
 	QPoint topLeft = rect.topLeft();
-	QPoint bottomRight = rect.bottomRight() + QPoint(1, 1);
+	QPoint bottomRight = rect.bottomRight();// +QPoint(1, 1);
 	return QRect(QPoint(topLeft.x() + interval, topLeft.y() + interval), QPoint(bottomRight.x() - interval, bottomRight.y() - interval));
 }
 
