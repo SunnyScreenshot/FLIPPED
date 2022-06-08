@@ -35,8 +35,8 @@ public:
 	static BOOL CALLBACK EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam);
 	static BOOL CALLBACK EnumChildRealTimeWindowsProc(HWND hWnd, LPARAM lParam);
 
-    static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM level);
-    static BOOL CALLBACK EnumChildWindowsProc(HWND hWnd, LPARAM level);
+    static BOOL CALLBACK EnumWindowsProc(HWND hWnd, LPARAM lParam);
+    static BOOL CALLBACK EnumChildWindowsProc(HWND hWnd, LPARAM lParam);
 
     static BOOL WindowsContainsPoint(HWND hWnd, POINT pt);
 	static HWND getWinInfoFromCache(POINT pt);
@@ -47,8 +47,11 @@ public:
 //    error: LNK2005: "protected: static struct HWND__ * WinInfoWin::m_hWndTarget" (?m_hWndTarget@WinInfoWin@@1PAUHWND__@@A) already defined in mocs_compilation.cpp.obj
 
     // 静态成员变量只能在 cpp 中初始化，坑了一会 https://stackoverflow.com/questions/40991522
-//private:
+public:
     static HWND m_hWndTarget;
+    static int m_level;
+    static int m_curIndex;
+    static int m_totalIndex;
 };
 
 #endif // WININFO_WIN_H

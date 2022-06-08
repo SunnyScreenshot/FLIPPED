@@ -34,8 +34,8 @@ struct WinData
             , QString tTitle
             , QString tReserved
             , int tLevel
-            , int tIndex
-            , int tChildCount)
+            , int tCurIndex
+            , int tTotalIndex)
         : id(tId)
         , bFilter(bTFilter)
         , rect(tRect)
@@ -44,8 +44,8 @@ struct WinData
         , title(tTitle)
         , reserved(tReserved)
         , level(tLevel)
-        , index(tIndex)
-        , childCount(tChildCount){}
+        , curIndex(tCurIndex)
+        , totalIndex(tTotalIndex){}
 
     WinData()
         : id()  // todo
@@ -56,8 +56,8 @@ struct WinData
         , title("")
         , reserved("")
         , level(0)
-        , index(0)
-        , childCount(0) {}
+        , curIndex(0)
+        , totalIndex(0) {}
 
     WinID id;
     bool bFilter;
@@ -66,9 +66,9 @@ struct WinData
     QString name;
     QString title;
     QString reserved;
-    int level;
-    int index;
-    int childCount;
+    int level;        // 等级
+    int curIndex;       // 当前等级的序号
+    int totalIndex;  // 总的累计个数（横跨等级累计）
 };
 
 class IWinInfo

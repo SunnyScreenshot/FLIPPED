@@ -140,10 +140,10 @@ const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details)
   //      , rtOuter.left(), rtOuter.left(), rtOuter.width(), rt.height()
   //      , interval);
 
-	XLOG_DEBUG("区域分割 rtOuter({}, {}, {} * {})  rtInner({}, {}, {} * {})  interval{}"
-		, rtOuter.left() , rtOuter.left(), rtOuter.width(), rtOuter.height()
-		, rtInner.left(), rtInner.left(), rtInner.width(), rtInner.height()
-		, interval);
+	//XLOG_DEBUG("区域分割 rtOuter({}, {}, {} * {})  rtInner({}, {}, {} * {})  interval{}"
+	//	, rtOuter.left() , rtOuter.left(), rtOuter.width(), rtOuter.height()
+	//	, rtInner.left(), rtInner.left(), rtInner.width(), rtInner.height()
+	//	, interval);
 
 	QRect rtLeft(rtOuter.left(), rtInner.top(), interval, rtInner.height());
 	QRect rtTop(rtInner.left(), rtOuter.top(), rtInner.width(), interval);

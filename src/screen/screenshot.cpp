@@ -26,7 +26,7 @@
 
 #include "../wininfo/wininfo.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -744,18 +744,19 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	pa.setPen(pen);
 	drawStep(pa, m_step, false);
 
+    int i = 0;
     // test 所有绘画的中那个
     for (const WinData& it : IWinInfo::m_vWinData) {
-
-
         //const auto pen = pa.pen();
         //pa.setPen(QPen(Qt::black, 10));
+        
         if (!it.bFilter) {
             const QRect& t = it.rect;
+            int m = 10;
             pa.drawRect(t);
 
             pa.drawText(QPoint(t.topLeft()) + QPoint(0, 30), it.path);
-            pa.drawText(QPoint(t.topLeft()) + QPoint(0, 10), it.title);
+            pa.drawText(QPoint(t.topLeft()) + QPoint(0, 10), it.title + QString("[%1]").arg(i++));
         }
 
         //pa.setPen(pen);
