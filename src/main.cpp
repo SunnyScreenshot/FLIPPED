@@ -37,8 +37,6 @@
 
 int main(int argc, char *argv[])
 {
-
-
     // getAllTopWinRect();
 
     // TODO 2021-10-08 高分屏适配的许多尝试: QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -47,15 +45,14 @@ int main(int argc, char *argv[])
     //a.setOrganizationName("XMuli");
     //a.setApplicationName("PicShot");
     //a.setApplicationVersion("0.1");
-    //a.setQuitOnLastWindowClosed(false);
-    //a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    a.setQuitOnLastWindowClosed(false);
+    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     /* 枚举窗口的所有进程 */
     //获取屏幕上所有的顶层窗口,每发现一个窗口就调用回调函数一次
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
-    Tray* tary = new Tray();
-    QApplication::setQuitOnLastWindowClosed(false);
+    Tray::instance();
 
 //#ifdef Q_OS_WIN
 //#elif  defined(Q_OS_MAC)
@@ -63,8 +60,6 @@ int main(int argc, char *argv[])
 //    WinInfo_x11 WinInfo;
 //    WinInfo.test();
 //#endif
-
-
 
     return QApplication::exec();
 }

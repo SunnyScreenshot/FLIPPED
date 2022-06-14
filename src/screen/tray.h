@@ -23,31 +23,26 @@ class QAction;
 class QMenu;
 QT_END_NAMESPACE
 
-
 class Tray : public QObject
 {
     Q_OBJECT
 public:
-    explicit Tray(QObject *parent = nullptr);
-    virtual ~Tray();
+	static Tray& instance();
 
 private:
+    explicit Tray(QObject* parent = nullptr);
+    virtual ~Tray();
 	void init();
 
 public slots:
-	void onScreenShot();
-	void onShowWinConfig(bool checked);
+	void onSrnShot();
+	void onSetting(bool checked);
 	
 private:
 	QPointer<ScreenShot> m_pSrnShot;
-
-	QAction* m_screenShot;
-	QAction* m_showWinConfig;
-	QAction* m_quit;
-	QMenu* m_menuTary;
-	QSystemTrayIcon* m_sysTary;
-
-    WinSetting* m_winMain;
+	QMenu* m_trayIconMenu;
+    QPointer<QSystemTrayIcon> m_trayIcon;
+    //WinSetting* m_winMain;
 };
 
 #endif // TARY_H
