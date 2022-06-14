@@ -13,6 +13,7 @@
 
 #include <QObject>
 #include <QHotkey>
+#include <QPointer>
 #include "winsetting.h"
 #include "screenshot.h"
 
@@ -38,6 +39,8 @@ public slots:
 	void onShowWinConfig(bool checked);
 	
 private:
+	QPointer<ScreenShot> m_pSrnShot;
+
 	QAction* m_screenShot;
 	QAction* m_showWinConfig;
 	QAction* m_quit;

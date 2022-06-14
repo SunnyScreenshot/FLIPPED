@@ -200,13 +200,15 @@ QRect RectCalcu::getRect(QPoint pos1, QPoint pos2)
 	
 }
 
-RectCalcu::RectCalcu()
+RectCalcu::RectCalcu(ScreenShot* pSrnShot)
 	: pos1(0, 0)
 	, pos2(0, 0)
+	, scrnType(ScrnType::Wait)
+    , bSmartMonitor(true)
 	, rtSel(0, 0, -1, -1)
 	, m_bClear(false)
-    , bSmartMonitor(true)
-	, scrnType(ScrnType::Wait)
+	, cursArea(CursorArea::Unknow)
+    , m_pSrnShot(pSrnShot)
 {
 }
 
@@ -219,15 +221,12 @@ const QRect RectCalcu::getSelRect()
 {
 	if (scrnType == ScrnType::Select) {
 		return getRect(pos1, pos2);
-
 	} else if (scrnType == ScrnType::Move) {
-
-		// TODO 2022.04.07: 可行，只是略感觉此获取方式有点不优雅
-		if (ScreenShot::instance().isSelBorder())
+		// TODO 2022.06.14: 单例改写了为 new 形式，故此处有一个 移动图形的 bug，且略感觉此获取方式有点不优雅
+		if (m_pSrnShot && m_pSrnShot->isSelBorder()) // 选中绘画的矩形
 			return rtSel.translated(pos2 - pos1);
-		else
-			return rtSel;
 
+		return rtSel;
 	} else if (scrnType == ScrnType::Stretch) {
 		return getStretchRect(); // 返回副本
 

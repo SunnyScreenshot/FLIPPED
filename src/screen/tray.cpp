@@ -21,9 +21,17 @@
 #include "../pluginsinterface/iplugininterface.h"
 //#include "../../pluginsimpl/watemark/pluginwatemark.h"
 
+/*!
+ * \brief WinFullScreen::instance 单例的实现
+ * \return 返回单例的引用
+ * \note 问：类的static变量在什么时候初始化？函数的static变量在什么时候初始化？
+ * \li 答：类的静态成员变量在类实例化之前就已经存在了，并且分配了内存。函数的static变量在执行此函数时进行初始化。
+ */
+// 此准备改写为单例。
 
 Tray::Tray(QObject *parent)
     : QObject(parent)
+	, m_pSrnShot(nullptr)
 	, m_screenShot(nullptr)
 	, m_showWinConfig(nullptr)
 	, m_quit(nullptr)
@@ -77,7 +85,6 @@ Tray::Tray(QObject *parent)
 
 Tray::~Tray()
 {
-	m_winMain->deleteLater();
 }
 
 void Tray::init()
@@ -98,7 +105,7 @@ void Tray::init()
 	m_sysTary->setContextMenu(m_menuTary);
 	m_sysTary->setVisible(true);
 
-    m_winMain = new WinSetting();
+    //m_winMain = new WinSetting();
 
 	connect(m_screenShot, &QAction::triggered, this, &Tray::onScreenShot);
 	connect(m_showWinConfig, &QAction::triggered, this, &Tray::onShowWinConfig);
@@ -109,15 +116,17 @@ void Tray::init()
 
 void Tray::onScreenShot()
 {
-	// TODO 2021-10-08 模拟按下快捷键或后续的封装函数
-	auto& ins = ScreenShot::instance();
-	ins.getScrnShots();
-	ins.activateWindow();
-	ins.setFocus();
+    // 第二次就是野指针, 故使用 QPointer 解决 https://blog.csdn.net/luoyayun361/article/details/90199081
+    if (!m_pSrnShot)
+        m_pSrnShot = new ScreenShot();
+
+    m_pSrnShot->getScrnShots();
+    m_pSrnShot->activateWindow();
+    m_pSrnShot->setFocus();
 }
 
 void Tray::onShowWinConfig(bool checked)
 {
 	Q_UNUSED(checked)
-    m_winMain->show();
+    //m_winMain->show();
 }

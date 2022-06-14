@@ -338,18 +338,18 @@ QWidget* WinSetting::tabAbout()
 
 void WinSetting::onScrnShot()
 {
-    ScreenShot::instance().getScrnShots();
+    //ScreenShot::instance().getScrnShots();
 }
 
 void WinSetting::onScrnShotDelay()
 {
-	ScreenShot& instance = ScreenShot::instance();
-	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-	instance.setFixedSize(QApplication::desktop()->size());
+	//ScreenShot& instance = ScreenShot::instance();
+	//instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+	//instance.setFixedSize(QApplication::desktop()->size());
 
-    QTimer::singleShot(3000, [&]() {
-		instance.getScrnShots();
-	});
+ //   QTimer::singleShot(3000, [&]() {
+	//	instance.getScrnShots();
+	//});
 }
 
 void WinSetting::onScrnShotFixedSize()
@@ -359,10 +359,10 @@ void WinSetting::onScrnShotFixedSize()
 
 void WinSetting::onScrnShotFullScreen()
 {
-	ScreenShot& instance = ScreenShot::instance();
-	instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
-	instance.setFixedSize(QApplication::desktop()->size());
-	instance.getScrnShots();
+	//ScreenShot& instance = ScreenShot::instance();
+	//instance.setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+	//instance.setFixedSize(QApplication::desktop()->size());
+	//instance.getScrnShots();
 }
 
 void WinSetting::onKeySeqChanged(const QKeySequence &keySequence)

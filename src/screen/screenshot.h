@@ -33,12 +33,13 @@ class QScreen;
 class QPixmap;
 QT_END_NAMESPACE
 
-
 class ScreenShot : public  QWidget
 {
     Q_OBJECT
 public:
-    static ScreenShot& instance();
+    ScreenShot(QWidget* parent = nullptr);
+    ~ScreenShot() override;
+
     void getScrnShots();
     static double getScale(QScreen *screen = QApplication::primaryScreen());
 
@@ -73,9 +74,6 @@ public slots:
 	void onLineDasheChange(Qt::PenStyle dashes);
 
 private:
-    ScreenShot(QWidget *parent = nullptr);
-    ~ScreenShot() override;
-
 	ScrnType updateScrnType(const QPoint pos);
 	void updateCursorShape(const QPoint pos);
     void updateBorderCursorShape(const CursorArea& cursArea);

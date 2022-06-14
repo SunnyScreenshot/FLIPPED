@@ -48,7 +48,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_screens(QApplication::screens())
 	, m_primaryScreen(QApplication::primaryScreen())
 	, m_currPixmap(nullptr)
-	, m_rtCalcu()
+	, m_rtCalcu(this)
     , m_pCurrShape(nullptr)
     , m_bFirstSel(false)
     , m_tbDrawBar(new DrawToolBar(this))
@@ -66,6 +66,9 @@ ScreenShot::ScreenShot(QWidget *parent)
     XLOG_INFO("prettyProductName[{}]", QSysInfo::prettyProductName().toUtf8().data());
     XLOG_INFO("productType[{}]", QSysInfo::productType().toUtf8().data());
     XLOG_INFO("productVersion[{}]", QSysInfo::productVersion().toUtf8().data());
+
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    //setAttribute(Qt::WA_QuitOnClose, false);
 
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
@@ -299,7 +302,7 @@ void ScreenShot::onDownload()
     }
 
     emit sigClearScreen();
-    hide();
+    close();
 }
 
 void ScreenShot::onCopy()
@@ -311,7 +314,7 @@ void ScreenShot::onCopy()
 
     //qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
     emit sigClearScreen();
-    hide();
+    close();
 }
 
 void ScreenShot::onDrawStart()
@@ -704,7 +707,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.translate(-1 * m_rtVirDesktop.topLeft()); // *** 偏移为显示器坐标下绘画 ***
     pa.setBrush(Qt::NoBrush);
     pa.setPen(Qt::NoPen);
-    pa.drawPixmap(m_rtVirDesktop, *m_currPixmap);
+    if (m_currPixmap)
+        pa.drawPixmap(m_rtVirDesktop, *m_currPixmap);
 
     // 选中矩形图片
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
@@ -961,8 +965,10 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 	if (event->key() == Qt::Key_Escape) {
 		qDebug() << "Key_Escape";
 		emit sigClearScreen();
-		hide();
-		//close();   // 销毁会有问题,已经排查：1. tray 有关，改用 qpushbutton 和 close即可； 2.单例有关，该市建议修改为 new 指针的比较合适
+        // hide() 和 close() 区别: https://stackoverflow.com/questions/39407564
+        //hide();
+        close();   // // 销毁再不会有问题,由单例改写为 new 形式了。排查：1. tray 有关，改用 qpushbutton 和 close即可； 2.单例有关，该市建议修改为 new 指针的比较合适
+        //deleteLater();
     }
 }
 
@@ -1158,17 +1164,7 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     update(); // TODO 2022.04.27: 此行仅调试用
 }
 
-/*!
- * \brief WinFullScreen::instance 单例的实现
- * \return 返回单例的引用
- * \note 问：类的static变量在什么时候初始化？函数的static变量在什么时候初始化？
- * \li 答：类的静态成员变量在类实例化之前就已经存在了，并且分配了内存。函数的static变量在执行此函数时进行初始化。
- */
-ScreenShot &ScreenShot::instance()
-{
-    static ScreenShot m_instance;
-    return m_instance;
-}
+
 
 void ScreenShot::getScrnShots()
 {

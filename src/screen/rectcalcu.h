@@ -61,11 +61,13 @@ namespace XC {
 // ** 方便使用枚举 **
 using namespace XC;
 
+
+class ScreenShot;
 // 矩形计算
 class RectCalcu
 {
 public:
-	RectCalcu();
+	RectCalcu(ScreenShot* pSrnShot);
 	~RectCalcu();
 
     static QRect getRect(QPoint pos1, QPoint pos2);
@@ -85,11 +87,9 @@ private:
 	//const QRect& setSelRect();
 	const QRect getStretchRect(); // 仅拉伸时使用
 
-
 public:
 	QRect getExteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取外部矩形
 	QRect getInteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取内部矩形
-
 	
 public:
 	QPoint pos1;
@@ -101,6 +101,7 @@ private:
 	QRect  rtSel;               // 由 pos1, pos2 所得
 	bool m_bClear;              // 当前清理状态
 	CursorArea cursArea;        // 光标对应区域
+	ScreenShot* m_pSrnShot;     // 用来判定 当前选中 移动 形状
 };
 
 #endif //PICSHOT_RECTCALCU_H
