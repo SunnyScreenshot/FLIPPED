@@ -22,6 +22,7 @@
 #include <QVector>
 #include <vector>
 
+
 #ifdef Q_OS_WIN
     #include "../wininfo/wininfo_win.h"
 #elif  defined(Q_OS_MAC)
@@ -32,6 +33,10 @@ QT_BEGIN_NAMESPACE
 class QScreen;
 class QPixmap;
 QT_END_NAMESPACE
+
+// test
+#include "../tool/frametoolbar.h"
+#include <QPushButton>
 
 class ScreenShot : public  QWidget
 {
@@ -124,6 +129,8 @@ private:
 	// test
 	XTextWidget* m_textEdit;
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
+
+    FrameToolBar* m_frameBar;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

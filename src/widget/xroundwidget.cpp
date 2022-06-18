@@ -37,5 +37,5 @@ void XRoundWidget::paintEvent(QPaintEvent *event)
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     pa.setPen(Qt::NoPen);
     pa.setBrush(QColor(255, 255, 255, 0.8 * 255));
-    pa.drawRoundedRect(contentsRect(), ROUNDED_RECT, ROUNDED_RECT);
+    pa.drawRoundedRect(contentsRect(), CW_RADIRS, CW_RADIRS);
 }

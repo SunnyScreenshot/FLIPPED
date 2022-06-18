@@ -73,6 +73,14 @@ set(SRCS_WIDGET
     "widget/xtextwidget.cpp"
     )
 
+# tool
+set(SRCS_TOOL
+    "tool/frametoolbar.h"
+    "tool/frametoolbar.cpp"
+    "tool/managetoolbar.h"
+    "tool/managetoolbar.cpp"
+    )
+
 # screen
 set(SRCS_WINSCREEN
     "screen/drawhelper.h"
@@ -160,6 +168,7 @@ if (APPLE)
     ${SRCS_WININFO}
     ${SRCS_CORE}
     ${SRCS_WIDGET}
+    ${SRCS_TOOL}
     ${SRCS_WINSCREEN}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
@@ -170,6 +179,7 @@ else()
     ${SRCS_WININFO}
     ${SRCS_CORE}
     ${SRCS_WIDGET}
+    ${SRCS_TOOL}
     ${SRCS_WINSCREEN}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
@@ -199,6 +209,7 @@ endif()
 source_group("" FILES ${SRCS_MAIN} ${SRCS_RESOURCES})
 source_group("core" FILES ${SRCS_CORE})
 source_group("widget" FILES ${SRCS_WIDGET})
+source_group("tool" FILES ${SRCS_TOOL})
 source_group("screen" FILES ${SRCS_WINSCREEN})
 source_group("pluginsinterface" FILES ${SRCS_PLUGIN_INTERFACE})
 source_group("wininfo" FILES ${SRCS_WININFO}

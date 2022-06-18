@@ -26,7 +26,7 @@
 
 #include "../wininfo/wininfo.h"
 
-#define _MYDEBUG
+//#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -54,6 +54,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
     , m_rtVirDesktop(0, 0, 0, 0)
+    , m_frameBar(new FrameToolBar(Qt::Horizontal, this))
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
     XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
@@ -160,6 +161,10 @@ ScreenShot::ScreenShot(QWidget *parent)
 	connect(m_tbDrawBar, &DrawToolBar::sigLineDasheChange, this, &ScreenShot::onLineDasheChange);
 
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
+
+
+    // test
+    m_frameBar->hide();
 }
 
 ScreenShot::~ScreenShot() 
@@ -185,7 +190,6 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
 void ScreenShot::updateCursorShape(const QPoint pos) 
 {
     if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        setCursor(Qt::ArrowCursor);
         return;
     }
     
@@ -202,9 +206,17 @@ void ScreenShot::updateCursorShape(const QPoint pos)
 
     } else if (m_rtCalcu.scrnType == ScrnType::Wait) {
         if (cursArea == CursorArea::External) {
-            setCursor(Qt::ArrowCursor);
+
+            if (m_rtAtuoMonitor.contains(pos, true)
+                || m_rtCalcu.getSelRect().contains(pos, true))
+                setCursor(Qt::ArrowCursor);
+            else
+                setCursor(Qt::ForbiddenCursor);
+
         } else if (cursArea == CursorArea::Internal){
             setCursor(Qt::SizeAllCursor);
+            // 已修复：光标移动到绘画工具栏时，光标显示异常，在里面的事件过滤器中修复此出逻辑纰漏。光标进入 tbBar 后，
+            // 光标坐标也【不会开始改变】，至少在 ScreenShot。
         } else {
             updateBorderCursorShape(cursArea);
         }
@@ -251,6 +263,7 @@ void ScreenShot::onClearScreen()
 
     m_bFirstSel = false;
     m_tbDrawBar->setVisible(false);
+    m_frameBar->setVisible(false);
     m_step.clear();
 
     m_rtAtuoMonitor = QRect();
@@ -748,23 +761,23 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	pa.setPen(pen);
 	drawStep(pa, m_step, false);
 
-    int i = 0;
-    // test 所有绘画的中那个
-    for (const WinData& it : IWinInfo::m_vWinData) {
-        //const auto pen = pa.pen();
-        //pa.setPen(QPen(Qt::black, 10));
-        
-        if (!it.bFilter) {
-            const QRect& t = it.rect;
-            int m = 10;
-            pa.drawRect(t);
+    //int i = 0;
+    //// test 所有绘画的中那个
+    //for (const WinData& it : IWinInfo::m_vWinData) {
+    //    //const auto pen = pa.pen();
+    //    //pa.setPen(QPen(Qt::black, 10));
+    //    
+    //    if (!it.bFilter) {
+    //        const QRect& t = it.rect;
+    //        int m = 10;
+    //        pa.drawRect(t);
 
-            pa.drawText(QPoint(t.topLeft()) + QPoint(0, 30), it.path);
-            pa.drawText(QPoint(t.topLeft()) + QPoint(0, 10), it.title + QString("[%1]").arg(i++));
-        }
+    //        pa.drawText(QPoint(t.topLeft()) + QPoint(0, 30), it.path);
+    //        pa.drawText(QPoint(t.topLeft()) + QPoint(0, 10), it.title + QString("[%1]").arg(i++));
+    //    }
 
-        //pa.setPen(pen);
-    }
+    //    //pa.setPen(pen);
+    //}
 
 
     // flameshot 选中图形的效果
@@ -838,6 +851,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         //m_tbDrawBar->move(mapFromGlobal(topLeft));
 
         m_tbDrawBar->move(drawBarPosition());
+
+        m_frameBar->move(drawBarPosition() + QPoint(0, -100));
     }
 
     //#ifdef _DEBUG  调试信息
@@ -850,7 +865,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::red);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
-
 
     //pen.setColor(Qt::yellow);
     //pa.setPen(pen);
@@ -1133,6 +1147,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
     if (!m_rtCalcu.calcurRsultOnce().isEmpty()) {  // 计算一次结果
         m_bFirstSel = true;
         m_tbDrawBar->setVisible(true);
+        m_frameBar->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
