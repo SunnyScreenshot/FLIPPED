@@ -17,6 +17,8 @@
 #include <QFont>
 #include <QPainterPath>
 
+
+class QDomElement;
 namespace XC {
 	//enum ScrnStatus {
 	//	// 基础的几种状态
@@ -138,31 +140,47 @@ struct  XDrawStep
 	// Mosaic ---------------------
 	int mscPx = 3; // 马赛克默认模糊块
 
-	void clear();
+    void clear() {
+        pos1 = QPoint();
+        pos2 = QPoint();
+        rt = QRect();
+        //shape = DrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
+        //pen = QPen(Qt::red);
+        //penWidth = 2;
+        //brush = QBrush(Qt::NoBrush);
+        //brushWidth = 1;
+        //transparency = 1;
+        //rX = 8;
+        //rY = 8;
+        //lineEnd = LineEnds::EmptyToEmpty;
+        //lineDashe = LineDashes::SolidLine;
+        custPath.clear();
+        //text = "==Test Text==";
+        //font = QFont();
+        //fontSize = 16;
+        //mscPx = 3;
+
+        index = -1;
+        //g_index = -1;  永不重置
+
+    }
 };
 
-class DrawHelper : public QObject
+
+class ScrnHelper : public QObject
 {
     Q_OBJECT
 public:
-    explicit DrawHelper(QObject* parent = nullptr);
-    virtual ~DrawHelper();
-
-    void drawRect(QPainter& pa, QRect rt, QPen pen = QPen(Qt::red), int width = 2, QBrush brush = QBrush(Qt::NoBrush));
-    bool drawStep();
-    bool saveDrawStep(QVector<XDrawStep *>& steps);
-    bool revoke();
-    bool revoke(XDrawStep* step);
-
-public:
-    XDrawStep m_step;
-    QVector<XDrawStep> m_vDrawStep;
+    explicit ScrnHelper(QObject* parent = nullptr);
+    virtual ~ScrnHelper();
 };
 
-//QDebug operator<<(QDebug myDebug, const XDrawStep& step)
-//{
-//    myDebug << step.rt << step.shape;
-//    return myDebug;
-//}
+// ------------------------
+
+namespace XHelp {
+QIcon ChangeSVGColor(QString path, QString color);
+void SetAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
+}
+
 
 #endif // XDRAW_H

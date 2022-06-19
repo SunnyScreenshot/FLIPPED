@@ -10,58 +10,70 @@
  ******************************************************************/
 #include "drawhelper.h"
 
+#include <QFile>
+#include <QByteArray>
 #include <QPainter>
+#include <QPixmap>
+#include <QIcon>
+#include <QSvgRenderer>
+#include <QDomElement>
+#include <QDomElement>
+#include <QIcon>
 
-/*!
- * \brief The XDrawStep struct 绘画步骤
- */
-
-/*!
- * \brief The XDraw class 绘画编辑截图类
- */
-
-DrawHelper::DrawHelper(QObject *parent)
-    : QObject(parent)
-{
-    // 变量还没有初始化
-}
-
-DrawHelper::~DrawHelper()
-{
-}
-
-void DrawHelper::drawRect(QPainter &pa, QRect rt, QPen pen, int width, QBrush brush)
-{
-    pen.setWidth(width);
-    pen.setColor(Qt::red);
-    pa.setPen(pen);
-    pa.setBrush(brush);
-}
 
 int XDrawStep::g_index = 0;
-void XDrawStep::clear()
+
+ScrnHelper::ScrnHelper(QObject *parent)
+    : QObject(parent)
 {
-	pos1 = QPoint();
-	pos2 = QPoint();
-	rt = QRect();
-	//shape = DrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
-	//pen = QPen(Qt::red);
-	//penWidth = 2;
-	//brush = QBrush(Qt::NoBrush);
-	//brushWidth = 1;
-	//transparency = 1;
-	//rX = 8;
-	//rY = 8;
-	//lineEnd = LineEnds::EmptyToEmpty;
-	//lineDashe = LineDashes::SolidLine;
-	custPath.clear();
-	//text = "==Test Text==";
-	//font = QFont();
-	//fontSize = 16;
-	//mscPx = 3;
-
-
-	index = -1;
-	//g_index = -1;  永不重置
 }
+
+ScrnHelper::~ScrnHelper()
+{
+}
+
+
+// 辅助功能函数
+namespace XHelp {
+QIcon ChangeSVGColor(QString path, QString color)
+{
+    QFile file(path);
+    file.open(QIODevice::ReadOnly);
+    QByteArray baData = file.readAll();
+
+    QDomDocument doc;
+    doc.setContent(baData);
+    QDomElement elem = doc.documentElement(); // const 和 值传递
+    SetAttrRecur(elem, "path", "fill", color);
+
+    QSvgRenderer svgRenderer(doc.toByteArray());
+    // create pixmap target (could be a QImage)
+    QPixmap pix(svgRenderer.defaultSize());
+    pix.fill(Qt::transparent);
+    // create painter to act over pixmap
+    QPainter pixPainter(&pix);
+    // use renderer to render over painter which paints on pixmap
+    svgRenderer.render(&pixPainter);
+    QIcon myicon(pix);
+    return myicon;
+}
+
+void SetAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval)
+{
+    // if it has the tagname then overwritte desired attribute
+    if (elem.tagName().compare(strtagname) == 0)
+        elem.setAttribute(strattr, strattrval);
+
+    // loop all children
+    for (int i = 0; i < elem.childNodes().count(); i++) {
+        if (!elem.childNodes().at(i).isElement())
+            continue;
+
+        QDomElement t = elem.childNodes().at(i).toElement();
+        SetAttrRecur(t, strtagname, strattr, strattrval);
+    }
+}
+
+}
+
 

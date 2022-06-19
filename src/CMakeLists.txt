@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.3)
 set(PROJECT_NAME PicShot)
-# SET(PROJECT_VERSION 0.0.13)
+set(PROJECT_VERSION 0.1.4)
 #set(PROJECT_VERSION_MAJOR 0)
 #set(PROJECT_VERSION_MINOR 1)
 
@@ -139,12 +139,17 @@ set(CMAKE_AUTOUIC ON)
 set(QT5_LIBS_LINK
         Qt5::Core
         Qt5::Gui
-        Qt5::Widgets)
+        Qt5::Widgets
+        Qt5::Svg
+        Qt5::Xml
+        )
 
 find_package(Qt5 COMPONENTS
         Core
         Gui
         Widgets
+        Svg
+        Xml
         REQUIRED)
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
@@ -201,10 +206,16 @@ endif()
 
 if(APPLE)
 elseif(WIN32)
-    target_sources(${PROJECT_NAME} PRIVATE wininfo/wininfo_win.h wininfo/wininfo_win.cpp)
+    target_sources(${PROJECT_NAME} PRIVATE
+        wininfo/wininfo_win.h
+        wininfo/wininfo_win.cpp)
 else()
-    target_sources(${PROJECT_NAME} PRIVATE wininfo/wininfo_x11.h wininfo/wininfo_x11.cpp)
+    target_sources(${PROJECT_NAME} PRIVATE
+        wininfo/wininfo_x11.h
+        wininfo/wininfo_x11.cpp)
 endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="v${PROJECT_VERSION}")
 
 source_group("" FILES ${SRCS_MAIN} ${SRCS_RESOURCES})
 source_group("core" FILES ${SRCS_CORE})

@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
 //    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 //#endif
 
+    // 【方案四】 使用 windows 自带的
+    // exe 统计目录下使用 qt.conf 文件
 
 
     // 三种方案 https://blog.csdn.net/hanjiang08/article/details/124653265
@@ -63,30 +65,17 @@ int main(int argc, char *argv[])
 //    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);  // 2K、4K 2@ 倍；获取的分辨率 4K 下实际为 /2 后。 此行需在 QApplication a(argc,argv);前面
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。                此行无需在 QApplication a(argc,argv);前面
 #endif
-    // getAllTopWinRect();
 
-
+    QCoreApplication::setApplicationVersion(APP_VERSION);
+    QCoreApplication::setApplicationName(QStringLiteral("PicShot"));
+    QCoreApplication::setOrganizationName(QStringLiteral("XMuli"));
 
     QApplication a(argc, argv);
     //a.loadTranslator(QList<QLocale>() << QLocale::system());
-    //a.setOrganizationName("XMuli");
-    //a.setApplicationName("PicShot");
-    //a.setApplicationVersion("0.1");
     a.setQuitOnLastWindowClosed(false);
-//    a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-
-    /* 枚举窗口的所有进程 */
-    //获取屏幕上所有的顶层窗口,每发现一个窗口就调用回调函数一次
+//    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
-
-//#ifdef Q_OS_WIN
-//#elif  defined(Q_OS_MAC)
-//#elif  defined(Q_OS_LINUX)
-//    WinInfo_x11 WinInfo;
-//    WinInfo.test();
-//#endif
-
     return QApplication::exec();
 }

@@ -45,5 +45,20 @@
         <file>resources/icons/line/Two-wayArrow.svg</file>
         <file>resources/icons/mosaic/pixelated.svg</file>
         <file>resources/icons/mosaic/smooth.svg</file>
+        <file>resources/tool/arrow.svg</file>
+        <file>resources/tool/cancel.svg</file>
+        <file>resources/tool/ellipse.svg</file>
+        <file>resources/tool/finish.svg</file>
+        <file>resources/tool/gif.svg</file>
+        <file>resources/tool/line.svg</file>
+        <file>resources/tool/mosaic.svg</file>
+        <file>resources/tool/pen.svg</file>
+        <file>resources/tool/rectangle.svg</file>
+        <file>resources/tool/renewal.svg</file>
+        <file>resources/tool/revocation.svg</file>
+        <file>resources/tool/save.svg</file>
+        <file>resources/tool/serial_num.svg</file>
+        <file>resources/tool/smooth.svg</file>
+        <file>resources/tool/text.svg</file>
     </qresource>
 </RCC>
