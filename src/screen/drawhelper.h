@@ -16,6 +16,9 @@
 #include <QRect>
 #include <QFont>
 #include <QPainterPath>
+#include <QApplication>
+#include <QScreen>
+#include <QColor>
 
 
 class QDomElement;
@@ -70,10 +73,12 @@ namespace XC {
 	enum class DrawShape {
 		Rectangles,
 		Ellipses,
-		Brush,
-		Arrows,
+        Line,
+        Arrows,
+        Pen,
+        Mosaics,
 		Text,
-		Mosaics,
+        SerialNumber,
 		NoDraw
 	};
 
@@ -178,8 +183,10 @@ public:
 // ------------------------
 
 namespace XHelp {
-QIcon ChangeSVGColor(QString path, QString color);
-void SetAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
+double getScale(QScreen *screen = QApplication::primaryScreen());
+
+QIcon changeSVGColor(QString path, QColor color);
+void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
 }
 
 

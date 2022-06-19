@@ -16,6 +16,7 @@
 #include "drawhelper.h"
 #include "../widget/xtextwidget.h"
 #include "../xglobal.h"
+#include "../tool/selectbar.h"
 #include <QWidget>
 #include <QList>
 #include <QColor>
@@ -130,7 +131,7 @@ private:
 	XTextWidget* m_textEdit;
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
 
-    FrameToolBar* m_frameBar;
+    SelectBar* m_frameBar;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

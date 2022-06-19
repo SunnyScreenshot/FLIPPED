@@ -77,6 +77,8 @@ set(SRCS_WIDGET
 set(SRCS_TOOL
     "tool/frametoolbar.h"
     "tool/frametoolbar.cpp"
+    "tool/selectbar.h"
+    "tool/selectbar.cpp"
     "tool/managetoolbar.h"
     "tool/managetoolbar.cpp"
     )

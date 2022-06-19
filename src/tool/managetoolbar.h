@@ -20,20 +20,7 @@ public:
     explicit ManageToolBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~ManageToolBar();
 
-    // rectangle
-    // ellipse
-    // line
-    // arrow
-    // pen
-    // mosaic  、 smooth
-    // text
-    // serial_num
-    // gif
-    // revocation
-    // renewal
-    // save
-    // cancel
-    // finish
+
 };
 
 #endif // MANAGETOOLBAR_H

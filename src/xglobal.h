@@ -12,11 +12,6 @@
 #ifndef XGLOBAL_H
 #define XGLOBAL_H
 
-// 默认图片宽度、高度 px（再乘以缩放比）
-#define ICON_WIDTH  24
-#define ICON_HEIGHT 24
-
-
 // 1. HAIF_INTERVAL 为一半间隔，边框宽度一半高; 2 * HAIF_INTERVAL 为边框的宽度，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
 // 2. HAIF_INTERVAL 为边框一般的灵敏度，光标移动到上面便会变化形态
 #define HAIF_INTERVAL 4
@@ -27,6 +22,14 @@
 #define CW_RADIRS 6  // 圆角矩形的圆角大小 eg: 绘画工具栏
 #define CW_MARGIN 8  // 圆角矩形的边框留白
 #define CW_ITEM_SPACE 10  // item 之间间隔
+
+
+// 默认图片宽度、高度 px （再乘以缩放比）
+#define ICON_WIDTH  24 * 2
+#define ICON_HEIGHT 24 * 2
+
+#define ICON_WIDTH_IN_MARGIN  5 * 2
+#define ICON_HEIGHT_IN_MARGIN  5 * 2
 
 
 #endif // XGLOBAL_H

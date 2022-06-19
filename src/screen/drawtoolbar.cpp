@@ -127,7 +127,7 @@ void DrawToolBar::onDrawShape(DrawShape shape, bool checked)
             insertSubBar(m_subArrowBar);
         break;
     }
-	case DrawShape::Brush: {
+    case DrawShape::Pen: {
 		if (checked)
 			insertSubBar(m_subBrushBar);
 		break;

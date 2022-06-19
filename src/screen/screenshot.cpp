@@ -26,7 +26,7 @@
 
 #include "../wininfo/wininfo.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
@@ -54,7 +54,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
     , m_rtVirDesktop(0, 0, 0, 0)
-    , m_frameBar(new FrameToolBar(Qt::Horizontal, this))
+    , m_frameBar(new SelectBar(Qt::Horizontal, this))
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
     XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
@@ -518,7 +518,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 		//pa.drawLine(step.startPos + offset, step.endPos + offset);
         break;
     }
-	case DrawShape::Brush: {
+    case DrawShape::Pen: {
 
 		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
@@ -571,7 +571,7 @@ bool ScreenShot::isDrawShape(XDrawStep& step)
     //if (step.shape == DrawShape::Rectangles) {
     //} else if (step.shape == DrawShape::Ellipses) {
 
-    //} else if (step.shape == DrawShape::Brush) {
+    //} else if (step.shape == DrawShape::Pen) {
 
     //} else if (step.shape == DrawShape::Arrows) {
 

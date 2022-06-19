@@ -184,7 +184,7 @@ void SubGrapToolBar::onToolBtn()
     } else if (toolBtn->objectName() == "arrow") {
         emit sigDrawShape(DrawShape::Arrows, isChecked);
     } else if (toolBtn->objectName() == "pen") {
-        emit sigDrawShape(DrawShape::Brush, isChecked);
+        emit sigDrawShape(DrawShape::Pen, isChecked);
     } else if (toolBtn->objectName() == "text") {
         emit sigDrawShape(DrawShape::Text, isChecked);
     } else if (toolBtn->objectName() == "mosaic") {
