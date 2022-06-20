@@ -25,7 +25,7 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
                                   , {"lab5_Pink", "#FB4288"}
                                   , {"lab6_Black", "#323232"}
                                   , {"lab7_White", "#FBFBFB"}
-                                  , {"lab8_Pick", "#FFDB34"}};  // 最后一个彩色
+                                  , {"lab8_Pick", ""}};  // 最后一个彩色
 
     int rowMax = 0;
     int colMax = 0;
@@ -41,20 +41,16 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     for (int i = 0; i < rowMax; ++i) {
         for (int j = 0; j < colMax; ++j) {
 
-//            QLabel* lab = new QLabel(this);
-//            QPalette palette;
-//            palette.setColor(QPalette::Background, it.value());
-//            lab->setPalette(palette);
-
-
             XLabel* lab = new XLabel(this);
             lab->setObjectName(it.key());
-            const int width(COLOR_LABEL_WIDTH * m_scal);
+            int width(COLOR_LABEL_WIDTH * m_scal);
             lab->setFixedSize(width, width);
-//            lab->setAutoFillBackground(true);
 
-            lab->setInEllipseColor(it.value(), 1);
-//            lab->setOutEllipseColor("#000000", 0.08);
+            if ((it + 1) == labMap.end()) {  // 最后一个渐变色
+                lab->setEnablemGradient(true);
+            } else {
+                lab->setInEllipseColor(it.value(), 1);
+            }
 
             m_layout->addWidget(lab, i, j);
             it++;

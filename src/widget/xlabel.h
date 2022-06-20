@@ -3,6 +3,11 @@
 
 #include <QLabel>
 
+class QWidget;
+class QString;
+class QColor;
+class QWidget;
+class QPainter;
 class XLabel : public QLabel
 {
     Q_OBJECT
@@ -15,9 +20,10 @@ public:
 
     void setInEllipseColor(QColor color, double alpha);
     void setOutEllipseColor(QColor color, double alpha);
-
+    void setEnablemGradient(bool enablem = false);
 private:
     void init();
+    void setConicalGradientColor(QPainter &pa);
 
 protected:
     virtual void paintEvent(QPaintEvent *event) override;
@@ -27,6 +33,7 @@ private:
     double m_inAlpha;
     QColor m_outEllipse;
     double m_outAlpha;
+    bool m_bGradient;
 };
 
 #endif // XLABEL_H
