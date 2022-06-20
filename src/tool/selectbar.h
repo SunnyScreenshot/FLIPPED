@@ -1,7 +1,7 @@
 #ifndef SELECTBAR_H
 #define SELECTBAR_H
 
-#include "frametoolbar.h"
+#include "base/frametoolbar.h"
 #include "../screen/drawhelper.h"
 #include <QVector>
 
@@ -9,8 +9,6 @@ QT_BEGIN_NAMESPACE
 class QToolButton;
 class QStringList;
 QT_END_NAMESPACE
-
-using namespace XC;
 
 // rectangle
 // ellipse

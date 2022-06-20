@@ -71,12 +71,16 @@ set(SRCS_WIDGET
     "widget/xroundwidget.cpp"
     "widget/xtextwidget.h"
     "widget/xtextwidget.cpp"
+    "widget/xlabel.h"
+    "widget/xlabel.cpp"
     )
 
 # tool
 set(SRCS_TOOL
-    "tool/frametoolbar.h"
-    "tool/frametoolbar.cpp"
+    "tool/base/frametoolbar.h"
+    "tool/base/frametoolbar.cpp"
+    "tool/base/colorparabar.h"
+    "tool/base/colorparabar.cpp"
     "tool/selectbar.h"
     "tool/selectbar.cpp"
     "tool/managetoolbar.h"

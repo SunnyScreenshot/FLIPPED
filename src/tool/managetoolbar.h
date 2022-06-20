@@ -11,7 +11,7 @@
 #ifndef MANAGETOOLBAR_H
 #define MANAGETOOLBAR_H
 
-#include "frametoolbar.h"
+#include "base/frametoolbar.h"
 
 class ManageToolBar : public FrameToolBar
 {

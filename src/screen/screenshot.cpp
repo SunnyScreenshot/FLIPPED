@@ -55,6 +55,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_textEdit(new XTextWidget(this))
     , m_rtVirDesktop(0, 0, 0, 0)
     , m_frameBar(new SelectBar(Qt::Horizontal, this))
+    , m_colorParaBar(new ColorParaBar(Qt::Horizontal, this))
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
     XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
@@ -852,7 +853,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
         m_tbDrawBar->move(drawBarPosition());
 
-        m_frameBar->move(drawBarPosition() + QPoint(0, -100));
+        m_frameBar->move(drawBarPosition() + QPoint(0, -200));
+        m_colorParaBar->move(drawBarPosition() + QPoint(0, -100));
     }
 
     //#ifdef _DEBUG  调试信息
@@ -1148,6 +1150,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_bFirstSel = true;
         m_tbDrawBar->setVisible(true);
         m_frameBar->setVisible(true);
+        m_colorParaBar->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {

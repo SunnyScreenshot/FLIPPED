@@ -36,7 +36,8 @@ class QPixmap;
 QT_END_NAMESPACE
 
 // test
-#include "../tool/frametoolbar.h"
+#include "../tool/base/frametoolbar.h"
+#include "../tool/base/colorparabar.h"
 #include <QPushButton>
 
 class ScreenShot : public  QWidget
@@ -132,6 +133,7 @@ private:
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
 
     SelectBar* m_frameBar;
+    ColorParaBar* m_colorParaBar;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

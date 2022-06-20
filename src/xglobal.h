@@ -31,5 +31,12 @@
 #define ICON_WIDTH_IN_MARGIN  5 * 2
 #define ICON_HEIGHT_IN_MARGIN  5 * 2
 
+#define COLOR_LABEL_WIDTH 12 * 2       // 圆形取色盘宽度
+#define COLOR_PARA_MARGIN 6 * 2        // 取色盘, 圆形按钮的边框距离
+#define COLOR_PARA_HOR_SPACING  7 * 2  // 取色盘, 圆形按钮之间的水平间距
+#define COLOR_PARA_VER_SPACING  4 * 2  // 取色盘, 圆形按钮之间的竖直间距
+
+
+
 
 #endif // XGLOBAL_H

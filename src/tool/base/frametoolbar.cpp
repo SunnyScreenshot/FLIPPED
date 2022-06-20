@@ -9,17 +9,17 @@
  * Description: 工具栏框架类，负责绘画好
  ******************************************************************/
 #include "frametoolbar.h"
-#include "../xglobal.h"
-#include "../widget/xhorizontalline.h"
-#include "../widget/xverticalline.h"
-#include "../screen/screenshot.h"
+#include "../../xglobal.h"
+#include "../../widget/xhorizontalline.h"
+#include "../../widget/xverticalline.h"
+#include "../../screen/drawhelper.h"
 #include <QColor>
 #include <QPainter>
 #include <QBoxLayout>
 
 FrameToolBar::FrameToolBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
-    , m_scal(1)
+    , m_scal(XHelp::getScale())
     , m_orien(orien)
     , m_layout(nullptr)
 {
@@ -50,7 +50,6 @@ void FrameToolBar::addSpacer()
 
 void FrameToolBar::initUI()
 {
-    m_scal = ScreenShot::getScale();
     if (m_orien == Qt::Horizontal) {
         m_layout = new QHBoxLayout(this);
 //        resize(395 * m_scal, 40 * m_scal);
@@ -77,9 +76,18 @@ void FrameToolBar::paintEvent(QPaintEvent *event)
 
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    pa.setPen(Qt::NoPen);
-    QColor col("#131313");
-    col.setAlphaF(0.6);
-    pa.setBrush(col);
+    QColor colBrush("#131313");
+    colBrush.setAlphaF(0.6);
+    pa.setBrush(colBrush);
+    QColor colPen("#FFFFFF");
+    colPen.setAlphaF(0.1);
+    pa.setPen(colPen);
+    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), CW_RADIRS, CW_RADIRS);
+
+    colPen.setNamedColor("#000000");
+    colPen.setAlphaF(0.1);
+    pa.setPen(colPen);
+    pa.setBrush(Qt::NoBrush);
+
     pa.drawRoundedRect(contentsRect(), CW_RADIRS, CW_RADIRS);
 }
