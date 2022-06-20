@@ -101,23 +101,16 @@ void SelectBar::onToolBtn()
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* it : listBtn) {
         QString path = ":/resources/tool/" + it->objectName() + ".svg";
-        it->setIconSize(QSize(ICON_WIDTH * 2, ICON_WIDTH * 2) * XHelp::getScale());
+        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
 
         if (it == tb) {
             if (it->isCheckable()) {
                 if (it->isChecked()) {
                     bDrawing = true;
-
-                    QString path = ":/resources/tool/serialnumber.svg";
-                    it->setIcon(QIcon(path));
-
-                    //QIcon ico = XHelp::changeSVGColor(path, Qt::blue);
-                    //it->setIcon(ico);
+                    it->setIcon(XHelp::changeSVGColor(path, QColor("#1F7AFF"), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
                 } else {
                     it->setIcon(QIcon(path));
                 }
-
-                
             }
         } else {
             if (it->isCheckable()) {

@@ -36,7 +36,7 @@ ScrnHelper::~ScrnHelper()
 
 // 辅助功能函数
 namespace XHelp {
-QIcon changeSVGColor(QString path, QColor color)
+QIcon changeSVGColor(QString path, QColor color, QSize size)
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly);
@@ -55,7 +55,7 @@ QIcon changeSVGColor(QString path, QColor color)
     QPainter pixPainter(&pix);
     // use renderer to render over painter which paints on pixmap
     svgRenderer.render(&pixPainter);
-    QIcon myicon(pix);
+    QIcon myicon(pix.scaled(size));  // 需要按比例放大
     return myicon;
 }
 

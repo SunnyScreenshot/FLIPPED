@@ -11,6 +11,7 @@
 #ifndef XDRAW_H
 #define XDRAW_H
 
+#include "../xglobal.h"
 #include <QObject>
 #include <QPen>
 #include <QRect>
@@ -185,7 +186,7 @@ public:
 namespace XHelp {
 double getScale(QScreen *screen = QApplication::primaryScreen());
 
-QIcon changeSVGColor(QString path, QColor color);
+QIcon changeSVGColor(QString path, QColor color, QSize size);
 void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
 }
 
