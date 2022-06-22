@@ -1,3 +1,13 @@
+/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date:   2022.06.22
+ * Description: 工具栏框架类，负责选择画各种图形的 ToolBar
+ ******************************************************************/
 #include "selectbar.h"
 #include "../xglobal.h"
 #include <QToolButton>

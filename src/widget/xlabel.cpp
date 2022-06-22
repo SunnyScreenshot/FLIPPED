@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QPainter>
 #include <QPalette>
+#include <QtGlobal>
 
 
 XLabel::XLabel(QWidget *parent, Qt::WindowFlags f)
@@ -22,12 +23,20 @@ XLabel::~XLabel()
 {
 }
 
+void XLabel::setMargin(double margin)
+{
+    m_nMargin = margin;
+}
+
+void XLabel::setInEllipseR(double r)
+{
+    m_nInEllipseR = r;
+}
+
 void XLabel::setInEllipseColor(QColor color, double alpha)
 {
     m_inEllipse = color;
     m_inAlpha = alpha;
-
-    update();
 }
 
 void XLabel::setOutEllipseColor(QColor color, double alpha)
@@ -75,6 +84,13 @@ void XLabel::init()
     m_outEllipse = col;
     m_outAlpha = 1;
     m_bGradient = false;
+
+    resize(24, 24);
+    auto a =contentsRect();
+    int width = this->width();
+    int height = this->height();
+    m_nInEllipseR = qMin(width, height) / 2.0;
+    m_nMargin = 1;
 }
 
 void XLabel::paintEvent(QPaintEvent *event)
@@ -92,12 +108,15 @@ void XLabel::paintEvent(QPaintEvent *event)
         colBrush.setAlphaF(m_inAlpha);
         pa.setPen(Qt::NoPen);
         pa.setBrush(colBrush);
-        pa.drawEllipse(contentsRect().adjusted(1, 1, -1, -1));
+//        pa.drawEllipse(contentsRect().adjusted(1, 1, -1, -1));
+        const int r = m_nInEllipseR - 1;
+        pa.drawEllipse(contentsRect().center(), r, r);
 
         // 此参数设计图写死
         QColor colPen("#000000");
         colPen.setAlphaF(0.08);
         pa.setBrush(Qt::NoBrush);
-        pa.drawEllipse(contentsRect());
+//        pa.drawEllipse(contentsRect());
+        pa.drawEllipse(contentsRect().center(), r, r);
     }
 }

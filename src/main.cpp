@@ -22,7 +22,9 @@
 #include "./screen/winresetbtn.h"
 #include "./screen/tray.h"
 #include "widget/xroundwidget.h"
-
+#include "tool/base/frametoolbar.h"
+#include "tool/base/widthparabar.h"
+#include "tool/parameterbar.h"
 #include <iostream>
 
 #include "core/xlog/xlog.h"
@@ -77,5 +79,8 @@ int main(int argc, char *argv[])
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
+
+    ParameterBar* t = new ParameterBar();
+    t->show();
     return QApplication::exec();
 }

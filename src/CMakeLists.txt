@@ -73,6 +73,8 @@ set(SRCS_WIDGET
     "widget/xtextwidget.cpp"
     "widget/xlabel.h"
     "widget/xlabel.cpp"
+    "widget/xframewidget.h"
+    "widget/xframewidget.cpp"
     )
 
 # tool
@@ -81,10 +83,12 @@ set(SRCS_TOOL
     "tool/base/frametoolbar.cpp"
     "tool/base/colorparabar.h"
     "tool/base/colorparabar.cpp"
+    "tool/base/widthparabar.h"
+    "tool/base/widthparabar.cpp"
     "tool/selectbar.h"
     "tool/selectbar.cpp"
-    "tool/managetoolbar.h"
-    "tool/managetoolbar.cpp"
+    "tool/parameterbar.h"
+    "tool/parameterbar.cpp"
     )
 
 # screen

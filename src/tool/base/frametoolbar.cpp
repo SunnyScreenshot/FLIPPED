@@ -6,7 +6,7 @@
  * Blog:   https://xmuli.tech
  *
  * Date: 2022.06.18
- * Description: 工具栏框架类，负责绘画好
+ * Description: 工具栏框架类，负责绘画上面各种矩形的那个 toolbar
  ******************************************************************/
 #include "frametoolbar.h"
 #include "../../xglobal.h"
@@ -18,14 +18,11 @@
 #include <QBoxLayout>
 
 FrameToolBar::FrameToolBar(Qt::Orientations orien, QWidget *parent)
-    : QWidget(parent)
+    : XFrameWidget(parent)
     , m_scal(XHelp::getScale())
     , m_orien(orien)
     , m_layout(nullptr)
 {
-    setWindowFlags(Qt::FramelessWindowHint);      // 去掉标题栏
-    setAttribute(Qt::WA_TranslucentBackground);   // 设置透明，自绘画为圆角矩形
-
     initUI();
 }
 
@@ -46,6 +43,18 @@ void FrameToolBar::addSpacer()
         m_layout->addWidget(new XVerticalLine((ICON_WIDTH - ICON_WIDTH_IN_MARGIN) * m_scal, this));
     else
         m_layout->addWidget(new XHorizontalLine((ICON_WIDTH - ICON_WIDTH_IN_MARGIN) * m_scal, this));
+}
+
+inline void FrameToolBar::setMargin(int margin)
+{
+    if (m_layout)
+        m_layout->setMargin(margin);
+}
+
+inline void FrameToolBar::setSpacing(int space)
+{
+    if (m_layout)
+        m_layout->setSpacing(space);
 }
 
 void FrameToolBar::initUI()
@@ -70,24 +79,24 @@ void FrameToolBar::initUI()
     // TEST END
 }
 
-void FrameToolBar::paintEvent(QPaintEvent *event)
-{
-    Q_UNUSED(event)
+//void FrameToolBar::paintEvent(QPaintEvent *event)
+//{
+//    Q_UNUSED(event)
 
-    QPainter pa(this);
-    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    QColor colBrush("#131313");
-    colBrush.setAlphaF(0.6);
-    pa.setBrush(colBrush);
-    QColor colPen("#FFFFFF");
-    colPen.setAlphaF(0.1);
-    pa.setPen(colPen);
-    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), CW_RADIRS, CW_RADIRS);
+//    QPainter pa(this);
+//    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+//    QColor colBrush("#131313");
+//    colBrush.setAlphaF(0.6);
+//    pa.setBrush(colBrush);
+//    QColor colPen("#FFFFFF");
+//    colPen.setAlphaF(0.1);
+//    pa.setPen(colPen);
+//    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), CW_RADIRS, CW_RADIRS);
 
-    colPen.setNamedColor("#000000");
-    colPen.setAlphaF(0.1);
-    pa.setPen(colPen);
-    pa.setBrush(Qt::NoBrush);
+//    colPen.setNamedColor("#000000");
+//    colPen.setAlphaF(0.1);
+//    pa.setPen(colPen);
+//    pa.setBrush(Qt::NoBrush);
 
-    pa.drawRoundedRect(contentsRect(), CW_RADIRS, CW_RADIRS);
-}
+//    pa.drawRoundedRect(contentsRect(), CW_RADIRS, CW_RADIRS);
+//}

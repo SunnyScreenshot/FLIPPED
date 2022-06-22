@@ -54,8 +54,8 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_tbDrawBar(new DrawToolBar(this))
 	, m_textEdit(new XTextWidget(this))
     , m_rtVirDesktop(0, 0, 0, 0)
-    , m_frameBar(new SelectBar(Qt::Horizontal, this))
-    , m_colorParaBar(new ColorParaBar(Qt::Horizontal, this))
+    , m_selBar(new SelectBar(Qt::Horizontal, this))
+    , m_paraBar(new ParameterBar(Qt::Horizontal, this))
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
     XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
@@ -165,7 +165,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 
     // test
-    m_frameBar->hide();
+    m_selBar->hide();
 }
 
 ScreenShot::~ScreenShot() 
@@ -264,7 +264,8 @@ void ScreenShot::onClearScreen()
 
     m_bFirstSel = false;
     m_tbDrawBar->setVisible(false);
-    m_frameBar->setVisible(false);
+    m_selBar->setVisible(false);
+    m_paraBar->setVisible(false);
     m_step.clear();
 
     m_rtAtuoMonitor = QRect();
@@ -853,8 +854,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
         m_tbDrawBar->move(drawBarPosition());
 
-        m_frameBar->move(drawBarPosition() + QPoint(0, -200));
-        m_colorParaBar->move(drawBarPosition() + QPoint(0, -100));
+        m_selBar->move(drawBarPosition() + QPoint(0, -200));
+        m_paraBar->move(drawBarPosition() + QPoint(0, -100));
     }
 
     //#ifdef _DEBUG  调试信息
@@ -1149,8 +1150,8 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
     if (!m_rtCalcu.calcurRsultOnce().isEmpty()) {  // 计算一次结果
         m_bFirstSel = true;
         m_tbDrawBar->setVisible(true);
-        m_frameBar->setVisible(true);
-        m_colorParaBar->setVisible(true);
+        m_selBar->setVisible(true);
+        m_paraBar->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {

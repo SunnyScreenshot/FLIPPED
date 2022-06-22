@@ -1,3 +1,13 @@
+/*******************************************************************
+ * Copyright (c) 2021-2022 偕臧  All rights reserved.
+ *
+ * Author: XMuli <xmulitech@gmail.com>
+ * GitHub: https://github.com/XMuli
+ * Blog:   https://xmuli.tech
+ *
+ * Date:   2022.06.21
+ * Description: 取色器面板
+ ******************************************************************/
 #ifndef COLORPARABAR_H
 #define COLORPARABAR_H
 
@@ -22,8 +32,6 @@ private:
     int m_scal;
     Qt::Orientations m_orien;
     QGridLayout* m_layout;
-
-
 };
 
 #endif // COLORPARABAR_H

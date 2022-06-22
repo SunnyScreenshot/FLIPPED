@@ -5,31 +5,27 @@
  * GitHub: https://github.com/XMuli
  * Blog:   https://xmuli.tech
  *
- * Date: 2022.06.18
- * Description: 工具栏框架类，负责绘画
+ * Date:   2022.06.22
+ * Description: Line Widt
  ******************************************************************/
-#ifndef FRAMETOOLBAR_H
-#define FRAMETOOLBAR_H
+#ifndef WIDTHPARABAR_H
+#define WIDTHPARABAR_H
 
-#include <QWidget>
 #include "../../widget/xframewidget.h"
 
 QT_BEGIN_NAMESPACE
 class QBoxLayout;
 QT_END_NAMESPACE
 
-class FrameToolBar : public XFrameWidget
+class WidthParaBar : public QWidget
 {
     Q_OBJECT
 public:
-    explicit FrameToolBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
-    virtual ~FrameToolBar();
+    explicit WidthParaBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
+    virtual ~WidthParaBar();
 
     void addWidget(QWidget *w);
     void addSpacer();
-
-    void setMargin(int margin);
-    void setSpacing(int space);
 
 private:
     void initUI();
@@ -43,4 +39,4 @@ private:
     QBoxLayout* m_layout;
 };
 
-#endif // FRAMETOOLBAR_H
+#endif // WIDTHPARABAR_H
