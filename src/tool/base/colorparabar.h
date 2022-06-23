@@ -29,7 +29,7 @@ protected:
     virtual void paintEvent(QPaintEvent *event) override;
 
 private:
-    int m_scal;
+    double m_scal;
     Qt::Orientations m_orien;
     QGridLayout* m_layout;
 };

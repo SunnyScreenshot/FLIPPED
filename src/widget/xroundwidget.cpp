@@ -7,7 +7,8 @@
  *
  * Date: 2021.11.06
  * Description: 圆角矩形窗口
- ******************************************************************/#include "xroundwidget.h"
+ ******************************************************************/
+#include "xroundwidget.h"
 #include "../xglobal.h"
 #include <QColor>
 #include <QHBoxLayout>

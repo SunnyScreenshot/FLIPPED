@@ -71,12 +71,7 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     m_layout->setMargin(0);
     m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
     m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
-
     setLayout(m_layout);
-
-    adjustSize();
-    auto t = size();
-
 }
 
 ColorParaBar::~ColorParaBar()

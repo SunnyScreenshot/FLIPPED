@@ -854,8 +854,14 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
         m_tbDrawBar->move(drawBarPosition());
 
+
+        // hor
         m_selBar->move(drawBarPosition() + QPoint(0, -200));
         m_paraBar->move(drawBarPosition() + QPoint(0, -100));
+
+        // ver
+//        m_selBar->move(drawBarPosition() + QPoint(100, 0));
+//        m_paraBar->move(drawBarPosition() + QPoint(200, 0));
     }
 
     //#ifdef _DEBUG  调试信息

@@ -18,6 +18,7 @@
 QT_BEGIN_NAMESPACE
 class QToolButton;
 class QStringList;
+class QAbstractButton;
 QT_END_NAMESPACE
 
 // rectangle
@@ -60,7 +61,7 @@ signals:
     void sigFinish();
 
 private:
-    int m_scal;
+    double m_scal;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 
