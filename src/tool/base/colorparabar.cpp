@@ -21,33 +21,39 @@
 #include <QPainter>
 #include <QPen>
 #include <QColor>
+#include <QColorDialog>
+
+//test
+#include <QMessageBox>
 
 ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
     , m_scal(XHelp::getScale())
     , m_orien(orien)
     , m_layout(new QGridLayout())
+    , m_curLab(nullptr)
+    , m_curColor()
 {
-    QMap<QString, QString> labMap { {"lab0_Red", "#DB000F"}
-                                  , {"lab1_Yellow", "#FFCF53"}
-                                  , {"lab2_Green", "#12F63B"}
-                                  , {"lab3_Blue", "#0E70FF"}
-                                  , {"lab4_Pink", "#FB4288"}
-                                  , {"lab5_Black", "#323232"}
-                                  , {"lab6_White", "#FBFBFB"}
-                                  , {"lab7_Pick", ""}};  // 最后一个彩色
+    m_labMap = { {"lab0_Red", "#DB000F"}
+               , {"lab1_Yellow", "#FFCF53"}
+               , {"lab2_Green", "#12F63B"}
+               , {"lab3_Blue", "#0E70FF"}
+               , {"lab4_Pink", "#FB4288"}
+               , {"lab5_Black", "#323232"}
+               , {"lab6_White", "#FBFBFB"}
+               , {"lab7_Pick", ""}};  // 最后一个彩色
 
     int rowMax = 0;
     int colMax = 0;
     if(orien == Qt::Horizontal) {
         rowMax = 2;
-        colMax = labMap.size() / rowMax;
+        colMax = m_labMap.size() / rowMax;
     } else {
         colMax = 2;
-        rowMax = labMap.size() / colMax;
+        rowMax = m_labMap.size() / colMax;
     }
 
-    auto it = labMap.begin();
+    auto it = m_labMap.begin();
     for (int i = 0; i < rowMax; ++i) {
         for (int j = 0; j < colMax; ++j) {
 
@@ -57,7 +63,9 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
             lab->setFixedSize(width, width);
             lab->setInEllipseR(width / 2.0);
 
-            if ((it + 1) == labMap.end()) {  // 最后一个渐变色
+            lab->installEventFilter(this);
+
+            if ((it + 1) == m_labMap.end()) {  // 最后一个渐变色
                 lab->setEnablemGradient(true);
             } else {
                 lab->setInEllipseColor(it.value(), 1);
@@ -72,6 +80,8 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
     m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
     setLayout(m_layout);
+
+    connect(this, &ColorParaBar::sigPickColor, this, &ColorParaBar::onPickColor);
 }
 
 ColorParaBar::~ColorParaBar()
@@ -86,29 +96,60 @@ void ColorParaBar::init()
     m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
 }
 
+void ColorParaBar::onPickColor(XLabel *lab, QColor col)
+{
+    Q_UNUSED(col);
+    m_curLab = lab;
+    m_curColor = col;   // TODO 2022.06.24: 后面可以用属性替换掉
+
+    update();
+}
+
+// #see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
+bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
+{
+    XLabel* lab = qobject_cast<XLabel *>(watched);
+
+    if (!lab)
+        return QWidget::eventFilter(watched, event);
+
+    if (event->type() == QEvent::MouseButtonRelease) {
+        if (lab->objectName().compare("lab7_Pick") == 0) {
+            QColor color = QColorDialog::getColor(lab->palette().color(QPalette::Background), this, tr("选择文本颜色"));
+            emit sigPickColor(lab, color);
+//            QMessageBox::about(nullptr, lab->objectName(), color.name());
+        } else {
+            const auto& it = m_labMap.find(lab->objectName());
+            emit sigPickColor(lab, it.value());
+//            QMessageBox::about(nullptr, lab->objectName(), it.value());
+        }
+        return true;
+
+    } else {
+        return QWidget::eventFilter(watched, event);
+    }
+
+}
+
 void ColorParaBar::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
 //    Q_UNUSED(event)
 
-//    QPainter pa(this);
-//    pa.setRenderHints(QPainter::Antialiasing, true);
-//    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-//    QPen pen(Qt::NoPen);
-//    pa.setPen(pen);
-//    QColor colBrush("#131313");
-//    colBrush.setAlphaF(0.6);
-//    pa.setBrush(colBrush);
-//    QColor colPen("#FFFFFF");
-//    colPen.setAlphaF(0.1);
-//    pa.setPen(colPen);
-//    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), CW_RADIRS, CW_RADIRS);
+    if (!m_curLab)
+        return;
 
-//    colPen.setNamedColor("#000000");
-//    colPen.setAlphaF(0.1);
-//    pa.setPen(colPen);
-//    pa.setBrush(Qt::NoBrush);
+    QPainter pa(this);
+    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    QPen pen(m_curColor);
+    pen.setWidth(5);  // 设计稿为 1， 最后看效果
+    pa.setPen(pen);
+    pa.setBrush(Qt::NoBrush);
 
-//    pa.drawRoundedRect(contentsRect(), CW_RADIRS, CW_RADIRS);
+    int margin = 4;
+    QRect rt = m_curLab->rect().adjusted(-margin, -margin, margin, margin);
+    auto t = mapToParent(rt.topLeft());
+//    pa.drawEllipse(QRect(t, rt.size()));  // 替换正确那就好了， 使用 VS 进行调试
 
+    pa.drawEllipse(QRect(QPoint(24, 24), rt.size()));
 }

@@ -18,7 +18,6 @@
 QT_BEGIN_NAMESPACE
 class QToolButton;
 class QStringList;
-class QAbstractButton;
 QT_END_NAMESPACE
 
 // rectangle

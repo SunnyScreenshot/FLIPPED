@@ -12,9 +12,13 @@
 #define COLORPARABAR_H
 
 #include "frametoolbar.h"
+#include <QColor>
+#include <QMap>
+#include <QString>
 #include <QWidget>
 //#include "../screen/drawhelper.h"
 
+class XLabel;
 class QGridLayout;
 class ColorParaBar : public QWidget
 {
@@ -24,7 +28,15 @@ public:
     virtual ~ColorParaBar();
     void init();
 
-    // QWidget interface
+signals:
+    void sigPickColor(XLabel*, QColor);
+
+public slots:
+    void onPickColor(XLabel* lab, QColor col);
+
+public:
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
+
 protected:
     virtual void paintEvent(QPaintEvent *event) override;
 
@@ -32,6 +44,9 @@ private:
     double m_scal;
     Qt::Orientations m_orien;
     QGridLayout* m_layout;
+    QMap<QString, QString> m_labMap;
+    XLabel* m_curLab;
+    QColor m_curColor;
 };
 
 #endif // COLORPARABAR_H

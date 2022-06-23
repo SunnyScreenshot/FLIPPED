@@ -413,7 +413,7 @@ void WinSetting::onKeySeqChanged(const QKeySequence &keySequence)
     qInfo()<< "sender():" << sender()<<"keySequence:"<<keySequence<< "keySequence:" << keySequence.count();
 }
 
-// see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
+
 bool WinSetting::eventFilter(QObject *watched, QEvent *event)
 {
     QLabel* lab = qobject_cast<QLabel *>(watched);
