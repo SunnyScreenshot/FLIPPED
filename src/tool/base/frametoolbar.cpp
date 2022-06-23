@@ -40,9 +40,9 @@ void FrameToolBar::addWidget(QWidget *w)
 void FrameToolBar::addSpacer()
 {
     if (m_orien == Qt::Horizontal)
-        m_layout->addWidget(new XVerticalLine((ICON_WIDTH - ICON_WIDTH_IN_MARGIN) * m_scal, this));
+        m_layout->addWidget(new XVerticalLine(SPACER_LINE_HEIGHT * m_scal, this));
     else
-        m_layout->addWidget(new XHorizontalLine((ICON_WIDTH - ICON_WIDTH_IN_MARGIN) * m_scal, this));
+        m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
 }
 
 inline void FrameToolBar::setMargin(int margin)
@@ -59,24 +59,20 @@ inline void FrameToolBar::setSpacing(int space)
 
 void FrameToolBar::initUI()
 {
-    if (m_orien == Qt::Horizontal) {
-        m_layout = new QHBoxLayout(this);
-//        resize(395 * m_scal, 40 * m_scal);
-    } else {
-        m_layout = new QVBoxLayout(this);
-//        resize(40 * m_scal, 395 * m_scal);
+    if (!m_layout) {
+        if (m_orien == Qt::Horizontal)
+            m_layout = new QHBoxLayout(this);
+        else
+            m_layout = new QVBoxLayout(this);
     }
 
     setLayout(m_layout);
-    m_layout->setMargin(CW_MARGIN);
+    m_layout->setMargin(0);
     m_layout->setSpacing(CW_ITEM_SPACE);
 
-    // TEST BEGIN
-//    m_layout->addWidget(new QPushButton("btn1"));
-//    m_layout->addWidget(new QPushButton("btn2"));
-//    addSpacer();
-//    m_layout->addWidget(new QPushButton("btn3"));
-    // TEST END
+//    setContentsMargins(BAR_MARGIN_HOR, BAR_MARGIN_VER, BAR_MARGIN_HOR, BAR_MARGIN_VER);
+//    adjustSize();  // 布局后重新计算一下大小尺寸
+//    resize(size().width() + BAR_MARGIN_HOR * 2, size().height() + BAR_MARGIN_VER * 2);
 }
 
 //void FrameToolBar::paintEvent(QPaintEvent *event)

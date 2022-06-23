@@ -10,6 +10,9 @@
  ******************************************************************/
 #include "selectbar.h"
 #include "../xglobal.h"
+#include "../widget/xframewidget.h"
+#include "../widget/xhorizontalline.h"
+#include "../widget/xverticalline.h"
 #include <QToolButton>
 #include <QStringList>
 #include <QBoxLayout>
@@ -17,23 +20,23 @@
 #include <QToolButton>
 
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
-    : FrameToolBar(orien, parent)
+    : XFrameWidget(parent)
+    , m_scal(XHelp::getScale())
+    , m_orien(orien)
+    , m_layout(nullptr)
     , m_tbName()
     , m_vItem()
 {
-    init();
-}
+    initUI();
 
-SelectBar::~SelectBar()
-{
-}
 
-void SelectBar::init()
-{
+    m_scal = 1;
+
     m_tbName << "rectangle"
              << "ellipse"
              << "line"
              << "arrow"
+             << "pen"
              << "mosaic"
              << "text"
              << "serialnumber"
@@ -54,6 +57,7 @@ void SelectBar::init()
            << tr("ellipse")
            << tr("line")
            << tr("arrow")
+           << tr("pen")
            << tr("mosaic")
            << tr("text")
            << tr("serialnumber")
@@ -63,7 +67,6 @@ void SelectBar::init()
            << tr("cancel")
            << tr("finish");
 
-    int scale = XHelp::getScale();
     m_vItem.fill(nullptr, m_tbName.count());
 
     for (int i = 0; i < m_tbName.count(); ++i) {
@@ -74,7 +77,9 @@ void SelectBar::init()
         m_vItem[i]->setToolButtonStyle(Qt::ToolButtonIconOnly);
         m_vItem[i]->setAutoRaise(true);   // 自动浮动模式
         m_vItem[i]->setIcon(QIcon(":/resources/tool/" + m_tbName[i] + ".svg"));
-        m_vItem[i]->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT) * scale);
+        m_vItem[i]->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
+        m_vItem[i]->setContentsMargins(0, 0, 0, 0);
+        m_vItem[i]->setFixedSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
         m_vItem[i]->setToolTip(barTip[i]);
         m_vItem[i]->setChecked(false);
 
@@ -97,89 +102,125 @@ void SelectBar::init()
     }
 }
 
-void SelectBar::onToolBtn()
+SelectBar::~SelectBar()
 {
-    QToolButton* tb = nullptr;
-    QObject* obj = sender();
-    if (obj)
-        tb = qobject_cast<QToolButton *>(obj);
-    else
+}
+
+void SelectBar::initUI()
+{
+    if (!m_layout) {
+        if (m_orien == Qt::Horizontal)
+            m_layout = new QHBoxLayout(this);
+        else
+            m_layout = new QVBoxLayout(this);
+    }
+
+    setContentsMargins(0, 0, 0, 0);
+    setLayout(m_layout);
+    m_layout->setContentsMargins(BAR_MARGIN_HOR, BAR_MARGIN_VER, BAR_MARGIN_HOR, BAR_MARGIN_VER);
+    m_layout->setSpacing(CW_ITEM_SPACE);
+}
+
+void SelectBar::addWidget(QWidget *w)
+{
+    if (w && m_layout)
+        m_layout->addWidget(w);
+}
+
+void SelectBar::addSpacer()
+{
+    if (!m_layout)
         return;
 
-    // 仅单选
-    bool bDrawing = false;  // true 此 btn 被按下，处于绘画状态
-    QList<QToolButton *> listBtn = findChildren<QToolButton *>();
-    for (QToolButton* it : listBtn) {
-        QString path = ":/resources/tool/" + it->objectName() + ".svg";
-        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
-
-        if (it == tb) {
-            if (it->isCheckable()) {
-                if (it->isChecked()) {
-                    bDrawing = true;
-                    it->setIcon(XHelp::changeSVGColor(path, QColor("#1F7AFF"), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
-                } else {
-                    it->setIcon(QIcon(path));
-                }
-            }
-        } else {
-            if (it->isCheckable()) {
-                it->setChecked(false);
-                it->setIcon(QIcon(path));  // 频繁切换 icon 应该不会有泄露，后面确认下。
-            }
-                
-            continue;
-        }
-
-    }
-
-    if (bDrawing)
-        emit sigDrawStart();
+    if (m_orien == Qt::Horizontal)
+        m_layout->addWidget(new XVerticalLine(SPACER_LINE_HEIGHT * m_scal, this));
     else
-        emit sigDrawEnd();
+        m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
+}
 
-    // rectangle
-    // ellipse
-    // line
-    // arrow
-    // pen
-    // mosaic  、 smooth
-    // text
-    // serialnumber
-    // gif 暂不添加
-    // revocation
-    // renewal
-    // save
-    // cancel
-    // finish
-    // 发射信号
-    bool isChecked = tb->isChecked();
-    if (tb->objectName() == "rectangle") {
-        emit sigSelShape(XC::DrawShape::Rectangles, isChecked);
-    } else if (tb->objectName() == "ellipse") {
-        emit sigSelShape(XC::DrawShape::Ellipses, isChecked);
-    } else if (tb->objectName() == "line") {
-        emit sigSelShape(XC::DrawShape::Line, isChecked);
-    } else if (tb->objectName() == "arrow") {
-        emit sigSelShape(XC::DrawShape::Arrows, isChecked);
-    } else if (tb->objectName() == "pen") {
-        emit sigSelShape(XC::DrawShape::Pen, isChecked);
-    } else if (tb->objectName() == "mosaic") {
-        emit sigSelShape(XC::DrawShape::Mosaics, isChecked);
-    } else if (tb->objectName() == "text") {
-        emit sigSelShape(XC::DrawShape::Text, isChecked);
-    } else if (tb->objectName() == "serialnumber") {
-        emit sigSelShape(XC::DrawShape::SerialNumber, isChecked);
-    } else if (tb->objectName() == "revocation") {
-        emit sigRevocation();
-    } else if (tb->objectName() == "renewal") {
-        emit sigRenewal();
-    } else if (tb->objectName() == "save") {
-        emit sigSave();
-    } else if (tb->objectName() == "cancel") {
-        emit sigCancel();
-    } else if (tb->objectName() == "finish") {
-        emit sigFinish();
-    } else{
-    }
+void SelectBar::onToolBtn()
+{
+//    QToolButton* tb = nullptr;
+//    QObject* obj = sender();
+//    if (obj)
+//        tb = qobject_cast<QToolButton *>(obj);
+//    else
+//        return;
+
+//    // 仅单选
+//    bool bDrawing = false;  // true 此 btn 被按下，处于绘画状态
+//    QList<QToolButton *> listBtn = findChildren<QToolButton *>();
+//    for (QToolButton* it : listBtn) {
+//        QString path = ":/resources/tool/" + it->objectName() + ".svg";
+//        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
+
+//        if (it == tb) {
+//            if (it->isCheckable()) {
+//                if (it->isChecked()) {
+//                    bDrawing = true;
+//                    it->setIcon(XHelp::changeSVGColor(path, QColor("#1F7AFF"), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+//                } else {
+//                    it->setIcon(QIcon(path));
+//                }
+//            }
+//        } else {
+//            if (it->isCheckable()) {
+//                it->setChecked(false);
+//                it->setIcon(QIcon(path));  // 频繁切换 icon 应该不会有泄露，后面确认下。
+//            }
+                
+//            continue;
+//        }
+
+//    }
+
+//    if (bDrawing)
+//        emit sigDrawStart();
+//    else
+//        emit sigDrawEnd();
+
+//    // rectangle
+//    // ellipse
+//    // line
+//    // arrow
+//    // pen
+//    // mosaic  、 smooth
+//    // text
+//    // serialnumber
+//    // gif 暂不添加
+//    // revocation
+//    // renewal
+//    // save
+//    // cancel
+//    // finish
+//    // 发射信号
+//    bool isChecked = tb->isChecked();
+//    if (tb->objectName() == "rectangle") {
+//        emit sigSelShape(XC::DrawShape::Rectangles, isChecked);
+//    } else if (tb->objectName() == "ellipse") {
+//        emit sigSelShape(XC::DrawShape::Ellipses, isChecked);
+//    } else if (tb->objectName() == "line") {
+//        emit sigSelShape(XC::DrawShape::Line, isChecked);
+//    } else if (tb->objectName() == "arrow") {
+//        emit sigSelShape(XC::DrawShape::Arrows, isChecked);
+//    } else if (tb->objectName() == "pen") {
+//        emit sigSelShape(XC::DrawShape::Pen, isChecked);
+//    } else if (tb->objectName() == "mosaic") {
+//        emit sigSelShape(XC::DrawShape::Mosaics, isChecked);
+//    } else if (tb->objectName() == "text") {
+//        emit sigSelShape(XC::DrawShape::Text, isChecked);
+//    } else if (tb->objectName() == "serialnumber") {
+//        emit sigSelShape(XC::DrawShape::SerialNumber, isChecked);
+//    } else if (tb->objectName() == "revocation") {
+//        emit sigRevocation();
+//    } else if (tb->objectName() == "renewal") {
+//        emit sigRenewal();
+//    } else if (tb->objectName() == "save") {
+//        emit sigSave();
+//    } else if (tb->objectName() == "cancel") {
+//        emit sigCancel();
+//    } else if (tb->objectName() == "finish") {
+//        emit sigFinish();
+//    } else{
+//    }
 }

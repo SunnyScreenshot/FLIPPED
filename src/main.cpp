@@ -25,6 +25,7 @@
 #include "tool/base/frametoolbar.h"
 #include "tool/base/widthparabar.h"
 #include "tool/parameterbar.h"
+#include "tool/selectbar.h"
 #include <iostream>
 
 #include "core/xlog/xlog.h"
@@ -78,9 +79,16 @@ int main(int argc, char *argv[])
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
-    Tray::instance();
+//    Tray::instance();
 
-    ParameterBar* t = new ParameterBar();
-    t->show();
+    SelectBar* t1 = new SelectBar();
+    t1->move(1500, 1000);
+    t1->show();
+
+    ParameterBar* t2 = new ParameterBar();
+    t2->move(1500, 1300);
+    t2->show();
+
+
     return QApplication::exec();
 }

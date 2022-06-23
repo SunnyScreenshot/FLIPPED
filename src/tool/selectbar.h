@@ -34,13 +34,20 @@ QT_END_NAMESPACE
 // save
 // cancel
 // finish
-class SelectBar : public FrameToolBar
+class SelectBar : public XFrameWidget
 {
     Q_OBJECT
 public:
-    SelectBar(Qt::Orientations orien, QWidget *parent = nullptr);
+    SelectBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~SelectBar();
-    void init();
+
+private:
+    void initUI();
+    void addWidget(QWidget *w);
+    void addSpacer();
+
+public slots:
+    void onToolBtn();
 
 signals:
     void sigDrawStart();       // 处于绘画状态
@@ -52,10 +59,11 @@ signals:
     void sigCancel();
     void sigFinish();
 
-public slots:
-    void onToolBtn();
-
 private:
+    int m_scal;
+    Qt::Orientations m_orien;
+    QBoxLayout* m_layout;
+
     QStringList m_tbName;
     QStringList m_tbOnlyClickName;
     QVector<QToolButton *> m_vItem;
