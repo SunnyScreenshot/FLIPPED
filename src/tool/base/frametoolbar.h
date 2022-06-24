@@ -38,7 +38,7 @@ private:
 //    virtual void paintEvent(QPaintEvent *event) override;
 
 private:
-    double m_scal;
+    int m_scal;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 };

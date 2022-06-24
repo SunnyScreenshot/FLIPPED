@@ -59,17 +59,20 @@ void ParameterBar::initUI()
     else
         m_layout = new QVBoxLayout(this);
 
-    if (m_colorBar)
+    if (m_colorBar) {}
         m_colorBar->setVisible(true);
 
     const int bbMarginHor = BAR_MARGIN_HOR;
     int bbMarginVer = BAR_MARGIN_VER;
-    if (m_colorBar->isVisible())
+    if (m_colorBar->isVisible()) {
         bbMarginVer = BAR_MARGIN_VER_HAS_COLOR_PARA;
-
+        m_layout->setContentsMargins(bbMarginHor, 0, 0, 0);
+    } else {
+        m_layout->setContentsMargins(bbMarginHor, bbMarginVer, bbMarginHor, bbMarginVer);
+    }
+    
     setContentsMargins(0, 0, 0, 0);
-    m_layout->setContentsMargins(bbMarginHor, bbMarginVer, bbMarginHor, bbMarginVer);
-    m_layout->setSpacing(BB_PARA_SPACING);
+    m_layout->setSpacing(BAR_MARGIN_HOR);  // TODO 最后一个大概是两个这个间隔（间隔 + 取色盘自带的）
     m_layout->addWidget(m_widthBar);
     addSpacer();
     m_layout->addWidget(m_colorBar);

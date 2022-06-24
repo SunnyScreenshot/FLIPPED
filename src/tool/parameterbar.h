@@ -33,7 +33,7 @@ private:
     void addSpacer();
 
 private:
-    double m_scal;
+    int m_scal;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 

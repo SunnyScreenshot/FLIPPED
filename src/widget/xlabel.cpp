@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QPalette>
 #include <QtGlobal>
-
+#include <QMouseEvent>
 
 XLabel::XLabel(QWidget *parent, Qt::WindowFlags f)
     : QLabel(parent, f)
@@ -62,7 +62,8 @@ void XLabel::setConicalGradientColor(QPainter& pa)
     pa.save();
     pa.setPen(Qt::NoPen);
     pa.setBrush(conicalGradient);
-    pa.drawEllipse(contentsRect().adjusted(1, 1, -1, -1));
+    const QRect& rt = contentsRect().adjusted(1, 1, -1, -1);
+    pa.drawEllipse(rt.center(), rt.width() / 2, rt.height() / 2);
     pa.restore();
 }
 
@@ -74,7 +75,7 @@ void XLabel::setEnablemGradient(bool enablem)
 void XLabel::init()
 {
     // 此两行也可以注释掉，亲测不影响，可能是由于后面有一个 ColorParaBar 作为父类
-    setWindowFlags(Qt::FramelessWindowHint);      // 去掉标题栏
+    //setWindowFlags(Qt::FramelessWindowHint);      // 去掉标题栏
     setAttribute(Qt::WA_TranslucentBackground);   // 设置透明，自绘画为圆角矩形
 //    setAutoFillBackground(false);
 
@@ -116,7 +117,16 @@ void XLabel::paintEvent(QPaintEvent *event)
         QColor colPen("#000000");
         colPen.setAlphaF(0.08);
         pa.setBrush(Qt::NoBrush);
-//        pa.drawEllipse(contentsRect());
         pa.drawEllipse(contentsRect().center(), r, r);
     }
 }
+
+//void XLabel::mousePressEvent(QMouseEvent* ev)
+//{
+//    ev->ignore();  //验证事件事件被忽略后会被传递给父对象
+//}
+//
+//void XLabel::mouseReleaseEvent(QMouseEvent* ev)
+//{
+//    ev->ignore();
+//}

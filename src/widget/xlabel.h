@@ -8,6 +8,7 @@ class QString;
 class QColor;
 class QWidget;
 class QPainter;
+class QMouseEvent;
 class XLabel : public QLabel
 {
     Q_OBJECT
@@ -30,7 +31,9 @@ private:
     void setConicalGradientColor(QPainter &pa);
 
 protected:
-    virtual void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
+    //void mousePressEvent(QMouseEvent* ev) override;
+    //void mouseReleaseEvent(QMouseEvent* ev) override;
 
 private:
     QColor m_inEllipse;

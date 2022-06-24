@@ -25,6 +25,7 @@
 
 //test
 #include <QMessageBox>
+#include <QDebug>
 
 ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
@@ -34,6 +35,7 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     , m_curLab(nullptr)
     , m_curColor()
 {
+    setWindowFlags(Qt::FramelessWindowHint | windowFlags());
     m_labMap = { {"lab0_Red", "#DB000F"}
                , {"lab1_Yellow", "#FFCF53"}
                , {"lab2_Green", "#12F63B"}
@@ -76,7 +78,7 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
         }
     }
 
-    m_layout->setMargin(0);
+    m_layout->setContentsMargins(COLOR_PARA_MARGIN_HOR, COLOR_PARA_MARGIN_VER, COLOR_PARA_MARGIN_HOR, COLOR_PARA_MARGIN_VER);
     m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
     m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
     setLayout(m_layout);
@@ -99,6 +101,8 @@ void ColorParaBar::init()
 void ColorParaBar::onPickColor(XLabel *lab, QColor col)
 {
     Q_UNUSED(col);
+    auto name = col.name();
+
     m_curLab = lab;
     m_curColor = col;   // TODO 2022.06.24: 后面可以用属性替换掉
 
@@ -117,13 +121,16 @@ bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
         if (lab->objectName().compare("lab7_Pick") == 0) {
             QColor color = QColorDialog::getColor(lab->palette().color(QPalette::Background), this, tr("选择文本颜色"));
             emit sigPickColor(lab, color);
+
+            //event->ignore();
 //            QMessageBox::about(nullptr, lab->objectName(), color.name());
         } else {
             const auto& it = m_labMap.find(lab->objectName());
             emit sigPickColor(lab, it.value());
+            //event->ignore();
 //            QMessageBox::about(nullptr, lab->objectName(), it.value());
         }
-        return true;
+        return false;
 
     } else {
         return QWidget::eventFilter(watched, event);
@@ -134,22 +141,28 @@ bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
 void ColorParaBar::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
-//    Q_UNUSED(event)
 
-    if (!m_curLab)
+    auto pos1 = cursor().pos();
+    auto ttt = childAt(mapFromGlobal(pos1));
+    XLabel* lab = static_cast<XLabel*>(ttt);
+    //for (const auto& it : findChildren<XLabel*>()) {
+    //    qDebug() << it << "  " << it->objectName() << it->isVisible() << "  " << it->rect();
+    //}
+
+    if (!m_curLab || !lab || m_curLab->objectName().compare("lab7_Pick") == 0)
         return;
 
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QPen pen(m_curColor);
-    pen.setWidth(5);  // 设计稿为 1， 最后看效果
+
+    pen.setWidth(COLOR_PARA_SELECTED_WIDTH);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
-    int margin = 4;
-    QRect rt = m_curLab->rect().adjusted(-margin, -margin, margin, margin);
-    auto t = mapToParent(rt.topLeft());
-//    pa.drawEllipse(QRect(t, rt.size()));  // 替换正确那就好了， 使用 VS 进行调试
-
-    pa.drawEllipse(QRect(QPoint(24, 24), rt.size()));
+    int margin = COLOR_PARA_SELECTED_MARGIN;
+    auto topLeft = lab->mapToGlobal(QPoint(0, 0)); // 子控件的窗口的（左上角的）绝对坐标; QPoint(0, 0) 为子控件的左上角坐标，子窗口的总是(0, 0)
+    topLeft = mapFromGlobal(topLeft);              // 切换为相对父窗口的绝对坐标
+    const QRect rt = QRect(topLeft, lab->size()).adjusted(-margin, -margin, margin, margin);
+    pa.drawEllipse(rt.center(), rt.width() / 2, rt.height() / 2);
 }
