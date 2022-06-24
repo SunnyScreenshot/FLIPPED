@@ -49,39 +49,39 @@ set(SRCS_CORE
     "core/xlog.h"
     )
 
-# wininfo
-set(SRCS_WININFO
-    "wininfo/xtype.h"
-    "wininfo/xtype.cpp"
-    "wininfo/iwininfo.h"
-    "wininfo/iwininfo.cpp"
-    "wininfo/wininfo.h"
-    "wininfo/wininfo.cpp"
+# platform
+set(SRCS_PLATFORM
+    "platform/xtype.h"
+    "platform/xtype.cpp"
+    "platform/iwininfo.h"
+    "platform/iwininfo.cpp"
+    "platform/wininfo.h"
+    "platform/wininfo.cpp"
 
     # 特定平台实现的文件列举在此，会自动剔除和分类归组。分类标准 *_win.* *_x11.*
-    "wininfo/wininfo_win.h"
-    "wininfo/wininfo_win.cpp"
-    "wininfo/wininfo_x11.h"
-    "wininfo/wininfo_x11.cpp"
+    "platform/wininfo_win.h"
+    "platform/wininfo_win.cpp"
+    "platform/wininfo_x11.h"
+    "platform/wininfo_x11.cpp"
     )
 
 
 # 正则 http://blog.icodeten.com/cmake/2015/01/22/cmake-experience/
 # 删除特定平台相关的 file
-foreach(_rm_file ${SRCS_WININFO})
+foreach(_rm_file ${SRCS_PLATFORM})
     string(REGEX MATCH ".*/*_win.h|.*/*_win.cpp|.*/*_x11.h|.*/*_x11.cpp" _need_remove_source ${_rm_file})
     if(_need_remove_source)
-        list(REMOVE_ITEM SRCS_WININFO ${_need_remove_source})
+        list(REMOVE_ITEM SRCS_PLATFORM ${_need_remove_source})
     endif(_need_remove_source)
 endforeach(_rm_file)
 
-#message("-------test-------")
-
-#foreach(_rm_file ${SRCS_WININFO})
+##----------- Test begin -----------
+#foreach(_rm_file ${SRCS_PLATFORM})
 #    message(${_rm_file})
 #endforeach(_rm_file)
+##----------- Test end -----------
 
-# widget
+# custom widget
 set(SRCS_WIDGET
     "widget/xhorizontalline.h"
     "widget/xhorizontalline.cpp"
@@ -202,7 +202,7 @@ if (APPLE)
 
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     ${SRCS_MAIN}
-    ${SRCS_WININFO}
+    ${SRCS_PLATFORM}
     ${SRCS_CORE}
     ${SRCS_WIDGET}
     ${SRCS_TOOL}
@@ -213,7 +213,7 @@ if (APPLE)
 else()
     add_executable(${PROJECT_NAME} WIN32
     ${SRCS_MAIN}
-    ${SRCS_WININFO}
+    ${SRCS_PLATFORM}
     ${SRCS_CORE}
     ${SRCS_WIDGET}
     ${SRCS_TOOL}

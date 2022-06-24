@@ -25,7 +25,7 @@
 
 
 #ifdef Q_OS_WIN
-    #include "../wininfo/wininfo_win.h"
+    #include "../platform/wininfo_win.h"
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
 #endif

@@ -24,7 +24,7 @@
 #include <QTextEdit>
 #include "../core/xlog.h"
 
-#include "../wininfo/wininfo.h"
+#include "../platform/wininfo.h"
 
 #define _MYDEBUG
 

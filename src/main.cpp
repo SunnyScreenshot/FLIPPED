@@ -32,10 +32,10 @@
 
 // test
 #ifdef Q_OS_WIN
-    //#include "./wininfo/wininfo_win.h"
+    //#include "./platform/wininfo_win.h"
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
-    #include "./wininfo/wininfo_x11.h"
+    #include "./platform/wininfo_x11.h"
 #endif
 
 int main(int argc, char *argv[])
