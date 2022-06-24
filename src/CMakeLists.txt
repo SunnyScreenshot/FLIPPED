@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.3)
 set(PROJECT_NAME PicShot)
-set(PROJECT_VERSION 0.1.4)
+set(PROJECT_VERSION 0.2)
 #set(PROJECT_VERSION_MAJOR 0)
 #set(PROJECT_VERSION_MINOR 1)
 
@@ -20,19 +20,19 @@ elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
-# msvc multicore compilation 
+# msvc multicore compilation
 if (WIN32)
     if(MSVC)
         add_definitions(-DUNICODE -D_UNICODE)   # 设置 DUNICODE 编码
-        
-		OPTION(USE_MP "use multiple" ON)
-		OPTION(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP 
-			"Set The Global Option COMPILE_FLAGS /MP to target." ON)
-		if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
-			set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-		endif()
-		set(VS_STARTUP_PROJECT ${PROJECT_NAME})
+
+                OPTION(USE_MP "use multiple" ON)
+                OPTION(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP
+                        "Set The Global Option COMPILE_FLAGS /MP to target." ON)
+                if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
+                        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
+                        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+                endif()
+                set(VS_STARTUP_PROJECT ${PROJECT_NAME})
     endif(MSVC)
 endif()
 
@@ -57,7 +57,29 @@ set(SRCS_WININFO
     "wininfo/iwininfo.cpp"
     "wininfo/wininfo.h"
     "wininfo/wininfo.cpp"
+
+    # 特定平台实现的文件列举在此，会自动剔除和分类归组。分类标准 *_win.* *_x11.*
+    "wininfo/wininfo_win.h"
+    "wininfo/wininfo_win.cpp"
+    "wininfo/wininfo_x11.h"
+    "wininfo/wininfo_x11.cpp"
     )
+
+
+# 正则 http://blog.icodeten.com/cmake/2015/01/22/cmake-experience/
+# 删除特定平台相关的 file
+foreach(_rm_file ${SRCS_WININFO})
+    string(REGEX MATCH ".*/*_win.h|.*/*_win.cpp|.*/*_x11.h|.*/*_x11.cpp" _need_remove_source ${_rm_file})
+    if(_need_remove_source)
+        list(REMOVE_ITEM SRCS_WININFO ${_need_remove_source})
+    endif(_need_remove_source)
+endforeach(_rm_file)
+
+#message("-------test-------")
+
+#foreach(_rm_file ${SRCS_WININFO})
+#    message(${_rm_file})
+#endforeach(_rm_file)
 
 # widget
 set(SRCS_WIDGET
@@ -177,7 +199,7 @@ if (APPLE)
     # set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
     # set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
     # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
-	
+
     add_executable(${PROJECT_NAME} MACOSX_BUNDLE
     ${SRCS_MAIN}
     ${SRCS_WININFO}
@@ -214,30 +236,51 @@ endif()
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog_header_only)
 
-if(APPLE)
-elseif(WIN32)
-    target_sources(${PROJECT_NAME} PRIVATE
-        wininfo/wininfo_win.h
-        wininfo/wininfo_win.cpp)
-else()
-    target_sources(${PROJECT_NAME} PRIVATE
-        wininfo/wininfo_x11.h
-        wininfo/wininfo_x11.cpp)
-endif()
+# 文件归类, ref:
+# https://stackoverflow.com/questions/33808087/cmake-how-to-create-visual-studio-filters
+# https://blog.csdn.net/gzj2013/article/details/102619480
+set(_src_root_path ${CMAKE_CURRENT_SOURCE_DIR}) # default root path curr path （CMakeList.txt）
 
+file(GLOB_RECURSE _source_list LIST_DIRECTORIES false
+    "${_src_root_path}/*.cpp"
+    "${_src_root_path}/*.h")
+
+#message( "_source_list----------"  ${_source_list})
+
+# 特定平台的文件，进行过滤分组和添加得到编译中
+foreach(_source IN ITEMS ${_source_list})
+    string(REGEX MATCH ".*/*_win.h|.*/*_win.cpp" _plat_win_source ${_source})  # 这个的匹配最后不能是 .c* 表示 .cpp
+    string(REGEX MATCH ".*/*_x11.h|.*/*_x11.cpp" _plat_x11_source ${_source})
+
+#   #----------- Test begin -----------
+#    message( "_source -->"  ${_source})
+#    message( "_plat_win_source -->"  ${_plat_win_source})
+#    message( "_plat_x11_source -->"  ${_plat_x11_source})
+#   #----------- Test end -----------
+
+    get_filename_component(_source_path "${_source}" PATH)
+    file(RELATIVE_PATH _source_path_rel "${_src_root_path}" "${_source_path}")
+    string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
+
+    if(_plat_win_source OR _plat_x11_source)
+        if(APPLE)
+        elseif(WIN32)
+            target_sources(${PROJECT_NAME} PRIVATE "${_plat_win_source}")
+            source_group("${_group_path}" FILES "${_plat_win_source}")
+        else()
+            target_sources(${PROJECT_NAME} PRIVATE "${_plat_x11_source}")
+            source_group("${_group_path}" FILES "${_plat_x11_source}")
+        endif()
+    else()
+        source_group("${_group_path}" FILES "${_source}")
+    endif(_plat_win_source OR _plat_x11_source)
+
+endforeach()
+
+
+# 定义一个变量
 target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="v${PROJECT_VERSION}")
 
-source_group("" FILES ${SRCS_MAIN} ${SRCS_RESOURCES})
-source_group("core" FILES ${SRCS_CORE})
-source_group("widget" FILES ${SRCS_WIDGET})
-source_group("tool" FILES ${SRCS_TOOL})
-source_group("screen" FILES ${SRCS_WINSCREEN})
-source_group("pluginsinterface" FILES ${SRCS_PLUGIN_INTERFACE})
-source_group("wininfo" FILES ${SRCS_WININFO}
-    wininfo/wininfo_x11.h
-    wininfo/wininfo_x11.cpp
-    wininfo/wininfo_win.h
-    wininfo/wininfo_win.cpp)
 
 #  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
 if(APPLE)
