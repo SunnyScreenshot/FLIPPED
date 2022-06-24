@@ -29,6 +29,7 @@
 #include <iostream>
 
 #include "core/xlog.h"
+#include "example/exwidget.h"
 
 // test
 #ifdef Q_OS_WIN
@@ -79,7 +80,7 @@ int main(int argc, char *argv[])
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
-//    Tray::instance();
+    Tray::instance();
 
 //    SelectBar* t1 = new SelectBar();
 //    t1->move(1500, 1000);
@@ -88,11 +89,16 @@ int main(int argc, char *argv[])
 //    ParameterBar* t2 = new ParameterBar();
 //    t2->move(1500, 1300);
 //    t2->show();
-
-    ColorParaBar* t3 = new ColorParaBar();
-//    t3->resize(400, 300);
-    t3->move(100, 1600);
-    t3->show();
+//
+//    ColorParaBar* t3 = new ColorParaBar();
+////    t3->resize(400, 300);
+//    t3->move(100, 100);
+//    t3->show();
+//
+//    ExWidget* t4 = new ExWidget();
+//    //    t3->resize(400, 300);
+//    t4->move(100, 200);
+//    t4->show();
 
 
     return QApplication::exec();

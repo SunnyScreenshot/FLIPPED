@@ -153,6 +153,12 @@ set(SRCS_WINSCREEN
     "screen/winsetting.cpp"
 )
 
+# 测试模块
+set(SRCS_EXAMPLE
+    "example/exwidget.h"
+    "example/exwidget.cpp")
+
+
 # 插件模块
 set(SRCS_PLUGIN_INTERFACE
     "pluginsinterface/iplugininterface.h"
@@ -207,6 +213,7 @@ if (APPLE)
     ${SRCS_WIDGET}
     ${SRCS_TOOL}
     ${SRCS_WINSCREEN}
+    ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
     )
@@ -218,6 +225,7 @@ else()
     ${SRCS_WIDGET}
     ${SRCS_TOOL}
     ${SRCS_WINSCREEN}
+    ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
     )
