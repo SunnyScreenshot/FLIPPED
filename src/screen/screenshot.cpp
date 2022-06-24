@@ -22,7 +22,7 @@
 #include <QFileDialog>
 #include <QImage>
 #include <QTextEdit>
-#include "../core/xlog/xlog.h"
+#include "../core/xlog.h"
 
 #include "../wininfo/wininfo.h"
 

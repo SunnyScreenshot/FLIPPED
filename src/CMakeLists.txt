@@ -46,7 +46,7 @@ set(SRCS_MAIN
 # core
 set(SRCS_CORE
     "core/isingleton.h"
-    "core/xlog/xlog.h"
+    "core/xlog.h"
     )
 
 # wininfo
@@ -247,6 +247,8 @@ file(GLOB_RECURSE _source_list LIST_DIRECTORIES false
 
 #message( "_source_list----------"  ${_source_list})
 
+source_group(TREE ${_src_root_path} FILES ${_source_list})  # [ source_group方法一， 会按照实际的目录结构进行组织， .h.cpp 放在一起]
+
 # 特定平台的文件，进行过滤分组和添加得到编译中
 foreach(_source IN ITEMS ${_source_list})
     string(REGEX MATCH ".*/*_win.h|.*/*_win.cpp" _plat_win_source ${_source})  # 这个的匹配最后不能是 .c* 表示 .cpp
@@ -272,7 +274,7 @@ foreach(_source IN ITEMS ${_source_list})
             source_group("${_group_path}" FILES "${_plat_x11_source}")
         endif()
     else()
-        source_group("${_group_path}" FILES "${_source}")
+#        source_group("${_group_path}" FILES "${_source}") # [source_group 方法二， 自行分组 .h 和最后的 .cpp 是分开放在两个大分组下]
     endif(_plat_win_source OR _plat_x11_source)
 
 endforeach()

@@ -9,7 +9,7 @@
  * Description: Linux 系统下智能窗口识别
  ******************************************************************/
 #include "wininfo_x11.h"
-#include "../core/xlog/xlog.h"
+#include "../core/xlog.h"
 
 #include <QString>
 #include <QLabel>

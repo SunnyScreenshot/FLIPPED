@@ -28,7 +28,7 @@
 #include "tool/selectbar.h"
 #include <iostream>
 
-#include "core/xlog/xlog.h"
+#include "core/xlog.h"
 
 // test
 #ifdef Q_OS_WIN

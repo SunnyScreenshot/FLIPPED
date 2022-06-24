@@ -11,7 +11,7 @@
 #include "xtextwidget.h"
 #include <QFontMetrics>
 #include <QDebug>
-#include "../core/xlog/xlog.h"
+#include "../core/xlog.h"
 
 XTextWidget::XTextWidget(QWidget *parent)
 	: QTextEdit(parent)

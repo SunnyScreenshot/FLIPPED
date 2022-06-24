@@ -12,7 +12,7 @@
 #include <QRect>
 #include <QPoint>
 #include "screenshot.h"
-#include "../core/xlog/xlog.h"
+#include "../core/xlog.h"
 
 //// 通过任意两点获取一个选中矩形
 //const QRect& RectCalcu::setSelRect()
