@@ -18,6 +18,7 @@
 
 QT_BEGIN_NAMESPACE
 class QBoxLayout;
+class XComboBox;
 QT_END_NAMESPACE
 
 class ParameterBar : public XFrameWidget
@@ -39,6 +40,7 @@ private:
 
     QPointer<WidthParaBar> m_widthBar;
     QPointer<ColorParaBar> m_colorBar;
+    QPointer<XComboBox>    m_serialBar;
 };
 
 #endif // PARAMETERBAR_H

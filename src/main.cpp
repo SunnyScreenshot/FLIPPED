@@ -90,10 +90,10 @@ int main(int argc, char *argv[])
     t2->move(200, 200);
     t2->show();
 
-    ColorParaBar* t3 = new ColorParaBar();
-//    t3->resize(400, 300);
-    t3->move(200, 300);
-    t3->show();
+//    ColorParaBar* t3 = new ColorParaBar();
+////    t3->resize(400, 300);
+//    t3->move(200, 300);
+//    t3->show();
 //
 //    ExWidget* t4 = new ExWidget();
 //    //    t3->resize(400, 300);

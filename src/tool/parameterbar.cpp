@@ -12,11 +12,13 @@
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"
 #include "../widget/xverticalline.h"
+#include "../widget/xcombobox.h"
 #include "../screen/drawhelper.h"
 #include <QColor>
 #include <QPainter>
 #include <QBoxLayout>
 #include <QWidget>
+#include <QComboBox>
 
 ParameterBar::ParameterBar(Qt::Orientations orien, QWidget *parent)
     : XFrameWidget(parent)
@@ -25,6 +27,7 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget *parent)
     , m_layout(nullptr)
     , m_widthBar(new WidthParaBar(orien))
     , m_colorBar(new ColorParaBar(orien))
+    , m_serialBar(new XComboBox(this))
 
 {
     initUI();
@@ -59,7 +62,7 @@ void ParameterBar::initUI()
     else
         m_layout = new QVBoxLayout(this);
 
-    if (m_colorBar) {}
+    if (m_colorBar)
         m_colorBar->setVisible(true);
 
     const int bbMarginHor = BAR_MARGIN_HOR;
@@ -73,6 +76,11 @@ void ParameterBar::initUI()
     
     setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(BAR_MARGIN_HOR);  // TODO 最后一个大概是两个这个间隔（间隔 + 取色盘自带的）
+    
+    m_serialBar->setFixedSize(COMBOBOX_WIDTH * m_scal, COMBOBOX_HEIGHT * m_scal);
+    m_layout->addWidget(m_serialBar);
+
+    addSpacer();
     m_layout->addWidget(m_widthBar);
     addSpacer();
     m_layout->addWidget(m_colorBar);

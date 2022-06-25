@@ -97,6 +97,8 @@ set(SRCS_WIDGET
     "widget/xlabel.cpp"
     "widget/xframewidget.h"
     "widget/xframewidget.cpp"
+    "widget/xcombobox.h"
+    "widget/xcombobox.cpp"
     )
 
 # tool

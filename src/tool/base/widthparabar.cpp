@@ -65,7 +65,6 @@ void WidthParaBar::initUI()
                               , {"lab1", 8}
                               , {"lab2", 12} };
 
-
     for (auto it = labMap.begin(); it != labMap.end(); it++) {
         XLabel* lab = new XLabel(this);
         lab->setObjectName(it.key());

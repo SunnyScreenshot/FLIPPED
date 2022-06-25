@@ -94,7 +94,6 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
 
 ColorParaBar::~ColorParaBar()
 {
-
 }
 
 void ColorParaBar::init()

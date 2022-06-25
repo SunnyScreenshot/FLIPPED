@@ -48,7 +48,11 @@
 // 底部参数 Button Bar Para
 #define BB_PARA_SPACING 10 * 2              // 圆形取色盘宽度
                                             
-                                            
+// 几个 combobox 的详细（序号、大小）
+#define COMBOBOX_WIDTH 48 * 2            // combobox 宽度
+#define COMBOBOX_HEIGHT 20 * 2            // combobox 宽度
+
+
 // 选择线宽度 3 个圆                         
 #define WIDTH_LABEL_WIDTH 24 * 2            // 色盘宽度
 #define WIDTH_PARA_MARGIN 0 * 2             // 等大的小圆形按钮的边框距离
