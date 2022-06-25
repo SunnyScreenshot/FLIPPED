@@ -10,6 +10,7 @@
  ******************************************************************/
 #include "colorparabar.h"
 #include "../../xglobal.h"
+#include "../../core/xlog.h"
 #include "../../widget/xlabel.h"
 #include "../../screen/drawhelper.h"
 #include <QLabel>
@@ -32,8 +33,6 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     , m_scal(XHelp::getScale())
     , m_orien(orien)
     , m_layout(new QGridLayout())
-    , m_curLab(nullptr)
-    , m_curColor()
 {
     setWindowFlags(Qt::FramelessWindowHint | windowFlags());
     m_labMap = { {"lab0_Red", "#DB000F"}
@@ -60,11 +59,19 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
         for (int j = 0; j < colMax; ++j) {
 
             XLabel* lab = new XLabel(this);
+
+            if (i == 0 && j== 0) { // 初始化为默认的第一个 XLabel 颜色 
+                if (!setProperty("curPick", QVariant::fromValue((void *)lab)))
+                    XLOG_INFO("Property [curPick] initialization faile.");
+
+                if (!setProperty("curColor", QColor(it.value())))
+                    XLOG_INFO("Property [curColor] initialization faile.");
+            }
+
             lab->setObjectName(it.key());
             int width(COLOR_LABEL_WIDTH * m_scal);
             lab->setFixedSize(width, width);
             lab->setInEllipseR(width / 2.0);
-
             lab->installEventFilter(this);
 
             if ((it + 1) == m_labMap.end()) {  // 最后一个渐变色
@@ -78,12 +85,11 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
         }
     }
 
+    //this->installEventFilter(this);
     m_layout->setContentsMargins(COLOR_PARA_MARGIN_HOR, COLOR_PARA_MARGIN_VER, COLOR_PARA_MARGIN_HOR, COLOR_PARA_MARGIN_VER);
     m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
     m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
     setLayout(m_layout);
-
-    connect(this, &ColorParaBar::sigPickColor, this, &ColorParaBar::onPickColor);
 }
 
 ColorParaBar::~ColorParaBar()
@@ -98,64 +104,61 @@ void ColorParaBar::init()
     m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
 }
 
-void ColorParaBar::onPickColor(XLabel *lab, QColor col)
-{
-    Q_UNUSED(col);
-    auto name = col.name();
-
-    m_curLab = lab;
-    m_curColor = col;   // TODO 2022.06.24: 后面可以用属性替换掉
-
-    update();
-}
-
 // #see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
+// return 为 false，表示其余事件交还给目标对象处理； true 表示该事件不再进一步处理
 bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
 {
     XLabel* lab = qobject_cast<XLabel *>(watched);
-
     if (!lab)
-        return QWidget::eventFilter(watched, event);
-
-    if (event->type() == QEvent::MouseButtonRelease) {
-        if (lab->objectName().compare("lab7_Pick") == 0) {
-            QColor color = QColorDialog::getColor(lab->palette().color(QPalette::Background), this, tr("选择文本颜色"));
-            emit sigPickColor(lab, color);
-
-            //event->ignore();
-//            QMessageBox::about(nullptr, lab->objectName(), color.name());
-        } else {
-            const auto& it = m_labMap.find(lab->objectName());
-            emit sigPickColor(lab, it.value());
-            //event->ignore();
-//            QMessageBox::about(nullptr, lab->objectName(), it.value());
-        }
         return false;
 
-    } else {
-        return QWidget::eventFilter(watched, event);
-    }
+    if (event->type() == QEvent::MouseButtonRelease) {
+        QColor color = property("curColor").value<QColor>();
+        if (lab->objectName().compare("lab7_Pick") == 0) {
+            color = QColorDialog::getColor(lab->palette().color(QPalette::Background), this, tr("选择文本颜色"));
+        } else {
+            const auto& it = m_labMap.find(lab->objectName());
+            color = it.value();
+        }
 
+        //QMessageBox::about(nullptr, lab->objectName(), it.value());
+        //for (const auto& it : findChildren<XLabel*>()) {
+        //    qDebug() << it << " --> " << it->objectName() << it->isVisible() << "  " << it->rect();
+        //}
+
+        if (!setProperty("curPick", QVariant::fromValue(static_cast<void*>(lab))))
+            XLOG_INFO("Property [curPick] pick-up new ptr faile, ptr:{}.", static_cast<void*>(lab));
+
+        if (color.isValid()) {
+            if (!setProperty("curColor", color))
+                XLOG_INFO("Property [curColor] pick-uo new color faile, color:{}.", color.name().toUtf8().data());
+        }
+        
+        update();
+        return true;
+
+    } else if (event->type() == QEvent::MouseButtonPress) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void ColorParaBar::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
-
-    auto pos1 = cursor().pos();
-    auto ttt = childAt(mapFromGlobal(pos1));
-    XLabel* lab = static_cast<XLabel*>(ttt);
+    XLabel* lab = static_cast<XLabel*>(property("curPick").value<void*>());
+    //XLabel* lab = static_cast<XLabel *>(childAt(mapFromGlobal(cursor().pos()))); // 通过此刻的光标的位置，选中对应 XLabel*
     //for (const auto& it : findChildren<XLabel*>()) {
     //    qDebug() << it << "  " << it->objectName() << it->isVisible() << "  " << it->rect();
     //}
 
-    if (!m_curLab || !lab || m_curLab->objectName().compare("lab7_Pick") == 0)
+    if (!lab)
         return;
 
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    QPen pen(m_curColor);
-
+    QPen pen(property("curColor").value<QColor>());
     pen.setWidth(COLOR_PARA_SELECTED_WIDTH);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);

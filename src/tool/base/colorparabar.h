@@ -28,11 +28,12 @@ public:
     virtual ~ColorParaBar();
     void init();
 
-signals:
-    void sigPickColor(XLabel*, QColor);
-
-public slots:
-    void onPickColor(XLabel* lab, QColor col);
+//signals:
+//    void sigPickColor(XLabel*, QColor);
+//
+//public slots:
+//    void onPickColor(XLabel* lab, QColor col);
+    
 
 public:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
@@ -45,8 +46,6 @@ private:
     Qt::Orientations m_orien;
     QGridLayout* m_layout;
     QMap<QString, QString> m_labMap;
-    XLabel* m_curLab;
-    QColor m_curColor;
 };
 
 #endif // COLORPARABAR_H
