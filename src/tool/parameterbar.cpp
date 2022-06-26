@@ -14,6 +14,7 @@
 #include "../widget/xverticalline.h"
 #include "../widget/xcombobox.h"
 #include "../screen/drawhelper.h"
+#include "../core/xlog.h"
 #include <QColor>
 #include <QPainter>
 #include <QBoxLayout>
@@ -22,7 +23,9 @@
 #include <QToolButton>
 #include <QButtonGroup>
 #include <QAbstractButton>
-#include "../core/xlog.h"
+
+//test
+#include <QDebug>
 
 ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     : XFrameWidget(parent)
@@ -33,6 +36,9 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_colorBar(new ColorParaBar(orien))
     , m_serialBar(new XComboBox(this))
     , m_rectBar(nullptr)
+    , m_ellipseBar(nullptr)
+    , m_mosaicBar(nullptr)
+    , m_arrowBar(nullptr)
 {
     initUI();
 }
@@ -54,12 +60,11 @@ void ParameterBar::addSpacer()
         m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
 }
 
-void ParameterBar::creatorParaBar(QStringList items)
+void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items)
 {
-    if (!m_rectBar)
-        m_rectBar = new ManageBar(Qt::Horizontal, this);
+    if (!manageBar)
+        manageBar = new ManageBar(Qt::Horizontal, this);
 
-    QString path(":/resources/tool_para/rectangles/");
     QMap<QString, QString> map;
     for (int i = 0; i < items.size(); ++i) {
         map.insert(QString("bt%1").arg(i), path + items[i] + ".svg");
@@ -87,7 +92,7 @@ void ParameterBar::creatorParaBar(QStringList items)
             XLOG_INFO("ToolButton Property [path] initialization faile.");
         
         group->addButton(tb);
-        m_rectBar->addWidget(tb);
+        manageBar->addWidget(tb);
         it++;
     }
 
@@ -97,17 +102,41 @@ void ParameterBar::creatorParaBar(QStringList items)
 
 void ParameterBar::initRectBar()
 {
+    QString path(":/resources/tool_para/rectangles/");
     QStringList list = { "rectangle",  "rectangle_fill" };
-    creatorParaBar(list);
+
+    creatorParaBar(m_rectBar, path, list);
+}
+
+void ParameterBar::initEllipseBar()
+{
+    QString path(":/resources/tool_para/ellipses/");
+    QStringList list = { "ellipse",  "ellipse_fill" };
+    creatorParaBar(m_ellipseBar, path, list);
+}
+
+void ParameterBar::initMosaicBar()
+{
+    QString path(":/resources/tool_para/mosaics/");
+    QStringList list = { "pixelated",  "smooth" };
+    creatorParaBar(m_mosaicBar, path, list);
+}
+
+void ParameterBar::initArrowBar()
+{
+    QString path(":/resources/tool_para/arrows/");
+    QStringList list = { "line",  "arrow" };
+    creatorParaBar(m_arrowBar, path, list);
 }
 
 void ParameterBar::onTBReleased(QAbstractButton* btn)
 {
-    if (!m_rectBar || !btn)
+    const auto& parent = btn->parentWidget();
+
+    if (!btn || !parent)
         return;
 
-    for (auto& it : m_rectBar->findChildren<QToolButton *>()) {
-
+    for (auto& it : parent->findChildren<QToolButton *>()) {
         QString path = it->property("path").value<QString>();
         it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
 
@@ -127,6 +156,9 @@ void ParameterBar::initUI()
         m_layout = new QVBoxLayout(this);
 
     initRectBar();
+    initEllipseBar();
+    initMosaicBar();
+    initArrowBar();
 
     if (m_colorBar)
         m_colorBar->setVisible(true);
@@ -139,11 +171,15 @@ void ParameterBar::initUI()
     } else {
         m_layout->setContentsMargins(bbMarginHor, bbMarginVer, bbMarginHor, bbMarginVer);
     }
-    
+
     setContentsMargins(0, 0, 0, 0);
-
-
     m_layout->addWidget(m_rectBar);
+    addSpacer();
+    m_layout->addWidget(m_ellipseBar);
+    addSpacer();
+    m_layout->addWidget(m_mosaicBar);
+    addSpacer();
+    m_layout->addWidget(m_arrowBar);
     addSpacer();
 
     m_layout->setSpacing(BAR_MARGIN_HOR);  // TODO 最后一个大概是两个这个间隔（间隔 + 取色盘自带的）

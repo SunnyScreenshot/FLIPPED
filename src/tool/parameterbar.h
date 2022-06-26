@@ -35,8 +35,11 @@ private:
     void addWidget(QWidget *w);
     void addSpacer();
 
-    void creatorParaBar(QStringList items);                    // 比如矩形等
+    void creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items);                    // 比如矩形等
     void initRectBar();
+    void initEllipseBar();
+    void initMosaicBar();
+    void initArrowBar();
 
 public slots:
     void onTBReleased(QAbstractButton* btn);
@@ -51,9 +54,9 @@ private:
     QPointer<XComboBox>    m_serialBar;        // 序号
                                                
     QPointer<ManageBar>    m_rectBar;          // 参数-矩形
-    //QPointer<ManageBar>    m_ellipseBar;       // 参数-圆形
-    //QPointer<ManageBar>    m_mosaicBar;        // 参数-马赛克
-    //QPointer<ManageBar>    m_arrowsBar;        // 参数-箭头
+    QPointer<ManageBar>    m_ellipseBar;       // 参数-圆形
+    QPointer<ManageBar>    m_mosaicBar;        // 参数-马赛克
+    QPointer<ManageBar>    m_arrowBar;         // 参数-箭头
 };
 
 #endif // PARAMETERBAR_H
