@@ -1,4 +1,4 @@
-#ifndef WININFO_H
+﻿#ifndef WININFO_H
 #define WININFO_H
 
 #include "../core/isingleton.h"

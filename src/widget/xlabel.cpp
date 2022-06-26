@@ -1,4 +1,4 @@
-#include "xlabel.h"
+﻿#include "xlabel.h"
 #include "../xglobal.h"
 #include <QPainter>
 #include <QPainter>

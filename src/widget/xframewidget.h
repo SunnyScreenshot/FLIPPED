@@ -1,4 +1,4 @@
-/*******************************************************************
+﻿/*******************************************************************
  * Copyright (c) 2021-2022 偕臧  All rights reserved.
  *
  * Author: XMuli <xmulitech@gmail.com>
@@ -21,7 +21,7 @@ public:
     ~XFrameWidget();
 
 protected:
-    virtual void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 };
 
 #endif // XFRAMEWIDGET_H

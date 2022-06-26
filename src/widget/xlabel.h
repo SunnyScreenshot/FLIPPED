@@ -1,4 +1,4 @@
-#ifndef XLABEL_H
+﻿#ifndef XLABEL_H
 #define XLABEL_H
 
 #include <QLabel>

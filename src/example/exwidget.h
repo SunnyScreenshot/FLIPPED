@@ -1,12 +1,12 @@
-/*******************************************************************
- * Copyright (c) 2021-2022 Ÿ…Í∞  All rights reserved.
+Ôªø/*******************************************************************
+ * Copyright (c) 2021-2022 ÂÅïËáß  All rights reserved.
  *
  * Author: XMuli <xmulitech@gmail.com>
  * GitHub: https://github.com/XMuli
  * Blog:   https://xmuli.tech
  *
  * Date:   2022.06.25
- * Description: ≤‚ ‘
+ * Description: ÊµãËØï
  ******************************************************************/
 #ifndef EXWIDGET_H
 #define EXWIDGET_H

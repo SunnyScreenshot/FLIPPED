@@ -1,12 +1,12 @@
-/*******************************************************************
- * Copyright (c) 2021-2022 ÙÉê°  All rights reserved.
+ï»¿/*******************************************************************
+ * Copyright (c) 2021-2022 å•è‡§  All rights reserved.
  *
  * Author: XMuli <xmulitech@gmail.com>
  * GitHub: https://github.com/XMuli
  * Blog:   https://xmuli.tech
  *
  * Date:   2022.06.25
- * Description: ²âÊÔ
+ * Description: æµ‹è¯•
  ******************************************************************/
 #include "exwidget.h"
 #include "../xglobal.h"
@@ -39,7 +39,7 @@ ExWidget::ExWidget(Qt::Orientations orien, QWidget* parent)
                , {"lab4_Pink", "#FB4288"}
                , {"lab5_Black", "#323232"}
                , {"lab6_White", "#FBFBFB"}
-               , {"lab7_Pick", ""} };  // ×îºóÒ»¸ö²ÊÉ«
+               , {"lab7_Pick", ""} };  // æœ€åä¸€ä¸ªå½©è‰²
 
     int rowMax = 0;
     int colMax = 0;
@@ -64,7 +64,7 @@ ExWidget::ExWidget(Qt::Orientations orien, QWidget* parent)
 
             //lab->installEventFilter(this);
 
-            //if ((it + 1) == m_labMap.end()) {  // ×îºóÒ»¸ö½¥±äÉ«
+            //if ((it + 1) == m_labMap.end()) {  // æœ€åä¸€ä¸ªæ¸å˜è‰²
             //    lab->setEnablemGradient(true);
             //}
             //else {
@@ -78,7 +78,7 @@ ExWidget::ExWidget(Qt::Orientations orien, QWidget* parent)
 
     m_layout->setMargin(0);
     m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
-    m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // ¼ì²é±ÈÀıÒ»ÏÂ
+    m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // æ£€æŸ¥æ¯”ä¾‹ä¸€ä¸‹
     setLayout(m_layout);
 
     connect(this, &ExWidget::sigPickColor, this, &ExWidget::onPickColor);
@@ -93,14 +93,14 @@ void ExWidget::init()
 {
     m_layout->setMargin(0);
     m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
-    m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // ¼ì²é±ÈÀıÒ»ÏÂ
+    m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // æ£€æŸ¥æ¯”ä¾‹ä¸€ä¸‹
 }
 
 void ExWidget::onPickColor(XLabel* lab, QColor col)
 {
     Q_UNUSED(col);
     m_curLab = lab;
-    m_curColor = col;   // TODO 2022.06.24: ºóÃæ¿ÉÒÔÓÃÊôĞÔÌæ»»µô
+    m_curColor = col;   // TODO 2022.06.24: åé¢å¯ä»¥ç”¨å±æ€§æ›¿æ¢æ‰
 
     update();
 }
@@ -131,7 +131,7 @@ void ExWidget::onBtnTest()
 
 //
 //
-//// #see: ÓÃ·¨ https://blog.csdn.net/xiezhongyuan07/article/details/79992099
+//// #see: ç”¨æ³• https://blog.csdn.net/xiezhongyuan07/article/details/79992099
 //bool eventFilter(QObject* watched, QEvent* event)
 //{
 //    XLabel* lab = qobject_cast<XLabel*>(watched);
@@ -141,7 +141,7 @@ void ExWidget::onBtnTest()
 //
 //    if (event->type() == QEvent::MouseButtonRelease) {
 //        if (lab->objectName().compare("lab7_Pick") == 0) {
-//            QColor color = QColorDialog::getColor(lab->palette().color(QPalette::Background), this, tr("Ñ¡ÔñÎÄ±¾ÑÕÉ«"));
+//            QColor color = QColorDialog::getColor(lab->palette().color(QPalette::Background), this, tr("é€‰æ‹©æ–‡æœ¬é¢œè‰²"));
 //            emit sigPickColor(lab, color);
 //
 //            event->ignore();
@@ -189,7 +189,7 @@ void ExWidget::paintEvent(QPaintEvent* event)
     //if (lab)
     //    p3 = lab->rect();
 
-    //pen.setWidth(5);  // Éè¼Æ¸åÎª 1£¬ ×îºó¿´Ğ§¹û
+    //pen.setWidth(5);  // è®¾è®¡ç¨¿ä¸º 1ï¼Œ æœ€åçœ‹æ•ˆæœ
     //pa.setPen(pen);
     //pa.setBrush(Qt::NoBrush);
 
@@ -198,7 +198,7 @@ void ExWidget::paintEvent(QPaintEvent* event)
     //auto t = mapTo(this, rt.topLeft());
     //auto t2 = mapToParent(rt.topLeft());
 
-    //pa.drawEllipse(QRect(t, rt.size()));  // Ìæ»»ÕıÈ·ÄÇ¾ÍºÃÁË£¬ Ê¹ÓÃ VS ½øĞĞµ÷ÊÔ
+    //pa.drawEllipse(QRect(t, rt.size()));  // æ›¿æ¢æ­£ç¡®é‚£å°±å¥½äº†ï¼Œ ä½¿ç”¨ VS è¿›è¡Œè°ƒè¯•
 
     ////pa.drawEllipse(QRect(QPoint(24, 24), rt.size()));
 }
