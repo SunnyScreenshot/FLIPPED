@@ -472,7 +472,7 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     pa.setRenderHint(QPainter::Antialiasing, true);
     QPen pen;
     pen.setWidth(SELECT_ASSIST_RECT_PEN_WIDTH);
-    pen.setColor(XHelp::highlightColor());
+    pen.setColor(QColor("#0E70FF"));
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 

@@ -1,14 +1,19 @@
 #include "xlabel.h"
 #include "../xglobal.h"
-#include <QColor>
 #include <QPainter>
 #include <QPainter>
 #include <QPalette>
 #include <QtGlobal>
 #include <QMouseEvent>
+#include "../core/xlog.h"
 
 XLabel::XLabel(QWidget *parent, Qt::WindowFlags f)
     : QLabel(parent, f)
+    , m_inEllipse("#FFFFFF")
+    , m_inAlpha(1)
+    , m_outEllipse("#000000")
+    , m_outAlpha(0.08)
+    , m_bGradient(false)
 {
     init();
 }
@@ -87,7 +92,7 @@ void XLabel::init()
     m_bGradient = false;
 
     resize(24, 24);
-    auto a =contentsRect();
+    auto a = contentsRect();
     int width = this->width();
     int height = this->height();
     m_nInEllipseR = qMin(width, height) / 2.0;
@@ -116,6 +121,7 @@ void XLabel::paintEvent(QPaintEvent *event)
         // 此参数设计图写死
         QColor colPen("#000000");
         colPen.setAlphaF(0.08);
+        pa.setPen(colPen);
         pa.setBrush(Qt::NoBrush);
         pa.drawEllipse(contentsRect().center(), r, r);
     }

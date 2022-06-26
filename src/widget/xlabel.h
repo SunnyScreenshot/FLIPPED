@@ -2,10 +2,10 @@
 #define XLABEL_H
 
 #include <QLabel>
+#include <QColor>
 
 class QWidget;
 class QString;
-class QColor;
 class QWidget;
 class QPainter;
 class QMouseEvent;
@@ -23,8 +23,8 @@ public:
     void setMargin(double margin);
     void setInEllipseR(double r); //半径
 
-    void setInEllipseColor(QColor color, double alpha);
-    void setOutEllipseColor(QColor color, double alpha);
+    void setInEllipseColor(QColor color = QColor("#FFFFFF"), double alpha = 1);
+    void setOutEllipseColor(QColor color = QColor("#FFFFFF"), double alpha = 1);
     void setEnablemGradient(bool enablem = false);
 private:
     void init();
@@ -40,7 +40,7 @@ private:
     double m_inAlpha;
     QColor m_outEllipse;
     double m_outAlpha;
-    bool m_bGradient;
+    bool m_bGradient;    // 默认为非渐变色
 
     double m_nMargin;
     double m_nInEllipseR; // 内部圆半径

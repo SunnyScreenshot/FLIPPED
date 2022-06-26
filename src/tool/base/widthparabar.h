@@ -15,6 +15,7 @@
 
 QT_BEGIN_NAMESPACE
 class QBoxLayout;
+class XLabel;
 QT_END_NAMESPACE
 
 class WidthParaBar : public QWidget
@@ -24,14 +25,15 @@ public:
     explicit WidthParaBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~WidthParaBar();
 
-    void addWidget(QWidget *w);
-    void addSpacer();
-
 private:
     void initUI();
+    void addWidget(QWidget* w);
+    void addSpacer();
+    void setChecked(XLabel* selLab, bool reset = false);
 
-//protected:
-//    virtual void paintEvent(QPaintEvent *event) override;
+public:
+    bool eventFilter(QObject* watched, QEvent* event) override;
+
 
 private:
     int m_scal;

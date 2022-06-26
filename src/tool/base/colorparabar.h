@@ -16,7 +16,6 @@
 #include <QMap>
 #include <QString>
 #include <QWidget>
-//#include "../screen/drawhelper.h"
 
 class XLabel;
 class QGridLayout;
@@ -27,13 +26,6 @@ public:
     ColorParaBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~ColorParaBar();
     void init();
-
-//signals:
-//    void sigPickColor(XLabel*, QColor);
-//
-//public slots:
-//    void onPickColor(XLabel* lab, QColor col);
-    
 
 public:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;

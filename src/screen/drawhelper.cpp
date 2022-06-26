@@ -110,6 +110,7 @@ double getScale(QScreen *screen)
 
 QColor highlightColor(QColor highlight)
 {
+    highlight.setAlphaF(1);
     return highlight;
 }
 }

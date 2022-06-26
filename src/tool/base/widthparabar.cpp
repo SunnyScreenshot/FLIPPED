@@ -47,6 +47,45 @@ void WidthParaBar::addSpacer()
         m_layout->addWidget(new XHorizontalLine((ICON_WIDTH - ICON_WIDTH_IN_MARGIN) * m_scal, this));
 }
 
+void WidthParaBar::setChecked(XLabel* selLab, bool reset /*= false*/)
+{
+    if (!selLab)
+        return;
+
+    if (reset) {
+        selLab->setInEllipseColor();
+        selLab->setOutEllipseColor();
+    } else {
+        selLab->setInEllipseColor(XHelp::highlightColor(), 1);
+        selLab->setOutEllipseColor(XHelp::highlightColor(), 1);
+    }
+
+}
+
+bool WidthParaBar::eventFilter(QObject* watched, QEvent* event)
+{
+    XLabel* selLab = qobject_cast<XLabel*>(watched);
+    if (!selLab)
+        return false;
+
+    if (event->type() == QEvent::MouseButtonRelease) {
+        setChecked(selLab, false);
+
+        QList<XLabel*> list = findChildren<XLabel*>();
+        for (XLabel* it : list) {
+            if (it != selLab)
+                setChecked(it, true);
+        }
+
+        update();
+        return true;
+
+    } else if (event->type() == QEvent::MouseButtonPress) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 void WidthParaBar::initUI()
 {
@@ -71,6 +110,11 @@ void WidthParaBar::initUI()
         int width(WIDTH_LABEL_WIDTH * m_scal);
         lab->setFixedSize(width, width);
         lab->setInEllipseR(it.value() * 2 * m_scal / 2.0);  // 第一个 *2 是 xglobal.h 中的统一乘以 2
+
+        if (lab->objectName().compare("lab1") == 0)
+            setChecked(lab);
+
+        lab->installEventFilter(this);
         addWidget(lab);
     }
 }
