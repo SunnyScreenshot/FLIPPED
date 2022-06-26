@@ -108,6 +108,10 @@ double getScale(QScreen *screen)
 #endif
 }
 
+QColor highlightColor(QColor highlight)
+{
+    return highlight;
+}
 }
 
 

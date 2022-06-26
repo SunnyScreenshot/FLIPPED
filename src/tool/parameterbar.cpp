@@ -78,6 +78,9 @@ void ParameterBar::initUI()
     m_layout->setSpacing(BAR_MARGIN_HOR);  // TODO 最后一个大概是两个这个间隔（间隔 + 取色盘自带的）
     
     m_serialBar->setFixedSize(COMBOBOX_WIDTH * m_scal, COMBOBOX_HEIGHT * m_scal);
+    QStringList items;
+    items << "①" << "a";
+    m_serialBar->addItems(items);
     m_layout->addWidget(m_serialBar);
 
     addSpacer();

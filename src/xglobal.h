@@ -24,6 +24,12 @@
 
 
 
+// 截图-选中矩形
+#define SELECT_RECT_PEN_WIDTH  1 * 2           // 选中矩形的边框, 其画笔的默认宽度
+#define SELECT_ASSIST_RECT_PEN_WIDTH  4 * 2    // 四角落辅助的 ∟，其画笔的默认宽度
+#define SELECT_ASSIST_RECT_WIDTH  30 * 2       // 四角周辅助的 ∟ 的宽度
+#define SELECT_ASSIST_RECT_HEIGHT 30 * 2       // 四角周辅助的 ∟ 的高度
+
 // 默认图片宽度、高度 px （再乘以缩放比）
 #define ICON_WIDTH  24 * 2
 #define ICON_HEIGHT 24 * 2

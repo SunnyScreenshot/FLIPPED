@@ -22,6 +22,7 @@
 #include <QFileDialog>
 #include <QImage>
 #include <QTextEdit>
+#include <QLine>
 #include "../core/xlog.h"
 
 #include "../platform/wininfo.h"
@@ -465,6 +466,51 @@ void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
     pa.restore();
 }
 
+void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
+{
+    pa.save();
+    pa.setRenderHint(QPainter::Antialiasing, true);
+    QPen pen;
+    pen.setWidth(SELECT_ASSIST_RECT_PEN_WIDTH);
+    pen.setColor(XHelp::highlightColor());
+    pa.setPen(pen);
+    pa.setBrush(Qt::NoBrush);
+
+    int x1 = rt.left();
+    int y1 = rt.top();
+    int x2 = rt.right();
+    int y2 = rt.bottom();
+
+    const int penWidth = SELECT_ASSIST_RECT_PEN_WIDTH;
+    const int penAssWidth = SELECT_ASSIST_RECT_WIDTH;
+
+    // hor 且补齐交叉角落的空缺的那一块
+    QLine l1(QPoint(x1 - penWidth / 2, y1), QPoint(x1 + penAssWidth, y1));
+    QLine l2(QPoint(x1 - penWidth / 2, y2), QPoint(x1 + penAssWidth, y2));
+    QLine l3(QPoint(x2 + penWidth / 2, y1), QPoint(x2 - penAssWidth, y1));
+    QLine l4(QPoint(x2 + penWidth / 2, y2), QPoint(x2 - penAssWidth, y2));
+
+    // ver
+    QLine l5(QPoint(x1, y1), QPoint(x1, y1 + penAssWidth));
+    QLine l6(QPoint(x1, y2), QPoint(x1, y2 - penAssWidth));
+    QLine l7(QPoint(x2, y1), QPoint(x2, y1 + penAssWidth));
+    QLine l8(QPoint(x2, y2), QPoint(x2, y2 - penAssWidth));
+
+    pa.drawLine(l1.translated(QPoint(0, -penWidth / 2)));
+    pa.drawLine(l2.translated(QPoint(0, penWidth / 2)));
+    pa.drawLine(l3.translated(QPoint(0, -penWidth / 2)));
+    pa.drawLine(l4.translated(QPoint(0, penWidth / 2)));
+    pa.drawLine(l5.translated(QPoint(-penWidth / 2, 0)));
+    pa.drawLine(l6.translated(QPoint(-penWidth / 2, 0)));
+    pa.drawLine(l7.translated(QPoint(penWidth / 2, 0)));
+    pa.drawLine(l8.translated(QPoint(penWidth / 2, 0)));
+
+    pen.setWidth(SELECT_RECT_PEN_WIDTH);
+    pa.setPen(pen);
+    pa.drawRect(rt);
+    pa.restore();
+}
+
 // 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；true 使用上一个环境的
 void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 {
@@ -837,7 +883,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         pa.drawText(rtSel.topLeft() + QPoint(0, -10), str);
 
         #if 1
-            drawBorderMac(pa, rtSel);
+            drawBorderPS(pa, rtSel);
+            //drawBorderMac(pa, rtSel);
         #else
             pa.drawRect(rtSel);
             drawBorderBlue(pa, rtSel);
