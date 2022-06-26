@@ -13,7 +13,7 @@
 #include "../widget/xhorizontalline.h"
 #include "../widget/xverticalline.h"
 #include "../widget/xcombobox.h"
-#include "../screen/drawhelper.h"
+
 #include "../core/xlog.h"
 #include <QColor>
 #include <QPainter>
@@ -129,10 +129,133 @@ void ParameterBar::initArrowBar()
     creatorParaBar(m_arrowBar, path, list);
 }
 
+void ParameterBar::removeAllBar()
+{
+    if (!m_layout)
+        return;
+
+    QWidgetList list;
+
+    for (int i = 0; i < m_layout->count(); ++i) {
+        QWidget* widget = m_layout->itemAt(i)->widget();
+
+        if (widget)
+            list << widget;
+    }
+
+    for (auto& it : list) {
+        bool isXLine = false;
+        if (m_orien == Qt::Horizontal) {
+            auto t = qobject_cast<XVerticalLine*>(it);
+            if (t)
+                isXLine = true;
+
+        } else {
+            auto t = qobject_cast<XHorizontalLine*>(it);
+            if (t)
+                isXLine = true;
+        }
+
+        m_layout->removeWidget(it);
+        it->setVisible(false);
+
+        if (isXLine)  // 若是分割线直接销毁
+            it->deleteLater();
+    }
+}
+
+void ParameterBar::onEnableDraw(bool enable)
+{
+    setVisible(enable);
+}
+
+void ParameterBar::onSelShape(DrawShape shape, bool checked)
+{
+    m_widthBar;
+    m_colorBar;
+    m_serialBar;
+
+    m_rectBar;
+    m_ellipseBar;
+    m_mosaicBar;
+    m_arrowBar;
+
+    removeAllBar();
+
+    int n = m_layout->count();
+    if (shape == DrawShape::NoDraw) {
+        XLOG_INFO("[shape] is DrawShape::NoDraw.");
+    } else if (shape == DrawShape::Rectangles) {
+        addWidget(m_rectBar);
+        m_rectBar->setVisible(true);
+        addSpacer();
+        addWidget(m_widthBar);
+        m_widthBar->setVisible(true);
+        addWidget(m_colorBar);
+        m_colorBar->setVisible(true);
+    } else if (shape == DrawShape::Ellipses) {
+        addWidget(m_ellipseBar);
+        m_ellipseBar->setVisible(true);
+        addSpacer();
+        addWidget(m_widthBar);
+        m_widthBar->setVisible(true);
+        addSpacer();
+        addWidget(m_colorBar);
+        m_colorBar->setVisible(true);
+    } else if (shape == DrawShape::Line) {
+        addWidget(m_widthBar);
+        m_widthBar->setVisible(true);
+        addSpacer();
+        addWidget(m_colorBar);
+        m_colorBar->setVisible(true);
+    } else if (shape == DrawShape::Arrows) {
+        addWidget(m_arrowBar);
+        m_arrowBar->setVisible(true);
+        addSpacer();
+        addWidget(m_widthBar);
+        m_widthBar->setVisible(true);
+        addSpacer();
+        addWidget(m_colorBar);
+        m_colorBar->setVisible(true);
+    } else if (shape == DrawShape::Pen) {
+        addWidget(m_widthBar);
+        m_widthBar->setVisible(true);
+        addSpacer();
+        addWidget(m_colorBar);
+        m_colorBar->setVisible(true);
+    } else if (shape == DrawShape::Mosaics) {
+        addWidget(m_mosaicBar);
+        m_mosaicBar->setVisible(true);
+        addSpacer();
+        addWidget(m_widthBar);
+        m_widthBar->setVisible(true);
+    } else if (shape == DrawShape::Text) {
+        addWidget(m_ellipseBar);        // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
+        m_ellipseBar->setVisible(true);   
+        addSpacer();
+        addWidget(m_colorBar);
+        m_colorBar->setVisible(true);
+    } else if (shape == DrawShape::SerialNumber) {
+        addWidget(m_ellipseBar);        // TODO 2022.06.27： 还需要添加一个 font size 大小的 combobox
+        m_ellipseBar->setVisible(true);
+        addSpacer();
+        addWidget(m_colorBar);
+        m_colorBar->setVisible(true);
+    } else {
+        XLOG_ERROR("[shape] is not any enumeration.");
+    }
+
+    // TODO 2022.06.27: fix 此处添加一个更新设置边框 和 margin 的函数，根据放入的不同，来切换； 设置放在控件添加前面或者后面都尝试一下
+
+
+    setVisible(m_layout->count());
+    this->adjustSize();
+    update();
+}
+
 void ParameterBar::onTBReleased(QAbstractButton* btn)
 {
     const auto& parent = btn->parentWidget();
-
     if (!btn || !parent)
         return;
 
@@ -194,6 +317,7 @@ void ParameterBar::initUI()
     m_layout->addWidget(m_widthBar);
     addSpacer();
     m_layout->addWidget(m_colorBar);
+
 
 //    adjustSize();  // 布局后重新计算一下大小尺寸
 //    resize(size().width() + bbMarginHor * 2, size().height() + bbMarginVer * 2);

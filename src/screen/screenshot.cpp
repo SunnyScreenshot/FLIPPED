@@ -23,6 +23,7 @@
 #include <QImage>
 #include <QTextEdit>
 #include <QLine>
+
 #include "../core/xlog.h"
 
 #include "../platform/wininfo.h"
@@ -50,11 +51,12 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_primaryScreen(QApplication::primaryScreen())
 	, m_currPixmap(nullptr)
 	, m_rtCalcu(this)
-    , m_pCurrShape(nullptr)
+    , m_rtVirDesktop(0, 0, 0, 0)
     , m_bFirstSel(false)
     , m_tbDrawBar(new DrawToolBar(this))
+    , m_pCurrShape(nullptr)
 	, m_textEdit(new XTextWidget(this))
-    , m_rtVirDesktop(0, 0, 0, 0)
+    , m_rtAtuoMonitor(0, 0, 0, 0)
     , m_selBar(new SelectBar(Qt::Horizontal, this))
     , m_paraBar(new ParameterBar(Qt::Horizontal, this))
 {
@@ -165,8 +167,11 @@ ScreenShot::ScreenShot(QWidget *parent)
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 
 
-    // test
-    m_selBar->hide();
+    //
+    m_selBar->setVisible(true);
+    m_paraBar->setVisible(false);
+    connect(m_selBar, &SelectBar::sigEnableDraw, m_paraBar, &ParameterBar::onEnableDraw);
+    connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
 }
 
 ScreenShot::~ScreenShot() 
@@ -1204,7 +1209,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_bFirstSel = true;
         m_tbDrawBar->setVisible(true);
         m_selBar->setVisible(true);
-        m_paraBar->setVisible(true);
+        //m_paraBar->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {

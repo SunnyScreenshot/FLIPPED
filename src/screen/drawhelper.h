@@ -72,6 +72,7 @@ namespace XC {
 	};
 
 	enum class DrawShape {
+		NoDraw,
 		Rectangles,
 		Ellipses,
         Line,
@@ -79,8 +80,7 @@ namespace XC {
         Pen,
         Mosaics,
 		Text,
-        SerialNumber,
-		NoDraw
+        SerialNumber
 	};
 
 	enum class LineEnds {

@@ -21,6 +21,7 @@
 #include <QList>
 #include <QColor>
 #include <QVector>
+#include <QPointer>
 #include <vector>
 
 
@@ -76,11 +77,14 @@ public slots:
     void onDownload();
     void onCopy();
 
-    void onDrawStart();
-    void onDrawEnd();
+    void onDrawStart(); // remove
+    void onDrawEnd();   // remove
 
 	void onLineEndsChange(LineEnds ends);
 	void onLineDasheChange(Qt::PenStyle dashes);
+
+    // new refactor
+    
 
 private:
 	ScrnType updateScrnType(const QPoint pos);
@@ -106,18 +110,18 @@ private:
     //--------------test end-------------
 
 protected:
-	virtual void paintEvent(QPaintEvent *event) override;
-	virtual void keyReleaseEvent(QKeyEvent *event) override;
-	virtual void mousePressEvent(QMouseEvent *event) override;
-	virtual void mouseMoveEvent(QMouseEvent *event) override;
-	virtual void mouseReleaseEvent(QMouseEvent *event) override;
-    virtual void wheelEvent(QWheelEvent* event) override;
+	void paintEvent(QPaintEvent *event) override;
+	void keyReleaseEvent(QKeyEvent *event) override;
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+	void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent* event) override;
 
 private:
 	QList<QScreen *> m_screens;  // 所有屏幕
 	QScreen* m_primaryScreen;    // 主屏幕
 	QPixmap* m_currPixmap;       // 当前屏幕截图
-    QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩
+    QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩   无构造初始化
 	RectCalcu m_rtCalcu;         // 选中矩形区域
     QRect m_rtVirDesktop;        // 截图时刻的虚拟桌面的大小
     bool m_bFirstSel;            // 初次选中 截图矩形 完成
@@ -135,8 +139,8 @@ private:
 	XTextWidget* m_textEdit;
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
 
-    SelectBar* m_selBar;
-    ParameterBar* m_paraBar;
+    QPointer<SelectBar> m_selBar;
+    QPointer<ParameterBar> m_paraBar;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

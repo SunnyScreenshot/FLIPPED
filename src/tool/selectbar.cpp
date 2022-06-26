@@ -25,6 +25,7 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     , m_orien(orien)
     , m_layout(nullptr)
     , m_tbName()
+    , m_tbOnlyClickName()
     , m_vItem()
 {
     initUI();
@@ -144,7 +145,7 @@ void SelectBar::onToolBtn()
         return;
 
     // 仅单选
-    bool bDrawing = false;  // true 此 btn 被按下，处于绘画状态
+    bool enableDraw = false;  // true 此 btn 被按下，处于绘画状态
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* it : listBtn) {
         QString path = ":/resources/tool/" + it->objectName() + ".svg";
@@ -153,7 +154,7 @@ void SelectBar::onToolBtn()
         if (it == tb) {
             if (it->isCheckable()) {
                 if (it->isChecked()) {
-                    bDrawing = true;
+                    enableDraw = true;
                     it->setIcon(XHelp::changeSVGColor(path, XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
                 } else {
                     it->setIcon(QIcon(path));
@@ -167,13 +168,18 @@ void SelectBar::onToolBtn()
                 
             continue;
         }
-
     }
 
-    if (bDrawing)
-        emit sigDrawStart();
-    else
-        emit sigDrawEnd();
+    //if (enableDraw) {
+    //    emit sigDrawStart();
+    //} else {
+    //    emit sigDrawEnd();
+    //}
+    
+    //emit sigEnableDraw(enableDraw);
+
+    //if (!enableDraw)
+    //    return;
 
     // rectangle
     // ellipse
@@ -191,7 +197,10 @@ void SelectBar::onToolBtn()
     // finish
     // 发射信号
     bool isChecked = tb->isChecked();
-    if (tb->objectName() == "rectangle") {
+    
+    if (!enableDraw) {
+        emit sigSelShape(XC::DrawShape::NoDraw, isChecked);
+    } else if (tb->objectName() == "rectangle") {
         emit sigSelShape(XC::DrawShape::Rectangles, isChecked);
     } else if (tb->objectName() == "ellipse") {
         emit sigSelShape(XC::DrawShape::Ellipses, isChecked);

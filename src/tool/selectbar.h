@@ -50,6 +50,7 @@ public slots:
     void onToolBtn();
 
 signals:
+    void sigEnableDraw(bool enable);
     void sigDrawStart();       // 处于绘画状态
     void sigDrawEnd();         // 处于绘画状态
     void sigSelShape(DrawShape shape, bool checked);
