@@ -20,6 +20,7 @@
 QT_BEGIN_NAMESPACE
 class QBoxLayout;
 class XComboBox;
+class QAbstractButton;
 QT_END_NAMESPACE
 
 class ParameterBar : public XFrameWidget
@@ -34,7 +35,11 @@ private:
     void addWidget(QWidget *w);
     void addSpacer();
 
-    bool creatorRectBar();
+    void creatorParaBar(QStringList items);                    // 比如矩形等
+    void initRectBar();
+
+public slots:
+    void onTBReleased(QAbstractButton* btn);
 
 private:
     int m_scal;

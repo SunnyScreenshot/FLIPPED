@@ -1,12 +1,12 @@
-/*******************************************************************
- * Copyright (c) 2021-2022 ÙÉê°  All rights reserved.
+ï»¿/*******************************************************************
+ * Copyright (c) 2021-2022 å•è‡§  All rights reserved.
  *
  * Author: XMuli <xmulitech@gmail.com>
  * GitHub: https://github.com/XMuli
  * Blog:   https://xmuli.tech
  *
  * Date:   2022.06.26
- * Description: ²ÎÊı¹¤¾ßÀ¸µÄÒ»²¿·Ö£¬×÷Îª¹ÜÀíÀà£º¾ØĞÎ¡¢ÍÖÔ²¡¢¼ıÍ·¡¢ÂíÈü¿ËµÈ
+ * Description: å‚æ•°å·¥å…·æ çš„ä¸€éƒ¨åˆ†ï¼Œä½œä¸ºç®¡ç†ç±»ï¼šçŸ©å½¢ã€æ¤­åœ†ã€ç®­å¤´ã€é©¬èµ›å…‹ç­‰
  ******************************************************************/
 #ifndef MANAGEBAR_H
 #define MANAGEBAR_H
@@ -24,10 +24,11 @@ public:
     explicit ManageBar(Qt::Orientations orien = Qt::Horizontal, QWidget* parent = nullptr);
     virtual ~ManageBar() = default;
 
-private:
-    void initUI();
     void addWidget(QWidget* w);
     void addSpacer();
+
+private:
+    void initUI();
 
 signals:
 

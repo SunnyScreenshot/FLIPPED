@@ -20,8 +20,11 @@
 #include <QWidget>
 #include <QComboBox>
 #include <QToolButton>
+#include <QButtonGroup>
+#include <QAbstractButton>
+#include "../core/xlog.h"
 
-ParameterBar::ParameterBar(Qt::Orientations orien, QWidget *parent)
+ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     : XFrameWidget(parent)
     , m_scal(XHelp::getScale())
     , m_orien(orien)
@@ -29,7 +32,7 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget *parent)
     , m_widthBar(new WidthParaBar(orien))
     , m_colorBar(new ColorParaBar(orien))
     , m_serialBar(new XComboBox(this))
-
+    , m_rectBar(nullptr)
 {
     initUI();
 }
@@ -51,21 +54,68 @@ void ParameterBar::addSpacer()
         m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
 }
 
-bool ParameterBar::creatorRectBar()
+void ParameterBar::creatorParaBar(QStringList items)
 {
     if (!m_rectBar)
         m_rectBar = new ManageBar(Qt::Horizontal, this);
 
-    QMap<QString, QString> map = { {"bt1", }
+    QString path(":/resources/tool_para/rectangles/");
+    QMap<QString, QString> map;
+    for (int i = 0; i < items.size(); ++i) {
+        map.insert(QString("bt%1").arg(i), path + items[i] + ".svg");
+    }
 
+    QButtonGroup* group = new QButtonGroup(this);
+    group->setExclusive(true); // toolBtn 互斥
 
-    };
-
-    const int nCount = 2;  // 一共有的按钮个数
-
-    for (int i = 0; i < nCount; ++i){
+    auto& it = map.begin();
+    QToolButton* firstBtn = nullptr;
+    for (int i = 0; i < items.size(); ++i) {
         QToolButton* tb = new QToolButton();
         tb->setIconSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
+        tb->setFixedSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
+        tb->setObjectName(it.key());
+        tb->setIcon(QIcon(it.value()));
+        tb->setCheckable(true);
+        tb->setChecked(false);
+        if (i == 0) {  // 第一个为默认选中
+            tb->setChecked(true);
+            tb->setIcon(XHelp::changeSVGColor(it.value(), XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+        }
+
+        if (!tb->setProperty("path", it.value()))
+            XLOG_INFO("ToolButton Property [path] initialization faile.");
+        
+        group->addButton(tb);
+        m_rectBar->addWidget(tb);
+        it++;
+    }
+
+    void (QButtonGroup::* sigFun)(QAbstractButton*) = &QButtonGroup::buttonReleased;
+    connect(group, sigFun, this, &ParameterBar::onTBReleased);
+}
+
+void ParameterBar::initRectBar()
+{
+    QStringList list = { "rectangle",  "rectangle_fill" };
+    creatorParaBar(list);
+}
+
+void ParameterBar::onTBReleased(QAbstractButton* btn)
+{
+    if (!m_rectBar || !btn)
+        return;
+
+    for (auto& it : m_rectBar->findChildren<QToolButton *>()) {
+
+        QString path = it->property("path").value<QString>();
+        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
+
+        if (it == qobject_cast<QToolButton *>(btn)) {
+            it->setIcon(XHelp::changeSVGColor(path, XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+        } else {
+            it->setIcon(QIcon(path));
+        }
     }
 }
 
@@ -75,6 +125,8 @@ void ParameterBar::initUI()
         m_layout = new QHBoxLayout(this);
     else
         m_layout = new QVBoxLayout(this);
+
+    initRectBar();
 
     if (m_colorBar)
         m_colorBar->setVisible(true);
@@ -89,6 +141,11 @@ void ParameterBar::initUI()
     }
     
     setContentsMargins(0, 0, 0, 0);
+
+
+    m_layout->addWidget(m_rectBar);
+    addSpacer();
+
     m_layout->setSpacing(BAR_MARGIN_HOR);  // TODO 最后一个大概是两个这个间隔（间隔 + 取色盘自带的）
     
     m_serialBar->setFixedSize(COMBOBOX_WIDTH * m_scal, COMBOBOX_HEIGHT * m_scal);
