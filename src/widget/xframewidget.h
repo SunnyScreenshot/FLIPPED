@@ -18,7 +18,7 @@ class XFrameWidget : public QWidget
     Q_OBJECT
 public:
     explicit XFrameWidget(QWidget *parent = nullptr);
-    ~XFrameWidget();
+    virtual ~XFrameWidget() = default;
 
 protected:
     void paintEvent(QPaintEvent *event) override;

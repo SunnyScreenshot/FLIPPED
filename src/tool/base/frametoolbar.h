@@ -23,7 +23,7 @@ class FrameToolBar : public XFrameWidget
     Q_OBJECT
 public:
     explicit FrameToolBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
-    virtual ~FrameToolBar();
+    virtual ~FrameToolBar() = default;
 
     void addWidget(QWidget *w);
     void addSpacer();

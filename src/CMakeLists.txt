@@ -109,6 +109,8 @@ set(SRCS_TOOL
     "tool/base/colorparabar.cpp"
     "tool/base/widthparabar.h"
     "tool/base/widthparabar.cpp"
+    "tool/base/managebar.h"
+    "tool/base/managebar.cpp"
     "tool/selectbar.h"
     "tool/selectbar.cpp"
     "tool/parameterbar.h"

@@ -19,6 +19,7 @@
 #include <QBoxLayout>
 #include <QWidget>
 #include <QComboBox>
+#include <QToolButton>
 
 ParameterBar::ParameterBar(Qt::Orientations orien, QWidget *parent)
     : XFrameWidget(parent)
@@ -32,11 +33,6 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget *parent)
 {
     initUI();
 }
-
-ParameterBar::~ParameterBar()
-{
-}
-
 
 void ParameterBar::addWidget(QWidget *w)
 {
@@ -53,6 +49,24 @@ void ParameterBar::addSpacer()
         m_layout->addWidget(new XVerticalLine(SPACER_LINE_HEIGHT * m_scal, this));
     else
         m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
+}
+
+bool ParameterBar::creatorRectBar()
+{
+    if (!m_rectBar)
+        m_rectBar = new ManageBar(Qt::Horizontal, this);
+
+    QMap<QString, QString> map = { {"bt1", }
+
+
+    };
+
+    const int nCount = 2;  // 一共有的按钮个数
+
+    for (int i = 0; i < nCount; ++i){
+        QToolButton* tb = new QToolButton();
+        tb->setIconSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
+    }
 }
 
 void ParameterBar::initUI()

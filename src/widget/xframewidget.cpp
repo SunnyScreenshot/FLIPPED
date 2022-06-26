@@ -20,10 +20,6 @@ XFrameWidget::XFrameWidget(QWidget *parent)
     setAttribute(Qt::WA_TranslucentBackground);   // 设置透明，自绘画为圆角矩形
 }
 
-XFrameWidget::~XFrameWidget()
-{
-}
-
 void XFrameWidget::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)

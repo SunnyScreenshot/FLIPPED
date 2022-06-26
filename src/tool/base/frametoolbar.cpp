@@ -26,11 +26,6 @@ FrameToolBar::FrameToolBar(Qt::Orientations orien, QWidget *parent)
     initUI();
 }
 
-FrameToolBar::~FrameToolBar()
-{
-
-}
-
 void FrameToolBar::addWidget(QWidget *w)
 {
     if (w)
