@@ -15,6 +15,9 @@
 #include <QGraphicsEffect>
 #include <QPen>
 
+#include "../../Acrylic/acrylic.h"
+
+
 XFrameWidget::XFrameWidget(QWidget *parent)
     : QWidget(parent)
 {
@@ -25,10 +28,32 @@ XFrameWidget::XFrameWidget(QWidget *parent)
     //    QualityHint = 0x01,
     //    AnimationHint = 0x02
 
-    QGraphicsBlurEffect* blureffect = new QGraphicsBlurEffect(this);
-    blureffect->setBlurRadius(1);	//数值越大，越模糊
-    blureffect->setBlurHints(QGraphicsBlurEffect::QualityHint);
-    this->setGraphicsEffect(blureffect);
+    //QGraphicsBlurEffect* blureffect = new QGraphicsBlurEffect(this);
+    //blureffect->setBlurRadius(1);	//数值越大，越模糊
+    //blureffect->setBlurHints(QGraphicsBlurEffect::QualityHint);
+    //this->setGraphicsEffect(blureffect);
+
+    //setWindowFlags(Qt::FramelessWindowHint);
+    QColor color(0.6 * 255, 255, 0, 0);
+
+
+    HWND hMoudle = (HWND)(winId());
+    HMODULE hDLL = LoadLibrary(L"Acrylic");
+
+    using fun = void (*)(HWND hWnd);
+
+    fun pSetBlur = (fun)GetProcAddress(hDLL, "setBlur");
+    pSetBlur((HWND)(winId()));
+
+
+// 仅支持 windows 7 的毛玻璃  磨砂 透明  Aero Glass 效果
+//#ifdef Q_OS_WIN
+//    // 添加 winextras
+//   #include <QtWin>
+//    this->setAttribute(Qt::WA_TranslucentBackground);
+//    QtWin::enableBlurBehindWindow(this);
+//    QtWin::extendFrameIntoClientArea(this, -1, -1, -1, -1);
+//#endif
 
 
 }

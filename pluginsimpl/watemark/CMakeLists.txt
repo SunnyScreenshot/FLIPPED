@@ -2,7 +2,7 @@
 set(PLUGIN_NAME "watemark")
 project(${PLUGIN_NAME})
 
-#set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin/plugins) # 更改输出路径
+set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_CURRENT_SOURCE_DIR}/../bin) # 更改二进制输出路径
 
 # Sources files
 set(SRCS_FILES
@@ -35,6 +35,12 @@ add_library(${PLUGIN_NAME} SHARED ${SRCS_FILES})
 #  ${DFrameworkDBus_INCLUDE_DIRS}
 #  ${QGSettings_INCLUDE_DIRS}
 #  ../../src/pluginsinterface)
+
+set(_src_root_path ${CMAKE_CURRENT_SOURCE_DIR}) # default root path curr path （CMakeList.txt）
+file(GLOB_RECURSE _source_list LIST_DIRECTORIES false
+    "${_src_root_path}/*.cpp"
+    "${_src_root_path}/*.h")
+source_group(TREE ${_src_root_path} FILES ${_source_list})
 
 target_link_libraries(${PLUGIN_NAME} PRIVATE
     ${QT5_LIBS_LINK})

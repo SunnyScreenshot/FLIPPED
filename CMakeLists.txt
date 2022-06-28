@@ -1,5 +1,10 @@
-﻿cmake_minimum_required(VERSION 3.3.0)
+﻿cmake_minimum_required(VERSION 3.3)
 project(PicShot)
 add_subdirectory(3rdparty/QHotkey)
 add_subdirectory(src)
 add_subdirectory(pluginsimpl/watemark)
+add_subdirectory(demo)
+
+IF (WIN32)
+    add_subdirectory(Acrylic)
+ENDIF ()
