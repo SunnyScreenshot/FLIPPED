@@ -49,13 +49,13 @@ QIcon changeSVGColor(QString path, QColor color, QSize size)
 
     QSvgRenderer svgRenderer(doc.toByteArray());
     // create pixmap target (could be a QImage)
-    QPixmap pix(svgRenderer.defaultSize());
+    QPixmap pix(svgRenderer.defaultSize().scaled(size.width(), size.height(), Qt::KeepAspectRatio));  // fix: 修改 svg 颜色后略有模糊
     pix.fill(Qt::transparent);
     // create painter to act over pixmap
     QPainter pixPainter(&pix);
     // use renderer to render over painter which paints on pixmap
     svgRenderer.render(&pixPainter);
-    QIcon myicon(pix.scaled(size));  // 需要按比例放大
+    QIcon myicon(pix);
     return myicon;
 }
 

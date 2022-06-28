@@ -12,12 +12,25 @@
 #include "../xglobal.h"
 #include <QColor>
 #include <QPainter>
+#include <QGraphicsEffect>
+#include <QPen>
 
 XFrameWidget::XFrameWidget(QWidget *parent)
     : QWidget(parent)
 {
     setWindowFlags(Qt::FramelessWindowHint);      // 去掉标题栏
     setAttribute(Qt::WA_TranslucentBackground);   // 设置透明，自绘画为圆角矩形
+    //setWindowOpacity(0.7);
+    //PerformanceHint = 0x00,
+    //    QualityHint = 0x01,
+    //    AnimationHint = 0x02
+
+    QGraphicsBlurEffect* blureffect = new QGraphicsBlurEffect(this);
+    blureffect->setBlurRadius(1);	//数值越大，越模糊
+    blureffect->setBlurHints(QGraphicsBlurEffect::QualityHint);
+    this->setGraphicsEffect(blureffect);
+
+
 }
 
 void XFrameWidget::paintEvent(QPaintEvent *event)
@@ -31,13 +44,16 @@ void XFrameWidget::paintEvent(QPaintEvent *event)
     pa.setBrush(colBrush);
     QColor colPen("#FFFFFF");
     colPen.setAlphaF(0.1);
-    pa.setPen(colPen);
-    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), CW_RADIRS, CW_RADIRS);
+    QPen pen(colPen, 1);
+    pa.setPen(pen);
+
+    const int margin1 = 1;
+    pa.drawRoundedRect(contentsRect().adjusted(margin1, margin1, -margin1, -margin1), CW_RADIRS, CW_RADIRS);
 
     colPen.setNamedColor("#000000");
     colPen.setAlphaF(0.1);
     pa.setPen(colPen);
     pa.setBrush(Qt::NoBrush);
-
-    pa.drawRoundedRect(contentsRect(), CW_RADIRS, CW_RADIRS);
+    const int margin2 = 0;
+    pa.drawRoundedRect(contentsRect().adjusted(margin2, margin2, -margin2, -margin2), CW_RADIRS, CW_RADIRS);
 }

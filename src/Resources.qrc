@@ -60,13 +60,13 @@
         <file>resources/tool/smooth.svg</file>
         <file>resources/tool/text.svg</file>
         <file>resources/tool/serialnumber.svg</file>
-        <file>resources/tool_para/arrows/arrow.svg</file>
-        <file>resources/tool_para/arrows/line.svg</file>
         <file>resources/tool_para/ellipses/ellipse.svg</file>
         <file>resources/tool_para/ellipses/ellipse_fill.svg</file>
         <file>resources/tool_para/mosaics/pixelated.svg</file>
         <file>resources/tool_para/mosaics/smooth.svg</file>
         <file>resources/tool_para/rectangles/rectangle.svg</file>
         <file>resources/tool_para/rectangles/rectangle_fill.svg</file>
+        <file>resources/tool_para/arrows/arrow_1.svg</file>
+        <file>resources/tool_para/arrows/arrow_2.svg</file>
     </qresource>
 </RCC>

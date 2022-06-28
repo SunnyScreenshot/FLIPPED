@@ -73,7 +73,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
     QButtonGroup* group = new QButtonGroup(this);
     group->setExclusive(true); // toolBtn 互斥
 
-    auto& it = map.begin();
+    auto it = map.begin();
     QToolButton* firstBtn = nullptr;
     for (int i = 0; i < items.size(); ++i) {
         QToolButton* tb = new QToolButton();
@@ -81,6 +81,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
         tb->setFixedSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
         tb->setObjectName(it.key());
         tb->setIcon(QIcon(it.value()));
+        tb->setAutoRaise(true);   // 自动浮动模式
         tb->setCheckable(true);
         tb->setChecked(false);
         if (i == 0) {  // 第一个为默认选中
@@ -125,7 +126,7 @@ void ParameterBar::initMosaicBar()
 void ParameterBar::initArrowBar()
 {
     QString path(":/resources/tool_para/arrows/");
-    QStringList list = { "line",  "arrow" };
+    QStringList list = { "arrow_1", "arrow_2", "arrow_3"};
     creatorParaBar(m_arrowBar, path, list);
 }
 
