@@ -1,1 +1,8 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg class="icon" width="24px" height="24px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#515151" d="M881.2 961.3H136c-42.2 0-76.5-34.3-76.5-76.5V139.5C59.5 97.3 93.8 63 136 63h745.2c42.2 0 76.5 34.3 76.5 76.5v745.2c0.1 42.2-34.3 76.6-76.5 76.6zM136 109.6c-16.5 0-29.9 13.4-29.9 29.9v745.2c0 16.5 13.4 29.9 29.9 29.9h745.2c16.5 0 29.9-13.4 29.9-29.9V139.5c0-16.5-13.4-29.9-29.9-29.9H136z"  /></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>矩形-线</title>
+    <g id="矩形-线" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="矩形-线" x="0" y="0" width="24" height="24"></rect>
+        <path d="M17,5 C18.1045695,5 19,5.8954305 19,7 L19,17 C19,18.1045695 18.1045695,19 17,19 L7,19 C5.8954305,19 5,18.1045695 5,17 L5,7 C5,5.8954305 5.8954305,5 7,5 L17,5 Z M17,6 L7,6 C6.48716416,6 6.06449284,6.38604019 6.00672773,6.88337887 L6,7 L6,17 C6,17.5128358 6.38604019,17.9355072 6.88337887,17.9932723 L7,18 L17,18 C17.5128358,18 17.9355072,17.6139598 17.9932723,17.1166211 L18,17 L18,7 C18,6.48716416 17.6139598,6.06449284 17.1166211,6.00672773 L17,6 Z" id="矩形" fill="#FFFFFF" fill-rule="nonzero"></path>
+    </g>
+</svg>

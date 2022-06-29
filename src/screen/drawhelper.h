@@ -187,7 +187,7 @@ namespace XHelp {
 double getScale(QScreen *screen = QApplication::primaryScreen());
 QColor highlightColor(QColor highlight = QColor("#1F7AFF"));
 
-QIcon changeSVGColor(QString path, QColor color, QSize size);
+QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size);
 void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
 }
 

@@ -16,6 +16,7 @@
 
 #include "../core/xlog.h"
 #include <QColor>
+#include <QSize>
 #include <QPainter>
 #include <QBoxLayout>
 #include <QWidget>
@@ -32,13 +33,14 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_scal(XHelp::getScale())
     , m_orien(orien)
     , m_layout(nullptr)
-    , m_widthBar(new WidthParaBar(orien))
+    //, m_widthBar(new WidthParaBar(orien))
     , m_colorBar(new ColorParaBar(orien))
     , m_serialBar(new XComboBox(this))
     , m_rectBar(nullptr)
     , m_ellipseBar(nullptr)
     , m_mosaicBar(nullptr)
     , m_arrowBar(nullptr)
+    , m_lienWidthBar(nullptr)
 {
     initUI();
 }
@@ -86,7 +88,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
         tb->setChecked(false);
         if (i == 0) {  // 第一个为默认选中
             tb->setChecked(true);
-            tb->setIcon(XHelp::changeSVGColor(it.value(), XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+            tb->setIcon(XHelp::changeSVGColor(it.value(), "rect", XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
         }
 
         if (!tb->setProperty("path", it.value()))
@@ -128,6 +130,13 @@ void ParameterBar::initArrowBar()
     QString path(":/resources/tool_para/arrows/");
     QStringList list = { "arrow_1", "arrow_2", "arrow_3"};
     creatorParaBar(m_arrowBar, path, list);
+}
+
+void ParameterBar::initLineWidthBar()
+{
+    QString path(":/resources/tool_para/line_width/");
+    QStringList list = { "line_width_1", "line_width_2", "line_width_3" };
+    creatorParaBar(m_lienWidthBar, path, list);
 }
 
 void ParameterBar::removeAllBar()
@@ -190,22 +199,22 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         addWidget(m_rectBar);
         m_rectBar->setVisible(true);
         addSpacer();
-        addWidget(m_widthBar);
-        m_widthBar->setVisible(true);
+        addWidget(m_lienWidthBar);
+        m_lienWidthBar->setVisible(true);
         addWidget(m_colorBar);
         m_colorBar->setVisible(true);
     } else if (shape == DrawShape::Ellipses) {
         addWidget(m_ellipseBar);
         m_ellipseBar->setVisible(true);
         addSpacer();
-        addWidget(m_widthBar);
-        m_widthBar->setVisible(true);
+        addWidget(m_lienWidthBar);
+        m_lienWidthBar->setVisible(true);
         addSpacer();
         addWidget(m_colorBar);
         m_colorBar->setVisible(true);
     } else if (shape == DrawShape::Line) {
-        addWidget(m_widthBar);
-        m_widthBar->setVisible(true);
+        addWidget(m_lienWidthBar);
+        m_lienWidthBar->setVisible(true);
         addSpacer();
         addWidget(m_colorBar);
         m_colorBar->setVisible(true);
@@ -213,14 +222,14 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         addWidget(m_arrowBar);
         m_arrowBar->setVisible(true);
         addSpacer();
-        addWidget(m_widthBar);
-        m_widthBar->setVisible(true);
+        addWidget(m_lienWidthBar);
+        m_lienWidthBar->setVisible(true);
         addSpacer();
         addWidget(m_colorBar);
         m_colorBar->setVisible(true);
     } else if (shape == DrawShape::Pen) {
-        addWidget(m_widthBar);
-        m_widthBar->setVisible(true);
+        addWidget(m_lienWidthBar);
+        m_lienWidthBar->setVisible(true);
         addSpacer();
         addWidget(m_colorBar);
         m_colorBar->setVisible(true);
@@ -228,8 +237,8 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         addWidget(m_mosaicBar);
         m_mosaicBar->setVisible(true);
         addSpacer();
-        addWidget(m_widthBar);
-        m_widthBar->setVisible(true);
+        addWidget(m_lienWidthBar);
+        m_lienWidthBar->setVisible(true);
     } else if (shape == DrawShape::Text) {
         addWidget(m_ellipseBar);        // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
         m_ellipseBar->setVisible(true);   
@@ -265,7 +274,7 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
         it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
 
         if (it == qobject_cast<QToolButton *>(btn)) {
-            it->setIcon(XHelp::changeSVGColor(path, XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+            it->setIcon(XHelp::changeSVGColor(path, "rect", XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
         } else {
             it->setIcon(QIcon(path));
         }
@@ -283,6 +292,7 @@ void ParameterBar::initUI()
     initEllipseBar();
     initMosaicBar();
     initArrowBar();
+    initLineWidthBar();
 
     if (m_colorBar)
         m_colorBar->setVisible(true);
@@ -297,15 +307,6 @@ void ParameterBar::initUI()
     }
 
     setContentsMargins(0, 0, 0, 0);
-    m_layout->addWidget(m_rectBar);
-    addSpacer();
-    m_layout->addWidget(m_ellipseBar);
-    addSpacer();
-    m_layout->addWidget(m_mosaicBar);
-    addSpacer();
-    m_layout->addWidget(m_arrowBar);
-    addSpacer();
-
     m_layout->setSpacing(BAR_MARGIN_HOR);  // TODO 最后一个大概是两个这个间隔（间隔 + 取色盘自带的）
     
     m_serialBar->setFixedSize(COMBOBOX_WIDTH * m_scal, COMBOBOX_HEIGHT * m_scal);
@@ -314,8 +315,15 @@ void ParameterBar::initUI()
     m_serialBar->addItems(items);
     m_layout->addWidget(m_serialBar);
 
+    m_layout->addWidget(m_rectBar);
     addSpacer();
-    m_layout->addWidget(m_widthBar);
+    m_layout->addWidget(m_ellipseBar);
+    addSpacer();
+    m_layout->addWidget(m_mosaicBar);
+    addSpacer();
+    m_layout->addWidget(m_arrowBar);
+    addSpacer();
+    m_layout->addWidget(m_lienWidthBar);
     addSpacer();
     m_layout->addWidget(m_colorBar);
 

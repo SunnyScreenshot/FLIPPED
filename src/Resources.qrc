@@ -68,5 +68,9 @@
         <file>resources/tool_para/rectangles/rectangle_fill.svg</file>
         <file>resources/tool_para/arrows/arrow_1.svg</file>
         <file>resources/tool_para/arrows/arrow_2.svg</file>
+        <file>resources/tool_para/arrows/arrow_3.svg</file>
+        <file>resources/tool_para/line_width/line_width_1.svg</file>
+        <file>resources/tool_para/line_width/line_width_2.svg</file>
+        <file>resources/tool_para/line_width/line_width_3.svg</file>
     </qresource>
 </RCC>

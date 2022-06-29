@@ -36,7 +36,16 @@ ScrnHelper::~ScrnHelper()
 
 // 辅助功能函数
 namespace XHelp {
-QIcon changeSVGColor(QString path, QColor color, QSize size)
+
+/*!
+ * \brief changeSVGColor 修改 .svg 的填充色
+ * \param path   .svg 文件路径
+ * \param shape  欲修改的图形， 通常是 path、偶尔是 rect 等
+ * \param color  填充的颜色
+ * \param size   svg 伸缩后的尺寸
+ * \return 一个 QIcon 对象
+ */
+QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size)
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly);
@@ -45,7 +54,7 @@ QIcon changeSVGColor(QString path, QColor color, QSize size)
     QDomDocument doc;
     doc.setContent(baData);
     QDomElement elem = doc.documentElement(); // const 和 值传递
-    setAttrRecur(elem, "path", "fill", color.name());
+    setAttrRecur(elem, shape, "fill", color.name());
 
     QSvgRenderer svgRenderer(doc.toByteArray());
     // create pixmap target (could be a QImage)

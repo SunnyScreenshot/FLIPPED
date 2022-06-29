@@ -13,7 +13,7 @@
 
 #include "../widget/xframewidget.h"
 #include "../screen/drawhelper.h"
-#include "base/widthparabar.h"
+//#include "base/widthparabar.h"
 #include "base/colorparabar.h"
 #include "base/managebar.h"
 #include <QPointer>
@@ -44,6 +44,7 @@ private:
     void initEllipseBar();
     void initMosaicBar();
     void initArrowBar();
+    void initLineWidthBar();
 
     void removeAllBar();                      // 移除所有的参数 Bar
 
@@ -57,7 +58,7 @@ private:
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 
-    QPointer<WidthParaBar> m_widthBar;         // 选择画笔宽度
+    //QPointer<WidthParaBar> m_widthBar;         // 选择画笔宽度
     QPointer<ColorParaBar> m_colorBar;         // 取色板
     QPointer<XComboBox>    m_serialBar;        // 序号
                                                
@@ -65,6 +66,7 @@ private:
     QPointer<ManageBar>    m_ellipseBar;       // 参数-圆形
     QPointer<ManageBar>    m_mosaicBar;        // 参数-马赛克
     QPointer<ManageBar>    m_arrowBar;         // 参数-箭头
+    QPointer<ManageBar>    m_lienWidthBar;     // 参数-线宽
 };
 
 #endif // PARAMETERBAR_H
