@@ -178,9 +178,10 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_selBar, &SelectBar::sigCancel, this, &ScreenShot::onCancel);
     connect(m_selBar, &SelectBar::sigFinish, this, &ScreenShot::onFinish);
 
+    connect(m_paraBar, &ParameterBar::sigParaBtnId, this, &ScreenShot::onParaBtnId);
+
     connect(m_selBar, &SelectBar::sigEnableDraw, m_paraBar, &ParameterBar::onEnableDraw);
     connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
-    
 }
 
 ScreenShot::~ScreenShot() 
@@ -448,6 +449,34 @@ void ScreenShot::onFinish()
     //qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
     emit sigClearScreen();
     close();
+}
+
+void ScreenShot::onParaBtnId(DrawShape shap, QToolButton* tb)
+{
+    if (!tb)
+        return;
+
+    const int idx = tb->objectName().right(1).toInt();
+
+    if (shap == DrawShape::Rectangles
+        || shap == DrawShape::Ellipses
+        || shap == DrawShape::Mosaics) {
+
+        if (idx == 0)
+            m_step.bFill = false;
+        else if (idx == 1)
+            m_step.bFill = true;
+        else
+            ;
+
+    } else if (shap == DrawShape::Line
+        || shap == DrawShape::Pen) {
+    } else if (shap == DrawShape::Arrows) {
+    } else if (shap == DrawShape::Text) {
+    } else if (shap == DrawShape::SerialNumber) {
+    } else {
+        //XLOG_INFO
+    }
 }
 
 // 获取虚拟屏幕截图

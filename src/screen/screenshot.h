@@ -91,6 +91,7 @@ public slots:
     void onSave();
     void onCancel();
     void onFinish();
+    void onParaBtnId(DrawShape shap, QToolButton* tb);
     
 
 private:

@@ -13,7 +13,6 @@
 
 #include "../widget/xframewidget.h"
 #include "../screen/drawhelper.h"
-//#include "base/widthparabar.h"
 #include "base/colorparabar.h"
 #include "base/managebar.h"
 #include <QPointer>
@@ -22,8 +21,8 @@ QT_BEGIN_NAMESPACE
 class QBoxLayout;
 class XComboBox;
 class QAbstractButton;
+class QToolButton;
 QT_END_NAMESPACE
-
 
 class ParameterBar : public XFrameWidget
 {
@@ -38,6 +37,8 @@ private:
     void initUI();
     void addWidget(QWidget *w);
     void addSpacer();
+    QPointer<ManageBar> curBtnParent(QWidget* w);
+
 
     void creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items);                    // 比如矩形等
     void initRectBar();
@@ -47,6 +48,10 @@ private:
     void initLineWidthBar();
 
     void removeAllBar();                      // 移除所有的参数 Bar
+
+signals:
+    void sigParaBtnId(DrawShape shap, QToolButton* tb);
+
 
 public slots:
     void onTBReleased(QAbstractButton* btn);
@@ -58,7 +63,6 @@ private:
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 
-    //QPointer<WidthParaBar> m_widthBar;         // 选择画笔宽度
     QPointer<ColorParaBar> m_colorBar;         // 取色板
     QPointer<XComboBox>    m_serialBar;        // 序号
                                                

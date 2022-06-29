@@ -33,7 +33,6 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_scal(XHelp::getScale())
     , m_orien(orien)
     , m_layout(nullptr)
-    //, m_widthBar(new WidthParaBar(orien))
     , m_colorBar(new ColorParaBar(orien))
     , m_serialBar(new XComboBox(this))
     , m_rectBar(nullptr)
@@ -69,7 +68,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
 
     QMap<QString, QString> map;
     for (int i = 0; i < items.size(); ++i) {
-        map.insert(QString("bt%1").arg(i), path + items[i] + ".svg");
+        map.insert(QString("tb%1").arg(i), path + items[i] + ".svg");
     }
 
     QButtonGroup* group = new QButtonGroup(this);
@@ -273,8 +272,61 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
         QString path = it->property("path").value<QString>();
         it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
 
-        if (it == qobject_cast<QToolButton *>(btn)) {
+        auto ptr = qobject_cast<QToolButton*>(btn);
+        if (it == ptr) {
             it->setIcon(XHelp::changeSVGColor(path, "rect", XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+
+            //enum class DrawShape {
+            //    NoDraw,
+            //    Rectangles,
+            //    Ellipses,
+            //    Line,
+            //    Arrows,
+            //    Pen,
+            //    Mosaics,
+            //    Text,
+            //    SerialNumber
+            //};
+
+
+            //m_colorBar;
+            //m_serialBar;
+
+            //m_rectBar;
+            //m_ellipseBar;
+            //m_mosaicBar;
+            //m_arrowBar;
+            //m_lienWidthBar;
+            // TODO: 此为当前点击选中这个
+            QString name = it->objectName();
+            int n = it->objectName().right(1).toInt();
+            
+            //const QString cTb1("tb1");
+            //const QString cTb2("tb2");
+            //const QString cTb3("tb3");
+
+            DrawShape shap = DrawShape::NoDraw;
+
+            if (parent == m_rectBar) {
+                shap = DrawShape::Rectangles;
+            } else if (parent == m_ellipseBar) {
+                shap = DrawShape::Ellipses;
+            } else if (parent == m_mosaicBar) {
+                shap = DrawShape::Mosaics;
+            } else if (parent == m_arrowBar) {
+                shap = DrawShape::Arrows;
+                //if (name == cTb1) {
+                //} else if (name == cTb2) {
+                //} else if (name == cTb3) {
+                //} else {
+                //}
+            } else if (parent == m_lienWidthBar) {
+                shap = DrawShape::Line;   // 或者 Pen
+            } else {
+            }
+
+            emit sigParaBtnId(shap, ptr);
+
         } else {
             it->setIcon(QIcon(path));
         }
