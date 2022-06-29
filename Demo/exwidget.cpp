@@ -18,7 +18,7 @@ ExWidget::ExWidget(QWidget *parent)
     fun pSetBlur = (fun)GetProcAddress(hDLL, "setBlur");
     pSetBlur((HWND)(winId()));
 
-    FreeLibrary(hDLL);
+    //FreeLibrary(hDLL);
 
 }
 

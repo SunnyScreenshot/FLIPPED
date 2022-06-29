@@ -176,7 +176,7 @@ void SelectBar::onToolBtn()
     //    emit sigDrawEnd();
     //}
     
-    //emit sigEnableDraw(enableDraw);
+    emit sigEnableDraw(enableDraw);
 
     //if (!enableDraw)
     //    return;
@@ -198,9 +198,11 @@ void SelectBar::onToolBtn()
     // 发射信号
     bool isChecked = tb->isChecked();
     
-    if (!enableDraw) {
-        emit sigSelShape(XC::DrawShape::NoDraw, isChecked);
-    } else if (tb->objectName() == "rectangle") {
+    //if (!enableDraw) {
+    //    emit sigSelShape(XC::DrawShape::NoDraw, isChecked);
+    //} 
+    
+    if (tb->objectName() == "rectangle") {
         emit sigSelShape(XC::DrawShape::Rectangles, isChecked);
     } else if (tb->objectName() == "ellipse") {
         emit sigSelShape(XC::DrawShape::Ellipses, isChecked);

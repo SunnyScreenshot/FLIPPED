@@ -84,6 +84,13 @@ public slots:
 	void onLineDasheChange(Qt::PenStyle dashes);
 
     // new refactor
+    void onEnableDraw(bool enable);
+    void onSelShape(DrawShape shape, bool checked);
+    void onRevocation();
+    void onRenewal();
+    void onSave();
+    void onCancel();
+    void onFinish();
     
 
 private:

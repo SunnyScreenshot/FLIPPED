@@ -149,14 +149,14 @@ ScreenShot::ScreenShot(QWidget *parent)
     m_rtCalcu.scrnType = ScrnType::Wait;
 
 //    m_draw = new XDraw(this);
-    connect(m_tbDrawBar, &DrawToolBar::sigDownload, this, &ScreenShot::onDownload);
-    connect(m_tbDrawBar, &DrawToolBar::sigCopy, this, &ScreenShot::onCopy);
+    connect(m_tbDrawBar, &DrawToolBar::sigDownload, this, &ScreenShot::onDownload);     // archive
+    connect(m_tbDrawBar, &DrawToolBar::sigCopy, this, &ScreenShot::onCopy);             // archive
 
-    connect(m_tbDrawBar, &DrawToolBar::sigDrawStart, this, &ScreenShot::onDrawStart);
-    connect(m_tbDrawBar, &DrawToolBar::sigDrawEnd, this, &ScreenShot::onDrawEnd);
-    connect(m_tbDrawBar, &DrawToolBar::sigDrawShape, this, &ScreenShot::onDrawShape);
-    connect(m_tbDrawBar, &DrawToolBar::sigUndo, this, &ScreenShot::onUndo);
-    connect(m_tbDrawBar, &DrawToolBar::sigRedo, this, &ScreenShot::onRedo);
+    connect(m_tbDrawBar, &DrawToolBar::sigDrawStart, this, &ScreenShot::onDrawStart);   // archive
+    connect(m_tbDrawBar, &DrawToolBar::sigDrawEnd, this, &ScreenShot::onDrawEnd);       // archive
+    connect(m_tbDrawBar, &DrawToolBar::sigDrawShape, this, &ScreenShot::onDrawShape);   // archive
+    connect(m_tbDrawBar, &DrawToolBar::sigUndo, this, &ScreenShot::onUndo);             // archive
+    connect(m_tbDrawBar, &DrawToolBar::sigRedo, this, &ScreenShot::onRedo);             // archive
 
     connect(m_tbDrawBar, &DrawToolBar::sigIsFill, this, [&](bool bFill) {
         m_step.bFill = bFill;});
@@ -167,11 +167,20 @@ ScreenShot::ScreenShot(QWidget *parent)
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 
 
-    //
+    // new refactor
     m_selBar->setVisible(true);
     m_paraBar->setVisible(false);
+    connect(m_selBar, &SelectBar::sigEnableDraw, this, &ScreenShot::onEnableDraw);
+    connect(m_selBar, &SelectBar::sigSelShape, this, &ScreenShot::onSelShape);
+    connect(m_selBar, &SelectBar::sigRevocation, this, &ScreenShot::onRevocation);
+    connect(m_selBar, &SelectBar::sigRenewal, this, &ScreenShot::onRenewal);
+    connect(m_selBar, &SelectBar::sigSave, this, &ScreenShot::onSave);
+    connect(m_selBar, &SelectBar::sigCancel, this, &ScreenShot::onCancel);
+    connect(m_selBar, &SelectBar::sigFinish, this, &ScreenShot::onFinish);
+
     connect(m_selBar, &SelectBar::sigEnableDraw, m_paraBar, &ParameterBar::onEnableDraw);
     connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
+    
 }
 
 ScreenShot::~ScreenShot() 
@@ -361,6 +370,84 @@ void ScreenShot::onLineEndsChange(LineEnds ends)
 void ScreenShot::onLineDasheChange(Qt::PenStyle dashes)
 {
 	m_step.lineDashes = dashes;
+}
+
+void ScreenShot::onEnableDraw(bool enable)
+{
+    if (enable) {
+        m_rtCalcu.scrnType = ScrnType::Draw;
+        setMouseTracking(false);  // Fix: 鼠标移动中会被自动绘画矩形，副作用绘画状态的光标不完美了(选中框内外的光标被固定了)，严格不算 bug，一种外观特效
+    //    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.scrnType;
+    } else {
+        m_rtCalcu.scrnType = ScrnType::Wait;
+        setMouseTracking(true);  // 等待状态开启鼠标跟踪
+    //    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.scrnType;
+    }
+}
+
+void ScreenShot::onSelShape(DrawShape shape, bool checked)
+{
+    if (checked)
+        m_step.shape = shape;
+    //qDebug() << "--------@onDrawShape:" << int(m_step.shape);
+}
+
+void ScreenShot::onRevocation()
+{
+    if (m_vDrawed.count() <= 0)
+        return;
+
+    m_vDrawUndo.push_back(*(m_vDrawed.end() - 1));
+    m_vDrawed.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
+    update();
+}
+
+void ScreenShot::onRenewal()
+{
+    if (m_vDrawUndo.count() <= 0)
+        return;
+
+    m_vDrawed.push_back(*(m_vDrawUndo.end() - 1));
+    m_vDrawUndo.pop_back();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
+    update();
+}
+
+void ScreenShot::onSave()
+{
+    if (drawToCurrPixmap()) {
+        QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
+        QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
+
+        QTime startTime = QTime::currentTime();
+        m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
+        QTime stopTime = QTime::currentTime();
+        int elapsed = startTime.msecsTo(stopTime);
+        qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
+        m_currPixmap->save("a2.png");
+    }
+
+    emit sigClearScreen();
+    close();
+}
+
+void ScreenShot::onCancel()
+{
+    emit sigClearScreen();
+    close();
+}
+
+void ScreenShot::onFinish()
+{
+    if (drawToCurrPixmap()) {
+        if (!m_savePixmap.isNull())
+            QApplication::clipboard()->setPixmap(m_savePixmap);
+    }
+
+    //qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
+    emit sigClearScreen();
+    close();
 }
 
 // 获取虚拟屏幕截图

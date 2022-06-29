@@ -34,16 +34,14 @@ XFrameWidget::XFrameWidget(QWidget *parent)
     //this->setGraphicsEffect(blureffect);
 
     //setWindowFlags(Qt::FramelessWindowHint);
-    QColor color(0.6 * 255, 255, 0, 0);
 
+    //HWND hMoudle = (HWND)(winId());
+    //HMODULE hDLL = LoadLibrary(L"Acrylic");
 
-    HWND hMoudle = (HWND)(winId());
-    HMODULE hDLL = LoadLibrary(L"Acrylic");
+    //using fun = void (*)(HWND hWnd);
 
-    using fun = void (*)(HWND hWnd);
-
-    fun pSetBlur = (fun)GetProcAddress(hDLL, "setBlur");
-    pSetBlur((HWND)(winId()));
+    //fun pSetBlur = (fun)GetProcAddress(hDLL, "setBlur");
+    //pSetBlur((HWND)(winId()));
 
 
 // 仅支持 windows 7 的毛玻璃  磨砂 透明  Aero Glass 效果

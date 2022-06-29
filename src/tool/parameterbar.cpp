@@ -172,14 +172,14 @@ void ParameterBar::onEnableDraw(bool enable)
 
 void ParameterBar::onSelShape(DrawShape shape, bool checked)
 {
-    m_widthBar;
-    m_colorBar;
-    m_serialBar;
+    //m_widthBar;
+    //m_colorBar;
+    //m_serialBar;
 
-    m_rectBar;
-    m_ellipseBar;
-    m_mosaicBar;
-    m_arrowBar;
+    //m_rectBar;
+    //m_ellipseBar;
+    //m_mosaicBar;
+    //m_arrowBar;
 
     removeAllBar();
 
