@@ -23,13 +23,11 @@
 #include <QImage>
 #include <QTextEdit>
 #include <QLine>
-
+#include <QToolButton>
 #include "../core/xlog.h"
-
 #include "../platform/wininfo.h"
 
 #define _MYDEBUG
-
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
 namespace Util {
@@ -53,7 +51,6 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_rtCalcu(this)
     , m_rtVirDesktop(0, 0, 0, 0)
     , m_bFirstSel(false)
-    , m_tbDrawBar(new DrawToolBar(this))
     , m_pCurrShape(nullptr)
 	, m_textEdit(new XTextWidget(this))
     , m_rtAtuoMonitor(0, 0, 0, 0)
@@ -78,7 +75,6 @@ ScreenShot::ScreenShot(QWidget *parent)
 	QDesktopWidget *desktop = QApplication::desktop();  // 获取桌面的窗体对象
 	const QRect geom = desktop->geometry();             // 多屏的矩形取并集
 
-    m_tbDrawBar->setVisible(false);
     //QFont font("STXingkai", 40); // 设置默认值
     //m_textEdit->setFont(font);
     m_textEdit->setTextColor(Qt::red);
@@ -149,21 +145,6 @@ ScreenShot::ScreenShot(QWidget *parent)
     m_rtCalcu.scrnType = ScrnType::Wait;
 
 //    m_draw = new XDraw(this);
-    connect(m_tbDrawBar, &DrawToolBar::sigDownload, this, &ScreenShot::onDownload);     // archive
-    connect(m_tbDrawBar, &DrawToolBar::sigCopy, this, &ScreenShot::onCopy);             // archive
-
-    connect(m_tbDrawBar, &DrawToolBar::sigDrawStart, this, &ScreenShot::onDrawStart);   // archive
-    connect(m_tbDrawBar, &DrawToolBar::sigDrawEnd, this, &ScreenShot::onDrawEnd);       // archive
-    connect(m_tbDrawBar, &DrawToolBar::sigDrawShape, this, &ScreenShot::onDrawShape);   // archive
-    connect(m_tbDrawBar, &DrawToolBar::sigUndo, this, &ScreenShot::onUndo);             // archive
-    connect(m_tbDrawBar, &DrawToolBar::sigRedo, this, &ScreenShot::onRedo);             // archive
-
-    connect(m_tbDrawBar, &DrawToolBar::sigIsFill, this, [&](bool bFill) {
-        m_step.bFill = bFill;});
-
-	connect(m_tbDrawBar, &DrawToolBar::sigLineEndsChange, this, &ScreenShot::onLineEndsChange);
-	connect(m_tbDrawBar, &DrawToolBar::sigLineDasheChange, this, &ScreenShot::onLineDasheChange);
-
 	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 
 
@@ -279,7 +260,6 @@ void ScreenShot::onClearScreen()
 	m_rtCalcu.clear();
 
     m_bFirstSel = false;
-    m_tbDrawBar->setVisible(false);
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     m_step.clear();
@@ -678,9 +658,9 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 		step.brush.setStyle(Qt::SolidPattern);
 		pa.setBrush(step.brush);
 
-		QPainterPath arrowPath = SubAbsLineToolBar::getArrowHead(step.pos1, step.pos2);
+		QPainterPath arrowPath = XHelp::GetArrowHead(step.pos1, step.pos2);
 		pa.fillPath(arrowPath, step.brush);
-		pa.drawLine(SubAbsLineToolBar::getShorterLine(step.pos1, step.pos2));
+		pa.drawLine(XHelp::GetShorterLine(step.pos1, step.pos2));
 
 		//QPoint offset(0, 20);
 		//pa.setPen(Qt::green);
@@ -718,10 +698,10 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         
         QPixmap mosaicPixmap = m_currPixmap->copy(QRect(mapFromGlobal(step.rt.topLeft()) * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
         if (step.bFill) { 
-            const QImage img = SubMosaicToolBar::setMosaicPixlelated(&mosaicPixmap, step.mscPx);
+            const QImage img = XHelp::SetMosaicPixlelated(&mosaicPixmap, step.mscPx);
             pa.drawImage(step.rt, img);
 		} else {
-            const QPixmap* pix = SubMosaicToolBar::setMosaicSmooth(&mosaicPixmap, step.mscPx);
+            const QPixmap* pix = XHelp::SetMosaicSmooth(&mosaicPixmap, step.mscPx);
             pa.drawPixmap(step.rt, *pix);
 		}
 
@@ -757,13 +737,13 @@ bool ScreenShot::isDrawShape(XDrawStep& step)
 
 const QPoint ScreenShot::drawBarPosition(Qt::Orientation orien)
 {
-    if (!m_tbDrawBar)
+    if (!m_selBar)
         return QPoint();
 
     const int space = 10;
-    const int barHeight = m_tbDrawBar->height();
+    const int barHeight = m_selBar->height();
     const QRect rtSel(m_rtCalcu.getSelRect());
-    QPoint topLeft(rtSel.right() - m_tbDrawBar->width(), rtSel.bottom() + space);
+    QPoint topLeft(rtSel.right() - m_selBar->width(), rtSel.bottom() + space);
 
     const int barMaxTop = rtSel.top() - space - barHeight;
     const int barMaxBottom = rtSel.bottom() + space + barHeight;
@@ -1013,14 +993,14 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     }
 
     // 绘画工具栏
-    if (isVisible() && m_tbDrawBar && m_bFirstSel) {
+    if (isVisible() && m_selBar && m_bFirstSel) {
         //QPoint topLeft;
         //const int space = 8;
         //topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
         //topLeft.setY(rtSel.bottomRight().y() + penWidth + space);
         //m_tbDrawBar->move(mapFromGlobal(topLeft));
 
-        m_tbDrawBar->move(drawBarPosition());
+        //m_tbDrawBar->move(drawBarPosition());
 
 
         // hor
@@ -1099,9 +1079,9 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         .arg(m_step.text));
 
     const int tSpace = 10;
-    const int barHeight = m_tbDrawBar->height();
+    const int barHeight = m_selBar->height();
     //const QRect rtSel(m_rtCalcu.getSelRect());
-    QPoint topLeft(rtSel.right() - m_tbDrawBar->width(), rtSel.bottom() + tSpace);
+    QPoint topLeft(rtSel.right() - m_selBar->width(), rtSel.bottom() + tSpace);
     const int barMaxTop = rtSel.top() - tSpace - barHeight;
     const int barMaxBottom = rtSel.bottom() + tSpace + barHeight;
 
@@ -1115,7 +1095,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         .arg(barMaxTop).arg(barMaxBottom).arg(m_rtVirDesktop.left()).arg(m_rtVirDesktop.top()).arg(m_rtVirDesktop.right()).arg(m_rtVirDesktop.bottom()));
     pa.drawText(tPosText - QPoint(0, space * 12), QString("rtScrn 左上右下(%1, %2, %3 * %4) topLimit:%5  bottomLimit:%6")
         .arg(rtScrn.left()).arg(rtScrn.top()).arg(rtScrn.right()).arg(rtScrn.bottom()).arg(topLimit).arg(bottomLimit));
-
 
 #if 0
     QRect rtOuter = m_rtCalcu.getExteRect(rtSel);
@@ -1323,7 +1302,6 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 
     if (!m_rtCalcu.calcurRsultOnce().isEmpty()) {  // 计算一次结果
         m_bFirstSel = true;
-        m_tbDrawBar->setVisible(true);
         m_selBar->setVisible(true);
         //m_paraBar->setVisible(true);
     }

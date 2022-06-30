@@ -21,6 +21,10 @@
 #include <QScreen>
 #include <QColor>
 
+class QPainterPath;
+class QLine;
+class QPoint;
+
 
 class QDomElement;
 namespace XC {
@@ -189,6 +193,16 @@ QColor highlightColor(QColor highlight = QColor("#1F7AFF"));
 
 QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size);
 void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
+
+
+
+// Mosaics draw
+const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
+const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
+
+// Arrow Line draw
+QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
+QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
 }
 
 

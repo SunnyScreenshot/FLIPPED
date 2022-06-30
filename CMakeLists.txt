@@ -3,8 +3,3 @@ project(PicShot)
 add_subdirectory(3rdparty/QHotkey)
 add_subdirectory(src)
 add_subdirectory(pluginsimpl/watemark)
-
-if (WIN32)
-    add_subdirectory(Acrylic)
-    add_subdirectory(demo)
-endif()

@@ -20,6 +20,11 @@
 #include <QDomElement>
 #include <QDomElement>
 #include <QIcon>
+#include <QGraphicsEffect>
+#include <QGraphicsItem>
+#include <QGraphicsScene>
+#include <QPainterPath>
+#include <QLine>
 
 
 int XDrawStep::g_index = 0;
@@ -82,6 +87,112 @@ void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QStrin
         QDomElement t = elem.childNodes().at(i).toElement();
         setAttrRecur(t, strtagname, strattr, strattrval);
     }
+}
+
+const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px)
+{
+    if (!pixmap)
+        return nullptr;
+
+    QGraphicsBlurEffect* blur = new QGraphicsBlurEffect;
+    blur->setBlurRadius(10);
+    QGraphicsPixmapItem* item =
+        new QGraphicsPixmapItem(*pixmap);
+    item->setGraphicsEffect(blur);
+
+    QGraphicsScene scene;
+    scene.addItem(item);
+
+    QPainter painter(pixmap);
+    scene.render(&painter, pixmap->rect(), QRectF());
+    blur->setBlurRadius(12);
+    // multiple repeat for make blur effect stronger
+    scene.render(&painter, pixmap->rect(), QRectF());
+
+    //pixmap->save("hahhaha.png");
+
+    // TODO 2022-01-09:  QGraphicsBlurEffect
+    // key: qt 截图 毛玻璃效果
+    return pixmap;
+}
+
+const QImage SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
+{
+    if (!pixmap)
+        return QImage();
+
+    const QImage& image = pixmap->toImage();
+    QImage* pImage = const_cast<QImage*>(&image);
+
+    const int width = image.width();
+    const int height = image.height();
+
+    for (int i = 0; i < width; i += px) {
+        for (int j = 0; j < height; j += px) {
+            QSize size(px, px);
+            if (width - i < px)
+                size.setWidth(width - i);
+            if (height - j < px)
+                size.setHeight(height - j);
+
+            const QPoint topLeft(i, j);
+            const QRect rt(topLeft, size);
+
+            //            qInfo()<<"--------->>i:"<< i << "  j:" << j << "  rt:" << rt;
+            QColor color = pImage->pixelColor(rt.topLeft());
+            for (int x = rt.x(); x <= rt.right(); ++x) {
+                for (int y = rt.y(); y <= rt.bottom(); ++y)
+                    pImage->setPixelColor(x, y, color);
+            }
+        }
+    }
+
+    return image;  // TODO 可优化: 值传递
+}
+
+const int ArrowWidth = 10;
+const int ArrowHeight = 18;
+QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness /*= 10*/)
+{
+    QLineF base(p1, p2);
+    // Create the vector for the position of the base  of the arrowhead
+    QLineF temp(QPoint(0, 0), p2 - p1);
+    int val = ArrowHeight + thickness * 4;
+    if (base.length() < val) {
+        val = static_cast<int>(base.length() + thickness * 2);
+    }
+    temp.setLength(base.length() + thickness * 2 - val);
+    // Move across the line up to the head
+    QPointF bottomTranslation(temp.p2());
+
+    // Rotate base of the arrowhead
+    base.setLength(ArrowWidth + thickness * 2);
+    base.setAngle(base.angle() + 90);
+    // Move to the correct point
+    QPointF temp2 = p1 - base.p2();
+    // Center it
+    QPointF centerTranslation((temp2.x() / 2), (temp2.y() / 2));
+
+    base.translate(bottomTranslation);
+    base.translate(centerTranslation);
+
+    QPainterPath path;
+    path.moveTo(p2);
+    path.lineTo(base.p1());
+    path.lineTo(base.p2());
+    path.lineTo(p2);
+    return path;
+}
+
+QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
+{
+    QLineF l(p1, p2);
+    int val = ArrowHeight + thickness * 4;
+    if (l.length() < val) {
+        val = static_cast<int>(l.length() + thickness * 2);
+    }
+    l.setLength(l.length() + thickness * 2 - val);
+    return l.toLine();
 }
 
 double getScale(QScreen *screen)

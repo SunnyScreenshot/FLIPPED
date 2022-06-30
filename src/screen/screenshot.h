@@ -12,7 +12,6 @@
 #define PICSHOT_WINFULLSCREEN_H
 
 #include "rectcalcu.h"
-#include "drawtoolbar.h"
 #include "drawhelper.h"
 #include "../widget/xtextwidget.h"
 #include "../xglobal.h"
@@ -134,7 +133,6 @@ private:
     QRect m_rtVirDesktop;        // 截图时刻的虚拟桌面的大小
     bool m_bFirstSel;            // 初次选中 截图矩形 完成
 
-    DrawToolBar* m_tbDrawBar;    // 工具栏
     XDrawStep m_step;        // 当前绘画一步骤
 //    XDraw* m_draw;             // 绘画 Helper
 

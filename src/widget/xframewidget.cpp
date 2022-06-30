@@ -15,9 +15,6 @@
 #include <QGraphicsEffect>
 #include <QPen>
 
-#include "../../Acrylic/acrylic.h"
-
-
 XFrameWidget::XFrameWidget(QWidget *parent)
     : QWidget(parent)
 {
