@@ -1,30 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/PicShot_32.svg</file>
-        <file>resources/icons/boardPoint_8px.svg</file>
-        <file>resources/icons/normal/copy.svg</file>
-        <file>resources/icons/normal/download.svg</file>
-        <file>resources/icons/normal/arrow.svg</file>
-        <file>resources/icons/normal/ellipse.svg</file>
-        <file>resources/icons/normal/exit.svg</file>
-        <file>resources/icons/normal/fill-ellipse.svg</file>
-        <file>resources/icons/normal/fill-rect.svg</file>
-        <file>resources/icons/normal/gif.svg</file>
-        <file>resources/icons/normal/line.svg</file>
-        <file>resources/icons/normal/mosaic.svg</file>
-        <file>resources/icons/normal/pen.svg</file>
-        <file>resources/icons/normal/rectangle.svg</file>
-        <file>resources/icons/normal/right.svg</file>
-        <file>resources/icons/normal/screenshot.svg</file>
-        <file>resources/icons/normal/text.svg</file>
-        <file>resources/icons/normal/update.svg</file>
-        <file>resources/icons/normal/redo.svg</file>
-        <file>resources/icons/normal/undo.svg</file>
-        <file>resources/icons/line/DashLine.svg</file>
-        <file>resources/icons/line/DotLine.svg</file>
-        <file>resources/icons/line/One-wayArrow.svg</file>
-        <file>resources/icons/line/SolidLine.svg</file>
-        <file>resources/icons/line/Two-wayArrow.svg</file>
         <file>resources/tool/arrow.svg</file>
         <file>resources/tool/cancel.svg</file>
         <file>resources/tool/ellipse.svg</file>

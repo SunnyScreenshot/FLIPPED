@@ -64,7 +64,7 @@ void ParameterBar::addSpacer()
 void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items)
 {
     if (!manageBar)
-        manageBar = new ManageBar(Qt::Horizontal, this);
+        manageBar = new ManageBar(m_orien, this);
 
     QMap<QString, QString> map;
     for (int i = 0; i < items.size(); ++i) {

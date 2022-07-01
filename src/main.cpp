@@ -82,13 +82,13 @@ int main(int argc, char *argv[])
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
 
-    SelectBar* t1 = new SelectBar();
-    t1->move(200, 100);
-    t1->show();
+    //SelectBar* t1 = new SelectBar();
+    //t1->move(200, 100);
+    //t1->show();
 
-    ParameterBar* t2 = new ParameterBar();
-    t2->move(200, 200);
-    t2->show();
+    //ParameterBar* t2 = new ParameterBar();
+    //t2->move(200, 200);
+    //t2->show();
 
 //    ColorParaBar* t3 = new ColorParaBar();
 ////    t3->resize(400, 300);

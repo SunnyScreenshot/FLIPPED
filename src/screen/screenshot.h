@@ -13,16 +13,15 @@
 
 #include "rectcalcu.h"
 #include "drawhelper.h"
-#include "../widget/xtextwidget.h"
 #include "../xglobal.h"
+#include "../widget/xtextwidget.h"
 #include "../tool/selectbar.h"
+#include "../tool/parameterbar.h"
 #include <QWidget>
 #include <QList>
 #include <QColor>
 #include <QVector>
 #include <QPointer>
-#include <vector>
-
 
 #ifdef Q_OS_WIN
     #include "../platform/wininfo_win.h"
@@ -36,10 +35,6 @@ class QPixmap;
 QT_END_NAMESPACE
 
 // test
-#include "../tool/base/frametoolbar.h"
-#include "../tool/base/colorparabar.h"
-#include "../tool/base/widthparabar.h"
-#include "../tool/parameterbar.h"
 #include <QPushButton>
 
 class ScreenShot : public  QWidget
@@ -51,9 +46,10 @@ public:
 
     void getScrnShots();
     static double getScale(QScreen *screen = QApplication::primaryScreen());
-
     bool isSelBorder();
 
+    const Qt::Orientation getBarOrien() const; 
+    void setBarOrien(Qt::Orientation val);
 private:
     void getScrnInfo();
 	double getDevicePixelRatio();
@@ -67,18 +63,8 @@ signals:
 
 public slots:
 	void onClearScreen();
-//    void onDrawContextChange(???);
 
     // toolBar 的槽函数
-    void onDrawShape(DrawShape shape);
-    void onUndo();
-    void onRedo();
-    void onDownload();
-    void onCopy();
-
-    void onDrawStart(); // remove
-    void onDrawEnd();   // remove
-
 	void onLineEndsChange(LineEnds ends);
 	void onLineDasheChange(Qt::PenStyle dashes);
 
@@ -91,7 +77,6 @@ public slots:
     void onCancel();
     void onFinish();
     void onParaBtnId(DrawShape shap, QToolButton* tb);
-    
 
 private:
 	ScrnType updateScrnType(const QPoint pos);
@@ -110,7 +95,7 @@ private:
     void drawStep(QPainter& pa, XDrawStep &step, bool isUseEnvContext = false);
     bool isDrawShape(XDrawStep& step);
 
-    const QPoint drawBarPosition(Qt::Orientation orien = Qt:: Horizontal);
+    const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
 
     //--------------test begin-------------
     void showAllDrawedShape(QPainter& pa);
@@ -145,6 +130,7 @@ private:
 	XTextWidget* m_textEdit;
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
 
+    Qt::Orientation m_barOrien;
     QPointer<SelectBar> m_selBar;
     QPointer<ParameterBar> m_paraBar;
 };

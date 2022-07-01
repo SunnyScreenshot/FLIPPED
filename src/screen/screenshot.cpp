@@ -27,7 +27,7 @@
 #include "../core/xlog.h"
 #include "../platform/wininfo.h"
 
-#define _MYDEBUG
+//#define _MYDEBUG
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
 namespace Util {
@@ -54,8 +54,9 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_pCurrShape(nullptr)
 	, m_textEdit(new XTextWidget(this))
     , m_rtAtuoMonitor(0, 0, 0, 0)
-    , m_selBar(new SelectBar(Qt::Horizontal, this))
-    , m_paraBar(new ParameterBar(Qt::Horizontal, this))
+    , m_barOrien(Qt::Horizontal)  // Horizontal | Vertical
+    , m_selBar(new SelectBar(m_barOrien, this))
+    , m_paraBar(new ParameterBar(m_barOrien, this))
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
     XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
@@ -268,80 +269,6 @@ void ScreenShot::onClearScreen()
     if (m_rtCalcu.scrnType == ScrnType::Wait) // 状态重置
         setMouseTracking(true);
 };
-
-void ScreenShot::onDrawShape(DrawShape shape)
-{
-    m_step.shape = shape;
-    qDebug() << "--------@onDrawShape:" << int(m_step.shape);
-}
-
-// 点击一次，撤销一步
-void ScreenShot::onUndo()
-{
-    if (m_vDrawed.count() <= 0)
-        return;
-
-    m_vDrawUndo.push_back(*(m_vDrawed.end() - 1));
-    m_vDrawed.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
-    update();
-}
-
-void ScreenShot::onRedo()
-{
-    if (m_vDrawUndo.count() <= 0)
-        return;
-
-    m_vDrawed.push_back(*(m_vDrawUndo.end() - 1));
-    m_vDrawUndo.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
-    update();
-}
-
-void ScreenShot::onDownload()
-{
-    if (drawToCurrPixmap()) {
-        QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
-        QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
-
-        QTime startTime = QTime::currentTime();
-        m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
-        QTime stopTime = QTime::currentTime();
-        int elapsed = startTime.msecsTo(stopTime);
-        qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
-        m_currPixmap->save("a2.png");
-    }
-
-    emit sigClearScreen();
-    close();
-}
-
-void ScreenShot::onCopy()
-{
-    if (drawToCurrPixmap()) {
-        if (!m_savePixmap.isNull())
-            QApplication::clipboard()->setPixmap(m_savePixmap);
-    }
-
-    //qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
-    emit sigClearScreen();
-    close();
-}
-
-void ScreenShot::onDrawStart()
-{
-    m_rtCalcu.scrnType = ScrnType::Draw;
-
-    setMouseTracking(false);  // Fix: 鼠标移动中会被自动绘画矩形，副作用绘画状态的光标不完美了(选中框内外的光标被固定了)，严格不算 bug，一种外观特效
-//    qInfo()<<"--------------onDrawStart"<<m_rtCalcu.scrnType;
-}
-
-void ScreenShot::onDrawEnd()
-{
-    m_rtCalcu.scrnType = ScrnType::Wait;
-    setMouseTracking(true);  // 等待状态开启鼠标跟踪
-//    qInfo()<<"--------------onDrawEnd"<<m_rtCalcu.scrnType;
-}
 
 void ScreenShot::onLineEndsChange(LineEnds ends)
 {
@@ -697,12 +624,12 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 			return;
         
         QPixmap mosaicPixmap = m_currPixmap->copy(QRect(mapFromGlobal(step.rt.topLeft()) * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
-        if (step.bFill) { 
-            const QImage img = XHelp::SetMosaicPixlelated(&mosaicPixmap, step.mscPx);
-            pa.drawImage(step.rt, img);
-		} else {
+        if (step.bFill) {
             const QPixmap* pix = XHelp::SetMosaicSmooth(&mosaicPixmap, step.mscPx);
             pa.drawPixmap(step.rt, *pix);
+		} else {
+            const QImage img = XHelp::SetMosaicPixlelated(&mosaicPixmap, step.mscPx);
+            pa.drawImage(step.rt, img);
 		}
 
         break;
@@ -735,40 +662,89 @@ bool ScreenShot::isDrawShape(XDrawStep& step)
     return true;
 }
 
-const QPoint ScreenShot::drawBarPosition(Qt::Orientation orien)
+const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt:: Horizonta*/, ToolBarOffset offset /*= ToolBarOffset::TBO_Middle*/)
 {
-    if (!m_selBar)
-        return QPoint();
+    QVector<QPoint> vec;
+    if (!m_selBar || !m_paraBar)
+        return vec;
 
     const int space = 10;
-    const int barHeight = m_selBar->height();
+    int selBarHeight = m_selBar->height();
+    int paraBarHeight = m_paraBar->height();
+
+    if (orien == Qt::Vertical) {
+        selBarHeight = m_selBar->width();
+        paraBarHeight = m_paraBar->width();
+    }
+
+    const int barHeight = space * 2 + selBarHeight + paraBarHeight;
     const QRect rtSel(m_rtCalcu.getSelRect());
-    QPoint topLeft(rtSel.right() - m_selBar->width(), rtSel.bottom() + space);
+    const int barMaxTop = rtSel.top() - barHeight;
+    const int barMaxBottom = rtSel.bottom() + barHeight;
+    const int barMaxLeft = rtSel.left() - barHeight;
+    const int barMaxRight = rtSel.right() + barHeight;
 
-    const int barMaxTop = rtSel.top() - space - barHeight;
-    const int barMaxBottom = rtSel.bottom() + space + barHeight;
-    
     QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
-    QRect rtScrn= desktop->screen(desktop->screenNumber(rtSel.bottomRight() - QPoint(0, 1)))->geometry();  // geometry 则左上角坐标非 0，0； (0, 1) 为修正底部置底后， 返回为（错的)另一个显示器
+    QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight() - QPoint(0, 1)))->geometry();  // geometry 则左上角坐标非 0，0； (0, 1) 为修正底部置底后， 返回为（错的)另一个显示器
 
-    int topLimit = qMax(m_rtVirDesktop.top(), rtScrn.top());
-    int bottomLimit = qMin(m_rtVirDesktop.bottom(), rtScrn.bottom());
+    QPoint p1;  // selBar
+    QPoint p2;  // paraBar
     if (orien == Qt::Horizontal) {
-        if (barMaxTop > topLimit) { // 上未触顶
-            if (barMaxBottom > bottomLimit) // 底部触顶
-                topLeft.setY(rtSel.top() - space - barHeight);
+
+        p1 = QPoint(rtSel.center().x() - m_selBar->width() / 2, rtSel.bottom() + space); // 默认底部中间
+        p2 = QPoint(p1.x(), p1.y() + space * 2 + selBarHeight);
+
+        if (offset == ToolBarOffset::TBO_Left)
+            p1.setX(rtSel.left());
+        else if (offset == ToolBarOffset::TBO_Right)
+            p1.setX(rtSel.right() - m_selBar->width());
+
+        int topLimit = qMax(m_rtVirDesktop.top(), rtScrn.top());
+        int bottomLimit = qMin(m_rtVirDesktop.bottom(), rtScrn.bottom());
+        if (barMaxTop > topLimit) { // 选中框，上未触顶
+            if (barMaxBottom > bottomLimit) { // 底部触顶
+                p1.setY(rtSel.top() - barHeight);
+                p2.setY(p1.y() + space * 2 +selBarHeight);
+            }
         } else {
-            if (barMaxBottom > bottomLimit) // 底部触顶
-                topLeft.setY(rtSel.bottom() - space - barHeight);
+            if (barMaxBottom > bottomLimit) { // 底部触顶
+                p1.setY(rtSel.bottom() - barHeight);
+                p2.setY(p1.y() + space * 2 + selBarHeight);
+            }
         }
 
+        p2.setX(p1.x());
     } else {
 
-    }
-        
-    return mapFromGlobal(topLeft);
-}
+        p1 = QPoint(rtSel.left() - (selBarHeight + space), rtSel.center().y() - m_selBar->height() / 2);         // 默认左侧中间
+        p2 = QPoint(p1.x() - space * 2 - selBarHeight, p1.y());
+        if (offset == ToolBarOffset::TBO_Top)
+            p1.setY(rtSel.top());
+        else if (offset == ToolBarOffset::TBO_Bottom)
+            p1.setY(rtSel.bottom() - m_selBar->height());
 
+        int leftLimit = qMax(m_rtVirDesktop.left(), rtScrn.left());
+        int rightLimit = qMin(m_rtVirDesktop.right(), rtScrn.right());
+
+        if (barMaxLeft > leftLimit) { // 选中框左边未触顶
+            //if (barMaxRight > rightLimit) // 右侧触顶
+            //    basePos.setY(rtSel.bottom() - barHeight);
+        } else {
+            p1.setX(rtSel.right() + space);
+            p2.setX(p1.x() + space * 2 + selBarHeight);
+
+            if (barMaxRight > rightLimit) { // 右侧触顶
+                p1.setX(rtSel.left() + space);
+                p2.setX(p1.x() + space * 2 + selBarHeight);
+            }
+        }
+
+        p2.setY(p1.y());
+    }
+
+    vec << mapFromGlobal(p1) << mapFromGlobal(p2);
+    return vec;
+}
 
 void ScreenShot::whichShape()
 {
@@ -994,22 +970,12 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 绘画工具栏
     if (isVisible() && m_selBar && m_bFirstSel) {
-        //QPoint topLeft;
-        //const int space = 8;
-        //topLeft.setX(rtSel.bottomRight().x() - m_tbDrawBar->width());
-        //topLeft.setY(rtSel.bottomRight().y() + penWidth + space);
-        //m_tbDrawBar->move(mapFromGlobal(topLeft));
+        const auto v = drawBarPosition(m_barOrien, ToolBarOffset::TBO_Middle);
 
-        //m_tbDrawBar->move(drawBarPosition());
-
-
-        // hor
-        m_selBar->move(drawBarPosition() + QPoint(0, -200));
-        m_paraBar->move(drawBarPosition() + QPoint(0, -100));
-
-        // ver
-//        m_selBar->move(drawBarPosition() + QPoint(100, 0));
-//        m_paraBar->move(drawBarPosition() + QPoint(200, 0));
+        if (v.size() == 2){
+            m_selBar->move(v.at(0));
+            m_paraBar->move(v.at(1));
+        }
     }
 
     //#ifdef _DEBUG  调试信息
@@ -1496,4 +1462,14 @@ bool ScreenShot::isSelBorder()
         return false;
     else
         return true;
+}
+
+const Qt::Orientation ScreenShot::getBarOrien() const
+{
+    return m_barOrien;
+}
+
+void ScreenShot::setBarOrien(Qt::Orientation val)
+{
+    m_barOrien = val;
 }

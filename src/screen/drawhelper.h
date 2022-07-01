@@ -87,6 +87,15 @@ namespace XC {
         SerialNumber
 	};
 
+    enum class ToolBarOffset {
+        TBO_Left,
+		TBO_Middle,
+		TBO_Right,
+
+        TBO_Top = TBO_Left,
+        TBO_Bottom = TBO_Right
+    };
+
 	enum class LineEnds {
 		EmptyToEmpty,
 		EmptyToRecesedArrow,
