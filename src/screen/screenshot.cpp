@@ -302,8 +302,39 @@ void ScreenShot::onEnableDraw(bool enable)
 
 void ScreenShot::onSelShape(DrawShape shape, bool checked)
 {
-    if (checked)
-        m_step.shape = shape;
+    if (!checked)
+        return;
+
+    m_step.shape = shape;
+
+    const bool bRect = shape == DrawShape::Rectangles;
+    const bool bEllipses = shape == DrawShape::Ellipses;
+    const bool bMosaics = shape == DrawShape::Mosaics;
+
+    const bool bLine = shape == DrawShape::Line;
+    const bool bPen = shape == DrawShape::Pen;
+    const bool bArrows = shape == DrawShape::Arrows;
+    const bool bText = shape == DrawShape::Text;
+    const bool bSeriNum = shape == DrawShape::SerialNumber;
+
+    if (bRect || bEllipses || bMosaics) {
+        int idx = property(std::to_string((int)shape).c_str()).value<int>();
+
+        if (idx == 0)
+            m_step.bFill = false;
+        else if (idx == 1)
+            m_step.bFill = true;
+    } else if (bLine || bPen) {
+    } else if (bArrows) {
+        int idx = property(std::to_string((int)shape).c_str()).value<int>();
+    } else if (bText) {
+    } else if (bSeriNum) {
+    } else {
+        //XLOG_INFO
+    }
+
+
+
     //qDebug() << "--------@onDrawShape:" << int(m_step.shape);
 }
 
@@ -365,29 +396,35 @@ void ScreenShot::onFinish()
     close();
 }
 
-void ScreenShot::onParaBtnId(DrawShape shap, QToolButton* tb)
+void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
 {
     if (!tb)
         return;
 
     const int idx = tb->objectName().right(1).toInt();
 
-    if (shap == DrawShape::Rectangles
-        || shap == DrawShape::Ellipses
-        || shap == DrawShape::Mosaics) {
+    const bool bRect = shape == DrawShape::Rectangles;
+    const bool bEllipses = shape == DrawShape::Ellipses;
+    const bool bMosaics = shape == DrawShape::Mosaics;
+
+    const bool bLine = shape == DrawShape::Line;
+    const bool bPen = shape == DrawShape::Pen;
+    const bool bArrows = shape == DrawShape::Arrows;
+    const bool bText = shape == DrawShape::Text;
+    const bool bSeriNum = shape == DrawShape::SerialNumber;
+
+    if (bRect || bEllipses || bMosaics) {
+        setProperty(std::to_string((int)shape).c_str(), idx);
 
         if (idx == 0)
             m_step.bFill = false;
         else if (idx == 1)
             m_step.bFill = true;
-        else
-            ;
-
-    } else if (shap == DrawShape::Line
-        || shap == DrawShape::Pen) {
-    } else if (shap == DrawShape::Arrows) {
-    } else if (shap == DrawShape::Text) {
-    } else if (shap == DrawShape::SerialNumber) {
+    } else if (bLine || bPen) {
+    } else if (bArrows) {
+        setProperty(std::to_string((int)shape).c_str(), idx);
+    } else if (bText) {
+    } else if (bSeriNum) {
     } else {
         //XLOG_INFO
     }
@@ -1275,7 +1312,8 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 
     if (!m_rtCalcu.calcurRsultOnce().isEmpty()) {  // 计算一次结果
         m_bFirstSel = true;
-        m_selBar->setVisible(true);
+        if (!m_selBar->isVisible())
+            m_selBar->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {

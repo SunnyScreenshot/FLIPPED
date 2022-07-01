@@ -76,7 +76,7 @@ public slots:
     void onSave();
     void onCancel();
     void onFinish();
-    void onParaBtnId(DrawShape shap, QToolButton* tb);
+    void onParaBtnId(DrawShape shape, QToolButton* tb);
 
 private:
 	ScrnType updateScrnType(const QPoint pos);
