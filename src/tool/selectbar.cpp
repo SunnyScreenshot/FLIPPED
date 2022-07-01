@@ -114,8 +114,8 @@ void SelectBar::initUI()
 
     setContentsMargins(0, 0, 0, 0);
     setLayout(m_layout);
-    m_layout->setContentsMargins(BAR_MARGIN_HOR, BAR_MARGIN_VER, BAR_MARGIN_HOR, BAR_MARGIN_VER);
-    m_layout->setSpacing(CW_ITEM_SPACE);
+    m_layout->setContentsMargins(SB_MARGIN_HOR, SB_MARGIN_VER, SB_MARGIN_HOR, SB_MARGIN_VER);
+    m_layout->setSpacing(SB_ITEM_SPACE);
 }
 
 void SelectBar::addWidget(QWidget *w)
@@ -130,9 +130,9 @@ void SelectBar::addSpacer()
         return;
 
     if (m_orien == Qt::Horizontal)
-        m_layout->addWidget(new XVerticalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XVerticalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
     else
-        m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XHorizontalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
 }
 
 void SelectBar::onToolBtn()

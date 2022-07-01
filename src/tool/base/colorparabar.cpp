@@ -69,7 +69,7 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
             }
 
             lab->setObjectName(it.key());
-            int width(COLOR_LABEL_WIDTH * m_scal);
+            int width(CPB_LABEL_WIDTH * m_scal);
             lab->setFixedSize(width, width);
             lab->setInEllipseR(width / 2.0);
             lab->installEventFilter(this);
@@ -86,9 +86,9 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, QWidget *parent)
     }
 
     //this->installEventFilter(this);
-    m_layout->setContentsMargins(COLOR_PARA_MARGIN_HOR, COLOR_PARA_MARGIN_VER, COLOR_PARA_MARGIN_HOR, COLOR_PARA_MARGIN_VER);
-    m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
-    m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
+    m_layout->setContentsMargins(CPB_MARGIN_HOR, CPB_MARGIN_VER, CPB_MARGIN_HOR, CPB_MARGIN_VER);
+    m_layout->setHorizontalSpacing(CPB_SPACING_HOR * m_scal);
+    m_layout->setVerticalSpacing(CPB_SPACING_VER * m_scal);  // 检查比例一下
     setLayout(m_layout);
 }
 
@@ -96,11 +96,11 @@ ColorParaBar::~ColorParaBar()
 {
 }
 
-void ColorParaBar::init()
+void ColorParaBar::initUI()
 {
     m_layout->setMargin(0);
-    m_layout->setHorizontalSpacing(COLOR_PARA_HOR_SPACING * m_scal);
-    m_layout->setVerticalSpacing(COLOR_PARA_VER_SPACING * m_scal);  // 检查比例一下
+    m_layout->setHorizontalSpacing(CPB_SPACING_HOR * m_scal);
+    m_layout->setVerticalSpacing(CPB_SPACING_VER * m_scal);  // 检查比例一下
 }
 
 // #see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
@@ -158,11 +158,11 @@ void ColorParaBar::paintEvent(QPaintEvent *event)
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QPen pen(property("curColor").value<QColor>());
-    pen.setWidth(COLOR_PARA_SELECTED_WIDTH);
+    pen.setWidth(CPB_WIDTH_SELECTED);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
-    int margin = COLOR_PARA_SELECTED_MARGIN;
+    int margin = CPB_MARGIN_SELECTED;
     auto topLeft = lab->mapToGlobal(QPoint(0, 0)); // 子控件的窗口的（左上角的）绝对坐标; QPoint(0, 0) 为子控件的左上角坐标，子窗口的总是(0, 0)
     topLeft = mapFromGlobal(topLeft);              // 切换为相对父窗口的绝对坐标
     const QRect rt = QRect(topLeft, lab->size()).adjusted(-margin, -margin, margin, margin);

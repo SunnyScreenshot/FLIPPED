@@ -35,9 +35,9 @@ void FrameToolBar::addWidget(QWidget *w)
 void FrameToolBar::addSpacer()
 {
     if (m_orien == Qt::Horizontal)
-        m_layout->addWidget(new XVerticalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XVerticalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
     else
-        m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XHorizontalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
 }
 
 inline void FrameToolBar::setMargin(int margin)
@@ -63,7 +63,7 @@ void FrameToolBar::initUI()
 
     setLayout(m_layout);
     m_layout->setMargin(0);
-    m_layout->setSpacing(CW_ITEM_SPACE);
+    m_layout->setSpacing(SB_ITEM_SPACE);
 
 //    setContentsMargins(BAR_MARGIN_HOR, BAR_MARGIN_VER, BAR_MARGIN_HOR, BAR_MARGIN_VER);
 //    adjustSize();  // 布局后重新计算一下大小尺寸

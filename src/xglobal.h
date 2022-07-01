@@ -20,10 +20,6 @@
 
 #define HEIGHT_SCALE = 1.5  // 4K 采用 1.5；  1080 则 1 倍缩放
 
-// custom widget parameter
-
-
-
 // 截图-选中矩形
 #define SELECT_RECT_PEN_WIDTH  1 * 2           // 选中矩形的边框, 其画笔的默认宽度
 #define SELECT_ASSIST_RECT_PEN_WIDTH  4 * 2    // 四角落辅助的 ∟，其画笔的默认宽度
@@ -38,42 +34,47 @@
 #define ICON_HEIGHT_IN_MARGIN  5 * 2
 
 
-// 上面那个 bar 的间距和一些参数，暂时没使用下面的
-#define CW_RADIRS 6  // 圆角矩形的圆角大小 eg: 绘画工具栏
-//#define CW_MARGIN 8 * 2  // 圆角矩形的边框留白
-#define CW_ITEM_SPACE 10 * 2  // item 之间间隔
+// 上面、下面两个 SelectBar、 ParameterBar 的一些公共参数
+//#define B_SPACER_LINE_WIDTH  1 * 2       // 分割线的宽度
+#define B_SPACER_LINE_HEIGHT 20 * 2      // 分割线的高度
+#define B_RADIRS 6  // 圆角矩形的圆角大小 eg: 绘画工具栏
 
-// 上面、下面两个 Bar 的一些公共参数
-#define SPACER_LINE_WIDTH  1 * 2       // 分割线的宽度
-#define SPACER_LINE_HEIGHT 20 * 2      // 分割线的高度
+// 顶部 SelectBar 中的项目
+#define SB_MARGIN_HOR 10 * 2      // 两个 bar； 选取的最小边框. 左右间距
+#define SB_MARGIN_VER 8 * 2       // 两个 bar； 选取的最小边框. 上下间距  --> 取色盘 不显示时
 
-#define BAR_MARGIN_HOR 10 * 2      // 两个 bar； 选取的最小边框. 左右间距
-#define BAR_MARGIN_VER 8 * 2       // 两个 bar； 选取的最小边框. 上下间距  --> 取色盘 不显示时
-#define BAR_MARGIN_VER_HAS_COLOR_PARA 6 * 2  // 特殊时、仅底部 bar； 选取的最小边框. 上下间距  -->  取色盘 显示时，由于非等距离， 故要小一点
+#define SB_ITEM_SPACE 10 * 2  // item 之间间隔
 
-// 底部参数 Button Bar Para
-#define BB_PARA_SPACING 10 * 2              // 圆形取色盘宽度
-                                            
+// 底部 ParameterBar 中的项目
+#define PB_ITEM_SPACE 0 * 2
+#define PB_MARGIN_HOR 0 * 2
+#define PB_MARGIN_VER 0 * 2
+
+// 底部 ParameterBar 中的子项, 如 ManageBar 的间距和一些参数
+#define MB_ITEM_SPACE 0 * 2       // ManageBar 中 item 的间距
+#define MB_MARGIN_HOR 10 * 2      // ManageBar 选取的最小边框. 左右间距
+#define MB_MARGIN_VER 8 * 2       // ManageBar 选取的最小边框. 上下间距 
+
+// 取色盘 ColorParaBar 的八个圆                          
+#define CPB_LABEL_WIDTH 12 * 2            // 圆形取色盘宽度
+#define CPB_MARGIN_HOR 10 * 2        // 取色盘, 圆形按钮的边框 左右 距离
+#define CPB_MARGIN_VER 6 * 2         // 取色盘, 圆形按钮的边框 上下 距离
+#define CPB_SPACING_HOR  7 * 2       // 取色盘, 圆形按钮之间的水平间距
+#define CPB_SPACING_VER  4 * 2       // 取色盘, 圆形按钮之间的竖直间距
+
+#define CPB_MARGIN_SELECTED  1 * 2    // 取色盘, 选中颜色的圆距离外框圆的距离
+#define CPB_WIDTH_SELECTED  1 * 2     // 取色盘, 圆形按钮之间的竖直间距
+
 // 几个 combobox 的详细（序号、大小）
 #define COMBOBOX_WIDTH 48 * 2            // combobox 宽度
 #define COMBOBOX_HEIGHT 20 * 2            // combobox 宽度
 
-
-// 选择线宽度 3 个圆                         
+// 选择线宽度 WidthParaBar 的 3 个圆，已经替换，后面可以删
 #define WIDTH_LABEL_WIDTH 24 * 2            // 色盘宽度
 #define WIDTH_PARA_MARGIN 0 * 2             // 等大的小圆形按钮的边框距离
 #define WIDTH_PARA_HOR_SPACING  0 * 2       // 等大的小圆形按钮之间的水平间距
 #define WIDTH_PARA_VER_SPACING  0 * 2       // 等大的小圆形按钮之间的竖直间距
                                             
-// 取色盘的八个圆                            
-#define COLOR_LABEL_WIDTH 12 * 2            // 圆形取色盘宽度
-#define COLOR_PARA_MARGIN_VER 6 * 2         // 取色盘, 圆形按钮的边框 上下 距离
-#define COLOR_PARA_MARGIN_HOR 10 * 2        // 取色盘, 圆形按钮的边框 左右 距离
-#define COLOR_PARA_HOR_SPACING  7 * 2       // 取色盘, 圆形按钮之间的水平间距
-#define COLOR_PARA_VER_SPACING  4 * 2       // 取色盘, 圆形按钮之间的竖直间距
-
-#define COLOR_PARA_SELECTED_MARGIN  1 * 2    // 取色盘, 选中颜色的圆距离外框圆的距离
-#define COLOR_PARA_SELECTED_WIDTH  1 * 2     // 取色盘, 圆形按钮之间的竖直间距
 
 
 

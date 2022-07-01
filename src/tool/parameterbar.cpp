@@ -56,9 +56,9 @@ void ParameterBar::addSpacer()
         return;
 
     if (m_orien == Qt::Horizontal)
-        m_layout->addWidget(new XVerticalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XVerticalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
     else
-        m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XHorizontalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
 }
 
 void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items)
@@ -180,15 +180,6 @@ void ParameterBar::onEnableDraw(bool enable)
 
 void ParameterBar::onSelShape(DrawShape shape, bool checked)
 {
-    //m_widthBar;
-    //m_colorBar;
-    //m_serialBar;
-
-    //m_rectBar;
-    //m_ellipseBar;
-    //m_mosaicBar;
-    //m_arrowBar;
-
     removeAllBar();
 
     int n = m_layout->count();
@@ -200,6 +191,7 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         addSpacer();
         addWidget(m_lienWidthBar);
         m_lienWidthBar->setVisible(true);
+        addSpacer();
         addWidget(m_colorBar);
         m_colorBar->setVisible(true);
     } else if (shape == DrawShape::Ellipses) {
@@ -254,11 +246,9 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         XLOG_ERROR("[shape] is not any enumeration.");
     }
 
-    // TODO 2022.06.27: fix 此处添加一个更新设置边框 和 margin 的函数，根据放入的不同，来切换； 设置放在控件添加前面或者后面都尝试一下
-
-
-    setVisible(m_layout->count());
-    this->adjustSize();
+    //setVisible(m_layout->count());
+    setVisible(checked);
+    adjustSize();
     update();
 }
 
@@ -349,17 +339,18 @@ void ParameterBar::initUI()
     if (m_colorBar)
         m_colorBar->setVisible(true);
 
-    const int bbMarginHor = BAR_MARGIN_HOR;
-    int bbMarginVer = BAR_MARGIN_VER;
-    if (m_colorBar->isVisible()) {
-        bbMarginVer = BAR_MARGIN_VER_HAS_COLOR_PARA;
-        m_layout->setContentsMargins(bbMarginHor, 0, 0, 0);
-    } else {
-        m_layout->setContentsMargins(bbMarginHor, bbMarginVer, bbMarginHor, bbMarginVer);
-    }
+    m_layout->setMargin(0);
+    //const int bbMarginHor = BAR_MARGIN_HOR;
+    //int bbMarginVer = BAR_MARGIN_VER;
+    //if (m_colorBar->isVisible()) {
+    //    bbMarginVer = BAR_MARGIN_VER_HAS_COLOR_PARA;
+    //    m_layout->setContentsMargins(bbMarginHor, 0, 0, 0);
+    //} else {
+    //    m_layout->setContentsMargins(bbMarginHor, bbMarginVer, bbMarginHor, bbMarginVer);
+    //}
 
     setContentsMargins(0, 0, 0, 0);
-    m_layout->setSpacing(BAR_MARGIN_HOR);  // TODO 最后一个大概是两个这个间隔（间隔 + 取色盘自带的）
+    m_layout->setSpacing(PB_ITEM_SPACE);
     
     m_serialBar->setFixedSize(COMBOBOX_WIDTH * m_scal, COMBOBOX_HEIGHT * m_scal);
     QStringList items;

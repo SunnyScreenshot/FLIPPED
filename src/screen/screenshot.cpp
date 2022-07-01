@@ -27,7 +27,7 @@
 #include "../core/xlog.h"
 #include "../platform/wininfo.h"
 
-//#define _MYDEBUG
+#define _MYDEBUG
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
 
 namespace Util {
@@ -83,7 +83,14 @@ ScreenShot::ScreenShot(QWidget *parent)
 	
 	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+
+#ifdef _MYDEBUG
+    setWindowFlags(Qt::FramelessWindowHint | windowFlags()); // 去掉标题栏 + 置顶
+#else
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
+#endif
+
+    
     #ifdef _MYDEBUG
 
 //        QSize size(geom.size());
@@ -150,7 +157,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 
     // new refactor
-    m_selBar->setVisible(true);
+    m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     connect(m_selBar, &SelectBar::sigEnableDraw, this, &ScreenShot::onEnableDraw);
     connect(m_selBar, &SelectBar::sigSelShape, this, &ScreenShot::onSelShape);
@@ -1269,7 +1276,6 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
     if (!m_rtCalcu.calcurRsultOnce().isEmpty()) {  // 计算一次结果
         m_bFirstSel = true;
         m_selBar->setVisible(true);
-        //m_paraBar->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {

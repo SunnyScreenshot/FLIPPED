@@ -6,7 +6,7 @@
  * Blog:   https://xmuli.tech
  *
  * Date:   2022.06.22
- * Description: Line Widt
+ * Description: Line Widt, archive
  ******************************************************************/
 #ifndef WIDTHPARABAR_H
 #define WIDTHPARABAR_H

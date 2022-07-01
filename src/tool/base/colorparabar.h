@@ -25,13 +25,13 @@ class ColorParaBar : public QWidget
 public:
     ColorParaBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~ColorParaBar();
-    void init();
+    void initUI();
 
 public:
-    virtual bool eventFilter(QObject *watched, QEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 protected:
-    virtual void paintEvent(QPaintEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     int m_scal;

@@ -68,12 +68,12 @@ void XFrameWidget::paintEvent(QPaintEvent *event)
     pa.setPen(pen);
 
     const int margin1 = 1;
-    pa.drawRoundedRect(contentsRect().adjusted(margin1, margin1, -margin1, -margin1), CW_RADIRS, CW_RADIRS);
+    pa.drawRoundedRect(contentsRect().adjusted(margin1, margin1, -margin1, -margin1), B_RADIRS, B_RADIRS);
 
     colPen.setNamedColor("#000000");
     colPen.setAlphaF(0.1);
     pa.setPen(colPen);
     pa.setBrush(Qt::NoBrush);
     const int margin2 = 0;
-    pa.drawRoundedRect(contentsRect().adjusted(margin2, margin2, -margin2, -margin2), CW_RADIRS, CW_RADIRS);
+    pa.drawRoundedRect(contentsRect().adjusted(margin2, margin2, -margin2, -margin2), B_RADIRS, B_RADIRS);
 }

@@ -33,10 +33,10 @@ void ManageBar::initUI()
             m_layout = new QVBoxLayout(this);
     }
 
-    setContentsMargins(0, 0, 0, 0);
+    setContentsMargins(MB_MARGIN_HOR, MB_MARGIN_VER, MB_MARGIN_HOR, MB_MARGIN_VER);
     setLayout(m_layout);
     m_layout->setMargin(0);
-    m_layout->setSpacing(CW_ITEM_SPACE);
+    m_layout->setSpacing(0);
 }
 
 void ManageBar::addWidget(QWidget* w)
@@ -48,7 +48,7 @@ void ManageBar::addWidget(QWidget* w)
 void ManageBar::addSpacer()
 {
     if (m_orien == Qt::Horizontal)
-        m_layout->addWidget(new XVerticalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XVerticalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
     else
-        m_layout->addWidget(new XHorizontalLine(SPACER_LINE_HEIGHT * m_scal, this));
+        m_layout->addWidget(new XHorizontalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
 }
