@@ -27,17 +27,7 @@
 #include <QLine>
 
 
-int XDrawStep::g_index = 0;
-
-ScrnHelper::ScrnHelper(QObject *parent)
-    : QObject(parent)
-{
-}
-
-ScrnHelper::~ScrnHelper()
-{
-}
-
+int XDrawStep::totalIdx = 0;
 
 // 辅助功能函数
 namespace XHelp {

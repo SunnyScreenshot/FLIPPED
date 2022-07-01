@@ -113,55 +113,57 @@ namespace XC {
 using namespace XC;
 
 
-//Rectangles,
-//Ellipses,
-//Arrows,
-//Lines,
-//Texts,
-//Mosaics,
-//NoDraw
+// NoDraw,
+// Rectangles,
+// Ellipses,
+// Line,
+// Arrows,
+// Pen,
+// Mosaics,
+// Text,
+// SerialNumber
 
 struct  XDrawStep
-{   // 公共元素 ------------------
-	QPoint pos1;                             // 起点
-	QPoint pos2;                             // 终点
-	QRect rt;                                // 初始绘画位置
-    DrawShape shape = DrawShape::NoDraw;     // 绘画形状
-	bool bFill = false;                      // 绘画类型
-	int index = -1;                          // 序号，亦 z 轴，越大越顶层
-	static int g_index;
+{   
+	//new refactor
+	// 公共元素 ------------------
+    QPoint p1;                                  // 起点
+    QPoint p2;                                  // 终点
+    QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成
+    DrawShape shape = DrawShape::NoDraw;        // 绘画形状
+    bool bFill = false;                         // 绘画类型  remove
+    int tbIdx = 0;                              // 某个绘画类型的样式: 为 ParameterBar 的子序号
+    int idxLevel = -1;                          // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
+    static int totalIdx;                        // 所有已绘画类型 的总的序号，越大越上层
 
-	QPen pen = QPen(Qt::red);
-	int penWidth = 2;                         // 画笔宽度
-	QBrush brush = QBrush(Qt::NoBrush);       // 画刷
-	int brushWidth = 1;                       // 画刷宽度
-	int transparency = 1;                     // 透明度
+	// color, pen width
+	QPen pen = QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // 默认红色，画笔宽度为 2px
+	QBrush brush = QBrush(Qt::NoBrush);         // 画刷
 
-	// Rectangles ----------------
-
-	// Ellipses ------------------
-    int rX = 58;                              // 短长轴
-    int rY = 58;                              // 竖长轴
-	
-	// Arrows || Brush(Customized path) ---
+	// Rectangles --------------------
+	// Ellipses ----------------------
+	// Line / Arrows -----------------
 	LineEnds lineEnds = LineEnds::EmptyToEmpty;
-	Qt::PenStyle lineDashes = Qt::SolidLine;
-	QVector<QPoint> custPath;                 // 手绘路径
 
-	// Texts ---------------------
-	bool bDisplay = false;                       // true 准备显示，显示；false 显示结束，隐藏起来
-	bool bTextComplete = true;                // 文字编辑完成
-	QPoint editPos;                           // 显示控件
-    QString text = "==Test Text==";
-	QFont font = QFont();
-	int fontSize = 16;
+	// Arrows ------------------------
+    // Pen ---------------------------
+	QVector<QPoint> custPath;                   // 手绘路径
+											    
+    // Mosaics -----------------------		    
+	int mscPx = 3;                              // 马赛克默认模糊块
+											    
+    // Text --------------------------		    
+    bool bDisplay = false;                      // true 准备显示，显示；false 显示结束，隐藏起来
+    bool bTextComplete = true;                  // 文字编辑完成
+    QPoint editPos;                             // 显示控件
+    QString text = "[Test Text]";               // 文字内容
+	QFont font;                                 // 字体
 
-	// Mosaic ---------------------
-	int mscPx = 3; // 马赛克默认模糊块
+    // SerialNumber ------------------
 
     void clear() {
-        pos1 = QPoint();
-        pos2 = QPoint();
+        p1 = QPoint();
+        p2 = QPoint();
         rt = QRect();
         //shape = DrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
         //pen = QPen(Qt::red);
@@ -179,31 +181,19 @@ struct  XDrawStep
         //fontSize = 16;
         //mscPx = 3;
 
-        index = -1;
+        idxLevel = -1;
         //g_index = -1;  永不重置
 
     }
 };
 
-
-class ScrnHelper : public QObject
-{
-    Q_OBJECT
-public:
-    explicit ScrnHelper(QObject* parent = nullptr);
-    virtual ~ScrnHelper();
-};
-
 // ------------------------
-
 namespace XHelp {
 double getScale(QScreen *screen = QApplication::primaryScreen());
 QColor highlightColor(QColor highlight = QColor("#1F7AFF"));
 
 QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size);
 void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
-
-
 
 // Mosaics draw
 const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克

@@ -119,7 +119,6 @@ private:
     bool m_bFirstSel;            // 初次选中 截图矩形 完成
 
     XDrawStep m_step;        // 当前绘画一步骤
-//    XDraw* m_draw;             // 绘画 Helper
 
     QVector<XDrawStep> m_vDrawed;    // 已绘步骤
     QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
@@ -130,6 +129,7 @@ private:
 	XTextWidget* m_textEdit;
 	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
 
+    // new refactor
     Qt::Orientation m_barOrien;
     QPointer<SelectBar> m_selBar;
     QPointer<ParameterBar> m_paraBar;

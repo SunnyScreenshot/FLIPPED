@@ -284,7 +284,7 @@ void ScreenShot::onLineEndsChange(LineEnds ends)
 
 void ScreenShot::onLineDasheChange(Qt::PenStyle dashes)
 {
-	m_step.lineDashes = dashes;
+    m_step.pen.setStyle(dashes);
 }
 
 void ScreenShot::onEnableDraw(bool enable)
@@ -589,13 +589,18 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
     if (DrawShape::NoDraw == step.shape || (m_pCurrShape == &step && m_rtCalcu.scrnType == ScrnType::Move)) // 选中图形的处于移动状态，跳过这不绘画
         return;
 
+    pa.save();
+    //pa.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    //pa.setRenderHint(QPainter::HighQualityAntialiasing, true);
+    pa.setRenderHint(QPainter::Antialiasing, true);
+    
     if (!isUseEnvContext) {
         QPen pen(step.pen);
-        pen.setWidth(step.penWidth);
-		pen.setStyle(step.lineDashes);
+        pen.setWidth(step.pen.width());
+		pen.setStyle(step.pen.style());
         QBrush brush(step.brush);
         QFont font(step.font);
-        font.setPixelSize(step.fontSize);
+        font.setPixelSize(step.font.pixelSize());   // 看是使用 pix 还是 point
 
         if (step.bFill){
             brush.setColor(step.pen.color());
@@ -629,9 +634,9 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 		step.brush.setStyle(Qt::SolidPattern);
 		pa.setBrush(step.brush);
 
-		QPainterPath arrowPath = XHelp::GetArrowHead(step.pos1, step.pos2);
+		QPainterPath arrowPath = XHelp::GetArrowHead(step.p1, step.p2);
 		pa.fillPath(arrowPath, step.brush);
-		pa.drawLine(XHelp::GetShorterLine(step.pos1, step.pos2));
+		pa.drawLine(XHelp::GetShorterLine(step.p1, step.p2));
 
 		//QPoint offset(0, 20);
 		//pa.setPen(Qt::green);
@@ -645,7 +650,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 	}
     case DrawShape::Text: {
         // 记住：这是每一个 step 都会绘画的
-        if (step.bTextComplete && !step.bDisplay && step.text > 0) {
+        if (step.bTextComplete && !step.bDisplay && step.text.size()) {
             QFontMetrics metrics(m_textEdit->font());
 
             //QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
@@ -681,11 +686,13 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
     default:
         break;
     }
+
+    pa.restore();
 }
 
 bool ScreenShot::isDrawShape(XDrawStep& step)
 {
-    if (step.pos1 == step.pos2)
+    if (step.p1 == step.p2)
         return false;
 
     //if (step.shape == DrawShape::Rectangles) {
@@ -1083,7 +1090,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.drawText(tPosText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtCurMove.x()).arg(rtCurMove.y())
         .arg(rtCurMove.width()).arg(rtCurMove.height()));
     pa.drawText(tPosText - QPoint(0, space * 10), QString("m_step=>pos1(%1, %2)  pos2(%3 * %4) editPos(%5, %6)  rt(%7, %8, %9 * %10)  text:%11")
-        .arg(m_step.pos1.x()).arg(m_step.pos1.y()) .arg(m_step.pos2.x()).arg(m_step.pos2.y())
+        .arg(m_step.p1.x()).arg(m_step.p1.y()) .arg(m_step.p2.x()).arg(m_step.p2.y())
         .arg(m_step.editPos.x()).arg(m_step.editPos.y())
         .arg(m_step.rt.x()).arg(m_step.rt.y()).arg(m_step.rt.width()).arg(m_step.rt.height())
         .arg(m_step.text));
@@ -1169,8 +1176,8 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
         m_rtCalcu.pos1 = event->globalPos();
         m_rtCalcu.pos2 = event->globalPos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) { 
-        m_step.pos1 = event->globalPos();
-        m_step.pos2 = event->globalPos(); 
+        m_step.p1 = event->globalPos();
+        m_step.p2 = event->globalPos(); 
        
         if (m_step.shape == DrawShape::Text) {
             QPoint perviousPos = m_step.editPos;   // 修改之前的显示坐标
@@ -1194,7 +1201,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
                     
                     m_step.editPos = perviousPos;
                     m_vDrawed.push_back(m_step);  // 绘画文字为单独处理【暂时特例】
-                    m_step.index = m_step.g_index++;
+                    m_step.idxLevel = m_step.totalIdx++;
                 } else {   // 编辑ing
                     m_step.bTextComplete = false;
                 }
@@ -1253,11 +1260,11 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->globalPos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        m_step.pos2 = event->globalPos();
+        m_step.p2 = event->globalPos();
         m_step.editPos = event->globalPos();
 
         m_step.custPath.append(event->globalPos());
-        m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
+        m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos2 = event->globalPos();
 	}
@@ -1293,15 +1300,15 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         }
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        m_step.pos2 = event->globalPos();
+        m_step.p2 = event->globalPos();
         m_step.custPath.append(event->globalPos());
-        m_step.rt = RectCalcu::getRect(m_step.pos1, m_step.pos2);
+        m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 
         // DrawShape::Text  在按下时候单独处理 m_vDrawed.push_back
         if (m_step.shape != DrawShape::Text && m_step.shape != DrawShape::NoDraw) {
             if (isDrawShape(m_step)) {
                 m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
-                m_step.index = m_step.g_index++;
+                m_step.idxLevel = m_step.totalIdx++;
                 m_step.clear();
             }
         }
@@ -1335,11 +1342,11 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     if (numDegrees.isNull())
         return;
 
-    m_step.penWidth += numSteps.y();
-    if (m_step.penWidth <= 0)
-        m_step.penWidth = 1;
-    if (m_step.penWidth >= 100)
-        m_step.penWidth = 100;
+    m_step.pen.setWidth(m_step.pen.width() + numSteps.y());
+    if (m_step.pen.width() <= 0)
+        m_step.pen.setWidth(1);
+    if (m_step.pen.width() >= 100)
+        m_step.pen.setWidth(100);
 
     event->accept();
     update(); // TODO 2022.04.27: 此行仅调试用
