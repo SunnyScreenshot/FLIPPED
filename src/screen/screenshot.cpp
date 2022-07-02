@@ -620,7 +620,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         || (m_pCurrShape == &step && m_rtCalcu.scrnType == ScrnType::Move)) // 选中图形的处于移动状态，跳过这不绘画
         return;
 
-    pa.save();
+    //pa.save();
     //pa.setRenderHint(QPainter::SmoothPixmapTransform, true);
     //pa.setRenderHint(QPainter::HighQualityAntialiasing, true);
     pa.setRenderHint(QPainter::Antialiasing, true);
@@ -713,7 +713,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         break;
     }
 
-    pa.restore();
+    //pa.restore();
 }
 
 bool ScreenShot::isDrawShape(XDrawStep& step)
@@ -955,6 +955,13 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     if (rtSel.width() > 0 && rtSel.height() > 0) {
         m_savePixmap = m_currPixmap->copy(QRect(mapFromGlobal(rtSel.topLeft()) * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
         pa.drawPixmap(rtSel, m_savePixmap);
+
+        // 放大镜实现
+        //QSize tSize(100, 100);
+        //auto& mousePos = QCursor::pos();
+        ////QRect rtMagnifying(QPoint(mousePos.x() - tSize.width() / 2, mousePos.y() - tSize.height() / 2), tSize);
+        //QRect rtPick(mousePos * getDevicePixelRatio(), tSize * getDevicePixelRatio());
+        //pa.drawPixmap(mousePos + QPoint(100, 100), m_currPixmap->copy(rtPick).scaled(tSize * 4, Qt::KeepAspectRatio)); // 放大 4 倍
 
         // m_savePixmap 和 m_currPixmap 的地址没有改变，但前者的 cacheKey 总在变化???
         //qInfo() << "ScreenShot::paintEvent()";
