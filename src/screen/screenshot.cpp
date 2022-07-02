@@ -55,6 +55,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_textEdit(new XTextWidget(this))
     , m_rtAtuoMonitor(0, 0, 0, 0)
     , m_barOrien(Qt::Horizontal)  // Horizontal | Vertical
+    , m_selSize(new SelectSize("test", this))
     , m_selBar(new SelectBar(m_barOrien, this))
     , m_paraBar(new ParameterBar(m_barOrien, this))
 {
@@ -157,6 +158,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 
     // new refactor
+    m_selSize->setVisible(false);
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     connect(m_selBar, &SelectBar::sigEnableDraw, this, &ScreenShot::onEnableDraw);
@@ -168,6 +170,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_selBar, &SelectBar::sigFinish, this, &ScreenShot::onFinish);
 
     connect(m_paraBar, &ParameterBar::sigParaBtnId, this, &ScreenShot::onParaBtnId);
+    connect(m_paraBar, &ParameterBar::sigSelColor, this, &ScreenShot::onSelColor);
 
     connect(m_selBar, &SelectBar::sigEnableDraw, m_paraBar, &ParameterBar::onEnableDraw);
     connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
@@ -268,6 +271,7 @@ void ScreenShot::onClearScreen()
 	m_rtCalcu.clear();
 
     m_bFirstSel = false;
+    m_selSize->setVisible(false);
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     m_step.clear();
@@ -324,7 +328,17 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
             m_step.bFill = false;
         else if (idx == 1)
             m_step.bFill = true;
-    } else if (bLine || bPen) {
+    } else if (bLine) {
+        //int idx = property(std::to_string((int)shape).c_str()).value<int>();
+        //int penWidth = 0;
+
+        //if (idx == 0)
+        //    penWidth = 1;
+        //else if (idx == 1)
+        //    penWidth = 2;
+        //else if (idx == 2)
+        //    penWidth = 4;
+    } else if (bPen) {
     } else if (bArrows) {
         int idx = property(std::to_string((int)shape).c_str()).value<int>();
     } else if (bText) {
@@ -406,7 +420,6 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     const bool bRect = shape == DrawShape::Rectangles;
     const bool bEllipses = shape == DrawShape::Ellipses;
     const bool bMosaics = shape == DrawShape::Mosaics;
-
     const bool bLine = shape == DrawShape::Line;
     const bool bPen = shape == DrawShape::Pen;
     const bool bArrows = shape == DrawShape::Arrows;
@@ -420,7 +433,19 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
             m_step.bFill = false;
         else if (idx == 1)
             m_step.bFill = true;
-    } else if (bLine || bPen) {
+    } else if (bLine) {
+        int penWidth = 0;
+        
+        if (idx == 0)
+            penWidth = 1;
+        else if (idx == 1)
+            penWidth = 4;
+        else if (idx == 2)
+            penWidth = 10;
+
+        m_step.pen.setWidth(penWidth);
+
+    } else if (bPen) {
     } else if (bArrows) {
         setProperty(std::to_string((int)shape).c_str(), idx);
     } else if (bText) {
@@ -428,6 +453,11 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     } else {
         //XLOG_INFO
     }
+}
+
+void ScreenShot::onSelColor(QColor col)
+{
+    m_step.pen.setColor(col);
 }
 
 // 获取虚拟屏幕截图
@@ -586,7 +616,8 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
 // 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；true 使用上一个环境的
 void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 {
-    if (DrawShape::NoDraw == step.shape || (m_pCurrShape == &step && m_rtCalcu.scrnType == ScrnType::Move)) // 选中图形的处于移动状态，跳过这不绘画
+    if (DrawShape::NoDraw == step.shape 
+        || (m_pCurrShape == &step && m_rtCalcu.scrnType == ScrnType::Move)) // 选中图形的处于移动状态，跳过这不绘画
         return;
 
     pa.save();
@@ -595,23 +626,18 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
     pa.setRenderHint(QPainter::Antialiasing, true);
     
     if (!isUseEnvContext) {
-        QPen pen(step.pen);
-        pen.setWidth(step.pen.width());
-		pen.setStyle(step.pen.style());
-        QBrush brush(step.brush);
-        QFont font(step.font);
-        font.setPixelSize(step.font.pixelSize());   // 看是使用 pix 还是 point
-
         if (step.bFill){
-            brush.setColor(step.pen.color());
-            brush.setStyle(Qt::SolidPattern);
+            auto t = step.pen.color();
+            step.brush.setColor(step.pen.color());
+            step.brush.setStyle(Qt::SolidPattern);
         } else {
-            brush.setStyle(Qt::NoBrush);
+            //step.brush.setColor(Qt::NoBrush);
+            step.brush.setStyle(Qt::NoBrush);
         }
 
-        pa.setPen(pen);
-        pa.setBrush(brush);
-        pa.setFont(font);
+        pa.setPen(step.pen);
+        pa.setBrush(step.brush);
+        pa.setFont(step.font);
     }
 
     switch (step.shape) {
@@ -795,6 +821,27 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
 
     vec << mapFromGlobal(p1) << mapFromGlobal(p2);
     return vec;
+}
+
+const QPoint ScreenShot::drawSelSizePosition(QRect& rt)
+{
+    QPoint ret;
+    if (!m_selSize)
+        return ret;
+
+    //QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rt.left()).arg(rt.top()).arg(rt.width()).arg(rt.height())
+    //    .arg(m_savePixmap.width()).arg(m_savePixmap.height());
+
+    QString str = QString("%1 x %2").arg(rt.width()).arg(rt.height());
+
+    if (str.compare(m_selSize->text()) != 0) {
+        emit m_selSize->sigTextChanged(str);
+        m_selSize->setText(str);
+    }
+
+    ret.setX(rt.left());
+    ret.setY(rt.top() - m_selSize->height() - SS_SPACE_TO_SELECTRECT);
+    return ret;
 }
 
 void ScreenShot::whichShape()
@@ -1006,9 +1053,11 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         pa.setPen(pen);
         pa.setBrush(Qt::NoBrush);
 
-        QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rtSel.left()).arg(rtSel.top()).arg(rtSel.width()).arg(rtSel.height())
-                .arg(m_savePixmap.width()).arg(m_savePixmap.height());
-        pa.drawText(rtSel.topLeft() + QPoint(0, -10), str);
+        m_selSize->move(drawSelSizePosition(rtSel));
+
+        //QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rtSel.left()).arg(rtSel.top()).arg(rtSel.width()).arg(rtSel.height())
+        //        .arg(m_savePixmap.width()).arg(m_savePixmap.height());
+        //pa.drawText(rtSel.topLeft() + QPoint(0, -10), str);
 
         #if 1
             drawBorderPS(pa, rtSel);
@@ -1321,6 +1370,9 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_bFirstSel = true;
         if (!m_selBar->isVisible())
             m_selBar->setVisible(true);
+
+        if (!m_selSize->isVisible())
+            m_selSize->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {

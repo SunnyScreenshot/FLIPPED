@@ -11,7 +11,6 @@
 #ifndef COLORPARABAR_H
 #define COLORPARABAR_H
 
-#include "frametoolbar.h"
 #include <QColor>
 #include <QMap>
 #include <QString>
@@ -26,6 +25,9 @@ public:
     ColorParaBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~ColorParaBar();
     void initUI();
+
+signals:
+    void sigColorChange(QColor);
 
 public:
     bool eventFilter(QObject *watched, QEvent *event) override;

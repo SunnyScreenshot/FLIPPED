@@ -120,6 +120,7 @@ bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
             color = it.value();
         }
 
+        emit sigColorChange(color);
         //QMessageBox::about(nullptr, lab->objectName(), it.value());
         //for (const auto& it : findChildren<XLabel*>()) {
         //    qDebug() << it << " --> " << it->objectName() << it->isVisible() << "  " << it->rect();

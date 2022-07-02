@@ -169,12 +169,6 @@ void SelectBar::onToolBtn()
             continue;
         }
     }
-
-    //if (enableDraw) {
-    //    emit sigDrawStart();
-    //} else {
-    //    emit sigDrawEnd();
-    //}
     
     emit sigEnableDraw(enableDraw);
 

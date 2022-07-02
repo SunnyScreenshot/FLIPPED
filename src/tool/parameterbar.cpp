@@ -13,6 +13,7 @@
 #include "../widget/xhorizontalline.h"
 #include "../widget/xverticalline.h"
 #include "../widget/xcombobox.h"
+#include "../widget/xlabel.h"
 
 #include "../core/xlog.h"
 #include <QColor>
@@ -42,6 +43,8 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_lienWidthBar(nullptr)
 {
     initUI();
+
+    connect(m_colorBar, &ColorParaBar::sigColorChange, this, &ParameterBar::sigSelColor);
 }
 
 void ParameterBar::addWidget(QWidget *w)

@@ -56,12 +56,13 @@ void XLabel::setConicalGradientColor(QPainter& pa)
     QConicalGradient conicalGradient(QPointF(contentsRect().center()), 300);
 
     conicalGradient.setColorAt(0, QColor("#EB004A"));
-    conicalGradient.setColorAt(1 / 6.0, QColor("#FF0000"));
-    conicalGradient.setColorAt(2 / 6.0, QColor("#F800FC"));
-    conicalGradient.setColorAt(3 / 6.0, QColor("#4D00F3"));
-    conicalGradient.setColorAt(4 / 6.0, QColor("#1BB8F2"));
-    conicalGradient.setColorAt(5 / 6.0, QColor("#46EA48"));
-    conicalGradient.setColorAt(1, QColor("#FFDB34"));
+    conicalGradient.setColorAt(1 / 7.0, QColor("#FF0000"));
+    conicalGradient.setColorAt(2 / 7.0, QColor("#F800FC"));
+    conicalGradient.setColorAt(3 / 7.0, QColor("#4D00F3"));
+    conicalGradient.setColorAt(4 / 7.0, QColor("#1BB8F2"));
+    conicalGradient.setColorAt(5 / 7.0, QColor("#46EA48"));
+    conicalGradient.setColorAt(6 / 7.0, QColor("#FFDB34"));
+    conicalGradient.setColorAt(1, QColor("#EB004A"));
 
     // 使用锥向渐变创建一个画刷，用来填充
     pa.save();

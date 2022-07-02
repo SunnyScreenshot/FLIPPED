@@ -22,7 +22,6 @@
 #include "./screen/winresetbtn.h"
 #include "./screen/tray.h"
 #include "widget/xroundwidget.h"
-#include "tool/base/frametoolbar.h"
 #include "tool/base/widthparabar.h"
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"

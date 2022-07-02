@@ -17,6 +17,7 @@
 #include "../widget/xtextwidget.h"
 #include "../tool/selectbar.h"
 #include "../tool/parameterbar.h"
+#include "../tool/selectsize/selectsize.h"
 #include <QWidget>
 #include <QList>
 #include <QColor>
@@ -77,6 +78,7 @@ public slots:
     void onCancel();
     void onFinish();
     void onParaBtnId(DrawShape shape, QToolButton* tb);
+    void onSelColor(QColor col);
 
 private:
 	ScrnType updateScrnType(const QPoint pos);
@@ -96,6 +98,8 @@ private:
     bool isDrawShape(XDrawStep& step);
 
     const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
+    const QPoint drawSelSizePosition(QRect& rt);
+
 
     //--------------test begin-------------
     void showAllDrawedShape(QPainter& pa);
@@ -110,29 +114,31 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
-	QList<QScreen *> m_screens;  // 所有屏幕
-	QScreen* m_primaryScreen;    // 主屏幕
-	QPixmap* m_currPixmap;       // 当前屏幕截图
-    QPixmap m_savePixmap;        // 当前屏幕截图 + 遮罩   无构造初始化
-	RectCalcu m_rtCalcu;         // 选中矩形区域
-    QRect m_rtVirDesktop;        // 截图时刻的虚拟桌面的大小
-    bool m_bFirstSel;            // 初次选中 截图矩形 完成
+	QList<QScreen *> m_screens;            // 所有屏幕
+	QScreen* m_primaryScreen;              // 主屏幕
+	QPixmap* m_currPixmap;                 // 当前屏幕截图
+    QPixmap m_savePixmap;                  // 当前屏幕截图 + 遮罩   无构造初始化
+	RectCalcu m_rtCalcu;                   // 选中矩形区域
+    QRect m_rtVirDesktop;                  // 截图时刻的虚拟桌面的大小
+    bool m_bFirstSel;                      // 初次选中 截图矩形 完成
 
-    XDrawStep m_step;        // 当前绘画一步骤
+    XDrawStep m_step;                      // 当前绘画一步骤
 
-    QVector<XDrawStep> m_vDrawed;    // 已绘步骤
-    QVector<XDrawStep> m_vDrawUndo;  // 撤销步骤
-    QVector<QRect> m_vWholeScrn;      // 特殊矩形，全屏大小
-    XDrawStep* m_pCurrShape;         // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
+    QVector<XDrawStep> m_vDrawed;          // 已绘步骤
+    QVector<XDrawStep> m_vDrawUndo;        // 撤销步骤
+    QVector<QRect> m_vWholeScrn;           // 特殊矩形，全屏大小
+    XDrawStep* m_pCurrShape;               // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
 
 	// test
 	XTextWidget* m_textEdit;
-	QRect m_rtAtuoMonitor;           // 自动检测窗口矩形大小；用以给其它赋值
+	QRect m_rtAtuoMonitor;                 // 自动检测窗口矩形大小；用以给其它赋值
 
     // new refactor
     Qt::Orientation m_barOrien;
+    QPointer<SelectSize> m_selSize;        // 左上角显示窗口大小
     QPointer<SelectBar> m_selBar;
     QPointer<ParameterBar> m_paraBar;
+
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

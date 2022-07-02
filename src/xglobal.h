@@ -57,23 +57,34 @@
 
 // 取色盘 ColorParaBar 的八个圆                          
 #define CPB_LABEL_WIDTH 12 * 2            // 圆形取色盘宽度
-#define CPB_MARGIN_HOR 10 * 2        // 取色盘, 圆形按钮的边框 左右 距离
-#define CPB_MARGIN_VER 6 * 2         // 取色盘, 圆形按钮的边框 上下 距离
-#define CPB_SPACING_HOR  7 * 2       // 取色盘, 圆形按钮之间的水平间距
-#define CPB_SPACING_VER  4 * 2       // 取色盘, 圆形按钮之间的竖直间距
+#define CPB_MARGIN_HOR 10 * 2               // 取色盘, 圆形按钮的边框 左右 距离
+#define CPB_MARGIN_VER 6 * 2                // 取色盘, 圆形按钮的边框 上下 距离
+#define CPB_SPACING_HOR  7 * 2              // 取色盘, 圆形按钮之间的水平间距
+#define CPB_SPACING_VER  4 * 2              // 取色盘, 圆形按钮之间的竖直间距
 
-#define CPB_MARGIN_SELECTED  1 * 2    // 取色盘, 选中颜色的圆距离外框圆的距离
-#define CPB_WIDTH_SELECTED  1 * 2     // 取色盘, 圆形按钮之间的竖直间距
+#define CPB_MARGIN_SELECTED  1 * 2          // 取色盘, 选中颜色的圆距离外框圆的距离
+#define CPB_WIDTH_SELECTED  1 * 2           // 取色盘, 圆形按钮之间的竖直间距
 
 // 几个 combobox 的详细（序号、大小）
-#define COMBOBOX_WIDTH 48 * 2            // combobox 宽度
-#define COMBOBOX_HEIGHT 20 * 2            // combobox 宽度
+#define COMBOBOX_WIDTH 48 * 2               // combobox 宽度
+#define COMBOBOX_HEIGHT 20 * 2              // combobox 宽度
 
 // 选择线宽度 WidthParaBar 的 3 个圆，已经替换，后面可以删
 #define WIDTH_LABEL_WIDTH 24 * 2            // 色盘宽度
 #define WIDTH_PARA_MARGIN 0 * 2             // 等大的小圆形按钮的边框距离
 #define WIDTH_PARA_HOR_SPACING  0 * 2       // 等大的小圆形按钮之间的水平间距
 #define WIDTH_PARA_VER_SPACING  0 * 2       // 等大的小圆形按钮之间的竖直间距
+
+// 左上角用来显示，选中矩形区域 SelectSize 的大小
+#define SS_MARGIN_LEFT 3 * 2                // 边框左部的间距
+#define SS_MARGIN_RIGHT 5 * 2               // 边框右部的间距
+#define SS_MARGIN_TOP 2 * 2                 // 边框顶部的间距
+#define SS_MARGIN_BOTTOM 3 * 2              // 边框底部的间距
+#define SS_SPACE_TO_SELECTRECT 10 * 2       // 此部件 底部距离选中框的顶部的距离
+#define SS_RADIRS 2                         // 此部件 圆角矩形的圆角
+//#define SS_MARGIN_BOTTOM 3 * 2            // 边框底部的间距
+//#define SS_HOR_SPACING  0 * 2             // 水平间距
+//#define SS_VER_SPACING  0 * 2             // 竖直间距
                                             
 
 

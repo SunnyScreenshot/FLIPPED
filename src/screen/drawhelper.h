@@ -126,7 +126,7 @@ using namespace XC;
 struct  XDrawStep
 {   
 	//new refactor
-	// 公共元素 ------------------
+	// base element ------------------
     QPoint p1;                                  // 起点
     QPoint p2;                                  // 终点
     QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成

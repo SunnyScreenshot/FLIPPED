@@ -11,13 +11,14 @@
 #ifndef SELECTBAR_H
 #define SELECTBAR_H
 
-#include "base/frametoolbar.h"
+#include "../widget/xframewidget.h"
 #include "../screen/drawhelper.h"
 #include <QVector>
 
 QT_BEGIN_NAMESPACE
 class QToolButton;
 class QStringList;
+class QBoxLayout;
 QT_END_NAMESPACE
 
 // rectangle
@@ -51,8 +52,6 @@ public slots:
 
 signals:
     void sigEnableDraw(bool enable);
-    void sigDrawStart();       // 处于绘画状态
-    void sigDrawEnd();         // 处于绘画状态
     void sigSelShape(DrawShape shape, bool checked);
     void sigRevocation();
     void sigRenewal();
