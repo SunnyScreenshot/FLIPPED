@@ -24,6 +24,7 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QToolButton>
+#include <QDateTime>
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
@@ -96,13 +97,22 @@ QWidget *Preference::aboutPage()
 
 //    ADD_DEFINITIONS(-DPROJECT_NAME=\"${PROJECT_NAME}\")
 //    ADD_DEFINITIONS(-DPROJECT_VERSION=\"${PROJECT_VERSION}\")
+//    message("_PROJECT_NAME:${PROJECT_NAME}")
+//    message("_PROJECT_VERSION:" ${PROJECT_VERSION})
+//    message("_BIT_ARCH:" ${_bit_arch})
+//    message("_COMPILER:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
+//    message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
 
     QFont font;
-    QLabel* project = new QLabel(tr("%1").arg(PROJECT_NAME));
+    QLabel* project = new QLabel(tr("%1").arg(_PROJECT_NAME));
     font.setPointSizeF(14);
     font.setBold(true);
     project->setFont(font);
-    QLabel* buildTime = new QLabel(tr("%1-Beta x64 (2022.07.03)").arg(PROJECT_VERSION));
+    QLabel* buildTime = new QLabel(tr("%1-Beta %2_%3 (%4)")
+                                   .arg(_PROJECT_VERSION)
+                                   .arg(_COMPILER_ID)
+                                   .arg(_BIT_ARCH)
+                                   .arg(QDateTime::currentDateTime().toString("yyyy.MM.dd")));  // hh:mm:ss
     font.setPointSizeF(9);
     font.setBold(false);
     buildTime->setFont(font);

@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。                此行无需在 QApplication a(argc,argv);前面
 #endif
 
-    QCoreApplication::setApplicationVersion(APP_VERSION);
-    QCoreApplication::setApplicationName(QStringLiteral("PicShot"));
+    QCoreApplication::setApplicationVersion(_PROJECT_VERSION);
+    QCoreApplication::setApplicationName(QStringLiteral(_PROJECT_NAME));
     QCoreApplication::setOrganizationName(QStringLiteral("XMuli"));
 
     QApplication a(argc, argv);
@@ -86,8 +86,8 @@ int main(int argc, char *argv[])
     pre->show();
 
 
-    WinSetting* set = new WinSetting();
-    set->show();
+//    WinSetting* set = new WinSetting();
+//    set->show();
     //SelectBar* t1 = new SelectBar();
     //t1->move(200, 100);
     //t1->show();

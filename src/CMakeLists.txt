@@ -1,27 +1,25 @@
 ﻿cmake_minimum_required(VERSION 3.3)
 set(PROJECT_NAME PicShot)
-set(PROJECT_VERSION 0.2.1)
+set(PROJECT_VERSION 0.2)
+set(_version ${PROJECT_VERSION})
 #set(PROJECT_VERSION_MAJOR 0)
 #set(PROJECT_VERSION_MINOR 2)
-
-# 定义 CMake 变量，在 cpp 中使用
-ADD_DEFINITIONS(-DPROJECT_NAME=\"${PROJECT_NAME}\")
-ADD_DEFINITIONS(-DPROJECT_VERSION=\"${PROJECT_VERSION}\")
+#set(PROJECT_VERSION_PATCH 0)
 
 project(${PROJECT_NAME})
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_CURRENT_SOURCE_DIR}/../bin) # 更改二进制输出路径
 
 # 此处配合 VMSVC 的 UTF8-BOM 插件，达到跨平台
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  message("---using Clang---")
+    message("---using Clang---")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  message("---using GCC---")
+    message("---using GCC---")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-  message("---using Intel C++---")
+    message("---using Intel C++---")
 elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-        message("---using Visual Studio C++---")
-        add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
-        add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+    message("---using Visual Studio C++---")
+    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 endif()
 
 # msvc multicore compilation
@@ -283,10 +281,41 @@ foreach(_source IN ITEMS ${_source_list})
 
 endforeach()
 
+# https://www.ljjyy.com/archives/2021/03/100653.html
+# CPU是32位还是64位
+if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(_bit_arch "x64")
+    message(STATUS "Target is 64 bits")
+else()
+    set(_bit_arch "x86")
+    message(STATUS "Target is 32 bits")
+endif()
 
-# 定义一个变量
-target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="v${PROJECT_VERSION}")
+# 主机处理器架构
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "i386")
+    message(STATUS "i386 architecture detected")
+elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "i686")
+    message(STATUS "i686 architecture detected")
+elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
+    message(STATUS "x86_64 architecture detected")
+else()
+    message(STATUS "host processor architecture is unknown")
+endif()
 
+# 定义一些变量，可以在 CPP 中使用
+target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")           # PicShot
+target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${_version}")    # 0.2 这个没打印出来，很奇怪，改用下面这个
+target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH="${_bit_arch}")                  # x64/x86
+target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown
+target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
+
+message("==========BRGIN============")
+message("_PROJECT_NAME:${PROJECT_NAME}")
+message("_PROJECT_VERSION:" ${_version})
+message("_BIT_ARCH:" ${_bit_arch})
+message("_COMPILER:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
+message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
+message("==========END============")
 
 #  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
 if(APPLE)
