@@ -1,8 +1,12 @@
 ﻿cmake_minimum_required(VERSION 3.3)
 set(PROJECT_NAME PicShot)
-set(PROJECT_VERSION 0.2)
+set(PROJECT_VERSION 0.2.1)
 #set(PROJECT_VERSION_MAJOR 0)
 #set(PROJECT_VERSION_MINOR 2)
+
+# 定义 CMake 变量，在 cpp 中使用
+ADD_DEFINITIONS(-DPROJECT_NAME=\"${PROJECT_NAME}\")
+ADD_DEFINITIONS(-DPROJECT_VERSION=\"${PROJECT_VERSION}\")
 
 project(${PROJECT_NAME})
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_CURRENT_SOURCE_DIR}/../bin) # 更改二进制输出路径
@@ -119,6 +123,14 @@ set(SRCS_TOOL
     "tool/parameterbar.cpp"
     )
 
+# tool
+set(SRCS_PERFERENCE
+    "preference/preference.h"
+    "preference/preference.cpp"
+    "preference/resetbtn.h"
+    "preference/resetbtn.cpp"
+    )
+
 # screen
 set(SRCS_WINSCREEN
     "screen/drawhelper.h"
@@ -194,6 +206,7 @@ if (APPLE)
     ${SRCS_CORE}
     ${SRCS_WIDGET}
     ${SRCS_TOOL}
+    ${SRCS_PERFERENCE}
     ${SRCS_WINSCREEN}
     ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}
@@ -206,6 +219,7 @@ else()
     ${SRCS_CORE}
     ${SRCS_WIDGET}
     ${SRCS_TOOL}
+    ${SRCS_PERFERENCE}
     ${SRCS_WINSCREEN}
     ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}

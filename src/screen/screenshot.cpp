@@ -687,10 +687,12 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 
             //http://qtdebug.com/qtbook-paint-text
             //https://doc.qt.io/qt-5/qpainter.html#drawText-5
-            const QFont font(pa.font());
-            pa.setFont(m_textEdit->font());
+            //const QFont font(pa.font());
+
+            qDebug() << step.font.pointSize();
+            pa.setFont(step.font);
             pa.drawText(QRect(step.editPos, textBoundingRect.size()), flags, step.text);
-            pa.setFont(font);
+            //pa.setFont(font);
         }   
         break;
     }
@@ -1401,11 +1403,16 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     if (numDegrees.isNull())
         return;
 
-    m_step.pen.setWidth(m_step.pen.width() + numSteps.y());
-    if (m_step.pen.width() <= 0)
-        m_step.pen.setWidth(1);
-    if (m_step.pen.width() >= 100)
-        m_step.pen.setWidth(100);
+    if (m_step.shape == DrawShape::Text) {
+        // TODO 2022.07.03: 待优化，需同时调整输入框的大小
+        m_step.font.setPointSize(m_step.font.pointSize() + numSteps.y());
+    } else {
+        m_step.pen.setWidth(m_step.pen.width() + numSteps.y());
+        if (m_step.pen.width() <= 0)
+            m_step.pen.setWidth(1);
+        if (m_step.pen.width() >= 100)
+            m_step.pen.setWidth(100);
+    }
 
     event->accept();
     update(); // TODO 2022.04.27: 此行仅调试用

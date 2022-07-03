@@ -89,9 +89,9 @@ private:
     bool getDrawedShapeRect();
 
 	// 绘画边框样式
-    void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);  // Deepin 边框样式
+    void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);  // Blue 边框样式
 	void drawBorderMac(QPainter& pa, QRect rt, int num = 8, bool isRound = true);   // Mac 边框样式
-    void drawBorderPS(QPainter& pa, QRect rt, bool isRound = false);                          // PicShot 边框样式
+    void drawBorderPS(QPainter& pa, QRect rt, bool isRound = false);                // PicShot 边框样式
 
     // 辅助（绘画）函数， TODO 可以迁移到 XDrawHelper 中？
     void drawStep(QPainter& pa, XDrawStep &step, bool isUseEnvContext = false);

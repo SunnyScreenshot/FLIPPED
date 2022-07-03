@@ -28,5 +28,6 @@
         <file>resources/tool_para/line_width/line_width_1.svg</file>
         <file>resources/tool_para/line_width/line_width_2.svg</file>
         <file>resources/tool_para/line_width/line_width_3.svg</file>
+        <file>resources/logo.svg</file>
     </qresource>
 </RCC>

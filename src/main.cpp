@@ -29,6 +29,7 @@
 
 #include "core/xlog.h"
 #include "example/exwidget.h"
+#include "preference/preference.h"
 
 // test
 #ifdef Q_OS_WIN
@@ -81,6 +82,12 @@ int main(int argc, char *argv[])
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
 
+    Preference* pre = new Preference(nullptr);
+    pre->show();
+
+
+    WinSetting* set = new WinSetting();
+    set->show();
     //SelectBar* t1 = new SelectBar();
     //t1->move(200, 100);
     //t1->show();

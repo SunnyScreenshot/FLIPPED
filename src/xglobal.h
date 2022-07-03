@@ -89,4 +89,18 @@
 
 
 
+// 偏好主 UI 界面 Preference
+#define PRE_MARGIN_HOR 20 * 1               // 布局到水平间隔
+#define PRE_MARGIN_VER 20 * 1               // 布局到垂直间隔
+#define PRE_MARGIN_VER_TOP 10 * 1           // 布局到顶上面间隔
+#define PRE_MARGIN_VER_BOTTOM 20 * 1        // 布局到最底部间隔
+
+// QGridLayout
+#define GL_SPACING_HOR  0 * 2              // 取色盘, 圆形按钮之间的水平间距
+#define GL_SPACING_VER  8 * 2              // 取色盘, 圆形按钮之间的竖直间距
+
+//#define CPB_SPACING_HOR  7 * 2
+//#define CPB_SPACING_VER  4 * 2
+
+
 #endif // XGLOBAL_H
