@@ -11,6 +11,7 @@
 #include "preference.h"
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"
+#include "../widget/xkeysequenceedit.h"
 #include "../screen/drawhelper.h"
 #include <QPushButton>
 #include <QTabWidget>
@@ -26,10 +27,12 @@
 #include <QToolButton>
 #include <QDateTime>
 
+// test
+#include <QDebug>
+
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
     , m_scale(1)
-    , m_resetBtn(nullptr)
 {
     initUI();
 }
@@ -42,41 +45,78 @@ void Preference::initUI()
     vLayout->setMargin(0);
     setLayout(vLayout);
 
-
     // tabPages
     QTabWidget* tabPages = new QTabWidget(this);
     tabPages->setMovable(true);
     tabPages->setObjectName("tabPages");
-    tabPages->addTab(generalPage(), tr("General"));
-    tabPages->addTab(shortcutPage(), tr("Shortcut"));
-    tabPages->addTab(aboutPage(), tr("About"));
-
-
-
-//    QHBoxLayout* layRestBtn = new QHBoxLayout(this);
-//    layRestBtn->setMargin(0);
-//    layRestBtn->addStretch(7);
-//    layRestBtn->addWidget(m_resetBtn, 1, Qt::AlignRight);
+    tabPages->addTab(tabGeneral(), tr("General"));
+    tabPages->addTab(tabHotkeys(), tr("HotKeys"));
+    tabPages->addTab(tabAbout(), tr("About"));
 
     vLayout->addWidget(tabPages);
 }
 
-QWidget *Preference::generalPage()
+QWidget *Preference::tabGeneral()
 {
 //    QWidget* page = new QWidget(this);
-
-
     return new QPushButton("generalPage");
 }
 
-QWidget *Preference::shortcutPage()
-{
-    return new QPushButton("shortcutPage");
-}
-
-QWidget *Preference::aboutPage()
+QWidget *Preference::tabHotkeys()
 {
     QWidget* page = new QWidget(nullptr);
+    page->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout* vLay = new QVBoxLayout(page);
+    vLay->setContentsMargins(20 * m_scale, 0, 20 * m_scale, 0);
+    vLay->addSpacing(20 * m_scale);
+
+    // 快捷键框
+    const int keyEditMinWidget = 200;
+    auto hotSrn1 = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y));
+    hotSrn1->setMinimumWidth(keyEditMinWidget);
+
+    QGridLayout* grid = new QGridLayout();
+    grid->setMargin(0);
+    grid->setSpacing(TSG_SPACING_VER);
+    grid->setColumnStretch (0, 3);
+    grid->setColumnStretch (1, 7);
+    grid->addWidget(new QLabel(tr("Active Window:")), 0, 0, Qt::AlignRight);
+    grid->addWidget(hotSrn1, 0, 1, Qt::AlignLeft);
+    grid->addWidget(new QLabel(tr("Window / Object")), 1, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(tr("hotkey")), 1, 1, Qt::AlignLeft);
+    grid->addWidget(new QLabel(tr("Delay Capture:")), 2, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(tr("hotkey")), 2, 1, Qt::AlignLeft);
+    grid->addWidget(new QLabel(tr("Full Screen:")), 3, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(tr("hotkey")), 3, 1, Qt::AlignLeft);
+    grid->addWidget(new QLabel(tr("Fixd-Size Region:")), 4, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(tr("hotkey")), 4, 1, Qt::AlignLeft);
+
+    grid->addWidget(new XHorizontalLine(contentsRect().width()), 5, 0, 1, grid->columnCount(), Qt::AlignCenter);
+
+    grid->addWidget(new QLabel(tr("Paste:")), 6, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(tr("hotkey")), 6, 1, Qt::AlignLeft);
+    grid->addWidget(new QLabel(tr("Hide/Show all images:")), 7, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(tr("hotkey")), 7, 1, Qt::AlignLeft);
+    grid->addWidget(new QLabel(tr("Switch to another image group:")), 8, 0, Qt::AlignRight);
+    grid->addWidget(new QLabel(tr("hotkey")), 8, 1, Qt::AlignLeft);
+
+    vLay->addLayout(grid, grid->rowCount());
+    vLay->addStretch(4);
+
+    QHBoxLayout* hLay = new QHBoxLayout();
+    hLay->setContentsMargins(20, 0, 20, 20);
+    hLay->addSpacing(0);
+    hLay->addStretch(7);
+    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    vLay->addLayout(hLay, 1);
+
+    return page;
+}
+
+QWidget *Preference::tabAbout()
+{
+    QWidget* page = new QWidget(nullptr);
+    page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *vLay = new QVBoxLayout(page);
     vLay->setMargin(0);
     vLay->addSpacing(30 * m_scale);
@@ -92,27 +132,16 @@ QWidget *Preference::aboutPage()
     tb->setChecked(false);
     tb->setDisabled(true);
 
-    vLay->addWidget(tb, 4, Qt::AlignCenter);
-//    vLay->addSpacing(10 * m_scale);
-
-//    ADD_DEFINITIONS(-DPROJECT_NAME=\"${PROJECT_NAME}\")
-//    ADD_DEFINITIONS(-DPROJECT_VERSION=\"${PROJECT_VERSION}\")
-//    message("_PROJECT_NAME:${PROJECT_NAME}")
-//    message("_PROJECT_VERSION:" ${PROJECT_VERSION})
-//    message("_BIT_ARCH:" ${_bit_arch})
-//    message("_COMPILER:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
-//    message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
-
+    vLay->addWidget(tb, 1, Qt::AlignCenter);
     QFont font;
     QLabel* project = new QLabel(tr("%1").arg(_PROJECT_NAME));
     font.setPointSizeF(14);
     font.setBold(true);
     project->setFont(font);
-    QLabel* buildTime = new QLabel(tr("%1-Beta %2_%3 (%4)")
+    QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
                                    .arg(_PROJECT_VERSION)
-                                   .arg(_COMPILER_ID)
                                    .arg(_BIT_ARCH)
-                                   .arg(QDateTime::currentDateTime().toString("yyyy.MM.dd")));  // hh:mm:ss
+                                   .arg(QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss")));  // hh:mm:ss
     font.setPointSizeF(9);
     font.setBold(false);
     buildTime->setFont(font);
@@ -135,16 +164,16 @@ QWidget *Preference::aboutPage()
     QLabel* copyrightL = new QLabel(tr("Copyright ©"));
     QLabel* copyrightR = new QLabel(tr("2021-2022 XMuli"));
 
-    QGridLayout* gird1 = new QGridLayout();
-    gird1->setMargin(0);
-    gird1->setSpacing(GL_SPACING_VER);
-    gird1->setColumnStretch (0, 7);
-    gird1->setColumnStretch (1, 9);
-    gird1->addWidget(authorL, 0, 0, Qt::AlignRight);
-    gird1->addWidget(authorR, 0, 1, Qt::AlignLeft);
-    gird1->addWidget(copyrightL, 1, 0, Qt::AlignRight);
-    gird1->addWidget(copyrightR, 1, 1, Qt::AlignLeft);
-    vLay->addLayout(gird1);
+    QGridLayout* grid1 = new QGridLayout();
+    grid1->setMargin(0);
+    grid1->setSpacing(TAG_SPACING_VER);
+    grid1->setColumnStretch (0, 7);
+    grid1->setColumnStretch (1, 9);
+    grid1->addWidget(authorL, 0, 0, Qt::AlignRight);
+    grid1->addWidget(authorR, 0, 1, Qt::AlignLeft);
+    grid1->addWidget(copyrightL, 1, 0, Qt::AlignRight);
+    grid1->addWidget(copyrightR, 1, 1, Qt::AlignLeft);
+    vLay->addLayout(grid1, grid1->rowCount());
 
     vLay->addSpacing(30 * m_scale);
     vLay->addWidget(new XHorizontalLine(contentsRect().width()), 1, Qt::AlignCenter);
@@ -160,27 +189,26 @@ QWidget *Preference::aboutPage()
     QLabel* blogR = new QLabel(tr("<a style='color: green;' href=https://ifmet.cn>ifmet.cn</a>"));
     blogR->setOpenExternalLinks(true);
 
-    QGridLayout* gird2 = new QGridLayout();
-    gird2->setMargin(0);
-    gird2->setSpacing(GL_SPACING_VER);
-    gird2->setColumnStretch (0, 7);
-    gird2->setColumnStretch (1, 9);
-    gird2->addWidget(ackmtR, 0, 0, 1, 2, Qt::AlignCenter);
-    gird2->addWidget(new QLabel("GitHub:"), 1, 0, Qt::AlignRight);
-    gird2->addWidget(ghR, 1, 1, Qt::AlignLeft);
-    gird2->addWidget(new QLabel(" "), 2, 0, Qt::AlignRight);
-    gird2->addWidget(blogR, 2, 1, Qt::AlignLeft);
-    gird2->addWidget(new QLabel("UI:"), 3, 0, Qt::AlignRight);
-    gird2->addWidget(new QLabel("iCancely"), 3, 1, Qt::AlignLeft);
-    gird2->addWidget(new QLabel("Contributor:"), 4, 0, Qt::AlignRight);
-    gird2->addWidget(new QLabel("Tom Jerry"), 4, 1, Qt::AlignLeft);
-    gird2->addWidget(new QLabel("Translators:"), 5, 0, Qt::AlignRight);
-    gird2->addWidget(new QLabel("Tom Jerry"), 5, 1, Qt::AlignLeft);
+    QGridLayout* grid2 = new QGridLayout();
+    grid2->setMargin(0);
+    grid2->setSpacing(TAG_SPACING_VER);
+    grid2->setColumnStretch (0, 7);
+    grid2->setColumnStretch (1, 9);
+    grid2->addWidget(ackmtR, 0, 0, 1, 2, Qt::AlignCenter);
+    grid2->addWidget(new QLabel("GitHub:"), 1, 0, Qt::AlignRight);
+    grid2->addWidget(ghR, 1, 1, Qt::AlignLeft);
+    grid2->addWidget(new QLabel(" "), 2, 0, Qt::AlignRight);
+    grid2->addWidget(blogR, 2, 1, Qt::AlignLeft);
+    grid2->addWidget(new QLabel("UI:"), 3, 0, Qt::AlignRight);
+    grid2->addWidget(new QLabel("iCancely"), 3, 1, Qt::AlignLeft);
+    grid2->addWidget(new QLabel("Contributor:"), 4, 0, Qt::AlignRight);
+    grid2->addWidget(new QLabel("Tom Jerry"), 4, 1, Qt::AlignLeft);
+    grid2->addWidget(new QLabel("Translators:"), 5, 0, Qt::AlignRight);
+    grid2->addWidget(new QLabel("Tom Jerry"), 5, 1, Qt::AlignLeft);
+    vLay->addLayout(grid2, grid2->rowCount());
 
-
-    vLay->addLayout(gird2, 6);
+    vLay->addStretch(6);
     vLay->addSpacing(35 * m_scale);
-//    vLay->addStretch(0);  // 设置策略，更改为弹簧效果
 
     return page;
 }

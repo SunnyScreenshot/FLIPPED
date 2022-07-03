@@ -28,13 +28,12 @@ public:
 
 private:
     void initUI();
-    QWidget* generalPage();             // 常规
-    QWidget* shortcutPage();            // 快捷键
-    QWidget* aboutPage();               // 关于
+    QWidget* tabGeneral();             // 常规
+    QWidget* tabHotkeys();            // 快捷键
+    QWidget* tabAbout();               // 关于
 
 private:
     double m_scale;
-    QPointer<QPushButton> m_resetBtn;
 };
 
 #endif // PREFERENCE_H
