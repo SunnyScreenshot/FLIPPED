@@ -17,10 +17,9 @@ class XKeySequenceEdit : public QKeySequenceEdit
 {
     Q_OBJECT
 public:
-    XKeySequenceEdit(QWidget *parent = 0);
-    XKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent = nullptr);
-    virtual ~XKeySequenceEdit();
-
+    explicit XKeySequenceEdit(QWidget *parent = nullptr);
+    explicit XKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent = nullptr);
+    virtual ~XKeySequenceEdit() = default;
 //	void test();
 
 signals:
@@ -33,5 +32,7 @@ signals:
 protected:
     virtual void keyPressEvent(QKeyEvent *event) override;
 };
+
+
 
 #endif // XKEYSEQUENCEEDIT_H

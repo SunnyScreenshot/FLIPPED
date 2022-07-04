@@ -101,7 +101,7 @@
 
 // Tab Shortcut: GridLayout
 //#define TSG_SPACING_HOR  0 * 2           
-#define TSG_SPACING_VER  10 * 1           
+#define TSG_SPACING_VER  10 * 2
 #define TSG_MARGIN_HOR  20 * 2
 #define TSG_MARGIN_VER  20 * 2
 

@@ -19,16 +19,11 @@
 XKeySequenceEdit::XKeySequenceEdit(QWidget *parent)
     : QKeySequenceEdit(parent)
 {
-	//test();
+
 }
 
 XKeySequenceEdit::XKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent)
     : QKeySequenceEdit(keySequence, parent)
-{
-	//test();
-}
-
-XKeySequenceEdit::~XKeySequenceEdit()
 {
 
 }
@@ -50,23 +45,23 @@ XKeySequenceEdit::~XKeySequenceEdit()
 //	qInfo() << "keySequenceChanged ------------>" << keySequence << keySequence.count();
 //}
 
+// Ref: https://jishurizhi.com/p-74.html
 void XKeySequenceEdit::keyPressEvent(QKeyEvent *event)
 {
     QKeySequenceEdit::keyPressEvent(event);
 
-	QKeySequence keySeq = keySequence();
-	qInfo() << "keySeq:" << keySeq << "keySeq.count():" << keySeq.count();
+    QKeySequence keySeq = keySequence();
+    qInfo() << "keySeq:" << keySeq << "keySeq.count():" << keySeq.count();
 
-	// Fix: 按下相同快捷键编辑框为空白
-    //if ( keySeq.count() <= 0)
-    //    return;
+    // Fix: 按下相同快捷键编辑框为空白
+    if ( keySeq.count() <= 0)
+        return;
 
     int key = keySeq[0];
+    qDebug()<<"keySeq[0]:"<<keySeq[0];
     if (key == Qt::Key_Backspace || key == Qt::Key_Delete)
         key = 0;
 
-//    其中，int key = keySeq[0]; 更准确的写法应该是 int key = keySeq[keySeq.count()-1];
-//    ，但实际两句的效果一样，原因在于setKeySequence函数的内部实现。
     setKeySequence(key);
-	emit sigKeySeqChanged(key); // 要发射对应信号
+    emit sigKeySeqChanged(key); // 要发射对应信号
 }
