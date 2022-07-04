@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/PicShot_32.svg</file>
         <file>resources/tool/arrow.svg</file>
         <file>resources/tool/cancel.svg</file>
         <file>resources/tool/ellipse.svg</file>

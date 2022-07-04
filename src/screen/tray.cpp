@@ -87,7 +87,7 @@ void Tray::init()
 	m_trayIconMenu->addSeparator();
 	m_trayIconMenu->addAction(quit);
 
-	m_trayIcon->setIcon(QIcon(":/resources/PicShot_32.svg"));
+    m_trayIcon->setIcon(QIcon(":/resources/logo.svg"));
 	m_trayIcon->setToolTip(tr("PicShot"));
 	m_trayIcon->setContextMenu(m_trayIconMenu);
 	

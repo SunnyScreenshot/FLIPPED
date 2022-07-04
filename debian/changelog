@@ -1,3 +1,13 @@
+picshot (0.2-1) unstable; urgency=medium
+
+  * 采用全新 UI 设计：截图工具栏和偏好设置界面
+  * 优化内存，且彻底重构掉旧的架构逻辑（两周重构了半年的代码，好累啊）
+  * CMake 进步了，采用树形目录结构在 Visual Studio 中展示，便于开发
+
+ -- XMuli <xmulitech@gmail.com>  Mon, 04 Jul 2022 23:01:03 +0800
+
+
+
 picshot (0.1.4-1) unstable; urgency=medium
 
   * 支持智能选中窗口（Linux）
