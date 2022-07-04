@@ -10,6 +10,7 @@
  ******************************************************************/
 #include "tray.h"
 #include "winresetbtn.h"
+#include "../preference/preference.h"
 #include <QSystemTrayIcon>
 #include <QAction>
 #include <QMenu>
@@ -27,7 +28,6 @@
  * \note 问：类的static变量在什么时候初始化？函数的static变量在什么时候初始化？
  * \li 答：类的静态成员变量在类实例化之前就已经存在了，并且分配了内存。函数的static变量在执行此函数时进行初始化。
  */
-// 此准备改写为单例。
 Tray& Tray::instance()
 {
     static Tray tray;
@@ -37,11 +37,14 @@ Tray& Tray::instance()
 Tray::Tray(QObject *parent)
     : QObject(parent)
 	, m_pSrnShot(nullptr)
+    , m_pPref(nullptr)
 	, m_trayIconMenu(new QMenu())
     , m_trayIcon(new QSystemTrayIcon(this))
-    //, m_winMain(nullptr)
 {
 	init();
+
+
+
 
 //	QString t = QApplication::instance()->applicationDirPath() + "/../../pluginsimpl/watemark/RelWithDebInfo";
 //    QDir pluginsDir(t);
@@ -72,6 +75,9 @@ Tray::~Tray()
     if (m_pSrnShot)
         m_pSrnShot->deleteLater();
 
+    if (m_pPref)
+        m_pPref->deleteLater();
+
     delete m_trayIconMenu;
     m_trayIconMenu = nullptr;
 }
@@ -79,22 +85,20 @@ Tray::~Tray()
 void Tray::init()
 {
     QAction* srnShot = new QAction(tr("ScreenShot"), this);
-    //QAction* setting = new QAction(tr("Config"), this);
+    QAction* preference = new QAction(tr("Preference"), this);
     QAction* quit = new QAction(tr("Quit"), this);
 
 	m_trayIconMenu->addAction(srnShot);
-	//m_menuTary->addAction(setting);
+    m_trayIconMenu->addAction(preference);
 	m_trayIconMenu->addSeparator();
 	m_trayIconMenu->addAction(quit);
 
     m_trayIcon->setIcon(QIcon(":/resources/logo.svg"));
-	m_trayIcon->setToolTip(tr("PicShot"));
+    m_trayIcon->setToolTip(tr(_PROJECT_NAME));
 	m_trayIcon->setContextMenu(m_trayIconMenu);
-	
-    //m_winMain = new WinSetting();
 
 	connect(srnShot, &QAction::triggered, this, &Tray::onSrnShot);
-	//connect(setting, &QAction::triggered, this, &Tray::onSetting);
+    connect(preference, &QAction::triggered, this, &Tray::onPreference);
 	connect(quit, &QAction::triggered, [](){qApp->quit();});
 
 #ifdef Q_OS_WIN
@@ -104,6 +108,7 @@ void Tray::init()
 
     m_trayIcon->show();
 }
+
 
 void Tray::onSrnShot()
 {
@@ -116,8 +121,11 @@ void Tray::onSrnShot()
     m_pSrnShot->setFocus();
 }
 
-void Tray::onSetting(bool checked)
+void Tray::onPreference(bool checked)
 {
-	Q_UNUSED(checked)
-    //m_winMain->show();
+    Q_UNUSED(checked);
+    if (!m_pPref)
+        m_pPref = new Preference();
+
+    m_pPref->setVisible(true);
 }

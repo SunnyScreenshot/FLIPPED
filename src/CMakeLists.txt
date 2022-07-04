@@ -6,8 +6,10 @@ set(_version ${PROJECT_VERSION})
 #set(PROJECT_VERSION_MINOR 2)
 #set(PROJECT_VERSION_PATCH 0)
 
-project(${PROJECT_NAME})
-set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_CURRENT_SOURCE_DIR}/../bin) # 更改二进制输出路径
+project(${PROJECT_NAME})   
+
+#CMAKE_BINARY_DIR   CMAKE_CURRENT_SOURCE_DIR
+set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin) # 更改二进制输出路径
 
 # 此处配合 VMSVC 的 UTF8-BOM 插件，达到跨平台
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -225,16 +227,21 @@ else()
     )
 endif()
 
-if(UNIX)
+
+IF (WIN32)
     target_link_libraries(${PROJECT_NAME}
-            ${QT5_LIBS_LINK}
-            qhotkey
-            X11)
-else()
+        ${QT5_LIBS_LINK}
+        qhotkey)
+ELSEIF (APPLE)
     target_link_libraries(${PROJECT_NAME}
-            ${QT5_LIBS_LINK}
-            qhotkey)
-endif()
+        ${QT5_LIBS_LINK}
+        qhotkey)
+ELSEIF (UNIX)
+    target_link_libraries(${PROJECT_NAME}
+        ${QT5_LIBS_LINK}
+        qhotkey
+        X11)
+ENDIF ()
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog_header_only)
 

@@ -14,7 +14,6 @@
 #include <QObject>
 #include <QHotkey>
 #include <QPointer>
-#include "winsetting.h"
 #include "screenshot.h"
 
 QT_BEGIN_NAMESPACE
@@ -23,6 +22,8 @@ class QAction;
 class QMenu;
 QT_END_NAMESPACE
 
+class QHotkey;
+class Preference;
 class Tray : public QObject
 {
     Q_OBJECT
@@ -34,15 +35,20 @@ private:
     virtual ~Tray();
 	void init();
 
+
 public slots:
 	void onSrnShot();
-	void onSetting(bool checked);
+    void onPreference(bool checked);
+
+
 	
 private:
 	QPointer<ScreenShot> m_pSrnShot;
+    QPointer<Preference> m_pPref;
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
-    //WinSetting* m_winMain;
+
+
 };
 
 #endif // TARY_H

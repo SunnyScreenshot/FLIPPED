@@ -28,8 +28,11 @@
 #include <QDateTime>
 #include <QKeySequence>
 
+#include <QHotkey>
+
 // test
 #include <QDebug>
+#include <QVector>
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
@@ -40,6 +43,8 @@ Preference::Preference(QWidget *parent)
 
 void Preference::initUI()
 {
+    setAttribute(Qt::WA_DeleteOnClose, true);
+
     // main layout
     setContentsMargins(PRE_MARGIN_HOR, PRE_MARGIN_VER_TOP, PRE_MARGIN_HOR, PRE_MARGIN_VER_BOTTOM);
     QVBoxLayout* vLayout = new QVBoxLayout(this);
@@ -59,7 +64,6 @@ void Preference::initUI()
 
 QWidget *Preference::tabGeneral()
 {
-//    QWidget* page = new QWidget(this);
     return new QPushButton("generalPage");
 }
 
@@ -77,26 +81,25 @@ QWidget *Preference::tabHotkeys()
     //QKeySequence(tr("Ctrl+p"));
     //QKeySequence(Qt::CTRL + Qt::Key_P);
 
-    const int keyEditMinWidget = 240;  // h:hotkey s: srn  --> hotSrn 缩写
-    auto hAW = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_A));  // 出现乱码是因为使用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
-    hAW->setMinimumWidth(keyEditMinWidget);
-    auto hWO = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W));
-    hWO->setMinimumWidth(keyEditMinWidget);
-    auto hDC = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_L));
-    hDC->setMinimumWidth(keyEditMinWidget);
-    auto hFS = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S));
-    hFS->setMinimumWidth(keyEditMinWidget);
-    auto hFR = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_F));
-    hFR->setMinimumWidth(keyEditMinWidget);
+    QVector<XKeySequenceEdit*> vHotkey;
+    QMap<QString, int> map = { {"h0_AW", Qt::CTRL + Qt::SHIFT + Qt::Key_A},     // 截图相关
+                               {"h1_WO", Qt::CTRL + Qt::SHIFT + Qt::Key_W},
+                               {"h2_DC", Qt::CTRL + Qt::SHIFT + Qt::Key_L},
+                               {"h3_FS", Qt::CTRL + Qt::SHIFT + Qt::Key_S},
+                               {"h4_FR", Qt::CTRL + Qt::SHIFT + Qt::Key_F},
+                               {"h5_P", Qt::CTRL + Qt::SHIFT + Qt::Key_T},      // 贴图相关
+                               {"h6_HSAI", Qt::CTRL + Qt::SHIFT + Qt::Key_H},
+                               {"h7_SCG", Qt::CTRL + Qt::SHIFT + Qt::Key_X}};
 
-    // 贴图相关
-    auto hP = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_T));
-    hP->setMinimumWidth(keyEditMinWidget);
-    auto hHSAI = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_H));
-    hHSAI->setMinimumWidth(keyEditMinWidget);
-    auto hSCG = new XKeySequenceEdit(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_X));
-    hSCG->setMinimumWidth(keyEditMinWidget);
+    
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        auto hotKey = new XKeySequenceEdit(QKeySequence(it.value()));           // 出现乱码是因为使用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
+        hotKey->setObjectName(it.key());
+        hotKey->setMinimumWidth(240);                                           // 估的一个数值
+        vHotkey.push_back(hotKey);
+    }
 
+    int id = 0;
     int i = 0;
     int j = 0;
     QGridLayout* grid = new QGridLayout();
@@ -105,24 +108,24 @@ QWidget *Preference::tabHotkeys()
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
     grid->addWidget(new QLabel(tr("Active Window:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hAW, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
     grid->addWidget(new QLabel(tr("Window / Object")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hWO, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
     grid->addWidget(new QLabel(tr("Delay Capture:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hDC, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
     grid->addWidget(new QLabel(tr("Full Screen:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hFS, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
     grid->addWidget(new QLabel(tr("Fixd-Size Region:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hFR, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
 
     grid->addWidget(new XHorizontalLine(contentsRect().width()), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
     grid->addWidget(new QLabel(tr("Paste:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hP, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
     grid->addWidget(new QLabel(tr("Hide/Show all images:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hHSAI, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
     grid->addWidget(new QLabel(tr("Switch curent group:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(hSCG,i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(vHotkey[id++],i++, j + 1, 1, 1, Qt::AlignLeft);
 
     qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
