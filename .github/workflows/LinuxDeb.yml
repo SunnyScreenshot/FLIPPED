@@ -43,7 +43,7 @@ jobs:
         run: |
           $systemInfo="${{ env.targetOS }}-x64"
           $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
-          # $productName="${{ env.targetName }}-$productVersion-beta-protable-$systemInfo"
+          # $productName="${{ env.targetName }}-$productVersion-beta-$systemInfo"
           $productDebName="${{ env.targetLowerName }}-$productVersion"
 
           echo "systemInfo=$systemInfo" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
@@ -51,7 +51,7 @@ jobs:
           # echo "productName=$productName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "productDebName=$productDebName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      # 安装一些包
+      # 安装一些包  # libqt5*-dev
       - name: AptInstallTool
         id: AptInstallTool      
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -59,7 +59,7 @@ jobs:
         run: |
           sudo apt clean
           sudo apt update
-          sudo apt install wget tar dh-make debmake lintian cmake qtbase5-dev qt5-default libqt5x11extras5-dev
+          sudo apt install wget tar dh-make debmake lintian cmake qtbase5-dev qt5-default libqt5x11extras5-dev libqt5svg5-dev  libqt5*-dev
 
       # tag 打包 .deb，无动态库
       - name: DebPackage
