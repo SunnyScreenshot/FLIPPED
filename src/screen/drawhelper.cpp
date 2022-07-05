@@ -185,36 +185,42 @@ QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
     return l.toLine();
 }
 
+#define _MYDEBUG
+
 double getScale(QScreen *screen)
 {
-// or defined(Q_WS_WIN) || defined(Q_WS_X11)
-#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
-    double scale = screen->logicalDotsPerInch() / 96.0;
-    if (scale < 1.25)
-        return 1;
-    else if (1.25 <= scale && scale < 1.5)
-        return 1.25;
-    else if (1.5 <= scale && scale < 1.75)
-        return 1.5;
-    else if (1.75 <= scale && scale < 2)
-        return 1.75;
-    else if (2 <= scale && scale < 2.25)
-        return 2;
-    else if (2.25 <= scale && scale < 2.5)
-        return 2.25;
-    else if (2.5 <= scale && scale < 3)
-        return 2.5;
-    else if (3 <= scale && scale < 3.5)
-        return 3;
-    else if (3.5 <= scale && scale < 4)
-        return 3.5;
-    else
-        return scale;
-#elif  defined(Q_OS_MAC)
-    double scale = screen->logicalDotsPerInch() / 72.0;
-    return scale;
+#ifdef _MYDEBUG
+    return 2;
 #else
-    return screen->logicalDotsPerInch() / 96.0;  //
+    // or defined(Q_WS_WIN) || defined(Q_WS_X11)
+    #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+        double scale = screen->logicalDotsPerInch() / 96.0;
+        if (scale < 1.25)
+            return 1;
+        else if (1.25 <= scale && scale < 1.5)
+            return 1.25;
+        else if (1.5 <= scale && scale < 1.75)
+            return 1.5;
+        else if (1.75 <= scale && scale < 2)
+            return 1.75;
+        else if (2 <= scale && scale < 2.25)
+            return 2;
+        else if (2.25 <= scale && scale < 2.5)
+            return 2.25;
+        else if (2.5 <= scale && scale < 3)
+            return 2.5;
+        else if (3 <= scale && scale < 3.5)
+            return 3;
+        else if (3.5 <= scale && scale < 4)
+            return 3.5;
+        else
+            return scale;
+    #elif  defined(Q_OS_MAC)
+        double scale = screen->logicalDotsPerInch() / 72.0;
+        return scale;
+    #else
+        return screen->logicalDotsPerInch() / 96.0;  //
+    #endif
 #endif
 }
 

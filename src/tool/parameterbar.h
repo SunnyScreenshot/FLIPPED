@@ -58,7 +58,7 @@ public slots:
     void onSelShape(DrawShape shape, bool checked);
 
 private:
-    int m_scal;
+    double m_scal;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 

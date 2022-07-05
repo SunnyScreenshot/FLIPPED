@@ -36,7 +36,7 @@ public:
 
 
 private:
-    int m_scal;
+    double m_scal;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 };

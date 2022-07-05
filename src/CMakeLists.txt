@@ -127,8 +127,6 @@ set(SRCS_TOOL
 set(SRCS_PERFERENCE
     "preference/preference.h"
     "preference/preference.cpp"
-    "preference/resetbtn.h"
-    "preference/resetbtn.cpp"
     )
 
 # screen
@@ -139,6 +137,8 @@ set(SRCS_WINSCREEN
     "screen/rectcalcu.cpp"
     "screen/screenshot.h"
     "screen/screenshot.cpp"
+    "screen/hotkeysvs.h"
+    "screen/hotkeysvs.cpp"
     "screen/tray.h"
     "screen/tray.cpp"
     "screen/winresetbtn.h"

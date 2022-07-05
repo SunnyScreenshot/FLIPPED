@@ -40,8 +40,11 @@ Tray::Tray(QObject *parent)
     , m_pPref(nullptr)
 	, m_trayIconMenu(new QMenu())
     , m_trayIcon(new QSystemTrayIcon(this))
+    , m_hkManage(new HotkeySvs(this))
 {
-	init();
+    init();
+
+
 
 
 

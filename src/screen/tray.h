@@ -15,6 +15,7 @@
 #include <QHotkey>
 #include <QPointer>
 #include "screenshot.h"
+#include "hotkeysvs.h"
 
 QT_BEGIN_NAMESPACE
 class QSystemTrayIcon;
@@ -24,9 +25,12 @@ QT_END_NAMESPACE
 
 class QHotkey;
 class Preference;
+
 class Tray : public QObject
 {
     Q_OBJECT
+    friend class HotkeySvs;
+
 public:
 	static Tray& instance();
 
@@ -35,12 +39,9 @@ private:
     virtual ~Tray();
 	void init();
 
-
 public slots:
 	void onSrnShot();
     void onPreference(bool checked);
-
-
 	
 private:
 	QPointer<ScreenShot> m_pSrnShot;
@@ -48,7 +49,7 @@ private:
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 
-
+    QPointer<HotkeySvs> m_hkManage;
 };
 
 #endif // TARY_H
