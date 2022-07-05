@@ -49,7 +49,7 @@ private:
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 
-    QPointer<HotkeySvs> m_hkManage;
+    //QPointer<HotkeySvs> m_hkManage;
 };
 
 #endif // TARY_H

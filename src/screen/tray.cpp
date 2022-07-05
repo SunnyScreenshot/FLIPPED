@@ -19,6 +19,8 @@
 #include <QPluginLoader>
 #include <QDir>
 #include <QFileInfoList>
+#include <QKeySequence>
+#include <QHotkey>
 #include "../pluginsinterface/iplugininterface.h"
 //#include "../../pluginsimpl/watemark/pluginwatemark.h"
 
@@ -40,11 +42,18 @@ Tray::Tray(QObject *parent)
     , m_pPref(nullptr)
 	, m_trayIconMenu(new QMenu())
     , m_trayIcon(new QSystemTrayIcon(this))
-    , m_hkManage(new HotkeySvs(this))
+    //, m_hkManage(new HotkeySvs(this))
 {
     init();
 
+    QHotkey* m_hkAW = new QHotkey(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Y), true, qApp);                   // Active Window 截图（手动矩形）
+    QHotkey* m_hkWO = new QHotkey(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W), true, qApp);                   // Window / Object 窗口/对象截图
 
+    connect(m_hkAW, &QHotkey::activated, this, &Tray::onSrnShot);
+    connect(m_hkWO, &QHotkey::activated, this, &Tray::onSrnShot);
+
+    qDebug() << "m_hkAW Is Registered: " << m_hkAW->isRegistered();
+    qDebug() << "m_hkWO Is Registered: " << m_hkWO->isRegistered();
 
 
 

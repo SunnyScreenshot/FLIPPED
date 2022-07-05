@@ -46,6 +46,7 @@ void Preference::initUI()
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     // main layout
+    //setContentsMargins(0, 0, 0, 0);
     setContentsMargins(PRE_MARGIN_HOR, PRE_MARGIN_VER_TOP, PRE_MARGIN_HOR, PRE_MARGIN_VER_BOTTOM);
     QVBoxLayout* vLayout = new QVBoxLayout(this);
     vLayout->setMargin(0);
@@ -72,8 +73,8 @@ QWidget *Preference::tabHotkeys()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(20 * m_scale, 0, 20 * m_scale, 0);
-    vLay->addSpacing(14 * m_scale);
+    vLay->setContentsMargins(THG_MARGIN_HOR * m_scale, 0, THG_MARGIN_HOR * m_scale, 0);
+    vLay->addSpacing(THV_SPACING_VER * m_scale);
 
     // 快捷键框
     //QKeySequence(QKeySequence::Print);
@@ -97,6 +98,7 @@ QWidget *Preference::tabHotkeys()
         hotKey->setObjectName(it.key());
         hotKey->setMinimumWidth(106 * m_scale);                                           // 估的一个数值
         vHotkey.push_back(hotKey);
+        //connect(hotKey, &XKeySequenceEdit::keySequenceChanged, )
     }
 
     int id = 0;
@@ -104,7 +106,7 @@ QWidget *Preference::tabHotkeys()
     int j = 0;
     QGridLayout* grid = new QGridLayout();
     grid->setMargin(0);
-    grid->setSpacing(TSG_SPACING_VER);
+    grid->setSpacing(THG_SPACING_VER);
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
     grid->addWidget(new QLabel(tr("Active Window:")), i, j, 1, 1, Qt::AlignRight);
@@ -118,7 +120,7 @@ QWidget *Preference::tabHotkeys()
     grid->addWidget(new QLabel(tr("Fixd-Size Region:")), i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
 
-    grid->addWidget(new XHorizontalLine(contentsRect().width()), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
     grid->addWidget(new QLabel(tr("Paste:")), i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
@@ -134,12 +136,13 @@ QWidget *Preference::tabHotkeys()
     vLay->addStretch(3);
 
     QHBoxLayout* hLay = new QHBoxLayout();
-    hLay->setContentsMargins(20, 0, 20, 0);
+    hLay->setContentsMargins(0, 0, 0, 0);
     hLay->addSpacing(0);
     hLay->addStretch(7);
     hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    hLay->addSpacing(THG_MARGIN_HOR * m_scale);  // 设计图距离
     vLay->addLayout(hLay, 1);
-    vLay->addSpacing(14 * m_scale);
+    vLay->addSpacing(THG_MARGIN_VER * m_scale);
 
     return page;
 }
@@ -149,8 +152,8 @@ QWidget *Preference::tabAbout()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(20 * m_scale, 0, 20 * m_scale, 0);
-    vLay->addSpacing(20 * m_scale);
+    vLay->setContentsMargins(TAG_MARGIN_HOR * m_scale, 0, TAG_MARGIN_HOR * m_scale, 0);
+    vLay->addSpacing(TAV_SPACING_VER * m_scale);
 
     int i = 0;
     int j = 0;
@@ -206,7 +209,7 @@ QWidget *Preference::tabAbout()
     grid->addWidget(copyrightL, i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(copyrightR, i++, j + 1, 1, 1, Qt::AlignLeft);
 
-    grid->addWidget(new XHorizontalLine(contentsRect().width()), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TAG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
     QLabel* ackmtR = new QLabel(tr("Acknowledgements"));
     font.setPointSizeF(9);
@@ -252,7 +255,7 @@ QWidget *Preference::tabAbout()
     qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-    vLay->addSpacing(25 * m_scale);
+    vLay->addSpacing(TAG_MARGIN_VER* m_scale);
 
     return page;
 }

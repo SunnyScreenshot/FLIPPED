@@ -89,21 +89,23 @@
 
 
 
-// 偏好主 UI 界面 Preference
-#define PRE_MARGIN_HOR 20 * 1               // 布局到水平间隔
-#define PRE_MARGIN_VER 20 * 1               // 布局到垂直间隔
+// 偏好主 UI 界面 Preference 缩写 PRE_
+#define PRE_MARGIN_HOR 10 * 1               // 布局到水平间隔
+#define PRE_MARGIN_VER 10 * 1               // 布局到垂直间隔
 #define PRE_MARGIN_VER_TOP 10 * 1           // 布局到顶上面间隔
-#define PRE_MARGIN_VER_BOTTOM 20 * 1        // 布局到最底部间隔
+#define PRE_MARGIN_VER_BOTTOM 10 * 1        // 布局到最底部间隔
 
-// Tab About: GridLayout
-//#define TAG_SPACING_HOR  0 * 1           
-#define TAG_SPACING_VER  7 * 1
 
-// Tab Shortcut: GridLayout
-//#define TSG_SPACING_HOR  0 * 1           
-#define TSG_SPACING_VER  7 * 1
-#define TSG_MARGIN_HOR  20 * 1
-#define TSG_MARGIN_VER  20 * 1
+// Tab Hotkeys GridLayout: 缩写 THG_
+#define THV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
+#define THG_SPACING_VER  7 * 1              // GridLayout 的 spacing
+#define THG_MARGIN_HOR  14 * 1              // 内层的边框距离
+#define THG_MARGIN_VER  14 * 1              // 内层的边框距离
 
+// Tab About GridLayout: 缩写 TAG_     
+#define TAV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
+#define TAG_SPACING_VER  7 * 1              // GridLayout 的 spacing
+#define TAG_MARGIN_HOR  14 * 1              // 内层的边框距离
+#define TAG_MARGIN_VER  25 * 1              // 内层的边框距离
 
 #endif // XGLOBAL_H
