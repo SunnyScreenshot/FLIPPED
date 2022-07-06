@@ -322,12 +322,7 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
     const bool bSeriNum = shape == DrawShape::SerialNumber;
 
     if (bRect || bEllipses || bMosaics) {
-        int idx = property(std::to_string((int)shape).c_str()).value<int>();
-
-        if (idx == 0)
-            m_step.bFill = false;
-        else if (idx == 1)
-            m_step.bFill = true;
+        m_step.bStyele = property(std::to_string((int)shape).c_str()).value<int>();
     } else if (bLine) {
         //int idx = property(std::to_string((int)shape).c_str()).value<int>();
         //int penWidth = 0;
@@ -340,7 +335,7 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
         //    penWidth = 4;
     } else if (bPen) {
     } else if (bArrows) {
-        int idx = property(std::to_string((int)shape).c_str()).value<int>();
+        m_step.bStyele = property(std::to_string((int)shape).c_str()).value<int>();
     } else if (bText) {
     } else if (bSeriNum) {
     } else {
@@ -429,10 +424,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     if (bRect || bEllipses || bMosaics) {
         setProperty(std::to_string((int)shape).c_str(), idx);
 
-        if (idx == 0)
-            m_step.bFill = false;
-        else if (idx == 1)
-            m_step.bFill = true;
+        m_step.bStyele = idx;
     } else if (bLine) {
         int penWidth = 0;
         
@@ -448,6 +440,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     } else if (bPen) {
     } else if (bArrows) {
         setProperty(std::to_string((int)shape).c_str(), idx);
+        m_step.bStyele = idx;
     } else if (bText) {
     } else if (bSeriNum) {
     } else {
@@ -626,13 +619,13 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
     pa.setRenderHint(QPainter::Antialiasing, true);
     
     if (!isUseEnvContext) {
-        if (step.bFill){
+        if (step.bStyele == 0){
+            //step.brush.setColor(Qt::NoBrush);
+            step.brush.setStyle(Qt::NoBrush);
+        } else if (step.bStyele == 1) {
             auto t = step.pen.color();
             step.brush.setColor(step.pen.color());
             step.brush.setStyle(Qt::SolidPattern);
-        } else {
-            //step.brush.setColor(Qt::NoBrush);
-            step.brush.setStyle(Qt::NoBrush);
         }
 
         pa.setPen(step.pen);
@@ -660,13 +653,13 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 		step.brush.setStyle(Qt::SolidPattern);
 		pa.setBrush(step.brush);
 
-		QPainterPath arrowPath = XHelp::GetArrowHead(step.p1, step.p2);
-		pa.fillPath(arrowPath, step.brush);
-		pa.drawLine(XHelp::GetShorterLine(step.p1, step.p2));
-
-		//QPoint offset(0, 20);
-		//pa.setPen(Qt::green);
-		//pa.drawLine(step.startPos + offset, step.endPos + offset);
+        if (step.bStyele == 0) {
+            pa.drawLine(step.p1, step.p2);
+        } else if (step.bStyele == 1 || step.bStyele == 2) {
+            pa.drawLine(XHelp::GetShorterLine(step.p1, step.p2));  // 0, 1, 2
+            QPainterPath arrowPath = XHelp::GetArrowHead(step.p1, step.p2);
+            pa.fillPath(arrowPath, step.brush);
+        }
         break;
     }
     case DrawShape::Pen: {
@@ -701,10 +694,10 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 			return;
         
         QPixmap mosaicPixmap = m_currPixmap->copy(QRect(mapFromGlobal(step.rt.topLeft()) * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
-        if (step.bFill) {
+        if (step.bStyele == 0) {
             const QPixmap* pix = XHelp::SetMosaicSmooth(&mosaicPixmap, step.mscPx);
             pa.drawPixmap(step.rt, *pix);
-		} else {
+		} else if (step.bStyele == 1) {
             const QImage img = XHelp::SetMosaicPixlelated(&mosaicPixmap, step.mscPx);
             pa.drawImage(step.rt, img);
 		}

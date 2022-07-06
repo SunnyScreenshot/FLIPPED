@@ -131,7 +131,7 @@ struct  XDrawStep
     QPoint p2;                                  // 终点
     QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成
     DrawShape shape = DrawShape::NoDraw;        // 绘画形状
-    bool bFill = false;                         // 绘画类型  remove
+	int bStyele = 0;                            // refactor 图形的样式, 取代之前  bFill
     int tbIdx = 0;                              // 某个绘画类型的样式: 为 ParameterBar 的子序号
     int idxLevel = -1;                          // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
     static int totalIdx;                        // 所有已绘画类型 的总的序号，越大越上层
