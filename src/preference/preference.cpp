@@ -69,7 +69,63 @@ void Preference::initUI()
 
 QWidget *Preference::tabGeneral()
 {
-    return new QPushButton("generalPage");
+    QWidget* page = new QWidget(nullptr);
+    page->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout* vLay = new QVBoxLayout(page);
+    vLay->setContentsMargins(TGG_MARGIN_HOR, 0, TGG_MARGIN_HOR, TGG_MARGIN_VER);
+    vLay->addSpacing(TGV_SPACING_VER * m_scale);
+
+    QGridLayout* grid = new QGridLayout();
+    grid->setMargin(0);
+    grid->setVerticalSpacing(TGG_SPACING_VER);
+    //grid->setHorizontalSpacing()
+    grid->setColumnStretch(0, 3);
+    grid->setColumnStretch(1, 5);
+
+    QFont font;
+    font.setPointSizeF(9);
+    QLabel* lanuage = new QLabel(tr("Lanuage:"));
+    lanuage->setFont(font);
+    QLabel* launch = new QLabel(tr("Launch:"));
+    launch->setFont(font);
+    QLabel* logLevel = new QLabel(tr("Log Level:"));
+    logLevel->setFont(font);
+    QLabel* update = new QLabel(tr("Update:"));
+    update->setFont(font);
+
+    int i = 0;
+    int j = 0;
+    grid->addWidget(lanuage, i, j, Qt::AlignRight);
+    grid->addWidget(new QComboBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(launch, i, j, Qt::AlignRight);
+    grid->addWidget(new QCheckBox(tr("Run on system startup")), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(new QCheckBox(tr("As administrator")), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(logLevel, i, j, Qt::AlignRight);
+    grid->addWidget(new QComboBox(this), i++, j + 1, Qt::AlignLeft);
+
+    grid->addItem(new QSpacerItem(0, 38, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j); // 添加弹簧
+    grid->addWidget(update, i, j, Qt::AlignRight);
+    QHBoxLayout* tHLay = new QHBoxLayout();
+    tHLay->setContentsMargins(0, 0, 0, 0);
+    tHLay->addSpacing(0);
+    tHLay->addWidget(new QCheckBox(tr("Automatic check")), 1, Qt::AlignLeft);
+    tHLay->addSpacing(20);
+    tHLay->addWidget(new QPushButton(tr("Update")), 1, Qt::AlignLeft);
+    tHLay->addStretch(8);
+    grid->addLayout(tHLay, i, j + 1, Qt::AlignLeft);
+
+    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();
+    vLay->addLayout(grid, grid->rowCount());
+    vLay->addStretch(3);
+
+    QHBoxLayout* hLay = new QHBoxLayout();
+    hLay->setContentsMargins(0, 0, 0, 0);
+    hLay->addSpacing(0);
+    hLay->addStretch(7);
+    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    vLay->addLayout(hLay, 1);
+
+    return page;
 }
 
 QWidget* Preference::tabInterface()

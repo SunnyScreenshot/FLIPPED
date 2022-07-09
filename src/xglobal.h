@@ -98,11 +98,18 @@
 
 
 
+
 // 偏好主 UI 界面 Preference 缩写 PRE_
 #define PRE_MARGIN_HOR 10 * 1               // 布局到水平间隔
 #define PRE_MARGIN_VER 10 * 1               // 布局到垂直间隔
 #define PRE_MARGIN_VER_TOP 10 * 1           // 布局到顶上面间隔
 #define PRE_MARGIN_VER_BOTTOM 10 * 1        // 布局到最底部间隔
+
+// Tab General GridLayout: 缩写 TIG_     
+#define TGV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
+#define TGG_SPACING_VER  9 * 1              // GridLayout 的 spacing
+#define TGG_MARGIN_HOR  14 * 1              // 内层的边框距离
+#define TGG_MARGIN_VER  14 * 1              // 内层的边框距离
 
 // Tab Interface GridLayout: 缩写 TIG_     
 #define TIV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
