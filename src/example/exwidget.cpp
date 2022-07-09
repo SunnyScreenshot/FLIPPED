@@ -58,7 +58,7 @@ ExWidget::ExWidget(Qt::Orientations orien, QWidget* parent)
 
             QPushButton* lab = new QPushButton(QString("%1").arg((i+1)* rowMax + (j+1)), this);
             lab->setObjectName(it.key());
-            int width(CPB_LABEL_WIDTH * m_scal);
+            int width(CPB_PB_LABEL_WIDTH * m_scal);
             lab->setFixedSize(width, width);
             //lab->setInEllipseR(width / 2.0);
 
@@ -77,8 +77,8 @@ ExWidget::ExWidget(Qt::Orientations orien, QWidget* parent)
     }
 
     m_layout->setMargin(0);
-    m_layout->setHorizontalSpacing(CPB_SPACING_HOR * m_scal);
-    m_layout->setVerticalSpacing(CPB_SPACING_VER * m_scal);  // 检查比例一下
+    m_layout->setHorizontalSpacing(CPB_PB_SPACING_HOR * m_scal);
+    m_layout->setVerticalSpacing(CPB_PB_SPACING_VER * m_scal);  // 检查比例一下
     setLayout(m_layout);
 
     connect(this, &ExWidget::sigPickColor, this, &ExWidget::onPickColor);
@@ -92,8 +92,8 @@ ExWidget::~ExWidget()
 void ExWidget::init()
 {
     m_layout->setMargin(0);
-    m_layout->setHorizontalSpacing(CPB_SPACING_HOR * m_scal);
-    m_layout->setVerticalSpacing(CPB_SPACING_VER * m_scal);  // 检查比例一下
+    m_layout->setHorizontalSpacing(CPB_PB_SPACING_HOR * m_scal);
+    m_layout->setVerticalSpacing(CPB_PB_SPACING_VER * m_scal);  // 检查比例一下
 }
 
 void ExWidget::onPickColor(XLabel* lab, QColor col)

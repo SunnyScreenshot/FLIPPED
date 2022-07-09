@@ -17,14 +17,22 @@
 #include <QWidget>
 
 class XLabel;
-class QGridLayout;
+class QLayout;
+//class QGridLayout;
+
+//ColorParaBarMode
+enum class ColorParaBarMode
+{
+    CPB_ParaBar,                                 // 默认的 GridLayout 布局，用途为 draw bar 的取色器
+    CPB_HighLight                                //  QHBoxLayout 的水平布局，为活动色选择
+};
+
 class ColorParaBar : public QWidget
 {
     Q_OBJECT
 public:
-    ColorParaBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
+    ColorParaBar(Qt::Orientations orien = Qt::Horizontal, ColorParaBarMode mode = ColorParaBarMode::CPB_ParaBar, QWidget *parent = nullptr);
     virtual ~ColorParaBar();
-    void initUI();
 
 signals:
     void sigColorChange(QColor);
@@ -36,9 +44,10 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
+
     double m_scal;
     Qt::Orientations m_orien;
-    QGridLayout* m_layout;
+    QLayout* m_layout;
     QMap<QString, QString> m_labMap;
 };
 

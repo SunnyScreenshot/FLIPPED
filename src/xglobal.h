@@ -55,13 +55,22 @@
 #define MB_MARGIN_HOR 10 * 1      // ManageBar 选取的最小边框. 左右间距
 #define MB_MARGIN_VER 8 * 1       // ManageBar 选取的最小边框. 上下间距 
 
-// 取色盘 ColorParaBar 的八个圆                          
-#define CPB_LABEL_WIDTH 12 * 1            // 圆形取色盘宽度
-#define CPB_MARGIN_HOR 10 * 1               // 取色盘, 圆形按钮的边框 左右 距离
-#define CPB_MARGIN_VER 6 * 1                // 取色盘, 圆形按钮的边框 上下 距离
-#define CPB_SPACING_HOR  7 * 1              // 取色盘, 圆形按钮之间的水平间距
-#define CPB_SPACING_VER  4 * 1              // 取色盘, 圆形按钮之间的竖直间距
+// 取色盘 ColorParaBar 的八个圆 
+  // Mode: CPB_ParaBar --> QGridLayout
+#define CPB_PB_LABEL_WIDTH 12 * 1              // 圆形取色盘宽度
+#define CPB_PB_MARGIN_HOR 10 * 1               // 取色盘, 圆形按钮的边框 左右 距离
+#define CPB_PB_MARGIN_VER 6 * 1                // 取色盘, 圆形按钮的边框 上下 距离
+#define CPB_PB_SPACING_HOR  7 * 1              // 取色盘, 圆形按钮之间的水平间距
+#define CPB_PB_SPACING_VER  4 * 1              // 取色盘, 圆形按钮之间的竖直间距
 
+  // Mode: CPB_HighLight  -> QHBoxLayout
+#define CPB_HL_LABEL_WIDTH 9 * 1            // 圆形取色盘宽度
+#define CPB_HL_MARGIN_HOR 10 * 1               // 取色盘, 圆形按钮的边框 左右 距离
+#define CPB_HL_MARGIN_VER 6 * 1                // 取色盘, 圆形按钮的边框 上下 距离
+#define CPB_HL_SPACING_HOR  5 * 1              // 取色盘, 圆形按钮之间的水平间距
+#define CPB_HL_SPACING_VER  0 * 1              // 取色盘, 圆形按钮之间的竖直间距
+
+  // 其中的外圆
 #define CPB_MARGIN_SELECTED  1 * 1          // 取色盘, 选中颜色的圆距离外框圆的距离
 #define CPB_WIDTH_SELECTED  1 * 1           // 取色盘, 圆形按钮之间的竖直间距
 
@@ -95,12 +104,17 @@
 #define PRE_MARGIN_VER_TOP 10 * 1           // 布局到顶上面间隔
 #define PRE_MARGIN_VER_BOTTOM 10 * 1        // 布局到最底部间隔
 
+// Tab Interface GridLayout: 缩写 TIG_     
+#define TIV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
+#define TIG_SPACING_VER  9 * 1              // GridLayout 的 spacing
+#define TIG_MARGIN_HOR  14 * 1              // 内层的边框距离
+#define TIG_MARGIN_VER  14 * 1              // 内层的边框距离
 
 // Tab Hotkeys GridLayout: 缩写 THG_
 #define THV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
 #define THG_SPACING_VER  7 * 1              // GridLayout 的 spacing
 #define THG_MARGIN_HOR  14 * 1              // 内层的边框距离
-#define THG_MARGIN_VER  14 * 1              // 内层的边框距离
+#define TIG_MARGIN_VER  14 * 1              // 内层的边框距离
 
 // Tab About GridLayout: 缩写 TAG_     
 #define TAV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing

@@ -29,7 +29,8 @@ public:
 private:
     void initUI();
     QWidget* tabGeneral();             // 常规
-    QWidget* tabHotkeys();            // 快捷键
+    QWidget* tabInterface();           // 界面
+    QWidget* tabHotkeys();             // 快捷键
     QWidget* tabAbout();               // 关于
 
 private:

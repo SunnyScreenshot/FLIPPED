@@ -12,6 +12,7 @@
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"
 #include "../widget/xkeysequenceedit.h"
+#include "../tool/base/colorparabar.h"
 #include "../screen/drawhelper.h"
 #include <QPushButton>
 #include <QTabWidget>
@@ -27,8 +28,10 @@
 #include <QToolButton>
 #include <QDateTime>
 #include <QKeySequence>
-
 #include <QHotkey>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QSpinBox>
 
 // test
 #include <QDebug>
@@ -57,6 +60,7 @@ void Preference::initUI()
     tabPages->setMovable(true);
     tabPages->setObjectName("tabPages");
     tabPages->addTab(tabGeneral(), tr("General"));
+    tabPages->addTab(tabInterface(), tr("Interface"));
     tabPages->addTab(tabHotkeys(), tr("HotKeys"));
     tabPages->addTab(tabAbout(), tr("About"));
 
@@ -68,12 +72,77 @@ QWidget *Preference::tabGeneral()
     return new QPushButton("generalPage");
 }
 
+QWidget* Preference::tabInterface()
+{
+    QWidget* page = new QWidget(nullptr);
+    page->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout* vLay = new QVBoxLayout(page);
+    vLay->setContentsMargins(TIG_MARGIN_HOR, 0, TIG_MARGIN_HOR, TIG_MARGIN_VER);
+    vLay->addSpacing(TIV_SPACING_VER * m_scale);
+
+    QGridLayout* grid = new QGridLayout();
+    grid->setMargin(0);
+    grid->setVerticalSpacing(TIG_SPACING_VER);
+    //grid->setHorizontalSpacing()
+    grid->setColumnStretch(0, 7);
+    grid->setColumnStretch(1, 9);
+
+    QFont font;
+    font.setPointSizeF(9);
+    QLabel* srnBorderStyle = new QLabel(tr("Screen Border Style:"));
+    srnBorderStyle->setFont(font);
+    QLabel* borderColor = new QLabel(tr("Border Color:"));
+    borderColor->setFont(font);
+    QLabel* borderWidth = new QLabel(tr("Border Width:"));
+    borderWidth->setFont(font);
+    QLabel* srnCrosshair = new QLabel(tr("Screen Crosshair:"));
+    srnCrosshair->setFont(font);
+    QLabel* srnCrosshairWidth = new QLabel(tr("Screen Crosshair Width:"));
+    srnCrosshairWidth->setFont(font);
+
+    int i = 0;
+    int j = 0;
+    grid->addWidget(srnBorderStyle, i, j, Qt::AlignRight);
+    grid->addWidget(new QComboBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(borderColor, i, j, Qt::AlignRight);
+    grid->addWidget(new ColorParaBar(Qt::Horizontal, ColorParaBarMode::CPB_HighLight, this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(borderWidth, i, j, Qt::AlignRight);
+    grid->addWidget(new QSpinBox(), i++, j + 1, Qt::AlignLeft);
+
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    i++;
+    grid->addWidget(srnCrosshair, i, j, Qt::AlignRight);
+    grid->addWidget(new ColorParaBar(Qt::Horizontal, ColorParaBarMode::CPB_HighLight, this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(srnCrosshairWidth, i, j, Qt::AlignRight);
+    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    i++;
+
+    grid->addWidget(new QCheckBox(tr("Enable smart window")), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(new QCheckBox(tr("Show cursor")), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(new QCheckBox(tr("Automatically copy to clipboard")), i++, j + 1, Qt::AlignLeft);
+
+    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();
+    vLay->addLayout(grid, grid->rowCount());
+    vLay->addStretch(3);
+
+    QHBoxLayout* hLay = new QHBoxLayout();
+    hLay->setContentsMargins(0, 0, 0, 0);
+    hLay->addSpacing(0);
+    hLay->addStretch(7);
+    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    vLay->addLayout(hLay, 1);
+
+    return page;
+}
+
 QWidget *Preference::tabHotkeys()
 {
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(THG_MARGIN_HOR * m_scale, 0, THG_MARGIN_HOR * m_scale, 0);
+    vLay->setContentsMargins(THG_MARGIN_HOR, 0, THG_MARGIN_HOR, TIG_MARGIN_VER);
     vLay->addSpacing(THV_SPACING_VER * m_scale);
 
     // 快捷键框
@@ -140,9 +209,7 @@ QWidget *Preference::tabHotkeys()
     hLay->addSpacing(0);
     hLay->addStretch(7);
     hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
-    hLay->addSpacing(THG_MARGIN_HOR * m_scale);  // 设计图距离
     vLay->addLayout(hLay, 1);
-    vLay->addSpacing(THG_MARGIN_VER * m_scale);
 
     return page;
 }
@@ -152,7 +219,7 @@ QWidget *Preference::tabAbout()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(TAG_MARGIN_HOR * m_scale, 0, TAG_MARGIN_HOR * m_scale, 0);
+    vLay->setContentsMargins(TAG_MARGIN_HOR, 0, TAG_MARGIN_HOR, 0);
     vLay->addSpacing(TAV_SPACING_VER * m_scale);
 
     int i = 0;
