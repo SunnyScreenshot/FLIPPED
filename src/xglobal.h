@@ -102,31 +102,48 @@
 // 偏好主 UI 界面 Preference 缩写 PRE_
 #define PRE_MARGIN_HOR 10 * 1               // 布局到水平间隔
 #define PRE_MARGIN_VER 10 * 1               // 布局到垂直间隔
-#define PRE_MARGIN_VER_TOP 10 * 1           // 布局到顶上面间隔
-#define PRE_MARGIN_VER_BOTTOM 10 * 1        // 布局到最底部间隔
 
-// Tab General GridLayout: 缩写 TIG_     
-#define TGV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
-#define TGG_SPACING_VER  9 * 1              // GridLayout 的 spacing
-#define TGG_MARGIN_HOR  14 * 1              // 内层的边框距离
-#define TGG_MARGIN_VER  14 * 1              // 内层的边框距离
+// Tab General QVBoxLayout: 缩写 TIV_     
+#define TGV_MARGIN_HOR  21 * 1              // QVBoxLayout 的水平间隔
+#define TGV_MARGIN_VER_TOP  16 * 1          // QVBoxLayout 的 top 间隔
+#define TGV_MARGIN_VER_BOTTOM  14 * 1       // QVBoxLayout 的 bottom 间隔
+#define TGG_SPACING_VER  16 * 1             // GridLayout 的 ver spacing
+#define TGG_SPACING_HOR  7 * 1              // GridLayout 的 hor spacing
 
-// Tab Interface GridLayout: 缩写 TIG_     
-#define TIV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
-#define TIG_SPACING_VER  9 * 1              // GridLayout 的 spacing
-#define TIG_MARGIN_HOR  14 * 1              // 内层的边框距离
-#define TIG_MARGIN_VER  14 * 1              // 内层的边框距离
+// Tab Output QVBoxLayout: 缩写 TOV_     
+#define TOV_MARGIN_HOR  21 * 1              // QVBoxLayout 的水平间隔
+#define TOV_MARGIN_VER_TOP  14 * 1          // QVBoxLayout 的 top 间隔
+#define TOV_MARGIN_VER_BOTTOM  14 * 1       // QVBoxLayout 的 bottom 间隔
+#define TOG_SPACING_VER  7 * 1             // GridLayout 的 ver spacing
+#define TOG_SPACING_HOR  7 * 1              // GridLayout 的 hor spacing
 
-// Tab Hotkeys GridLayout: 缩写 THG_
-#define THV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
-#define THG_SPACING_VER  7 * 1              // GridLayout 的 spacing
-#define THG_MARGIN_HOR  14 * 1              // 内层的边框距离
-#define TIG_MARGIN_VER  14 * 1              // 内层的边框距离
+// Tab Pin QVBoxLayout: 缩写 TPV_     
+#define TPV_MARGIN_HOR  21 * 1              // QVBoxLayout 的水平间隔
+#define TPV_MARGIN_VER_TOP  17 * 1          // QVBoxLayout 的 top 间隔
+#define TPV_MARGIN_VER_BOTTOM  14 * 1       // QVBoxLayout 的 bottom 间隔
+#define TPG_SPACING_VER  13 * 1             // GridLayout 的 ver spacing
+#define TPG_SPACING_HOR  7 * 1              // GridLayout 的 hor spacing
 
-// Tab About GridLayout: 缩写 TAG_     
-#define TAV_SPACING_VER  14 * 1             // QVBoxLayout 的 spacing
-#define TAG_SPACING_VER  7 * 1              // GridLayout 的 spacing
-#define TAG_MARGIN_HOR  14 * 1              // 内层的边框距离
-#define TAG_MARGIN_VER  25 * 1              // 内层的边框距离
+// Tab Interface QVBoxLayout: 缩写 TIV_     
+#define TIV_MARGIN_HOR  21 * 1              // QVBoxLayout 的水平间隔
+#define TIV_MARGIN_VER_TOP  16 * 1          // QVBoxLayout 的 top 间隔
+#define TIV_MARGIN_VER_BOTTOM  14 * 1       // QVBoxLayout 的 bottom 间隔
+#define TIG_SPACING_VER  10 * 1             // GridLayout 的 ver spacing
+#define TIG_SPACING_HOR  7 * 1              // GridLayout 的 hor spacing
+
+// Tab Hotkeys QVBoxLayout: 缩写 THV_
+#define THV_MARGIN_HOR  21 * 1              // QVBoxLayout 的水平间隔
+#define THV_MARGIN_VER_TOP  14 * 1          // QVBoxLayout 的 top 间隔
+#define THV_MARGIN_VER_BOTTOM  14 * 1       // QVBoxLayout 的 bottom 间隔
+#define THG_SPACING_VER  13 * 1             // GridLayout 的 ver spacing
+#define THG_SPACING_HOR  7 * 1              // GridLayout 的 hor spacing
+
+// Tab About QVBoxLayout: 缩写 TAV_     
+#define TAV_MARGIN_HOR  21 * 1              // QVBoxLayout 的水平间隔
+#define TAV_MARGIN_VER_TOP  21 * 1          // QVBoxLayout 的 top 间隔
+#define TAV_MARGIN_VER_BOTTOM  25 * 1       // QVBoxLayout 的 bottom 间隔
+#define TAG_SPACING_VER  0 * 1             // GridLayout 的 ver spacing
+#define TAG_SPACING_HOR  7 * 1              // GridLayout 的 ver spacing
+
 
 #endif // XGLOBAL_H

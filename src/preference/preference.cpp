@@ -32,6 +32,7 @@
 #include <QComboBox>
 #include <QCheckBox>
 #include <QSpinBox>
+#include <QLineEdit>
 
 // test
 #include <QDebug>
@@ -49,10 +50,10 @@ void Preference::initUI()
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     // main layout
-    //setContentsMargins(0, 0, 0, 0);
-    setContentsMargins(PRE_MARGIN_HOR, PRE_MARGIN_VER_TOP, PRE_MARGIN_HOR, PRE_MARGIN_VER_BOTTOM);
+    setContentsMargins(PRE_MARGIN_HOR, PRE_MARGIN_VER, PRE_MARGIN_HOR, PRE_MARGIN_VER);
     QVBoxLayout* vLayout = new QVBoxLayout(this);
     vLayout->setMargin(0);
+    vLayout->setSpacing(0);
     setLayout(vLayout);
 
     // tabPages
@@ -61,6 +62,8 @@ void Preference::initUI()
     tabPages->setObjectName("tabPages");
     tabPages->addTab(tabGeneral(), tr("General"));
     tabPages->addTab(tabInterface(), tr("Interface"));
+    tabPages->addTab(tabOutput(), tr("Output"));
+    tabPages->addTab(tabPin(), tr("Pin"));
     tabPages->addTab(tabHotkeys(), tr("HotKeys"));
     tabPages->addTab(tabAbout(), tr("About"));
 
@@ -72,13 +75,13 @@ QWidget *Preference::tabGeneral()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(TGG_MARGIN_HOR, 0, TGG_MARGIN_HOR, TGG_MARGIN_VER);
-    vLay->addSpacing(TGV_SPACING_VER * m_scale);
+    vLay->setContentsMargins(TGV_MARGIN_HOR, TGV_MARGIN_VER_TOP, TGV_MARGIN_HOR, TGV_MARGIN_VER_BOTTOM);
+
 
     QGridLayout* grid = new QGridLayout();
     grid->setMargin(0);
     grid->setVerticalSpacing(TGG_SPACING_VER);
-    //grid->setHorizontalSpacing()
+    grid->setHorizontalSpacing(TGG_SPACING_HOR);
     grid->setColumnStretch(0, 3);
     grid->setColumnStretch(1, 5);
 
@@ -114,7 +117,7 @@ QWidget *Preference::tabGeneral()
     tHLay->addStretch(8);
     grid->addLayout(tHLay, i, j + 1, Qt::AlignLeft);
 
-    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();
+    qDebug() << "tabGeneral:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
 
@@ -133,13 +136,12 @@ QWidget* Preference::tabInterface()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(TIG_MARGIN_HOR, 0, TIG_MARGIN_HOR, TIG_MARGIN_VER);
-    vLay->addSpacing(TIV_SPACING_VER * m_scale);
+    vLay->setContentsMargins(TIV_MARGIN_HOR, TIV_MARGIN_VER_TOP, TIV_MARGIN_HOR, TIV_MARGIN_VER_BOTTOM);
 
     QGridLayout* grid = new QGridLayout();
     grid->setMargin(0);
     grid->setVerticalSpacing(TIG_SPACING_VER);
-    //grid->setHorizontalSpacing()
+    grid->setHorizontalSpacing(TIG_SPACING_HOR);
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
@@ -165,21 +167,127 @@ QWidget* Preference::tabInterface()
     grid->addWidget(borderWidth, i, j, Qt::AlignRight);
     grid->addWidget(new QSpinBox(), i++, j + 1, Qt::AlignLeft);
 
-    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
-    i++;
+
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     grid->addWidget(srnCrosshair, i, j, Qt::AlignRight);
     grid->addWidget(new ColorParaBar(Qt::Horizontal, ColorParaBarMode::CPB_HighLight, this), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(srnCrosshairWidth, i, j, Qt::AlignRight);
     grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
 
-    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
-    i++;
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
     grid->addWidget(new QCheckBox(tr("Enable smart window")), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(new QCheckBox(tr("Show cursor")), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(new QCheckBox(tr("Automatically copy to clipboard")), i++, j + 1, Qt::AlignLeft);
 
-    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();
+    qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
+    vLay->addLayout(grid, grid->rowCount());
+    vLay->addStretch(3);
+
+    QHBoxLayout* hLay = new QHBoxLayout();
+    hLay->setContentsMargins(0, 0, 0, 0);
+    hLay->addSpacing(0);
+    hLay->addStretch(7);
+    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    vLay->addLayout(hLay, 1);
+
+    return page;
+}
+
+QWidget* Preference::tabOutput()
+{
+    QWidget* page = new QWidget(nullptr);
+    page->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout* vLay = new QVBoxLayout(page);
+    vLay->setContentsMargins(TOV_MARGIN_HOR, TOV_MARGIN_VER_TOP, TOV_MARGIN_HOR, TOV_MARGIN_VER_BOTTOM);
+
+    QGridLayout* grid = new QGridLayout();
+    grid->setMargin(0);
+    grid->setVerticalSpacing(TOG_SPACING_VER);
+    grid->setHorizontalSpacing(TOG_SPACING_HOR);
+    grid->setColumnStretch(0, 2);
+    grid->setColumnStretch(1, 5);
+
+    QLabel* imageQuailty = new QLabel(tr("Image quailty:"));
+    QLabel* fileName = new QLabel(tr("File Name:"));
+    QLabel* quickSavePath = new QLabel(tr("Quick save path:"));
+    QLabel* autoAavePath = new QLabel(tr("Auto save path:"));
+    QLabel* configurePath = new QLabel(tr("Configure path:"));
+
+    int i = 0;
+    int j = 0;
+    grid->addWidget(imageQuailty, i, j, Qt::AlignRight);
+    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TOV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    grid->addWidget(fileName, i, j, Qt::AlignRight);
+    grid->addWidget(new QLineEdit(this), i++, j + 1, Qt::AlignLeft);
+
+    grid->addWidget(quickSavePath, i, j, Qt::AlignRight);
+    QHBoxLayout* hLay1 = new QHBoxLayout();
+    hLay1->setMargin(0);
+    hLay1->addSpacing(0);
+    hLay1->addWidget(new QLineEdit(this), 4, Qt::AlignLeft);
+    hLay1->addWidget(new QPushButton(tr("Change path"), this), 1, Qt::AlignLeft);
+    grid->addLayout(hLay1, i++, j + 1, Qt::AlignLeft);
+
+    grid->addWidget(autoAavePath, i, j, Qt::AlignRight);
+    QHBoxLayout* hLay2 = new QHBoxLayout();
+    hLay2->setMargin(0);
+    hLay2->addSpacing(0);
+    hLay2->addWidget(new QLineEdit(this), 4, Qt::AlignLeft);
+    hLay2->addWidget(new QPushButton(tr("Change path"), this), 1, Qt::AlignLeft);
+    grid->addLayout(hLay2, i++, j + 1, Qt::AlignLeft);
+
+    grid->addWidget(configurePath, i, j, Qt::AlignRight);
+    QHBoxLayout* hLay3 = new QHBoxLayout();
+    hLay3->setMargin(0);
+    hLay3->addSpacing(0);
+    hLay3->addWidget(new QLineEdit(this), 4, Qt::AlignLeft);
+    hLay3->addWidget(new QPushButton(tr("Change path"), this), 1, Qt::AlignLeft);
+    grid->addLayout(hLay3, i++, j + 1, Qt::AlignLeft);
+
+    qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
+    vLay->addLayout(grid, grid->rowCount());
+    vLay->addStretch(3);
+
+    QHBoxLayout* hLay = new QHBoxLayout();
+    hLay->setContentsMargins(0, 0, 0, 0);
+    hLay->addSpacing(0);
+    hLay->addStretch(7);
+    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    vLay->addLayout(hLay, 1);
+
+    return page;
+}
+
+QWidget* Preference::tabPin()
+{
+    QWidget* page = new QWidget(nullptr);
+    page->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout* vLay = new QVBoxLayout(page);
+    vLay->setContentsMargins(TPV_MARGIN_HOR, TPV_MARGIN_VER_TOP, TPV_MARGIN_HOR, TPV_MARGIN_VER_BOTTOM);
+
+    QGridLayout* grid = new QGridLayout();
+    grid->setMargin(0);
+    grid->setVerticalSpacing(TPG_SPACING_VER);
+    grid->setHorizontalSpacing(TPG_SPACING_HOR);
+    grid->setColumnStretch(0, 7);
+    grid->setColumnStretch(1, 9);
+
+    QLabel* shade = new QLabel(tr("Window shade:"));
+    QLabel* opacity = new QLabel(tr("Opacity:"));
+    QLabel* maxSize = new QLabel(tr("Maximum size:"));
+
+    int i = 0;
+    int j = 0;
+    grid->addWidget(shade, i, j, Qt::AlignRight);
+    grid->addWidget(new QCheckBox(tr("Enable window shadow"), this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(opacity, i, j, Qt::AlignRight);
+    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(maxSize, i, j, Qt::AlignRight);
+    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+
+    qDebug() << "tabPin:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
 
@@ -198,8 +306,7 @@ QWidget *Preference::tabHotkeys()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(THG_MARGIN_HOR, 0, THG_MARGIN_HOR, TIG_MARGIN_VER);
-    vLay->addSpacing(THV_SPACING_VER * m_scale);
+    vLay->setContentsMargins(THV_MARGIN_HOR, THV_MARGIN_VER_TOP, THV_MARGIN_HOR, THV_MARGIN_VER_BOTTOM);
 
     // 快捷键框
     //QKeySequence(QKeySequence::Print);
@@ -231,9 +338,11 @@ QWidget *Preference::tabHotkeys()
     int j = 0;
     QGridLayout* grid = new QGridLayout();
     grid->setMargin(0);
-    grid->setSpacing(THG_SPACING_VER);
+    grid->setVerticalSpacing(THG_SPACING_VER);
+    grid->setHorizontalSpacing(THG_SPACING_HOR);
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
+
     grid->addWidget(new QLabel(tr("Active Window:")), i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
     grid->addWidget(new QLabel(tr("Window / Object")), i, j, 1, 1, Qt::AlignRight);
@@ -245,7 +354,7 @@ QWidget *Preference::tabHotkeys()
     grid->addWidget(new QLabel(tr("Fixd-Size Region:")), i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
 
-    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
     grid->addWidget(new QLabel(tr("Paste:")), i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
@@ -256,7 +365,7 @@ QWidget *Preference::tabHotkeys()
 
 
     auto lab = new QLabel(tr("Switch current group:"));
-    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount() << "   font->" << lab->font().pointSizeF();
+    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
 
@@ -275,14 +384,14 @@ QWidget *Preference::tabAbout()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(TAG_MARGIN_HOR, 0, TAG_MARGIN_HOR, 0);
-    vLay->addSpacing(TAV_SPACING_VER * m_scale);
+    vLay->setContentsMargins(TAV_MARGIN_HOR, TAV_MARGIN_VER_TOP, TAV_MARGIN_HOR, TAV_MARGIN_VER_BOTTOM);
 
     int i = 0;
     int j = 0;
     QGridLayout* grid = new QGridLayout();
     grid->setMargin(0);
-    grid->setSpacing(TAG_SPACING_VER);
+    grid->setVerticalSpacing(TAG_SPACING_VER);
+    grid->setHorizontalSpacing(TAG_SPACING_VER);
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
@@ -295,13 +404,15 @@ QWidget *Preference::tabAbout()
     tb->setCheckable(false);
     tb->setChecked(false);
     tb->setDisabled(true);
-    grid->addWidget(tb, i++, j, 2, 2, Qt::AlignCenter);  // 0, 0
+    grid->addWidget(tb, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
+
 
     QFont font;
     QLabel* project = new QLabel(tr("%1").arg(_PROJECT_NAME));
     font.setPointSizeF(11);
     font.setBold(true);
     project->setFont(font);
+
     QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
                                    .arg(_PROJECT_VERSION)
                                    .arg(_BIT_ARCH)
@@ -322,22 +433,30 @@ QWidget *Preference::tabAbout()
     QLabel* copyrightR = new QLabel(tr("2021-2022 XMuli"));
     copyrightR->setFont(font);
 
-    i = 2;
+    i = grid->rowCount();
+    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(project, i++, j, 1, 2, Qt::AlignCenter);
-    grid->addWidget(buildTime, i++, j, 1, 2, Qt::AlignCenter);  
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
+    grid->addWidget(buildTime, i++, j, 1, 2, Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 10, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(detail, i++, j, 1, 2, Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 16, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
 
     grid->addWidget(authorL, i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(authorR, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(copyrightL, i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(copyrightR, i++, j + 1, 1, 1, Qt::AlignLeft);
 
-    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TAG_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 21, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TAV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 14, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
 
     QLabel* ackmtR = new QLabel(tr("Acknowledgements"));
     font.setPointSizeF(9);
     font.setBold(true);
     ackmtR->setFont(font);
+    font.setBold(false);
 
     QLabel* ghL =new QLabel("GitHub:");
     font.setPointSizeF(8);
@@ -347,7 +466,7 @@ QWidget *Preference::tabAbout()
     ghR->setFont(font);
     QLabel* blogR = new QLabel(tr("<a style='color: green;' href=https://ifmet.cn>ifmet.cn</a>"));
     blogR->setOpenExternalLinks(true);
-    font.setPointSizeF(8);
+    font.setPointSizeF(9);
     blogR->setFont(font);
 
     QLabel* UIL = new QLabel("UI:");
@@ -364,21 +483,26 @@ QWidget *Preference::tabAbout()
     tsR->setFont(font);
 
     grid->addWidget(ackmtR, i, j, 1, 2, Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(ghL, ++i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(ghR, i, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 1, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(new QLabel(" "), ++i, j, 1, 1, Qt::AlignRight);
     grid->addWidget(blogR, i, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(UIL, ++i, j, Qt::AlignRight);
     grid->addWidget(UIR, i, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(ctL, ++i, j, Qt::AlignRight);
     grid->addWidget(ctR, i, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
     grid->addWidget(tsL, ++i, j, Qt::AlignRight);
     grid->addWidget(tsR, i, j + 1, Qt::AlignLeft);
 
-    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();
+    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();  // 创建一个空 grid 时，便默认有一个 1 item，添加第一个后，依旧计数 1 个；
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-    vLay->addSpacing(TAG_MARGIN_VER* m_scale);
+    vLay->addSpacing(TAV_MARGIN_VER_BOTTOM);
 
     return page;
 }

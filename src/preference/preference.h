@@ -30,6 +30,8 @@ private:
     void initUI();
     QWidget* tabGeneral();             // 常规
     QWidget* tabInterface();           // 界面
+    QWidget* tabOutput();              // 输出
+    QWidget* tabPin();                 // 贴图
     QWidget* tabHotkeys();             // 快捷键
     QWidget* tabAbout();               // 关于
 
