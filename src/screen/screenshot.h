@@ -138,7 +138,6 @@ private:
     QPointer<SelectSize> m_selSize;        // 左上角显示窗口大小
     QPointer<SelectBar> m_selBar;
     QPointer<ParameterBar> m_paraBar;
-
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H

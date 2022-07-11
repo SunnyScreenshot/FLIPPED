@@ -255,6 +255,11 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
     update();
 }
 
+void ParameterBar::enterEvent(QEvent* event)
+{
+    setCursor(Qt::ArrowCursor);
+}
+
 void ParameterBar::onTBReleased(QAbstractButton* btn)
 {
     const auto& parent = btn->parentWidget();

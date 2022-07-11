@@ -91,35 +91,27 @@ ScreenShot::ScreenShot(QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
 #endif
 
-    
     #ifdef _MYDEBUG
-
-//        QSize size(geom.size());
-//        resize(size.width(), size.height() / 4.0);
-        move(m_screens.at(0)->geometry().topLeft());
+        int index = 0;   // 使用非主屏的屏幕作为 Debug 测试
         if (m_screens.size() >= 2) {
 
-            int index = 0;   // 使用主屏的屏幕作为 Debug 测试
             for (; index < m_screens.size(); ++index) {
                 if (m_primaryScreen == m_screens.at(index))
                     break;
             }
-            
+
             setFixedSize(m_screens.at(index)->size());
-            //move(m_screens.at(index)->geometry().topLeft());
+            move(m_screens.at(index)->geometry().topLeft());
 
         } else {
             QSize size(m_screens.at(0)->size());
             resize(size.width() / 2.0, size.height());
             move(m_screens.at(0)->geometry().topLeft());
         }
-        
     #else
         setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags()); // 去掉标题栏 + 置顶
         setFixedSize(geom.size());
-
-//    showFullScreen();
-        
+        //showFullScreen();
     #endif
 
 #else // Q_OS_MAC
@@ -140,8 +132,6 @@ ScreenShot::ScreenShot(QWidget *parent)
         showFullScreen();
     #endif
 #endif
-        
-    move(geom.topLeft());
 
 	//int x1 = 0;
 	//int x2 = 0;
@@ -150,12 +140,9 @@ ScreenShot::ScreenShot(QWidget *parent)
 	//m_screens[0]->virtualGeometry().getRect(&x1, &y1, &x2,  &y2) ;
 	//QRect rt(x1, y1, x2, y2);
 
+    move(geom.topLeft());
     setMouseTracking(true);
     m_rtCalcu.scrnType = ScrnType::Wait;
-
-//    m_draw = new XDraw(this);
-	connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
-
 
     // new refactor
     m_selSize->setVisible(false);
@@ -176,7 +163,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
 }
 
-ScreenShot::~ScreenShot() 
+ScreenShot::~ScreenShot()
 {
 }
 
@@ -198,30 +185,19 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
 
 void ScreenShot::updateCursorShape(const QPoint pos) 
 {
-    if (m_rtCalcu.scrnType == ScrnType::Draw) {
+    if (m_rtCalcu.scrnType == ScrnType::Draw)
         return;
-    }
     
 	CursorArea cursArea = m_rtCalcu.getCursorArea(pos, true);
-
     if (m_rtCalcu.scrnType == ScrnType::Move) {
-        //if (cursArea == CursorArea::External)
-        //    setCursor(Qt::ForbiddenCursor);
-        //else
-        //    setCursor(Qt::SizeAllCursor);
     } else if (m_rtCalcu.scrnType == ScrnType::Select) {
         setCursor(Qt::CrossCursor);
     } else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
-
     } else if (m_rtCalcu.scrnType == ScrnType::Wait) {
         if (cursArea == CursorArea::External) {
 
-            if (m_rtAtuoMonitor.contains(pos, true)
-                || m_rtCalcu.getSelRect().contains(pos, true))
-                setCursor(Qt::ArrowCursor);
-            else
-                setCursor(Qt::ForbiddenCursor);
-
+            (m_rtAtuoMonitor.contains(pos, false) && !m_bFirstSel) || m_rtCalcu.getSelRect().contains(pos, true) ? 
+                setCursor(Qt::ArrowCursor) : setCursor(Qt::ForbiddenCursor);
         } else if (cursArea == CursorArea::Internal){
             setCursor(Qt::SizeAllCursor);
             // 已修复：光标移动到绘画工具栏时，光标显示异常，在里面的事件过滤器中修复此出逻辑纰漏。光标进入 tbBar 后，
@@ -933,6 +909,10 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
 
+    if (m_rtCalcu.scrnType == ScrnType::Draw) {
+        setCursor(Qt::CrossCursor);
+    }
+
     // 原始图案
     QPainter pa(this);
     pa.translate(-1 * m_rtVirDesktop.topLeft()); // *** 偏移为显示器坐标下绘画 ***
@@ -1215,7 +1195,7 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
 void ScreenShot::mousePressEvent(QMouseEvent *event)
 {
-    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
+    //XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 	if (event->button() != Qt::LeftButton)
 		return;
 
@@ -1285,15 +1265,13 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 		m_rtCalcu.pos2 = event->globalPos();
 	} 
 
-    updateCursorShape(event->globalPos());
 	update();
-
-    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
+    //XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 }
 
 void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 {
-    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
+    //XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 //    if (event->button() != Qt::LeftButton)
 //        return;
 
@@ -1322,13 +1300,12 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
     updateCursorShape(event->globalPos());
 	update();
-
-    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
+    //XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 }
 
 void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 {
-    XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
+    //XLOG_DEBUG("BEGIN m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
     if (event->button() != Qt::LeftButton)
         return;
 
@@ -1383,7 +1360,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	}
 
 	update();
-    XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
+    //XLOG_DEBUG("END m_rtCalcu.scrnType[{}], event->pos({}, {})", int(m_rtCalcu.scrnType), event->globalPos().x(), event->globalPos().y());
 }
 
 void ScreenShot::wheelEvent(QWheelEvent* event)

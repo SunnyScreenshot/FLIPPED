@@ -59,6 +59,9 @@ signals:
     void sigCancel();
     void sigFinish();
 
+protected: 
+    void enterEvent(QEvent* event) override;
+
 private:
     double m_scal;
     Qt::Orientations m_orien;

@@ -225,3 +225,8 @@ void SelectBar::onToolBtn()
     } else{
     }
 }
+
+void SelectBar::enterEvent(QEvent* event)
+{
+    setCursor(Qt::ArrowCursor);
+}

@@ -57,6 +57,9 @@ public slots:
     void onEnableDraw(bool enable);
     void onSelShape(DrawShape shape, bool checked);
 
+protected:
+    void enterEvent(QEvent* event) override;
+
 private:
     double m_scal;
     Qt::Orientations m_orien;
