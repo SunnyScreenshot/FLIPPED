@@ -37,7 +37,6 @@ private:
     void initUI();
     void addWidget(QWidget *w);
     void addSpacer();
-    QPointer<ManageBar> curBtnParent(QWidget* w);
 
     void creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items);                    // 比如矩形等
     void initRectBar();

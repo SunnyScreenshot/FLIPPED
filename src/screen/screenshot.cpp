@@ -9,6 +9,8 @@
  * Description:
  ******************************************************************/
 #include "screenshot.h"
+#include "../core/xlog.h"
+#include "../platform/wininfo.h"
 #include <QScreen>
 #include <QPixmap>
 #include <QApplication>
@@ -24,8 +26,7 @@
 #include <QTextEdit>
 #include <QLine>
 #include <QToolButton>
-#include "../core/xlog.h"
-#include "../platform/wininfo.h"
+#include <QPainterPath>
 
 #define _MYDEBUG
 #define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
@@ -815,26 +816,99 @@ const QPoint ScreenShot::drawSelSizePosition(QRect& rt)
     return ret;
 }
 
+void ScreenShot::selectedShapeMove(QPainter& pa)
+{
+    QRect rtCurMove;
+    if (m_pCurrShape && (m_rtCalcu.scrnType == ScrnType::Wait || m_rtCalcu.scrnType == ScrnType::Move)) {
+        pa.save();
+
+        rtCurMove = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
+        pa.setRenderHint(QPainter::Antialiasing, false);
+        pa.setBrush(Qt::NoBrush);
+        QPen penWhite(QColor(255, 255, 255, 1 * 255), 1);
+        penWhite.setStyle(Qt::CustomDashLine);
+        penWhite.setDashOffset(0);
+        penWhite.setDashPattern(QVector<qreal>() << 4 * ScreenShot::getScale() << 4 * ScreenShot::getScale());
+        penWhite.setCapStyle(Qt::FlatCap);
+        pa.setPen(penWhite);
+
+        const int r = 3;
+        QPen penBlack(penWhite);
+        penBlack.setColor(QColor(0, 0, 0, 1 * 255));
+        penBlack.setDashOffset(4);
+        
+        if (m_pCurrShape->shape == DrawShape::Rectangles) {
+            pa.setBrush(m_pCurrShape->brush);
+            pa.setPen(m_pCurrShape->pen);
+            pa.drawRect(rtCurMove);
+
+            pa.setBrush(Qt::NoBrush);
+            pa.setPen(penWhite);
+            pa.drawRect(rtCurMove.adjusted(-r, -r, r, r));
+            pa.setPen(penBlack);
+            pa.drawRect(rtCurMove.adjusted(-r, -r, r, r));
+        } else if (m_pCurrShape->shape == DrawShape::Ellipses) {
+            pa.setBrush(m_pCurrShape->brush);
+            pa.setPen(m_pCurrShape->pen);
+            pa.drawEllipse(rtCurMove.center(), rtCurMove.width() / 2, rtCurMove.height() / 2);
+
+            pa.setBrush(Qt::NoBrush);
+            pa.setPen(penWhite);
+            pa.drawRect(rtCurMove.adjusted(-r, -r, r, r));
+            pa.setPen(penBlack);
+            pa.drawRect(rtCurMove.adjusted(-r, -r, r, r));
+
+            //pa.setBrush(Qt::NoBrush);
+            //pa.setPen(penWhite);
+
+            //// 生成可填充的轮廓
+            //QPainterPathStroker stroker;
+            //stroker.setCapStyle(Qt::RoundCap);      // 端点风格
+            //stroker.setJoinStyle(Qt::RoundJoin);    // 连接样式
+            //stroker.setDashPattern(Qt::DashLine);   // 虚线图案
+            //stroker.setWidth(penWhite.width());     // 宽度
+
+            //// 生成一个新路径（可填充区域），表示原始路径 path 的轮廓
+            //QPainterPath outlinePath = stroker.createStroke(path);
+
+
+            //pa.drawEllipse(rtCurMove.center(), rtCurMove.width() / 2, rtCurMove.height() / 2);
+            //pa.setPen(penBlack);
+            //pa.drawEllipse(rtCurMove.center(), rtCurMove.width() / 2, rtCurMove.height() / 2);
+        }
+
+        pa.restore();
+    }
+}
 void ScreenShot::whichShape()
 {
     bool bChecked = false; // 点击是否选中
-    const int r = 3;
+    const int r = 4;
     QPoint pos(QCursor::pos());
     for (auto it = m_vDrawed.rbegin(); it != m_vDrawed.rend(); ++it) {
-        const QRect& rt = it->rt;
+        const auto& rt = it->rt;
+        const QRect& rtOut = rt.adjusted(-r, -r, r, r);
+        const QRect& rtIn = rt.adjusted(r, r, -r, -r);
 
+        QPainterPath path;
+        path.setFillRule(Qt::OddEvenFill);
         if (it->shape == DrawShape::Rectangles) {
-            const QRect& rtIn = rt.adjusted(r, r, -r, -r);
-            const QRect& rtOut = rt.adjusted(-r, -r, r, r);
+            path.addEllipse(rtOut);
+            if (it->bStyele == 0)
+                path.addEllipse(rtIn);
+        } else if (it->shape == DrawShape::Ellipses) {
+            
+            path.addEllipse(rtOut.center(), rtOut.width() / 2, rtOut.height() / 2);
+            if (it->bStyele == 0)
+                path.addEllipse(rtIn.center(), rtIn.width() / 2, rtIn.height() / 2);
+        } else if (it->shape == DrawShape::Arrows) {
+            // TODO 2022.07.12: 倾斜的矩形 + 三角形； 旋转坐标轴后绘画？
+        }
 
-            bool bFirst = rtOut.contains(pos) && !rtIn.contains(pos, true);
-            bool bOther = rtOut.contains(pos) && m_pCurrShape == &(*it);
-
-            if (bFirst || bOther){
-                m_pCurrShape = &(*it);
-                bChecked = true;
-                return;
-            }
+        if (path.contains(pos)) {
+            m_pCurrShape = &(*it);
+            bChecked = true;
+            return;
         }
     }
 
@@ -984,39 +1058,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     //    //pa.setPen(pen);
     //}
 
-
-    // flameshot 选中图形的效果
-    QRect rtCurMove;
-    if (m_pCurrShape && (m_rtCalcu.scrnType == ScrnType::Move || m_rtCalcu.scrnType == ScrnType::Wait)){
-        pa.save();
-        rtCurMove = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
-
-        pa.setRenderHint(QPainter::Antialiasing, false);
-        pa.setBrush(Qt::NoBrush);
-        QPen penWhite(QColor(255, 255, 255, 1 * 255), 1);
-        penWhite.setStyle(Qt::CustomDashLine);
-        penWhite.setDashOffset(0);
-        penWhite.setDashPattern(QVector<qreal>() << 4 * ScreenShot::getScale() << 4 * ScreenShot::getScale());
-        penWhite.setCapStyle(Qt::FlatCap);
-        pa.setPen(penWhite);
-
-        const int r = 3;
-        pa.drawRect(rtCurMove.adjusted(-r, -r, r, r));
-        if (m_rtCalcu.scrnType == ScrnType::Wait)
-            pa.drawRect(m_pCurrShape->rt.adjusted(-r, -r, r, r));
-
-        QPen penBlack(penWhite);
-        penBlack.setColor(QColor(0, 0, 0, 1 * 255));
-        penBlack.setDashOffset(4);
-        pa.setPen(penBlack);
-
-        pa.drawRect(rtCurMove.adjusted(-r, -r, r, r));
-        if (m_rtCalcu.scrnType == ScrnType::Wait)
-            pa.drawRect(m_pCurrShape->rt.adjusted(-r, -r, r, r));
-
-        pa.restore();
-        pa.drawRect(rtCurMove);
-    }
+    selectedShapeMove(pa);                          // flameshot 选中图形的效果
 
     // 屏幕遮罩
     QPainterPath path;
@@ -1118,8 +1160,11 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.drawText(tPosText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
         .arg(m_rtCalcu.bSmartMonitor));
     pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
-    pa.drawText(tPosText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtCurMove.x()).arg(rtCurMove.y())
-        .arg(rtCurMove.width()).arg(rtCurMove.height()));
+    if (m_pCurrShape) {
+        QRect rtCurMove = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
+        pa.drawText(tPosText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtCurMove.x()).arg(rtCurMove.y())
+            .arg(rtCurMove.width()).arg(rtCurMove.height()));
+    }
     pa.drawText(tPosText - QPoint(0, space * 10), QString("m_step=>pos1(%1, %2)  pos2(%3 * %4) editPos(%5, %6)  rt(%7, %8, %9 * %10)  text:%11")
         .arg(m_step.p1.x()).arg(m_step.p1.y()) .arg(m_step.p2.x()).arg(m_step.p2.y())
         .arg(m_step.editPos.x()).arg(m_step.editPos.y())

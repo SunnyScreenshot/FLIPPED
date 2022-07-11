@@ -99,15 +99,17 @@ private:
 
     const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
     const QPoint drawSelSizePosition(QRect& rt);
-
-
+    
     //--------------test begin-------------
     void showAllDrawedShape(QPainter& pa);
     //--------------test end-------------
 
+    // refactor
+    void selectedShapeMove(QPainter& pa); // flameshot 选中图形的效果
+
 protected:
 	void paintEvent(QPaintEvent *event) override;
-	void keyReleaseEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
