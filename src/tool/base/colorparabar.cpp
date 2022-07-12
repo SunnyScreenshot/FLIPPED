@@ -29,7 +29,7 @@
 #include <QMessageBox>
 #include <QDebug>
 
-ColorParaBar::ColorParaBar(Qt::Orientations orien, ColorParaBarMode mode, QWidget *parent)
+ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
     , m_scal(XHelp::getScale())
     , m_orien(orien)
@@ -50,7 +50,7 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, ColorParaBarMode mode, QWidge
 
         int rowMax = 0;
         int colMax = 0;
-        if (orien == Qt::Horizontal) {
+        if (m_orien == Qt::Horizontal) {
             rowMax = 2;
             colMax = m_labMap.size() / rowMax;
         } else {
@@ -75,13 +75,12 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, ColorParaBarMode mode, QWidge
                 lab->setObjectName(it.key());
                 int width(CPB_PB_LABEL_WIDTH * m_scal);
                 lab->setFixedSize(width, width);
-                lab->setInEllipseR(width / 2.0);
                 lab->installEventFilter(this);
 
                 if ((it + 1) == m_labMap.end()) {  // 最后一个渐变色
-                    lab->setEnablemGradient(true);
+                    lab->setIsPickColor(true);
                 } else {
-                    lab->setInEllipseColor(it.value(), 1);
+                    lab->setColor(it.value(), 1);
                 }
 
                 layout->addWidget(lab, i, j);
@@ -112,13 +111,12 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, ColorParaBarMode mode, QWidge
                 lab->setObjectName(it.key());
                 int width(CPB_HL_LABEL_WIDTH * m_scal);
                 lab->setFixedSize(width, width);
-                lab->setInEllipseR(width / 2.0);
                 lab->installEventFilter(this);
 
                 if ((it + 1) == m_labMap.end()) {  // 最后一个渐变色
-                    lab->setEnablemGradient(true);
+                    lab->setIsPickColor(true);
                 } else {
-                    lab->setInEllipseColor(it.value(), 1);
+                    lab->setColor(it.value(), 1);
                 }
 
                 layout->addWidget(lab);
@@ -136,6 +134,11 @@ ColorParaBar::ColorParaBar(Qt::Orientations orien, ColorParaBarMode mode, QWidge
 
 ColorParaBar::~ColorParaBar()
 {
+}
+
+void ColorParaBar::setOrientations(Qt::Orientations orien)
+{
+    m_orien = orien;
 }
 
 // #see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099

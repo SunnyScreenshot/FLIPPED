@@ -22,7 +22,6 @@
 #include "./screen/winresetbtn.h"
 #include "./screen/tray.h"
 #include "widget/xroundwidget.h"
-#include "tool/base/widthparabar.h"
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"
 #include <iostream>
@@ -96,15 +95,15 @@ int main(int argc, char *argv[])
     //t2->move(200, 200);
     //t2->show();
 
-//    ColorParaBar* t3 = new ColorParaBar(Qt::Horizontal, ColorParaBarMode::CPB_ParaBar);
-////    t3->resize(400, 300);
-//    t3->move(200, 300);
-//    t3->show();
-//
-//    ColorParaBar* t3_1 = new ColorParaBar(Qt::Horizontal, ColorParaBarMode::CPB_HighLight);
-//    //    t3->resize(400, 300);
-//    t3_1->move(200, 400);
-//    t3_1->show();
+    ColorParaBar* t3 = new ColorParaBar(ColorParaBarMode::CPB_ParaBar, Qt::Horizontal);
+//    t3->resize(400, 300);
+    t3->move(200, 300);
+    t3->show();
+
+    ColorParaBar* t3_1 = new ColorParaBar(ColorParaBarMode::CPB_HighLight, Qt::Horizontal);
+    //    t3->resize(400, 300);
+    t3_1->move(200, 400);
+    t3_1->show();
 //
 //    ExWidget* t4 = new ExWidget();
 //    //    t3->resize(400, 300);

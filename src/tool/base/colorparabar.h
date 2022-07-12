@@ -31,8 +31,10 @@ class ColorParaBar : public QWidget
 {
     Q_OBJECT
 public:
-    ColorParaBar(Qt::Orientations orien = Qt::Horizontal, ColorParaBarMode mode = ColorParaBarMode::CPB_ParaBar, QWidget *parent = nullptr);
+    ColorParaBar(ColorParaBarMode mode = ColorParaBarMode::CPB_ParaBar, Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~ColorParaBar();
+
+    void setOrientations(Qt::Orientations orien = Qt::Horizontal);
 
 signals:
     void sigColorChange(QColor);
@@ -44,7 +46,6 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-
     double m_scal;
     Qt::Orientations m_orien;
     QLayout* m_layout;

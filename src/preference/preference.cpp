@@ -163,14 +163,14 @@ QWidget* Preference::tabInterface()
     grid->addWidget(srnBorderStyle, i, j, Qt::AlignRight);
     grid->addWidget(new QComboBox(this), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(borderColor, i, j, Qt::AlignRight);
-    grid->addWidget(new ColorParaBar(Qt::Horizontal, ColorParaBarMode::CPB_HighLight, this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(new ColorParaBar(ColorParaBarMode::CPB_HighLight), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(borderWidth, i, j, Qt::AlignRight);
     grid->addWidget(new QSpinBox(), i++, j + 1, Qt::AlignLeft);
 
 
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     grid->addWidget(srnCrosshair, i, j, Qt::AlignRight);
-    grid->addWidget(new ColorParaBar(Qt::Horizontal, ColorParaBarMode::CPB_HighLight, this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(new ColorParaBar(ColorParaBarMode::CPB_HighLight), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(srnCrosshairWidth, i, j, Qt::AlignRight);
     grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
 

@@ -9,11 +9,9 @@
 
 XLabel::XLabel(QWidget *parent, Qt::WindowFlags f)
     : QLabel(parent, f)
-    , m_inEllipse("#FFFFFF")
-    , m_inAlpha(1)
-    , m_outEllipse("#000000")
-    , m_outAlpha(0.08)
-    , m_bGradient(false)
+    , m_color("#DB000F")
+    , m_alpha(1)
+    , m_bPickColor(false)
 {
     init();
 }
@@ -28,26 +26,10 @@ XLabel::~XLabel()
 {
 }
 
-void XLabel::setMargin(double margin)
+void XLabel::setColor(QColor c, double alpha /*= 1*/)
 {
-    m_nMargin = margin;
-}
-
-void XLabel::setInEllipseR(double r)
-{
-    m_nInEllipseR = r;
-}
-
-void XLabel::setInEllipseColor(QColor color, double alpha)
-{
-    m_inEllipse = color;
-    m_inAlpha = alpha;
-}
-
-void XLabel::setOutEllipseColor(QColor color, double alpha)
-{
-    m_outEllipse = color;
-    m_outAlpha = alpha;
+    m_color = c;
+    m_alpha = alpha;
 }
 
 void XLabel::setConicalGradientColor(QPainter& pa)
@@ -73,9 +55,9 @@ void XLabel::setConicalGradientColor(QPainter& pa)
     pa.restore();
 }
 
-void XLabel::setEnablemGradient(bool enablem)
+void XLabel::setIsPickColor(bool enablem)
 {
-    m_bGradient = enablem;
+    m_bPickColor = enablem;
 }
 
 void XLabel::init()
@@ -86,18 +68,7 @@ void XLabel::init()
 //    setAutoFillBackground(false);
 
     QColor col = this->palette().background().color();
-    m_inEllipse = col;
-    m_inAlpha = 1;
-    m_outEllipse = col;
-    m_outAlpha = 1;
-    m_bGradient = false;
-
-    resize(24, 24);
-    auto a = contentsRect();
-    int width = this->width();
-    int height = this->height();
-    m_nInEllipseR = qMin(width, height) / 2.0;
-    m_nMargin = 1;
+    m_bPickColor = false;
 }
 
 void XLabel::paintEvent(QPaintEvent *event)
@@ -107,24 +78,23 @@ void XLabel::paintEvent(QPaintEvent *event)
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     // 矩形和内切圆此部分不用绘画 避免出现 拖曳时刻出现残影和交叉部分显示黑色
 
-    if (m_bGradient) {
+    if (m_bPickColor) {
         setConicalGradientColor(pa);
         // TODO 2022.06.21 故意缺少最外层一单层圈、 #000000、 0.08； 但是加上就很显示外圈线条很黑
     } else {
-        QColor colBrush(m_inEllipse);
-        colBrush.setAlphaF(m_inAlpha);
+        QColor colBrush(m_color);
+        colBrush.setAlphaF(m_alpha);
         pa.setPen(Qt::NoPen);
         pa.setBrush(colBrush);
-//        pa.drawEllipse(contentsRect().adjusted(1, 1, -1, -1));
-        const int r = m_nInEllipseR - 1;
-        pa.drawEllipse(contentsRect().center(), r, r);
+        const QRect& rt = contentsRect().adjusted(1, 1, -1, -1);
+        pa.drawEllipse(rt.center(), rt.width() / 2, rt.height() / 2);
 
         // 此参数设计图写死
         QColor colPen("#000000");
         colPen.setAlphaF(0.08);
         pa.setPen(colPen);
         pa.setBrush(Qt::NoBrush);
-        pa.drawEllipse(contentsRect().center(), r, r);
+        pa.drawEllipse(contentsRect().center(), contentsRect().width() / 2, contentsRect().height() / 2);
     }
 }
 

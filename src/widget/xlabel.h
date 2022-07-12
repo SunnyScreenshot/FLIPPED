@@ -17,33 +17,19 @@ public:
     explicit XLabel(const QString &text, QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
     virtual ~XLabel();
 
-//    void setEllipse(QColor color, double alpha, QRect rt);
-//    void setOutEllipseColor(QColor color, double alpha);
-
-    void setMargin(double margin);
-    void setInEllipseR(double r); //半径
-
-    void setInEllipseColor(QColor color = QColor("#FFFFFF"), double alpha = 1);
-    void setOutEllipseColor(QColor color = QColor("#FFFFFF"), double alpha = 1);
-    void setEnablemGradient(bool enablem = false);
+    void setColor(QColor c, double alpha = 1);
+    void setIsPickColor(bool enablem = false);
 private:
     void init();
     void setConicalGradientColor(QPainter &pa);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-    //void mousePressEvent(QMouseEvent* ev) override;
-    //void mouseReleaseEvent(QMouseEvent* ev) override;
 
 private:
-    QColor m_inEllipse;
-    double m_inAlpha;
-    QColor m_outEllipse;
-    double m_outAlpha;
-    bool m_bGradient;    // 默认为非渐变色
-
-    double m_nMargin;
-    double m_nInEllipseR; // 内部圆半径
+    QColor m_color;
+    double m_alpha;
+    bool m_bPickColor;    // 默认为非渐变色
 };
 
 #endif // XLABEL_H
