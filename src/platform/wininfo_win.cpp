@@ -9,10 +9,8 @@
  * Description: Windows 系统下智能窗口识别
  ******************************************************************/
 #include "wininfo_win.h"
-//#include <Windows.h>
-//#include <atlstr.h>
-//#include <string>
 #include <psapi.h>
+#include <string>
 #include <iostream>
 
 #if defined(UNICODE) || defined(_UNICODE)
@@ -140,12 +138,12 @@ BOOL WinInfo_Win::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
 	if (WindowsContainsPoint(hWnd, pos) && WindowsFilter(hWnd)) {
         RECT rt;
 		DWORD processId;
-		TCHAR windowTitle[MAX_PATH] = _T("");
+        wchar_t windowTitle[MAX_PATH] = L"";
         ::GetWindowRect(hWnd, &rt);
 		::GetWindowThreadProcessId(hWnd, &processId);
 		::GetWindowText(hWnd, windowTitle, MAX_PATH);
-		CString procPath = getWindowPath(processId);
-		CString procName = windowPath2Name(procPath);
+        std::wstring procPath = getWindowPath(processId);
+        std::wstring procName = windowPath2Name(procPath);
 
         m_hWndTarget = hWnd;
         WinID winId;
@@ -153,8 +151,8 @@ BOOL WinInfo_Win::EnumRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
         m_vWinData.push_back(WinData(winId
                                      , false
                                      , QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
-                                     , QString::fromStdWString(procPath.GetString())
-                                     , QString::fromStdWString(procName.GetString())
+                                     , QString::fromStdWString(procPath)
+                                     , QString::fromStdWString(procName)
                                      , QString::fromWCharArray(windowTitle)
                                      , ""
                                      , m_level
@@ -180,12 +178,12 @@ BOOL WinInfo_Win::EnumChildRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
         RECT rt;
 		DWORD processId;
         
-		TCHAR windowTitle[MAX_PATH] = _T("");
+        wchar_t windowTitle[MAX_PATH] = L"";
         ::GetWindowRect(hWnd, &rt);
 		::GetWindowThreadProcessId(hWnd, &processId);
 		::GetWindowText(hWnd, windowTitle, MAX_PATH);
-		CString procPath = getWindowPath(processId);
-		CString procName = windowPath2Name(procPath);
+        std::wstring procPath = getWindowPath(processId);
+        std::wstring procName = windowPath2Name(procPath);
 
         m_hWndTarget = hWnd;
         WinID winId;
@@ -193,8 +191,8 @@ BOOL WinInfo_Win::EnumChildRealTimeWindowsProc(HWND hWnd, LPARAM lParam)
         m_vWinData.push_back(WinData(winId
                                      , false
                                      , QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
-                                     , QString::fromStdWString(procPath.GetString())
-                                     , QString::fromStdWString(procName.GetString())
+                                     , QString::fromStdWString(procPath)
+                                     , QString::fromStdWString(procName)
                                      , QString::fromWCharArray(windowTitle)
                                      , ""
                                      , m_level
@@ -216,12 +214,12 @@ BOOL WinInfo_Win::EnumChildWindowsProc(HWND hWnd, LPARAM lParam)
         DWORD processId;
         m_level++;
         m_curIndex = 0;
-        TCHAR windowTitle[MAX_PATH] = _T("");
+        wchar_t windowTitle[MAX_PATH] = L"";
         ::GetWindowRect(hWnd, &rt);
         ::GetWindowThreadProcessId(hWnd, &processId);
         ::GetWindowText(hWnd, windowTitle, MAX_PATH);
-        CString procPath = getWindowPath(processId);
-        CString procName = windowPath2Name(procPath);
+        std::wstring procPath = getWindowPath(processId);
+        std::wstring procName = windowPath2Name(procPath);
 
         m_hWndTarget = hWnd;
         WinID winId;
@@ -229,8 +227,8 @@ BOOL WinInfo_Win::EnumChildWindowsProc(HWND hWnd, LPARAM lParam)
         m_vWinData.push_back(WinData(winId
             , false
             , QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
-            , QString::fromStdWString(procPath.GetString())
-            , QString::fromStdWString(procName.GetString())
+            , QString::fromStdWString(procPath)
+            , QString::fromStdWString(procName)
             , QString::fromWCharArray(windowTitle)
             , ""
             , m_level
@@ -249,20 +247,20 @@ BOOL WinInfo_Win::EnumWindowsProc(HWND hWnd, LPARAM lParam)
 	if (hWnd && WindowsFilter(hWnd)) {  // 句柄存在且可见
         RECT rt;
 		DWORD processId;
-		TCHAR windowTitle[MAX_PATH] = _T("");
+        wchar_t windowTitle[MAX_PATH] = L"";
         ::GetWindowRect(hWnd, &rt);
 		::GetWindowThreadProcessId(hWnd, &processId);
 		::GetWindowText(hWnd, windowTitle, MAX_PATH);
-		CString procPath = getWindowPath(processId);
-		CString procName = windowPath2Name(procPath);
+        std::wstring procPath = getWindowPath(processId);
+        std::wstring procName = windowPath2Name(procPath);
 
         WinID winId;
         winId._hWnd = (void *)hWnd;
         m_vWinData.push_back(WinData(winId
                                      , false
                                      , QRect(rt.left, rt.top, rt.right - rt.left, rt.bottom - rt.top)
-                                     , QString::fromStdWString(procPath.GetString())
-                                     , QString::fromStdWString(procName.GetString())
+                                     , QString::fromStdWString(procPath)
+                                     , QString::fromStdWString(procName)
                                      , QString::fromWCharArray(windowTitle)
                                      , ""
                                      , m_level
@@ -352,23 +350,28 @@ BOOL WinInfo_Win::WindowsFilter(HWND hWnd)
     return ::IsWindowVisible(hWnd);
 }
 
-CString WinInfo_Win::getWindowPath(DWORD processId)
+std::wstring WinInfo_Win::getWindowPath(DWORD processId)
 {
-    TCHAR path[MAX_PATH] = _T("");
+    wchar_t path[MAX_PATH] = L"";
     HANDLE hProc = ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
-    GetProcessImageFileName(hProc, path, MAX_PATH);
-    ::CloseHandle(hProc);
 
-    return path;
+#ifdef Q_CC_MINGW   // mingw 编译器
+    // 坑，mingw 不支持
+#elif Q_CC_MSVC  //msvc编译器
+    GetProcessImageFileName(hProc, path, MAX_PATH);
+#endif
+
+    ::CloseHandle(hProc);
+    return std::wstring(path);
 }
 
-CString WinInfo_Win::windowPath2Name(CString path)
+std::wstring WinInfo_Win::windowPath2Name(std::wstring path)
 {
-    auto pos = path.ReverseFind(_T('/'));
+    auto pos = path.rfind(L'/');
     if (pos == -1)
-        pos = path.ReverseFind(_T('\\'));
+        pos = path.rfind(L'\\');
     if (pos == -1)
-        return _T("");
+        return L"";
 
-    return path.Right(path.GetLength() - (pos + 1));
+    return path.substr(pos + 1);
 }

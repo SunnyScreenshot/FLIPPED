@@ -26,17 +26,17 @@ endif()
 
 # msvc multicore compilation
 if (WIN32)
-    if(MSVC)
-        add_definitions(-DUNICODE -D_UNICODE)   # 设置 DUNICODE 编码
+    add_definitions(-DUNICODE -D_UNICODE)   # 设置 DUNICODE 编码
 
-                OPTION(USE_MP "use multiple" ON)
-                OPTION(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP
-                        "Set The Global Option COMPILE_FLAGS /MP to target." ON)
-                if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
-                        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-                        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-                endif()
-                set(VS_STARTUP_PROJECT ${PROJECT_NAME})
+    if(MSVC)
+        OPTION(USE_MP "use multiple" ON)
+        OPTION(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP
+                "Set The Global Option COMPILE_FLAGS /MP to target." ON)
+        if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
+                set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
+                set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+        endif()
+        set(VS_STARTUP_PROJECT ${PROJECT_NAME})
     endif(MSVC)
 endif()
 

@@ -14,7 +14,6 @@
 #include "iwininfo.h"
 
 #include <windows.h>
-#include <atlstr.h>
 #include <vector>
 
 class WinInfo_Win : public IWinInfo
@@ -41,8 +40,8 @@ public:
     static BOOL WindowsContainsPoint(HWND hWnd, POINT pt);
 	static HWND getWinInfoFromCache(POINT pt);
     static BOOL WindowsFilter(HWND hWnd);
-    static CString getWindowPath(DWORD processId);
-    static CString windowPath2Name(CString path);
+    static std::wstring getWindowPath(DWORD processId);
+    static std::wstring windowPath2Name(std::wstring path);
 
 //    error: LNK2005: "protected: static struct HWND__ * WinInfoWin::m_hWndTarget" (?m_hWndTarget@WinInfoWin@@1PAUHWND__@@A) already defined in mocs_compilation.cpp.obj
 

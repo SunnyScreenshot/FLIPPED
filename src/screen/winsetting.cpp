@@ -9,7 +9,6 @@
  * Description:
  ******************************************************************/
 #include "winsetting.h"
-#include "winresetbtn.h"
 #include "screenshot.h"
 #include "../widget/xkeysequenceedit.h"
 #include <QBoxLayout>
@@ -186,7 +185,7 @@ QWidget * WinSetting::tabScreenShot()
 	mainVLayout->addLayout(hlGirdParent);
 	mainVLayout->addLayout(vlCheckBox);
 	mainVLayout->addStretch(0);
-	mainVLayout->addWidget(new WinResetBtn());
+//	mainVLayout->addWidget(new WinResetBtn());
 
 	return tabScreenShot;
 }
@@ -228,7 +227,7 @@ QWidget * WinSetting::tabOutput()
 	//mainVLayout->setSpacing(0);
 	mainVLayout->addLayout(girdLayout);
 	mainVLayout->addStretch(0);
-	mainVLayout->addWidget(new WinResetBtn());
+//	mainVLayout->addWidget(new WinResetBtn());
 
 	return outputWidget;
 }
@@ -303,7 +302,7 @@ QWidget * WinSetting::tabShortcuts()
 	mainVLayout->addWidget(line);
 	mainVLayout->addLayout(girdLayout);
     mainVLayout->addStretch(0);
-    mainVLayout->addWidget(new WinResetBtn());
+//    mainVLayout->addWidget(new WinResetBtn());
 
     QWidget* tabOneShortcuts = new QWidget();
 	tabOneShortcuts->setLayout(mainVLayout);

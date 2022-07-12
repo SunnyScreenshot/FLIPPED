@@ -9,7 +9,6 @@
  * Description:
  ******************************************************************/
 #include "tray.h"
-#include "winresetbtn.h"
 #include "../preference/preference.h"
 #include <QSystemTrayIcon>
 #include <QAction>
