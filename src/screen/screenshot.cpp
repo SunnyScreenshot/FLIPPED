@@ -46,6 +46,7 @@ namespace Util {
 
 ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
+    , m_scal(XHelp::getScale())
     , m_screens(QApplication::screens())
 	, m_primaryScreen(QApplication::primaryScreen())
 	, m_currPixmap(nullptr)
@@ -162,6 +163,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
     connect(m_selBar, &SelectBar::sigEnableDraw, m_paraBar, &ParameterBar::onEnableDraw);
     connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
+    connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
 }
 
 ScreenShot::~ScreenShot()
@@ -543,7 +545,7 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     pa.save();
     pa.setRenderHint(QPainter::Antialiasing, true);
     QPen pen;
-    pen.setWidth(SELECT_ASSIST_RECT_PEN_WIDTH);
+    pen.setWidth(SELECT_ASSIST_RECT_PEN_WIDTH * m_scal);
     pen.setColor(QColor("#0E70FF"));
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
@@ -553,8 +555,8 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     int x2 = rt.right();
     int y2 = rt.bottom();
 
-    const int penWidth = SELECT_ASSIST_RECT_PEN_WIDTH;
-    const int penAssWidth = SELECT_ASSIST_RECT_WIDTH;
+    const int penWidth = pen.width();
+    const int penAssWidth = SELECT_ASSIST_RECT_WIDTH * m_scal;
 
     // hor 且补齐交叉角落的空缺的那一块
     QLine l1(QPoint(x1 - penWidth / 2, y1), QPoint(x1 + penAssWidth, y1));
@@ -717,7 +719,7 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
     if (!m_selBar || !m_paraBar)
         return vec;
 
-    const int space = 10;
+    const int space = B_SPACEING;
     int selBarHeight = m_selBar->height();
     int paraBarHeight = m_paraBar->height();
 
@@ -726,12 +728,13 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
         paraBarHeight = m_paraBar->width();
     }
 
-    const int barHeight = space * 2 + selBarHeight + paraBarHeight;
+    const int sBarHeight = space + selBarHeight;
+    const int pBarHeight = space + paraBarHeight;
     const QRect rtSel(m_rtCalcu.getSelRect());
-    const int barMaxTop = rtSel.top() - barHeight;
-    const int barMaxBottom = rtSel.bottom() + barHeight;
-    const int barMaxLeft = rtSel.left() - barHeight;
-    const int barMaxRight = rtSel.right() + barHeight;
+    const int barMaxTop = rtSel.top() - sBarHeight;
+    const int barMaxBottom = rtSel.bottom() + sBarHeight;
+    const int barMaxLeft = rtSel.left() - sBarHeight;
+    const int barMaxRight = rtSel.right() + sBarHeight;
 
     QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
     QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight() - QPoint(0, 1)))->geometry();  // geometry 则左上角坐标非 0，0； (0, 1) 为修正底部置底后， 返回为（错的)另一个显示器
@@ -739,9 +742,8 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
     QPoint p1;  // selBar
     QPoint p2;  // paraBar
     if (orien == Qt::Horizontal) {
-
         p1 = QPoint(rtSel.center().x() - m_selBar->width() / 2, rtSel.bottom() + space); // 默认底部中间
-        p2 = QPoint(p1.x(), p1.y() + space * 2 + selBarHeight);
+        p2 = QPoint(p1.x(), p1.y() + space + selBarHeight);
 
         if (offset == ToolBarOffset::TBO_Left)
             p1.setX(rtSel.left());
@@ -750,19 +752,36 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
 
         int topLimit = qMax(m_rtVirDesktop.top(), rtScrn.top());
         int bottomLimit = qMin(m_rtVirDesktop.bottom(), rtScrn.bottom());
+
         if (barMaxTop > topLimit) { // 选中框，上未触顶
             if (barMaxBottom > bottomLimit) { // 底部触顶
-                p1.setY(rtSel.top() - barHeight);
-                p2.setY(p1.y() + space * 2 +selBarHeight);
+                p1.setY(rtSel.top() - sBarHeight);
+                p2.setY(p1.y() - pBarHeight);
             }
+
+            if (m_paraBar->isVisible()) {
+                if (barMaxBottom + pBarHeight > bottomLimit) {
+
+                    if (barMaxTop - pBarHeight < topLimit) {
+                        p1.setY(rtSel.top() + space);
+                        p2.setY(rtSel.top() + sBarHeight + space);
+                    } else {
+                        p1.setY(rtSel.top() - sBarHeight);
+                        p2.setY(p1.y() - pBarHeight);
+                    }
+                } else {
+                    p1.setY(rtSel.bottom() + space);
+                }
+            }
+
         } else {
-            if (barMaxBottom > bottomLimit) { // 底部触顶
-                p1.setY(rtSel.bottom() - barHeight);
-                p2.setY(p1.y() + space * 2 + selBarHeight);
+            if (barMaxBottom > bottomLimit
+                || (m_paraBar->isVisible() && barMaxBottom + pBarHeight > bottomLimit)) { // 底部触顶
+                p1.setY(rtSel.top() + space);
+                p2.setY(rtSel.top() + sBarHeight + space);
             }
         }
 
-        p2.setX(p1.x());
     } else {
 
         p1 = QPoint(rtSel.left() - (selBarHeight + space), rtSel.center().y() - m_selBar->height() / 2);         // 默认左侧中间
@@ -780,11 +799,11 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
             //    basePos.setY(rtSel.bottom() - barHeight);
         } else {
             p1.setX(rtSel.right() + space);
-            p2.setX(p1.x() + space * 2 + selBarHeight);
+            p2.setX(p1.x() + space + selBarHeight);
 
             if (barMaxRight > rightLimit) { // 右侧触顶
                 p1.setX(rtSel.left() + space);
-                p2.setX(p1.x() + space * 2 + selBarHeight);
+                p2.setX(p1.x() + space + selBarHeight);
             }
         }
 

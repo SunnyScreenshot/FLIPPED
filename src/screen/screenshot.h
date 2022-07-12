@@ -116,6 +116,7 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
 
 private:
+    double m_scal;
 	QList<QScreen *> m_screens;            // 所有屏幕
 	QScreen* m_primaryScreen;              // 主屏幕
 	QPixmap* m_currPixmap;                 // 当前屏幕截图

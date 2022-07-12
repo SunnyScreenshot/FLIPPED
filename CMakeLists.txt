@@ -2,3 +2,4 @@
 project(PicShot)
 add_subdirectory(src)
 add_subdirectory(pluginsimpl/watemark)
+add_subdirectory(3rdparty/QHotkey)

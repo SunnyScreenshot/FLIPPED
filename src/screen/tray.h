@@ -44,8 +44,8 @@ public slots:
     void onPreference(bool checked);
 	
 private:
-	QPointer<ScreenShot> m_pSrnShot;
-    QPointer<Preference> m_pPref;
+	QPointer<ScreenShot> m_pSrnShot;           // 前台截图 UI
+    QPointer<Preference> m_pPref;              // 偏好设置 UI 
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 
