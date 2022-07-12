@@ -23,7 +23,6 @@ QT_END_NAMESPACE
 
 // rectangle
 // ellipse
-// line
 // arrow
 // pen
 // mosaic  、 smooth

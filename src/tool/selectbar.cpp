@@ -32,7 +32,6 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
 
     m_tbName << "rectangle"
              << "ellipse"
-             << "line"
              << "arrow"
              << "pen"
              << "mosaic"
@@ -53,7 +52,6 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     QStringList barTip;
     barTip << tr("rectangle")
            << tr("ellipse")
-           << tr("line")
            << tr("arrow")
            << tr("pen")
            << tr("mosaic")
@@ -201,7 +199,7 @@ void SelectBar::onToolBtn()
     } else if (tb->objectName() == "ellipse") {
         emit sigSelShape(XC::DrawShape::Ellipses, isChecked);
     } else if (tb->objectName() == "line") {
-        emit sigSelShape(XC::DrawShape::Line, isChecked);
+        emit sigSelShape(XC::DrawShape::LineWidth, isChecked);
     } else if (tb->objectName() == "arrow") {
         emit sigSelShape(XC::DrawShape::Arrows, isChecked);
     } else if (tb->objectName() == "pen") {

@@ -69,9 +69,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。                此行无需在 QApplication a(argc,argv);前面
 #endif
 
-    QCoreApplication::setApplicationVersion(_PROJECT_VERSION);
-    QCoreApplication::setApplicationName(QStringLiteral(_PROJECT_NAME));
+    // 因多处使用 QSettings，故声明组织等信息
     QCoreApplication::setOrganizationName(QStringLiteral("XMuli"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("github.com/XMuli"));
+    QCoreApplication::setApplicationName(QStringLiteral(_PROJECT_NAME));
+    QCoreApplication::setApplicationVersion(_PROJECT_VERSION);
 
     QApplication a(argc, argv);
     //a.loadTranslator(QList<QLocale>() << QLocale::system());

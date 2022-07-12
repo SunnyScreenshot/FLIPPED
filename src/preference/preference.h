@@ -16,6 +16,7 @@
 
 QT_BEGIN_NAMESPACE
 class QPushButton;
+class QHBoxLayout;
 QT_END_NAMESPACE
 
 class QHotkey;
@@ -28,6 +29,8 @@ public:
 
 private:
     void initUI();
+    QHBoxLayout* creatResetBtn();
+
     QWidget* tabGeneral();             // 常规
     QWidget* tabInterface();           // 界面
     QWidget* tabOutput();              // 输出

@@ -5,7 +5,6 @@
         <file>resources/tool/ellipse.svg</file>
         <file>resources/tool/finish.svg</file>
         <file>resources/tool/gif.svg</file>
-        <file>resources/tool/line.svg</file>
         <file>resources/tool/mosaic.svg</file>
         <file>resources/tool/pen.svg</file>
         <file>resources/tool/rectangle.svg</file>
@@ -28,5 +27,6 @@
         <file>resources/tool_para/line_width/line_width_2.svg</file>
         <file>resources/tool_para/line_width/line_width_3.svg</file>
         <file>resources/logo.svg</file>
+        <file>resources/tool_para/arrows/arrow_4.svg</file>
     </qresource>
 </RCC>

@@ -79,7 +79,7 @@ namespace XC {
 		NoDraw,
 		Rectangles,
 		Ellipses,
-        Line,
+        LineWidth,   // 特殊、线宽度
         Arrows,
         Pen,
         Mosaics,

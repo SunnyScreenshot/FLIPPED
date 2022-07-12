@@ -130,7 +130,7 @@ void ParameterBar::initMosaicBar()
 void ParameterBar::initArrowBar()
 {
     QString path(":/resources/tool_para/arrows/");
-    QStringList list = { "arrow_1", "arrow_2", "arrow_3"};
+    QStringList list = { "arrow_1", "arrow_2", "arrow_3", "arrow_4" };
     creatorParaBar(m_arrowBar, path, list);
 }
 
@@ -206,7 +206,7 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         addSpacer();
         addWidget(m_colorBar);
         m_colorBar->setVisible(true);
-    } else if (shape == DrawShape::Line) {
+    } else if (shape == DrawShape::LineWidth) {
         addWidget(m_lienWidthBar);
         m_lienWidthBar->setVisible(true);
         addSpacer();
@@ -319,7 +319,7 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
                 //} else {
                 //}
             } else if (parent == m_lienWidthBar) {
-                shap = DrawShape::Line;   // 或者 Pen
+                shap = DrawShape::LineWidth;   // 或者 Pen
             } else {
             }
 

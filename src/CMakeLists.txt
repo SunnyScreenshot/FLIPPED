@@ -139,8 +139,6 @@ set(SRCS_WINSCREEN
     "screen/hotkeysvs.cpp"
     "screen/tray.h"
     "screen/tray.cpp"
-    "screen/winresetbtn.h"
-    "screen/winresetbtn.cpp"
     "screen/winsetting.h"
     "screen/winsetting.cpp"
 )

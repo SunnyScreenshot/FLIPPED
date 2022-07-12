@@ -294,7 +294,7 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
     const bool bEllipses = shape == DrawShape::Ellipses;
     const bool bMosaics = shape == DrawShape::Mosaics;
 
-    const bool bLine = shape == DrawShape::Line;
+    const bool bLine = shape == DrawShape::LineWidth;
     const bool bPen = shape == DrawShape::Pen;
     const bool bArrows = shape == DrawShape::Arrows;
     const bool bText = shape == DrawShape::Text;
@@ -394,7 +394,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     const bool bRect = shape == DrawShape::Rectangles;
     const bool bEllipses = shape == DrawShape::Ellipses;
     const bool bMosaics = shape == DrawShape::Mosaics;
-    const bool bLine = shape == DrawShape::Line;
+    const bool bLine = shape == DrawShape::LineWidth;
     const bool bPen = shape == DrawShape::Pen;
     const bool bArrows = shape == DrawShape::Arrows;
     const bool bText = shape == DrawShape::Text;

@@ -33,6 +33,7 @@
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QLineEdit>
+#include <QSettings>
 
 // test
 #include <QDebug>
@@ -68,6 +69,16 @@ void Preference::initUI()
     tabPages->addTab(tabAbout(), tr("About"));
 
     vLayout->addWidget(tabPages);
+}
+
+QHBoxLayout* Preference::creatResetBtn()
+{
+    QHBoxLayout* hLay = new QHBoxLayout();
+    hLay->setContentsMargins(0, 0, 0, 0);
+    hLay->addSpacing(0);
+    hLay->addStretch(7);
+    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    return hLay;
 }
 
 QWidget *Preference::tabGeneral()
@@ -121,12 +132,7 @@ QWidget *Preference::tabGeneral()
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
 
-    QHBoxLayout* hLay = new QHBoxLayout();
-    hLay->setContentsMargins(0, 0, 0, 0);
-    hLay->addSpacing(0);
-    hLay->addStretch(7);
-    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
-    vLay->addLayout(hLay, 1);
+    vLay->addLayout(creatResetBtn(), 1);
 
     return page;
 }
@@ -183,13 +189,7 @@ QWidget* Preference::tabInterface()
     qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-
-    QHBoxLayout* hLay = new QHBoxLayout();
-    hLay->setContentsMargins(0, 0, 0, 0);
-    hLay->addSpacing(0);
-    hLay->addStretch(7);
-    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
-    vLay->addLayout(hLay, 1);
+    vLay->addLayout(creatResetBtn(), 1);
 
     return page;
 }
@@ -249,13 +249,7 @@ QWidget* Preference::tabOutput()
     qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-
-    QHBoxLayout* hLay = new QHBoxLayout();
-    hLay->setContentsMargins(0, 0, 0, 0);
-    hLay->addSpacing(0);
-    hLay->addStretch(7);
-    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
-    vLay->addLayout(hLay, 1);
+    vLay->addLayout(creatResetBtn(), 1);
 
     return page;
 }
@@ -290,13 +284,7 @@ QWidget* Preference::tabPin()
     qDebug() << "tabPin:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-
-    QHBoxLayout* hLay = new QHBoxLayout();
-    hLay->setContentsMargins(0, 0, 0, 0);
-    hLay->addSpacing(0);
-    hLay->addStretch(7);
-    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
-    vLay->addLayout(hLay, 1);
+    vLay->addLayout(creatResetBtn(), 1);
 
     return page;
 }
@@ -324,14 +312,32 @@ QWidget *Preference::tabHotkeys()
                                {"h6_HSAI", Qt::CTRL + Qt::SHIFT + Qt::Key_H},
                                {"h7_SCG", Qt::CTRL + Qt::SHIFT + Qt::Key_X}};
 
+    //std::tuple<QString, QString, >
     
+    //QMap<QString, QString> map = { {"h0_AW", tr("Ctrl + Shift + P")},     // 截图相关
+    //                           {"h1_WO", tr("Ctrl + Shift + W")},
+    //                           {"h2_DC", tr("Ctrl + Shift + L")},
+    //                           {"h3_FS", tr("Ctrl + Shift + S")},
+    //                           {"h4_FSR", tr("Ctrl + Shift + F")},
+    //                           {"h5_P", tr("Ctrl + Shift + T")},      // 贴图相关
+    //                           {"h6_HSAI", tr("Ctrl + Shift + H")},
+    //                           {"h7_SCG", tr("Ctrl + Shift + X")}};
+
+
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+    settings.beginGroup("tabHotkeys");
+
     for (auto it = map.begin(); it != map.end(); ++it) {
         auto hotKey = new XKeySequenceEdit(QKeySequence(it.value()));           // 出现乱码是因为使用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
+
+        settings.setValue(it.key(), it.value());
+
         hotKey->setObjectName(it.key());
         hotKey->setMinimumWidth(106 * m_scale);                                           // 估的一个数值
         vHotkey.push_back(hotKey);
-        //connect(hotKey, &XKeySequenceEdit::keySequenceChanged, )
     }
+
+    settings.endGroup();
 
     int id = 0;
     int i = 0;
@@ -368,13 +374,7 @@ QWidget *Preference::tabHotkeys()
     qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-
-    QHBoxLayout* hLay = new QHBoxLayout();
-    hLay->setContentsMargins(0, 0, 0, 0);
-    hLay->addSpacing(0);
-    hLay->addStretch(7);
-    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
-    vLay->addLayout(hLay, 1);
+    vLay->addLayout(creatResetBtn(), 1);
 
     return page;
 }
