@@ -296,50 +296,24 @@ QWidget *Preference::tabHotkeys()
     QVBoxLayout* vLay = new QVBoxLayout(page);
     vLay->setContentsMargins(THV_MARGIN_HOR, THV_MARGIN_VER_TOP, THV_MARGIN_HOR, THV_MARGIN_VER_BOTTOM);
 
-    // 快捷键框
+    // 快捷键框。若是出现乱码则因为混用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
     //QKeySequence(QKeySequence::Print);
     //QKeySequence(tr("Ctrl+P"));
     //QKeySequence(tr("Ctrl+p"));
     //QKeySequence(Qt::CTRL + Qt::Key_P);
 
-    QVector<XKeySequenceEdit*> vHotkey;
-    QMap<QString, int> map = { {"h0_AW", Qt::CTRL + Qt::SHIFT + Qt::Key_Y},     // 截图相关
-                               {"h1_WO", Qt::CTRL + Qt::SHIFT + Qt::Key_W},
-                               {"h2_DC", Qt::CTRL + Qt::SHIFT + Qt::Key_L},
-                               {"h3_FS", Qt::CTRL + Qt::SHIFT + Qt::Key_S},
-                               {"h4_FSR", Qt::CTRL + Qt::SHIFT + Qt::Key_F},
-                               {"h5_P", Qt::CTRL + Qt::SHIFT + Qt::Key_T},      // 贴图相关
-                               {"h6_HSAI", Qt::CTRL + Qt::SHIFT + Qt::Key_H},
-                               {"h7_SCG", Qt::CTRL + Qt::SHIFT + Qt::Key_X}};
+    std::tuple<QString, QString, QString> tup;
+    std::vector<std::tuple<QString, QString, QString>> v = {
+        std::make_tuple("h0_AW", "Ctrl+Shift+Y", tr("Active Window")),        // 截图相关
+        std::make_tuple("h1_WO", "Ctrl+Shift+W", tr("Window / Object")),
+        std::make_tuple("h2_DC", "Ctrl+Shift+L", tr("Delay Capture")),
+        std::make_tuple("h3_FS", "Ctrl+Shift+S", tr("Full Screen")),
+        std::make_tuple("h4_FSR", "Ctrl+Shift+F", tr("Fixd-Size Region")),
 
-    //std::tuple<QString, QString, >
-    
-    //QMap<QString, QString> map = { {"h0_AW", tr("Ctrl + Shift + P")},     // 截图相关
-    //                           {"h1_WO", tr("Ctrl + Shift + W")},
-    //                           {"h2_DC", tr("Ctrl + Shift + L")},
-    //                           {"h3_FS", tr("Ctrl + Shift + S")},
-    //                           {"h4_FSR", tr("Ctrl + Shift + F")},
-    //                           {"h5_P", tr("Ctrl + Shift + T")},      // 贴图相关
-    //                           {"h6_HSAI", tr("Ctrl + Shift + H")},
-    //                           {"h7_SCG", tr("Ctrl + Shift + X")}};
+        std::make_tuple("h5_P", "Ctrl+Shift+T", tr("Paste")),             // 贴图相关
+        std::make_tuple("h6_HSAI", "Ctrl+Shift+H", tr("Hide/Show all images")),
+        std::make_tuple("h7_SCG", "Ctrl+Shift+X", tr("Switch current group")) };
 
-
-    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
-    settings.beginGroup("tabHotkeys");
-
-    for (auto it = map.begin(); it != map.end(); ++it) {
-        auto hotKey = new XKeySequenceEdit(QKeySequence(it.value()));           // 出现乱码是因为使用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
-
-        settings.setValue(it.key(), it.value());
-
-        hotKey->setObjectName(it.key());
-        hotKey->setMinimumWidth(106 * m_scale);                                           // 估的一个数值
-        vHotkey.push_back(hotKey);
-    }
-
-    settings.endGroup();
-
-    int id = 0;
     int i = 0;
     int j = 0;
     QGridLayout* grid = new QGridLayout();
@@ -349,28 +323,26 @@ QWidget *Preference::tabHotkeys()
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
-    grid->addWidget(new QLabel(tr("Active Window:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
-    grid->addWidget(new QLabel(tr("Window / Object")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
-    grid->addWidget(new QLabel(tr("Delay Capture:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
-    grid->addWidget(new QLabel(tr("Full Screen:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
-    grid->addWidget(new QLabel(tr("Fixd-Size Region:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+    settings.beginGroup("tabHotkeys");
+    for (auto& it : v) {
+        QString& name = std::get<0>(it);
+        QString& hotkey = std::get<1>(it);
+        QString& describe = std::get<2>(it);
+        XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
+        pEdit->setObjectName(name);
+        pEdit->setMinimumWidth(110 * m_scale);                                // 估的一个数值
 
-    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+        grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
+        grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
 
-    grid->addWidget(new QLabel(tr("Paste:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
-    grid->addWidget(new QLabel(tr("Hide/Show all images:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++], i++, j + 1, 1, 1, Qt::AlignLeft);
-    grid->addWidget(new QLabel(tr("Switch current group:")), i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(vHotkey[id++],i++, j + 1, 1, 1, Qt::AlignLeft);
+        settings.setValue(describe, hotkey);
 
+        if (i == 5)
+            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+    }
+    settings.endGroup();
 
-    auto lab = new QLabel(tr("Switch current group:"));
     qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
