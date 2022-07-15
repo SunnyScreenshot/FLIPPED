@@ -111,6 +111,8 @@ set(SRCS_TOOL
     "tool/base/colorparabar.cpp"
     "tool/base/managebar.h"
     "tool/base/managebar.cpp"
+    "tool/base/blurwidget.h"
+    "tool/base/blurwidget.cpp"
     "tool/selectsize/selectsize.h"
     "tool/selectsize/selectsize.cpp"
     "tool/magnifier/magnifier.h"

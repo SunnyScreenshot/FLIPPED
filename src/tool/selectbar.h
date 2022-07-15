@@ -13,6 +13,7 @@
 
 #include "../widget/xframewidget.h"
 #include "../screen/drawhelper.h"
+#include "base/blurwidget.h"
 #include <QVector>
 
 QT_BEGIN_NAMESPACE
@@ -21,6 +22,7 @@ class QStringList;
 class QBoxLayout;
 QT_END_NAMESPACE
 
+class BlurWidget;
 // rectangle
 // ellipse
 // arrow
@@ -34,12 +36,14 @@ QT_END_NAMESPACE
 // save
 // cancel
 // finish
-class SelectBar : public XFrameWidget
+class SelectBar : public QWidget
 {
     Q_OBJECT
 public:
     SelectBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
-    virtual ~SelectBar();
+    virtual ~SelectBar() = default;
+
+    void setBlurBackground(const QPixmap& pix, double blurRadius);
 
 private:
     void initUI();
@@ -60,9 +64,11 @@ signals:
 
 protected: 
     void enterEvent(QEvent* event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     double m_scal;
+    BlurWidget* m_blur;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 

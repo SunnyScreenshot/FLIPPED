@@ -20,8 +20,9 @@
 #include <QToolButton>
 
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
-    : XFrameWidget(parent)
+    : QWidget(parent)
     , m_scal(XHelp::getScale())
+    , m_blur(new BlurWidget(this))
     , m_orien(orien)
     , m_layout(nullptr)
     , m_tbName()
@@ -97,8 +98,13 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     }
 }
 
-SelectBar::~SelectBar()
+void SelectBar::setBlurBackground(const QPixmap &pix, double blurRadius)
 {
+    if (!m_blur)
+        return;
+
+    m_blur->setPixmap(pix, blurRadius);
+    m_blur->lower();
 }
 
 void SelectBar::initUI()
@@ -227,4 +233,10 @@ void SelectBar::onToolBtn()
 void SelectBar::enterEvent(QEvent* event)
 {
     setCursor(Qt::ArrowCursor);
+}
+
+void SelectBar::resizeEvent(QResizeEvent *event)
+{
+    m_blur->setGeometry(0, 0, width(), height());
+    return QWidget::resizeEvent(event);
 }

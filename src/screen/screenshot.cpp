@@ -1024,6 +1024,15 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         m_savePixmap = m_currPixmap->copy(QRect(mapFromGlobal(rtSel.topLeft()) * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
         pa.drawPixmap(rtSel, m_savePixmap);
 
+
+        // 添加磨砂透明效果
+        if(m_selBar) {
+            auto leftTop = m_selBar->mapToGlobal(QPoint(0, 0));
+            auto t = m_currPixmap->copy(QRect(leftTop * getDevicePixelRatio(), m_selBar->rect().size() * getDevicePixelRatio()));
+            m_selBar->setBlurBackground(t, 5);
+        }
+
+
         // 放大镜实现
         //QSize tSize(100, 100);
         //auto& mousePos = QCursor::pos();
