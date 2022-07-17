@@ -10,6 +10,7 @@
  ******************************************************************/
 #include "xkeysequenceedit.h"
 #include <QWidget>
+#include <QMouseEvent>
 #include <QDebug>
 
 /*!
@@ -19,13 +20,18 @@
 XKeySequenceEdit::XKeySequenceEdit(QWidget *parent)
     : QKeySequenceEdit(parent)
 {
-
+    initUI();
 }
 
 XKeySequenceEdit::XKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent)
     : QKeySequenceEdit(keySequence, parent)
 {
+    initUI();
+}
 
+void XKeySequenceEdit::initUI()
+{
+    //setWindowFlags(Qt::FramelessWindowHint | Qt::Popup);
 }
 
 //void XKeySequenceEdit::test()
@@ -65,3 +71,13 @@ void XKeySequenceEdit::keyPressEvent(QKeyEvent *event)
     setKeySequence(key);
     emit sigKeySeqChanged(key); // 要发射对应信号
 }
+
+//void XKeySequenceEdit::mousePressEvent(QMouseEvent* event)
+//{
+//    int a = 0;
+//    if (event->button() != Qt::LeftButton)
+//        return;
+//
+//    if (!geometry().contains(mapFromGlobal(QCursor::pos())))
+//        clearFocus();
+//}

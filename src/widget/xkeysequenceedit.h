@@ -20,6 +20,9 @@ public:
     explicit XKeySequenceEdit(QWidget *parent = nullptr);
     explicit XKeySequenceEdit(const QKeySequence &keySequence, QWidget *parent = nullptr);
     virtual ~XKeySequenceEdit() = default;
+
+private:
+    void initUI();
 //	void test();
 
 signals:
@@ -30,7 +33,8 @@ signals:
 	//void onKeySequenceChanged(const QKeySequence &keySequence);
 
 protected:
-    virtual void keyPressEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    //void mousePressEvent(QMouseEvent* event) override;
 };
 
 

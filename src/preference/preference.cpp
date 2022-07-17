@@ -290,52 +290,54 @@ QWidget* Preference::tabPin()
     return page;
 }
 
+#include "hotkeyswidget.h"
 QWidget *Preference::tabHotkeys()
 {
-    QWidget* page = new QWidget(nullptr);
-    page->setContentsMargins(0, 0, 0, 0);
-    QVBoxLayout* vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(THV_MARGIN_HOR, THV_MARGIN_VER_TOP, THV_MARGIN_HOR, THV_MARGIN_VER_BOTTOM);
+    return new HotkeysWidget();
+//    QWidget* page = new QWidget(nullptr);
+//    page->setContentsMargins(0, 0, 0, 0);
+//    QVBoxLayout* vLay = new QVBoxLayout(page);
+//    vLay->setContentsMargins(THV_MARGIN_HOR, THV_MARGIN_VER_TOP, THV_MARGIN_HOR, THV_MARGIN_VER_BOTTOM);
 
-    // 快捷键框。若是出现乱码则因为混用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
-    //QKeySequence(QKeySequence::Print);
-    //QKeySequence(tr("Ctrl+P"));
-    //QKeySequence(tr("Ctrl+p"));
-    //QKeySequence(Qt::CTRL + Qt::Key_P);
+//    // 快捷键框。若是出现乱码则因为混用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
+//    //QKeySequence(QKeySequence::Print);
+//    //QKeySequence(tr("Ctrl+P"));
+//    //QKeySequence(tr("Ctrl+p"));
+//    //QKeySequence(Qt::CTRL + Qt::Key_P);
 
 
-    int i = 0;
-    int j = 0;
-    QGridLayout* grid = new QGridLayout();
-    grid->setMargin(0);
-    grid->setVerticalSpacing(THG_SPACING_VER);
-    grid->setHorizontalSpacing(THG_SPACING_HOR);
-    grid->setColumnStretch(0, 7);
-    grid->setColumnStretch(1, 9);
+//    int i = 0;
+//    int j = 0;
+//    QGridLayout* grid = new QGridLayout();
+//    grid->setMargin(0);
+//    grid->setVerticalSpacing(THG_SPACING_VER);
+//    grid->setHorizontalSpacing(THG_SPACING_HOR);
+//    grid->setColumnStretch(0, 7);
+//    grid->setColumnStretch(1, 9);
 
-    for (auto& it : Tray::instance().getVHotKeys()) {
-        // TODO 2022.07.17: 虽然是值传递，但 std::get<0>(it) 为空，以后研究下
-        QString& hotkey = std::get<1>(it);
-        QString& describe = std::get<2>(it);
-        XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
-        pEdit->setObjectName(describe);
-        pEdit->setMinimumWidth(110 * m_scale);                // 估的一个数值
+//    for (auto& it : Tray::instance().getVHotKeys()) {
+//        // TODO 2022.07.17: 虽然是值传递，但 std::get<0>(it) 为空，以后研究下
+//        QString& hotkey = std::get<1>(it);
+//        QString& describe = std::get<2>(it);
+//        XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
+//        pEdit->setObjectName(describe);
+//        pEdit->setMinimumWidth(110 * m_scale);                // 估的一个数值
 
-        connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
+//        connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
 
-        grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
-        grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
+//        grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
+//        grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
 
-        if (i == 5)
-            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
-    }
+//        if (i == 5)
+//            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+//    }
 
-    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
-    vLay->addLayout(grid, grid->rowCount());
-    vLay->addStretch(3);
-    vLay->addLayout(creatResetBtn(), 1);
+//    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
+//    vLay->addLayout(grid, grid->rowCount());
+//    vLay->addStretch(3);
+//    vLay->addLayout(creatResetBtn(), 1);
 
-    return page;
+//    return page;
 }
 
 QWidget *Preference::tabAbout()

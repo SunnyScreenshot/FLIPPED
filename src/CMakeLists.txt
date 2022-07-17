@@ -127,6 +127,8 @@ set(SRCS_TOOL
 set(SRCS_PERFERENCE
     "preference/preference.h"
     "preference/preference.cpp"
+    "preference/hotkeyswidget.h"
+    "preference/hotkeyswidget.cpp"
     )
 
 # screen

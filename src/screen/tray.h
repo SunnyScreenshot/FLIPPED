@@ -42,7 +42,6 @@ private:
 public slots:
 	void onSrnShot();
     void onPreference(bool checked);
-	
     void onKeySequenceChanged(const QKeySequence& keySequence);
 
 private:

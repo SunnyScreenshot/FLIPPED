@@ -23,6 +23,7 @@
 #include <QKeySequence>
 #include <QHotkey>
 #include "QSettings"
+#include "QThread"
 //#include "../../pluginsimpl/watemark/pluginwatemark.h"
 
 /*!
@@ -139,6 +140,9 @@ void Tray::initGlobalHotKeys()
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
+
+        hotkey = settings.value(describe).toString(); // 读取配置文件
+
         pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
         pHK->setObjectName(describe);
         connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
@@ -160,7 +164,13 @@ void Tray::onSrnShot()
     if (!m_pSrnShot)
         m_pSrnShot = new ScreenShot();
 
-    m_pSrnShot->getScrnShots();
+    QHotkey* hk = qobject_cast<QHotkey*>(sender());
+    if (!hk) {
+        return;
+    } else if (hk->objectName() == "Active Window") { // TODO 2022.07.17： 替换为枚举
+        m_pSrnShot->getScrnShots();
+    }
+    
     m_pSrnShot->activateWindow();
     m_pSrnShot->setFocus();
 }
@@ -168,6 +178,7 @@ void Tray::onSrnShot()
 void Tray::onPreference(bool checked)
 {
     Q_UNUSED(checked);
+
     if (!m_pPref)
         m_pPref = new Preference();
 
@@ -190,6 +201,7 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
 
         if (editor->objectName() == describe) {
             auto& prev = pHK->shortcut();
+            qDebug() << "----->prev:" << prev << "   keySequence:" << keySequence;
             if (prev == keySequence || keySequence.isEmpty())
                 return;
 
@@ -200,8 +212,6 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
             qDebug() << "#keySequence>" << keySequence;
             qDebug() << "#pHK-------------->" << pHK;
             qDebug() << "#pHK->shortcut()-------------->" << pHK->shortcut();
-            
-
             if (pHK->isRegistered())
                 settings.setValue(describe, keySequence.toString());
             else
