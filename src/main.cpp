@@ -15,7 +15,6 @@
 #include <QtGlobal>
 #include <QObject>
 #include "screen/screenshot.h"
-#include "screen/winsetting.h"
 
 // test
 //#include <QHotkey>
@@ -24,11 +23,12 @@
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"
 #include <iostream>
+#include <QPixmap>
 
 #include "core/xlog.h"
 #include "example/exwidget.h"
 #include "preference/preference.h"
-
+#include "tool/base/blurwidget.h"
 // test
 #ifdef Q_OS_WIN
     //#include "./platform/wininfo_win.h"
@@ -82,6 +82,13 @@ int main(int argc, char *argv[])
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
 
+    //XFrameWidget *m_pw1 = new XFrameWidget();
+    ////m_pw1->setPixmap(QPixmap("../../p2.jpg"));
+    //m_pw1->setPixmap(QPixmap("D:/projects/PicShot/src/p2.jpg"));
+    //m_pw1->setFixedSize(400, 400);
+    //m_pw1->show();
+
+
     //Preference* pre = new Preference(nullptr);
     //pre->show();
 
@@ -89,10 +96,12 @@ int main(int argc, char *argv[])
 //    WinSetting* set = new WinSetting();
 //    set->show();
     //SelectBar* t1 = new SelectBar();
+    //t1 ->setBlurBackground(QPixmap("D:/projects/PicShot/src/p1.jpg"), 4);
     //t1->move(200, 100);
     //t1->show();
 
     //ParameterBar* t2 = new ParameterBar();
+    //t2->setPixmap(QPixmap("D:/projects/PicShot/src/p2.jpg"));
     //t2->move(200, 200);
     //t2->show();
 

@@ -10,6 +10,8 @@
  ******************************************************************/
 #include "tray.h"
 #include "../preference/preference.h"
+#include "../widget/xkeysequenceedit.h"
+#include "../pluginsinterface/iplugininterface.h"
 #include <QSystemTrayIcon>
 #include <QAction>
 #include <QMenu>
@@ -20,7 +22,7 @@
 #include <QFileInfoList>
 #include <QKeySequence>
 #include <QHotkey>
-#include "../pluginsinterface/iplugininterface.h"
+#include "QSettings"
 //#include "../../pluginsimpl/watemark/pluginwatemark.h"
 
 /*!
@@ -35,6 +37,11 @@ Tray& Tray::instance()
     return tray;
 }
 
+std::vector<std::tuple<QHotkey*, QString, QString>> Tray::getVHotKeys() const
+{
+    return m_vHotKeys;
+}
+
 Tray::Tray(QObject *parent)
     : QObject(parent)
 	, m_pSrnShot(nullptr)
@@ -44,15 +51,7 @@ Tray::Tray(QObject *parent)
     //, m_hkManage(new HotkeySvs(this))
 {
     init();
-
-    QHotkey* m_hkAW = new QHotkey(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Y), true, qApp);                   // Active Window 截图（手动矩形）
-    QHotkey* m_hkWO = new QHotkey(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W), true, qApp);                   // Window / Object 窗口/对象截图
-
-    connect(m_hkAW, &QHotkey::activated, this, &Tray::onSrnShot);
-    connect(m_hkWO, &QHotkey::activated, this, &Tray::onSrnShot);
-
-    qDebug() << "m_hkAW Is Registered: " << m_hkAW->isRegistered();
-    qDebug() << "m_hkWO Is Registered: " << m_hkWO->isRegistered();
+    initGlobalHotKeys();
 
 
 
@@ -121,6 +120,40 @@ void Tray::init()
 }
 
 
+void Tray::initGlobalHotKeys()
+{
+    m_vHotKeys = {
+        std::make_tuple(nullptr, "Ctrl+Shift+Y", tr("Active Window")),        // 截图相关
+        std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window")),
+        std::make_tuple(nullptr, "Ctrl+Shift+L", tr("Delay Capture")),
+        std::make_tuple(nullptr, "Ctrl+Shift+S", tr("Full Screen")),
+        std::make_tuple(nullptr, "Ctrl+Shift+F", tr("Fixd-Size Region")),
+
+        std::make_tuple(nullptr, "Ctrl+Shift+T", tr("Paste")),                // 贴图相关
+        std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images")),
+        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group")) };
+
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+    settings.beginGroup("initGlobalHotKeys");
+    for (auto& it : m_vHotKeys) {
+        auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
+        QString& hotkey = std::get<1>(it);
+        QString& describe = std::get<2>(it);
+        pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
+        pHK->setObjectName(describe);
+        connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
+        
+        qDebug() << "pHK" << pHK << "  std::get<0>(it)" << std::get<0>(it);
+        qDebug() << "hotkey" << hotkey;
+
+        qDebug() << "hk Is Registered(" << describe << "):"  << pHK->isRegistered();
+        qDebug() << "------------------------";
+
+        settings.setValue(describe, hotkey);
+    }
+    settings.endGroup();
+}
+
 void Tray::onSrnShot()
 {
     // 第二次就是野指针, 故使用 QPointer 解决 https://blog.csdn.net/luoyayun361/article/details/90199081
@@ -140,3 +173,46 @@ void Tray::onPreference(bool checked)
 
     m_pPref->setVisible(true);
 }
+
+void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
+{
+    XKeySequenceEdit* editor = qobject_cast<XKeySequenceEdit*>(sender());
+
+    if (!editor)
+        return;
+
+    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
+    settings.beginGroup("initGlobalHotKeys");
+    for (auto& it : m_vHotKeys) {
+        auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
+        QString& hotkey = std::get<1>(it);
+        QString& describe = std::get<2>(it);
+
+        if (editor->objectName() == describe) {
+            auto& prev = pHK->shortcut();
+            if (prev == keySequence || keySequence.isEmpty())
+                return;
+
+            //pHK->resetShortcut();
+            pHK->setShortcut(keySequence, true);
+
+            qDebug() << "#editor->keySequence():" << editor->keySequence();
+            qDebug() << "#keySequence>" << keySequence;
+            qDebug() << "#pHK-------------->" << pHK;
+            qDebug() << "#pHK->shortcut()-------------->" << pHK->shortcut();
+            
+
+            if (pHK->isRegistered())
+                settings.setValue(describe, keySequence.toString());
+            else
+                pHK->setShortcut(prev);
+
+            qDebug() << "@5-------------->" << pHK->shortcut();
+        } else {
+            continue;
+        }
+    }
+
+    settings.endGroup();
+}
+

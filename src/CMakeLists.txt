@@ -137,12 +137,8 @@ set(SRCS_WINSCREEN
     "screen/rectcalcu.cpp"
     "screen/screenshot.h"
     "screen/screenshot.cpp"
-    "screen/hotkeysvs.h"
-    "screen/hotkeysvs.cpp"
     "screen/tray.h"
     "screen/tray.cpp"
-    "screen/winsetting.h"
-    "screen/winsetting.cpp"
 )
 
 # 测试模块

@@ -14,6 +14,7 @@
 #include "../widget/xkeysequenceedit.h"
 #include "../tool/base/colorparabar.h"
 #include "../screen/drawhelper.h"
+#include "../screen/tray.h"
 #include <QPushButton>
 #include <QTabWidget>
 #include <QBoxLayout>
@@ -302,17 +303,6 @@ QWidget *Preference::tabHotkeys()
     //QKeySequence(tr("Ctrl+p"));
     //QKeySequence(Qt::CTRL + Qt::Key_P);
 
-    std::tuple<QString, QString, QString> tup;
-    std::vector<std::tuple<QString, QString, QString>> v = {
-        std::make_tuple("h0_AW", "Ctrl+Shift+Y", tr("Active Window")),        // 截图相关
-        std::make_tuple("h1_WO", "Ctrl+Shift+W", tr("Window / Object")),
-        std::make_tuple("h2_DC", "Ctrl+Shift+L", tr("Delay Capture")),
-        std::make_tuple("h3_FS", "Ctrl+Shift+S", tr("Full Screen")),
-        std::make_tuple("h4_FSR", "Ctrl+Shift+F", tr("Fixd-Size Region")),
-
-        std::make_tuple("h5_P", "Ctrl+Shift+T", tr("Paste")),             // 贴图相关
-        std::make_tuple("h6_HSAI", "Ctrl+Shift+H", tr("Hide/Show all images")),
-        std::make_tuple("h7_SCG", "Ctrl+Shift+X", tr("Switch current group")) };
 
     int i = 0;
     int j = 0;
@@ -323,25 +313,22 @@ QWidget *Preference::tabHotkeys()
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
-    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
-    settings.beginGroup("tabHotkeys");
-    for (auto& it : v) {
-        QString& name = std::get<0>(it);
+    for (auto& it : Tray::instance().getVHotKeys()) {
+        // TODO 2022.07.17: 虽然是值传递，但 std::get<0>(it) 为空，以后研究下
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
-        pEdit->setObjectName(name);
-        pEdit->setMinimumWidth(110 * m_scale);                                // 估的一个数值
+        pEdit->setObjectName(describe);
+        pEdit->setMinimumWidth(110 * m_scale);                // 估的一个数值
+
+        connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
 
         grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
         grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
 
-        settings.setValue(describe, hotkey);
-
         if (i == 5)
             grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     }
-    settings.endGroup();
 
     qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());

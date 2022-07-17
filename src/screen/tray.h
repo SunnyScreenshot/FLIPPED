@@ -15,7 +15,6 @@
 #include <QHotkey>
 #include <QPointer>
 #include "screenshot.h"
-#include "hotkeysvs.h"
 
 QT_BEGIN_NAMESPACE
 class QSystemTrayIcon;
@@ -29,25 +28,30 @@ class Preference;
 class Tray : public QObject
 {
     Q_OBJECT
-    friend class HotkeySvs;
-
 public:
 	static Tray& instance();
+
+    std::vector<std::tuple<QHotkey*, QString, QString>> getVHotKeys() const;
 
 private:
     explicit Tray(QObject* parent = nullptr);
     virtual ~Tray();
 	void init();
+    void initGlobalHotKeys();
 
 public slots:
 	void onSrnShot();
     void onPreference(bool checked);
 	
+    void onKeySequenceChanged(const QKeySequence& keySequence);
+
 private:
 	QPointer<ScreenShot> m_pSrnShot;           // 前台截图 UI
     QPointer<Preference> m_pPref;              // 偏好设置 UI 
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
+
+    std::vector<std::tuple<QHotkey*, QString, QString>> m_vHotKeys;
 
     //QPointer<HotkeySvs> m_hkManage;
 };
