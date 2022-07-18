@@ -43,30 +43,30 @@ endif()
 # Sources files
 # main
 set(SRCS_MAIN
-    "xglobal.h"
-    "main.cpp"
+    xglobal.h
+    main.cpp
     )
 
 # core
 set(SRCS_CORE
-    "core/isingleton.h"
-    "core/xlog.h"
+    core/isingleton.h
+    core/xlog.h
     )
 
 # platform
 set(SRCS_PLATFORM
-    "platform/xtype.h"
-    "platform/xtype.cpp"
-    "platform/iwininfo.h"
-    "platform/iwininfo.cpp"
-    "platform/wininfo.h"
-    "platform/wininfo.cpp"
+    platform/xtype.h
+    platform/xtype.cpp
+    platform/iwininfo.h
+    platform/iwininfo.cpp
+    platform/wininfo.h
+    platform/wininfo.cpp
 
     # 特定平台实现的文件列举在此，会自动剔除和分类归组。分类标准 *_win.* *_x11.*
-    "platform/wininfo_win.h"
-    "platform/wininfo_win.cpp"
-    "platform/wininfo_x11.h"
-    "platform/wininfo_x11.cpp"
+    platform/wininfo_win.h
+    platform/wininfo_win.cpp
+    platform/wininfo_x11.h
+    platform/wininfo_x11.cpp
     )
 
 
@@ -87,77 +87,77 @@ endforeach(_rm_file)
 
 # custom widget
 set(SRCS_WIDGET
-    "widget/xhorizontalline.h"
-    "widget/xhorizontalline.cpp"
-    "widget/xverticalline.h"
-    "widget/xverticalline.cpp"
-    "widget/xkeysequenceedit.h"
-    "widget/xkeysequenceedit.cpp"
-    "widget/xroundwidget.h"
-    "widget/xroundwidget.cpp"
-    "widget/xtextwidget.h"
-    "widget/xtextwidget.cpp"
-    "widget/xlabel.h"
-    "widget/xlabel.cpp"
-    "widget/xframewidget.h"
-    "widget/xframewidget.cpp"
-    "widget/xcombobox.h"
-    "widget/xcombobox.cpp"
+    widget/xhorizontalline.h
+    widget/xhorizontalline.cpp
+    widget/xverticalline.h
+    widget/xverticalline.cpp
+    widget/xkeysequenceedit.h
+    widget/xkeysequenceedit.cpp
+    widget/xroundwidget.h
+    widget/xroundwidget.cpp
+    widget/xtextwidget.h
+    widget/xtextwidget.cpp
+    widget/xlabel.h
+    widget/xlabel.cpp
+    widget/xframewidget.h
+    widget/xframewidget.cpp
+    widget/xcombobox.h
+    widget/xcombobox.cpp
     )
 
 # tool
 set(SRCS_TOOL
-    "tool/base/colorparabar.h"
-    "tool/base/colorparabar.cpp"
-    "tool/base/managebar.h"
-    "tool/base/managebar.cpp"
-    "tool/base/blurwidget.h"
-    "tool/base/blurwidget.cpp"
-    "tool/selectsize/selectsize.h"
-    "tool/selectsize/selectsize.cpp"
-    "tool/magnifier/magnifier.h"
-    "tool/magnifier/magnifier.cpp"
-    "tool/selectbar.h"
-    "tool/selectbar.cpp"
-    "tool/parameterbar.h"
-    "tool/parameterbar.cpp"
+    tool/base/colorparabar.h
+    tool/base/colorparabar.cpp
+    tool/base/managebar.h
+    tool/base/managebar.cpp
+    tool/base/blurwidget.h
+    tool/base/blurwidget.cpp
+    tool/selectsize/selectsize.h
+    tool/selectsize/selectsize.cpp
+    tool/magnifier/magnifier.h
+    tool/magnifier/magnifier.cpp
+    tool/selectbar.h
+    tool/selectbar.cpp
+    tool/parameterbar.h
+    tool/parameterbar.cpp
     )
 
 # tool
 set(SRCS_PERFERENCE
-    "preference/preference.h"
-    "preference/preference.cpp"
-    "preference/hotkeyswidget.h"
-    "preference/hotkeyswidget.cpp"
+    preference/preference.h
+    preference/preference.cpp
+    preference/hotkeyswidget.h
+    preference/hotkeyswidget.cpp
     )
 
 # screen
 set(SRCS_WINSCREEN
-    "screen/drawhelper.h"
-    "screen/drawhelper.cpp"
-    "screen/rectcalcu.h"
-    "screen/rectcalcu.cpp"
-    "screen/screenshot.h"
-    "screen/screenshot.cpp"
-    "screen/tray.h"
-    "screen/tray.cpp"
+    screen/drawhelper.h
+    screen/drawhelper.cpp
+    screen/rectcalcu.h
+    screen/rectcalcu.cpp
+    screen/screenshot.h
+    screen/screenshot.cpp
+    screen/tray.h
+    screen/tray.cpp
 )
 
 # 测试模块
 set(SRCS_EXAMPLE
-    "example/exwidget.h"
-    "example/exwidget.cpp")
+    example/exwidget.h
+    example/exwidget.cpp)
 
 
 # 插件模块
 set(SRCS_PLUGIN_INTERFACE
-    "pluginsinterface/iplugininterface.h"
-    "pluginsinterface/iplugininterface.cpp")
+    pluginsinterface/iplugininterface.h
+    pluginsinterface/iplugininterface.cpp)
 
 # 资源模块
 set(SRCS_RESOURCES
-    "Resources.qrc"
-    "logo.rc"
+    Resources.qrc
+    logo.rc
     )
 
 set(CMAKE_CXX_STANDARD 17)

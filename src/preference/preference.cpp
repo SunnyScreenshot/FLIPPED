@@ -34,7 +34,6 @@
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QLineEdit>
-#include <QSettings>
 
 // test
 #include <QDebug>
@@ -89,7 +88,6 @@ QWidget *Preference::tabGeneral()
     QVBoxLayout* vLay = new QVBoxLayout(page);
     vLay->setContentsMargins(TGV_MARGIN_HOR, TGV_MARGIN_VER_TOP, TGV_MARGIN_HOR, TGV_MARGIN_VER_BOTTOM);
 
-
     QGridLayout* grid = new QGridLayout();
     grid->setMargin(0);
     grid->setVerticalSpacing(TGG_SPACING_VER);
@@ -100,12 +98,12 @@ QWidget *Preference::tabGeneral()
     QFont font;
     font.setPointSizeF(9);
     QLabel* lanuage = new QLabel(tr("Lanuage:"));
-    lanuage->setFont(font);
     QLabel* launch = new QLabel(tr("Launch:"));
-    launch->setFont(font);
     QLabel* logLevel = new QLabel(tr("Log Level:"));
-    logLevel->setFont(font);
     QLabel* update = new QLabel(tr("Update:"));
+    lanuage->setFont(font);
+    launch->setFont(font);
+    logLevel->setFont(font);
     update->setFont(font);
 
     int i = 0;
@@ -134,6 +132,11 @@ QWidget *Preference::tabGeneral()
     vLay->addStretch(3);
 
     vLay->addLayout(creatResetBtn(), 1);
+
+    insSettings->beginGroup(INIT_GENERAL);
+    insSettings->setValue("Lanuage", "English");
+    insSettings->setValue("Log Level", "debug");
+    insSettings->endGroup();
 
     return page;
 }

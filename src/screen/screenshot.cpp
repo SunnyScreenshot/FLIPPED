@@ -579,7 +579,7 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     pa.drawLine(l7.translated(QPoint(penWidth / 2, 0)));
     pa.drawLine(l8.translated(QPoint(penWidth / 2, 0)));
 
-    pen.setWidth(SELECT_RECT_PEN_WIDTH);
+    pen.setWidth(SELECT_RECT_PEN_WIDTH * m_scal);
     pa.setPen(pen);
     pa.drawRect(rt);
     pa.restore();

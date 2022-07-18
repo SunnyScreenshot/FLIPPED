@@ -22,7 +22,7 @@
 #include <QFileInfoList>
 #include <QKeySequence>
 #include <QHotkey>
-#include "QSettings"
+
 #include "QThread"
 //#include "../../pluginsimpl/watemark/pluginwatemark.h"
 
@@ -134,28 +134,26 @@ void Tray::initGlobalHotKeys()
         std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images")),
         std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group")) };
 
-    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
-    settings.beginGroup("initGlobalHotKeys");
+    insSettings->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
 
-        hotkey = settings.value(describe).toString(); // 读取配置文件
+        hotkey = insSettings->value(describe).toString(); // 读取配置文件
 
         pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
         pHK->setObjectName(describe);
         connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
         
-        qDebug() << "pHK" << pHK << "  std::get<0>(it)" << std::get<0>(it);
-        qDebug() << "hotkey" << hotkey;
+//        qDebug() << "pHK" << pHK << "  std::get<0>(it)" << std::get<0>(it);
+//        qDebug() << "hotkey" << hotkey;
+//        qDebug() << "hk Is Registered(" << describe << "):"  << pHK->isRegistered();
+//        qDebug() << "------------------------";
 
-        qDebug() << "hk Is Registered(" << describe << "):"  << pHK->isRegistered();
-        qDebug() << "------------------------";
-
-        settings.setValue(describe, hotkey);
+        insSettings->setValue(describe, hotkey);
     }
-    settings.endGroup();
+    insSettings->endGroup();
 }
 
 void Tray::onSrnShot()
@@ -192,15 +190,14 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
     if (!editor)
         return;
 
-    QSettings settings(QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat);
-    settings.beginGroup("initGlobalHotKeys");
+    insSettings->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
-        QString& hotkey = std::get<1>(it);
+//        QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
 
         if (editor->objectName() == describe) {
-            auto& prev = pHK->shortcut();
+            auto prev = pHK->shortcut();
             qDebug() << "----->prev:" << prev << "   keySequence:" << keySequence;
             if (prev == keySequence || keySequence.isEmpty())
                 return;
@@ -213,7 +210,7 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
             qDebug() << "#pHK-------------->" << pHK;
             qDebug() << "#pHK->shortcut()-------------->" << pHK->shortcut();
             if (pHK->isRegistered())
-                settings.setValue(describe, keySequence.toString());
+                insSettings->setValue(describe, keySequence.toString());
             else
                 pHK->setShortcut(prev);
 
@@ -223,6 +220,6 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
         }
     }
 
-    settings.endGroup();
+    insSettings->endGroup();
 }
 

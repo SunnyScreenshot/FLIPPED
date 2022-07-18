@@ -20,6 +20,10 @@
 #include <QApplication>
 #include <QScreen>
 #include <QColor>
+#include <QCoreApplication>
+#include <QSettings>
+#include <QString>
+#include <Format>
 
 class QPainterPath;
 class QLine;
@@ -203,6 +207,15 @@ const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马
 QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
 QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
 }
+
+
+// ------------------------
+// 创建全局静态 单例 的对象, 就不浪费生命重新创建了，  路径后面替换为 ConfigLocation
+Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, (QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat));
+
+// perference UI config
+const QString INIT_GENERAL("General");                   // 初始化 常规
+const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
 
 
 #endif // XDRAW_H
