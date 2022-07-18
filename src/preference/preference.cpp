@@ -34,9 +34,12 @@
 #include <QCheckBox>
 #include <QSpinBox>
 #include <QLineEdit>
+#include <QStandardPaths>
+#include <QSizePolicy>
 
 // test
 #include <QDebug>
+#include <QPushButton>
 #include <QVector>
 
 Preference::Preference(QWidget *parent)
@@ -83,6 +86,7 @@ QHBoxLayout* Preference::creatResetBtn()
 
 QWidget *Preference::tabGeneral()
 {
+    insSettings->beginGroup(INIT_GENERAL);
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(page);
@@ -106,15 +110,17 @@ QWidget *Preference::tabGeneral()
     logLevel->setFont(font);
     update->setFont(font);
 
+    auto cbbLanuage = new QComboBox(this);
+    auto cbbLogLevel = new QComboBox(this);
     int i = 0;
     int j = 0;
     grid->addWidget(lanuage, i, j, Qt::AlignRight);
-    grid->addWidget(new QComboBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbbLanuage, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(launch, i, j, Qt::AlignRight);
     grid->addWidget(new QCheckBox(tr("Run on system startup")), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(new QCheckBox(tr("As administrator")), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(logLevel, i, j, Qt::AlignRight);
-    grid->addWidget(new QComboBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbbLogLevel, i++, j + 1, Qt::AlignLeft);
 
     grid->addItem(new QSpacerItem(0, 38, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j); // 添加弹簧
     grid->addWidget(update, i, j, Qt::AlignRight);
@@ -130,12 +136,14 @@ QWidget *Preference::tabGeneral()
     qDebug() << "tabGeneral:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-
     vLay->addLayout(creatResetBtn(), 1);
 
-    insSettings->beginGroup(INIT_GENERAL);
-    insSettings->setValue("Lanuage", "English");
-    insSettings->setValue("Log Level", "debug");
+    QStringList lLanuage = {tr("English"), tr("中文")};
+    QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
+    cbbLanuage->addItems(lLanuage);
+    cbbLogLevel->addItems(lLogLevel);
+    cbbLanuage->setCurrentText(insSettings->value("Lanuage", lLanuage[0]).toString());
+    cbbLogLevel->setCurrentText(insSettings->value("Log Level", lLogLevel[1]).toString());
     insSettings->endGroup();
 
     return page;
@@ -212,48 +220,74 @@ QWidget* Preference::tabOutput()
     grid->setColumnStretch(0, 2);
     grid->setColumnStretch(1, 5);
 
-    QLabel* imageQuailty = new QLabel(tr("Image quailty:"));
-    QLabel* fileName = new QLabel(tr("File Name:"));
-    QLabel* quickSavePath = new QLabel(tr("Quick save path:"));
-    QLabel* autoAavePath = new QLabel(tr("Auto save path:"));
-    QLabel* configurePath = new QLabel(tr("Configure path:"));
+    auto imageQuailty = new QLabel(tr("Image quailty:"));
+    auto fileName = new QLabel(tr("File Name:"));
+    auto quickSavePath = new QLabel(tr("Quick save path:"));
+    auto autoAavePath = new QLabel(tr("Auto save path:"));
+    auto configurePath = new QLabel(tr("Config path:"));
+    auto sbImageQuailty = new QSpinBox(this);
+    auto editFileName = new QLineEdit(this);
+    auto editQuickSavePath = new QLineEdit(this);
+    auto editAutoSavePath = new QLineEdit(this);
+    auto editConfigPath = new QLineEdit(this);
+    auto changeFileName = new QPushButton(tr("Hint"), this);
+    auto changeQuickSavePath = new QPushButton(tr("Change path"), this);
+    auto changeAutoSavePath = new QPushButton(tr("Change path"), this);
+    auto changeConfigPath = new QPushButton(tr("Change path"), this);
+
+    sbImageQuailty->setRange(-1, 100);
+    sbImageQuailty->setFixedWidth(80);
 
     int i = 0;
     int j = 0;
     grid->addWidget(imageQuailty, i, j, Qt::AlignRight);
-    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(sbImageQuailty, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TOV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     grid->addWidget(fileName, i, j, Qt::AlignRight);
-    grid->addWidget(new QLineEdit(this), i++, j + 1, Qt::AlignLeft);
+    QHBoxLayout* hLay0 = new QHBoxLayout();
+    hLay0->setMargin(0);
+    hLay0->addSpacing(0);
+    hLay0->addWidget(editFileName, 4);
+    hLay0->addWidget(changeFileName, 1);
+    grid->addLayout(hLay0, i++, j + 1);
 
     grid->addWidget(quickSavePath, i, j, Qt::AlignRight);
     QHBoxLayout* hLay1 = new QHBoxLayout();
     hLay1->setMargin(0);
     hLay1->addSpacing(0);
-    hLay1->addWidget(new QLineEdit(this), 4, Qt::AlignLeft);
-    hLay1->addWidget(new QPushButton(tr("Change path"), this), 1, Qt::AlignLeft);
-    grid->addLayout(hLay1, i++, j + 1, Qt::AlignLeft);
+    hLay1->addWidget(editQuickSavePath, 4);    // 去掉位置，即可自动策略为伸长
+    hLay1->addWidget(changeQuickSavePath, 1);
+    grid->addLayout(hLay1, i++, j + 1);
 
     grid->addWidget(autoAavePath, i, j, Qt::AlignRight);
     QHBoxLayout* hLay2 = new QHBoxLayout();
     hLay2->setMargin(0);
     hLay2->addSpacing(0);
-    hLay2->addWidget(new QLineEdit(this), 4, Qt::AlignLeft);
-    hLay2->addWidget(new QPushButton(tr("Change path"), this), 1, Qt::AlignLeft);
-    grid->addLayout(hLay2, i++, j + 1, Qt::AlignLeft);
+    hLay2->addWidget(editAutoSavePath, 4);
+    hLay2->addWidget(changeAutoSavePath, 1);
+    grid->addLayout(hLay2, i++, j + 1);
 
     grid->addWidget(configurePath, i, j, Qt::AlignRight);
     QHBoxLayout* hLay3 = new QHBoxLayout();
     hLay3->setMargin(0);
     hLay3->addSpacing(0);
-    hLay3->addWidget(new QLineEdit(this), 4, Qt::AlignLeft);
-    hLay3->addWidget(new QPushButton(tr("Change path"), this), 1, Qt::AlignLeft);
-    grid->addLayout(hLay3, i++, j + 1, Qt::AlignLeft);
+    hLay3->addWidget(editConfigPath, 4);
+    hLay3->addWidget(changeConfigPath, 1);
+    grid->addLayout(hLay3, i++, j + 1);
 
     qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(), 1);
+
+    insSettings->beginGroup(INIT_OUTPUT);
+    bool ok = false;
+    sbImageQuailty->setValue(insSettings->value(imageQuailty->text().chopped(1), "-1").toInt(&ok));
+    editFileName->setText(insSettings->value(fileName->text().chopped(1), "PicShot_xxxx.png").toString());
+    editQuickSavePath->setText(insSettings->value(quickSavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
+    editAutoSavePath->setText(insSettings->value(autoAavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
+    editConfigPath->setText(insSettings->value(autoAavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
+    insSettings->endGroup();
 
     return page;
 }
