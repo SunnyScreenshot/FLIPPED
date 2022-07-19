@@ -141,6 +141,21 @@ void ColorParaBar::setOrientations(Qt::Orientations orien)
     m_orien = orien;
 }
 
+QColor ColorParaBar::setCurColor(const QColor col)
+{
+    if (col.isValid()) {
+        if (!setProperty("curColor", col))
+            XLOG_INFO("Property [curColor] pick-uo new color faile, color:{}.", col.name().toUtf8().data());
+    }
+
+    return property("curColor").value<QColor>();
+}
+
+const QColor ColorParaBar::getCurColor()
+{
+    return property("curColor").value<QColor>();
+}
+
 // #see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
 // return 为 false，表示其余事件交还给目标对象处理； true 表示该事件不再进一步处理
 bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)

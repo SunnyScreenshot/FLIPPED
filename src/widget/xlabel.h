@@ -9,6 +9,7 @@ class QString;
 class QWidget;
 class QPainter;
 class QMouseEvent;
+
 class XLabel : public QLabel
 {
     Q_OBJECT

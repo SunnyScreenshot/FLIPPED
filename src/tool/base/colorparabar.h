@@ -35,6 +35,8 @@ public:
     virtual ~ColorParaBar();
 
     void setOrientations(Qt::Orientations orien = Qt::Horizontal);
+    QColor setCurColor(const QColor col);
+    const QColor getCurColor();
 
 signals:
     void sigColorChange(QColor);

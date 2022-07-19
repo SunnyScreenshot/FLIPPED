@@ -15,6 +15,7 @@
 #include "../tool/base/colorparabar.h"
 #include "../screen/drawhelper.h"
 #include "../screen/tray.h"
+#include "hotkeyswidget.h"
 #include <QPushButton>
 #include <QTabWidget>
 #include <QBoxLayout>
@@ -110,17 +111,17 @@ QWidget *Preference::tabGeneral()
     logLevel->setFont(font);
     update->setFont(font);
 
-    auto cbbLanuage = new QComboBox(this);
-    auto cbbLogLevel = new QComboBox(this);
+    auto cbLanuage = new QComboBox(this);
+    auto cbLogLevel = new QComboBox(this);
     int i = 0;
     int j = 0;
     grid->addWidget(lanuage, i, j, Qt::AlignRight);
-    grid->addWidget(cbbLanuage, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbLanuage, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(launch, i, j, Qt::AlignRight);
     grid->addWidget(new QCheckBox(tr("Run on system startup")), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(new QCheckBox(tr("As administrator")), i++, j + 1, Qt::AlignLeft);
     grid->addWidget(logLevel, i, j, Qt::AlignRight);
-    grid->addWidget(cbbLogLevel, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbLogLevel, i++, j + 1, Qt::AlignLeft);
 
     grid->addItem(new QSpacerItem(0, 38, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j); // 添加弹簧
     grid->addWidget(update, i, j, Qt::AlignRight);
@@ -140,10 +141,10 @@ QWidget *Preference::tabGeneral()
 
     QStringList lLanuage = {tr("English"), tr("中文")};
     QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
-    cbbLanuage->addItems(lLanuage);
-    cbbLogLevel->addItems(lLogLevel);
-    cbbLanuage->setCurrentText(insSettings->value("Lanuage", lLanuage[0]).toString());
-    cbbLogLevel->setCurrentText(insSettings->value("Log Level", lLogLevel[1]).toString());
+    cbLanuage->addItems(lLanuage);
+    cbLogLevel->addItems(lLogLevel);
+    cbLanuage->setCurrentText(insSettings->value("Lanuage", lLanuage[0]).toString());
+    cbLogLevel->setCurrentText(insSettings->value("Log Level", lLogLevel[1]).toString());
     insSettings->endGroup();
 
     return page;
@@ -165,43 +166,83 @@ QWidget* Preference::tabInterface()
 
     QFont font;
     font.setPointSizeF(9);
-    QLabel* srnBorderStyle = new QLabel(tr("Screen Border Style:"));
-    srnBorderStyle->setFont(font);
+    QLabel* srnBorderStyle = new QLabel(tr("Border Style:"));
     QLabel* borderColor = new QLabel(tr("Border Color:"));
-    borderColor->setFont(font);
     QLabel* borderWidth = new QLabel(tr("Border Width:"));
+    QLabel* srnCrosshair = new QLabel(tr("Crosshair Color:"));
+    QLabel* srnCrosshairWidth = new QLabel(tr("Crosshair Width:"));
+    srnBorderStyle->setFont(font);
+    borderColor->setFont(font);
     borderWidth->setFont(font);
-    QLabel* srnCrosshair = new QLabel(tr("Screen Crosshair:"));
     srnCrosshair->setFont(font);
-    QLabel* srnCrosshairWidth = new QLabel(tr("Screen Crosshair Width:"));
     srnCrosshairWidth->setFont(font);
+
+    QStringList lStyleTheme = { "picshot", "black and white", "blue" };
+    auto cbBorderStyle = new QComboBox(this);
+    cbBorderStyle->addItems(lStyleTheme);
+    cbBorderStyle->setCurrentText(lStyleTheme.at(0));
+    auto cpbHighLight = new ColorParaBar(ColorParaBarMode::CPB_HighLight);
+    auto spBorder = new QSpinBox(this);
+    spBorder->setRange(1, 100);
+    spBorder->setValue(2);
+    auto cpbCrosshair = new ColorParaBar(ColorParaBarMode::CPB_HighLight);
+    auto spCrosshair = new QSpinBox(this);
+    spCrosshair->setRange(1, 100);
+    spCrosshair->setValue(2);
+    auto cbEnableSamrtWindow = new QCheckBox(tr("Enable smart window"));
+    auto cbEnableShowCursor = new QCheckBox(tr("Show cursor"));
+    auto cbEnableAutoCopy = new QCheckBox(tr("Automatically copy to clipboard"));
 
     int i = 0;
     int j = 0;
     grid->addWidget(srnBorderStyle, i, j, Qt::AlignRight);
-    grid->addWidget(new QComboBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbBorderStyle, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(borderColor, i, j, Qt::AlignRight);
-    grid->addWidget(new ColorParaBar(ColorParaBarMode::CPB_HighLight), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cpbHighLight, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(borderWidth, i, j, Qt::AlignRight);
-    grid->addWidget(new QSpinBox(), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(spBorder, i++, j + 1, Qt::AlignLeft);
 
 
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     grid->addWidget(srnCrosshair, i, j, Qt::AlignRight);
-    grid->addWidget(new ColorParaBar(ColorParaBarMode::CPB_HighLight), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cpbCrosshair, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(srnCrosshairWidth, i, j, Qt::AlignRight);
-    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(spCrosshair, i++, j + 1, Qt::AlignLeft);
 
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
-    grid->addWidget(new QCheckBox(tr("Enable smart window")), i++, j + 1, Qt::AlignLeft);
-    grid->addWidget(new QCheckBox(tr("Show cursor")), i++, j + 1, Qt::AlignLeft);
-    grid->addWidget(new QCheckBox(tr("Automatically copy to clipboard")), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbEnableSamrtWindow, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbEnableShowCursor, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbEnableAutoCopy, i++, j + 1, Qt::AlignLeft);
 
     qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(), 1);
+
+    insSettings->beginGroup(INIT_INTERFACE);
+    //insSettings->setValue(srnBorderStyle->text().chopped(1), cbBorderStyle->currentText());
+    //insSettings->setValue(borderColor->text().chopped(1), cpbHighLight->getCurColor().name());
+    //insSettings->setValue(borderWidth->text().chopped(1), spBorder->value());
+
+    //insSettings->setValue(srnCrosshair->text().chopped(1), cpbCrosshair->getCurColor().name());
+    //insSettings->setValue(srnCrosshairWidth->text().chopped(1), spCrosshair->value());
+
+    //insSettings->setValue(cbEnableSamrtWindow->text(), false);
+    //insSettings->setValue(cbEnableShowCursor->text(), false);
+    //insSettings->setValue(cbEnableAutoCopy->text(), false);
+
+    cbBorderStyle->setCurrentText(insSettings->value(srnBorderStyle->text().chopped(1), "picshot").toString());
+    cpbHighLight->setCurColor(QColor(insSettings->value(borderColor->text().chopped(1), QColor("#db000f")).toString()));
+    spBorder->setValue(insSettings->value(borderWidth->text().chopped(1), 2).toInt());
+    cpbCrosshair->setCurColor(QColor(insSettings->value(srnCrosshair->text().chopped(1), QColor("#db000f")).toString()));
+    spCrosshair->setValue(insSettings->value(srnCrosshairWidth->text().chopped(1), 2).toInt());
+
+    cbEnableSamrtWindow->setChecked(insSettings->value(cbEnableSamrtWindow->text(), false).toBool());
+    cbEnableShowCursor->setChecked(insSettings->value(cbEnableShowCursor->text(), false).toBool());
+    cbEnableAutoCopy->setChecked(insSettings->value(cbEnableAutoCopy->text(), false).toBool());
+
+    insSettings->endGroup();
 
     return page;
 }
@@ -327,7 +368,6 @@ QWidget* Preference::tabPin()
     return page;
 }
 
-#include "hotkeyswidget.h"
 QWidget *Preference::tabHotkeys()
 {
     return new HotkeysWidget();
