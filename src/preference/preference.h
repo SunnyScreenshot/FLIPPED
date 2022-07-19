@@ -38,6 +38,9 @@ private:
     QWidget* tabHotkeys();             // 快捷键
     QWidget* tabAbout();               // 关于
 
+protected slots:
+    void onLanuageChange(const QString & language);
+
 private:
     double m_scale;
 };

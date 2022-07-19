@@ -39,8 +39,10 @@
 #include <QSizePolicy>
 
 // test
+#include <QCoreApplication>
 #include <QDebug>
 #include <QPushButton>
+#include <QTranslator>
 #include <QVector>
 
 Preference::Preference(QWidget *parent)
@@ -87,7 +89,6 @@ QHBoxLayout* Preference::creatResetBtn()
 
 QWidget *Preference::tabGeneral()
 {
-    insSettings->beginGroup(INIT_GENERAL);
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(page);
@@ -112,7 +113,10 @@ QWidget *Preference::tabGeneral()
     update->setFont(font);
 
     auto cbLanuage = new QComboBox(this);
+    cbLanuage->setObjectName("cbLanuage");
     auto cbLogLevel = new QComboBox(this);
+    cbLogLevel->setObjectName("cbLogLevel");
+
     int i = 0;
     int j = 0;
     grid->addWidget(lanuage, i, j, Qt::AlignRight);
@@ -139,11 +143,21 @@ QWidget *Preference::tabGeneral()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(), 1);
 
-    QStringList lLanuage = {tr("English"), tr("中文")};
+    QMap<QString, QString> mapLanuage = { {tr("English"), "es_US"},
+                                          {tr("简体中文"), "zh_CN"},
+                                          {tr("繁體中文"), "zh_TW"} };
+
+    for (auto it = mapLanuage.cbegin(); it != mapLanuage.cend(); ++it )
+        cbLanuage->addItem(it.key(), it.value());
+
     QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
-    cbLanuage->addItems(lLanuage);
     cbLogLevel->addItems(lLogLevel);
-    cbLanuage->setCurrentText(insSettings->value("Lanuage", lLanuage[0]).toString());
+
+    connect(cbLanuage, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
+
+    insSettings->beginGroup(INIT_GENERAL);
+    auto t = insSettings->value("Lanuage", mapLanuage.key("es_US")).toString();
+    cbLanuage->setCurrentText(mapLanuage.key(insSettings->value("Lanuage", mapLanuage.key("English")).toString()));
     cbLogLevel->setCurrentText(insSettings->value("Log Level", lLogLevel[1]).toString());
     insSettings->endGroup();
 
@@ -543,4 +557,15 @@ QWidget *Preference::tabAbout()
     vLay->addSpacing(TAV_MARGIN_VER_BOTTOM);
 
     return page;
+}
+
+void Preference::onLanuageChange(const QString &language)
+{
+    auto bt = qobject_cast<QComboBox *>(sender());
+    if (!bt)
+        return;
+
+    insSettings->beginGroup(INIT_GENERAL);
+    insSettings->setValue("Lanuage", bt->itemData(bt->currentIndex()).toString());
+    insSettings->endGroup();
 }

@@ -169,8 +169,13 @@ set(QT5_LIBS_LINK
         Qt5::Gui
         Qt5::Widgets
         Qt5::Svg
-        Qt5::Xml
-        )
+        Qt5::Xml)
+# I18
+set(TS_FILES
+    ../i18n/zh_CN.ts
+    ../i18n/zh_TW.ts
+    ../i18n/es_US.ts)
+#file(GLOB TS_FILES i18n/*.ts)
 
 find_package(Qt5 COMPONENTS
         Core
@@ -178,7 +183,26 @@ find_package(Qt5 COMPONENTS
         Widgets
         Svg
         Xml
+        LinguistTools
         REQUIRED)
+
+# 自动生成 .ts 文件，且转成 .qm, 自动生成到 D:/projects/PicShot 的 /i18n 中
+#qt5_add_translation(QM_FILES ${TS_FILES})
+#add_custom_target(translations DEPENDS ${TS_FILES})
+qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})  # .ts transition .qm
+
+message("---->" ${CMAKE_SOURCE_DIR})  # D:/projects/PicShot
+#1. 自动批量生成 *.ts 文件
+#2. 每次都能够更新 *ts 的增量
+#3. 每次 清理 不会删除 .ts 文件
+#4. 能够自定义导出 .ts 和 .qm 文件
+
+##编译时更新.ts .qm
+foreach(_ts_file ${TS_FILES})
+    execute_process(
+        COMMAND ${LUPDATE_EXECUTABLE} -recursive ${CMAKE_SOURCE_DIR} -ts ${_ts_file})
+    execute_process(COMMAND lrelease ${_ts_file})
+endforeach()
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
     ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey
@@ -207,6 +231,7 @@ if (APPLE)
     ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
+    ${QM_FILES}
     )
 else()
     add_executable(${PROJECT_NAME} WIN32
@@ -220,6 +245,7 @@ else()
     ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
+    ${QM_FILES}
     )
 endif()
 

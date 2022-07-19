@@ -29,6 +29,7 @@
 #include "example/exwidget.h"
 #include "preference/preference.h"
 #include "tool/base/blurwidget.h"
+#include <QTranslator>
 // test
 #ifdef Q_OS_WIN
     //#include "./platform/wininfo_win.h"
@@ -36,6 +37,7 @@
 #elif  defined(Q_OS_LINUX)
     #include "./platform/wininfo_x11.h"
 #endif
+
 
 int main(int argc, char *argv[])
 {
@@ -78,6 +80,15 @@ int main(int argc, char *argv[])
     //a.loadTranslator(QList<QLocale>() << QLocale::system());
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
+
+    insSettings->beginGroup(INIT_GENERAL);
+    auto lanuage = insSettings->value("Lanuage", "en_US").toString();
+    insSettings->endGroup();
+
+    QTranslator* trans = new QTranslator(qApp);
+    auto a1 = QCoreApplication::applicationDirPath() + "/../../src/" + lanuage + ".qm";
+    trans->load(QCoreApplication::applicationDirPath() + "/../../src/" + lanuage + ".qm"); // VS 和 gcc 的 .qm 生成路径不一样，需要固定统一
+    QCoreApplication::installTranslator(trans);
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
