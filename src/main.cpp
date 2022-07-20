@@ -41,7 +41,6 @@
 
 int main(int argc, char *argv[])
 {
-
     // TODO 2022-06-18 高分屏适配的许多尝试:
     // 【方案一】 Qt 5.14+, 解决 1.5会缩放到2倍，不过显示会有问题，比如按钮之间时不时会有虚线。
     //    qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
@@ -58,7 +57,6 @@ int main(int argc, char *argv[])
 
     // 【方案四】 使用 windows 自带的
     // exe 统计目录下使用 qt.conf 文件
-
 
     // 三种方案 https://blog.csdn.net/hanjiang08/article/details/124653265
     // https://blog.csdn.net/qq_18260845/article/details/103861201
@@ -77,18 +75,19 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(_PROJECT_VERSION);
 
     QApplication a(argc, argv);
-    //a.loadTranslator(QList<QLocale>() << QLocale::system());
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
-    insSettings->beginGroup(INIT_GENERAL);
-    auto lanuage = insSettings->value("Lanuage", "en_US").toString();
-    insSettings->endGroup();
+    //insSettings->beginGroup(INIT_GENERAL);
+    //auto lanuage = insSettings->value("Lanuage", "en_US").toString();
+    //insSettings->endGroup();
 
-    QTranslator* trans = new QTranslator(qApp);
-    auto a1 = QCoreApplication::applicationDirPath() + "/../../src/" + lanuage + ".qm";
-    trans->load(QCoreApplication::applicationDirPath() + "/../../src/" + lanuage + ".qm"); // VS 和 gcc 的 .qm 生成路径不一样，需要固定统一
-    QCoreApplication::installTranslator(trans);
+    //QTranslator* trans = new QTranslator(qApp);
+    //QString qmPath(QCoreApplication::applicationDirPath());
+    //QString(_COMPILER_ID).compare("MSVC") == 0 ? qmPath += "/../../src/" + lanuage + ".qm" : qmPath += "/../src/" + lanuage + ".qm";
+    //qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0);
+    //trans->load(qmPath); 
+    //QCoreApplication::installTranslator(trans);
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
@@ -98,7 +97,6 @@ int main(int argc, char *argv[])
     //m_pw1->setPixmap(QPixmap("D:/projects/PicShot/src/p2.jpg"));
     //m_pw1->setFixedSize(400, 400);
     //m_pw1->show();
-
 
     //Preference* pre = new Preference(nullptr);
     //pre->show();

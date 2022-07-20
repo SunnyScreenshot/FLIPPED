@@ -6,6 +6,8 @@ set(_version ${PROJECT_VERSION})
 #set(PROJECT_VERSION_MINOR 2)
 #set(PROJECT_VERSION_PATCH 0)
 
+#add_subdirectory(i18n)
+
 project(${PROJECT_NAME})   
 
 #CMAKE_BINARY_DIR   CMAKE_CURRENT_SOURCE_DIR
@@ -172,10 +174,9 @@ set(QT5_LIBS_LINK
         Qt5::Xml)
 # I18
 set(TS_FILES
-    ../i18n/zh_CN.ts
-    ../i18n/zh_TW.ts
-    ../i18n/es_US.ts)
-#file(GLOB TS_FILES i18n/*.ts)
+    i18n/zh_CN.ts
+    i18n/zh_TW.ts
+    i18n/es_US.ts)
 
 find_package(Qt5 COMPONENTS
         Core
@@ -186,23 +187,28 @@ find_package(Qt5 COMPONENTS
         LinguistTools
         REQUIRED)
 
-# 自动生成 .ts 文件，且转成 .qm, 自动生成到 D:/projects/PicShot 的 /i18n 中
-#qt5_add_translation(QM_FILES ${TS_FILES})
-#add_custom_target(translations DEPENDS ${TS_FILES})
 qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})  # .ts transition .qm
-
-message("---->" ${CMAKE_SOURCE_DIR})  # D:/projects/PicShot
+message("#2---->" ${QM_FILES})
 #1. 自动批量生成 *.ts 文件
 #2. 每次都能够更新 *ts 的增量
 #3. 每次 清理 不会删除 .ts 文件
 #4. 能够自定义导出 .ts 和 .qm 文件
 
 ##编译时更新.ts .qm
-foreach(_ts_file ${TS_FILES})
-    execute_process(
-        COMMAND ${LUPDATE_EXECUTABLE} -recursive ${CMAKE_SOURCE_DIR} -ts ${_ts_file})
-    execute_process(COMMAND lrelease ${_ts_file})
-endforeach()
+#foreach(_ts_file ${TS_FILES})
+#    execute_process(COMMAND ${LUPDATE_EXECUTABLE} -recursive ${CMAKE_SOURCE_DIR} -ts ${_ts_file})
+#    execute_process(COMMAND lrelease ${_ts_file})
+#endforeach()
+
+#foreach(_qm_file ${QM_FILES})
+#    message("#b---->" ${_qm_file})
+#    message("#b2---->" ${EXECUTABLE_OUTPUT_PATH}/i18n)
+#    if(EXISTS ${_qm_file})
+#        message("#a---->" ${_qm_file})
+#        message("#a2---->" ${EXECUTABLE_OUTPUT_PATH}/i18n)
+#        file(COPY ${_qm_file} DESTINATION ${EXECUTABLE_OUTPUT_PATH}/i18n)
+#    endif()
+#endforeach()
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
     ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey
@@ -231,7 +237,7 @@ if (APPLE)
     ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
-    ${QM_FILES}
+    #${QM_FILES}
     )
 else()
     add_executable(${PROJECT_NAME} WIN32
@@ -245,7 +251,7 @@ else()
     ${SRCS_EXAMPLE}
     ${SRCS_PLUGIN_INTERFACE}
     ${SRCS_RESOURCES}
-    ${QM_FILES}
+    #${QM_FILES}
     )
 endif()
 
@@ -333,7 +339,7 @@ endif()
 
 # 定义一些变量，可以在 CPP 中使用
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")           # PicShot
-target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${_version}")    # 0.2 这个没打印出来，很奇怪，改用下面这个
+target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${_version}")            # 0.2 这个没打印出来，很奇怪，改用下面这个
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH="${_bit_arch}")                  # x64/x86
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
@@ -347,10 +353,12 @@ message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
 message("==========END============")
 
 #  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
-if(APPLE)
-
-elseif(WIN32)
-    # install(TARGETS ${PROJECT_NAME} RUNTIME)
+if(WIN32)
+    set (BIN_INSTALL_DIR "") # seems useless, don't know why...
 else()
+    if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX /usr)
+    endif ()
+
     install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)
 endif()
