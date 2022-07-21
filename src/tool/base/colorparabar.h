@@ -39,7 +39,7 @@ public:
     const QColor getCurColor();
 
 signals:
-    void sigColorChange(QColor);
+    void sigColorChange(const QColor&);
 
 public:
     bool eventFilter(QObject *watched, QEvent *event) override;

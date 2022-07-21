@@ -44,6 +44,7 @@
 #include <QPushButton>
 #include <QTranslator>
 #include <QVector>
+#include <QFileDialog>
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
@@ -153,13 +154,12 @@ QWidget *Preference::tabGeneral()
     QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
     cbLogLevel->addItems(lLogLevel);
 
-    connect(cbLanuage, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
-
     insSettings->beginGroup(INIT_GENERAL);
-    auto t = insSettings->value("Lanuage", mapLanuage.key("es_US")).toString();
     cbLanuage->setCurrentText(mapLanuage.key(insSettings->value("Lanuage", mapLanuage.key("English")).toString()));
-    cbLogLevel->setCurrentText(insSettings->value("Log Level", lLogLevel[1]).toString());
     insSettings->endGroup();
+
+    connect(cbLanuage, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
+    connect(cbLogLevel, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLogLevelChange);
 
     return page;
 }
@@ -185,27 +185,21 @@ QWidget* Preference::tabInterface()
     QLabel* borderWidth = new QLabel(tr("Border Width:"));
     QLabel* srnCrosshair = new QLabel(tr("Crosshair Color:"));
     QLabel* srnCrosshairWidth = new QLabel(tr("Crosshair Width:"));
-    srnBorderStyle->setFont(font);
-    borderColor->setFont(font);
-    borderWidth->setFont(font);
-    srnCrosshair->setFont(font);
-    srnCrosshairWidth->setFont(font);
 
-    QStringList lStyleTheme = { "picshot", "black and white", "blue" };
     auto cbBorderStyle = new QComboBox(this);
-    cbBorderStyle->addItems(lStyleTheme);
-    cbBorderStyle->setCurrentText(lStyleTheme.at(0));
     auto cpbHighLight = new ColorParaBar(ColorParaBarMode::CPB_HighLight);
     auto spBorder = new QSpinBox(this);
     spBorder->setRange(1, 100);
-    spBorder->setValue(2);
     auto cpbCrosshair = new ColorParaBar(ColorParaBarMode::CPB_HighLight);
     auto spCrosshair = new QSpinBox(this);
     spCrosshair->setRange(1, 100);
-    spCrosshair->setValue(2);
-    auto cbEnableSamrtWindow = new QCheckBox(tr("Enable smart window"));
+    auto cbEnableSamrtWindow = new QCheckBox(tr("Smart window"));
     auto cbEnableShowCursor = new QCheckBox(tr("Show cursor"));
     auto cbEnableAutoCopy = new QCheckBox(tr("Automatically copy to clipboard"));
+
+    QMap<QString, QString> styels = { {tr("picshot"), "0"}, {tr("black and white"), "1"}, {tr("blue"), "2"} };
+    for (auto it = styels.cbegin(); it != styels.cend(); ++it)
+        cbBorderStyle->addItem(it.key(), it.value());
 
     int i = 0;
     int j = 0;
@@ -246,7 +240,7 @@ QWidget* Preference::tabInterface()
     //insSettings->setValue(cbEnableShowCursor->text(), false);
     //insSettings->setValue(cbEnableAutoCopy->text(), false);
 
-    cbBorderStyle->setCurrentText(insSettings->value(srnBorderStyle->text().chopped(1), "picshot").toString());
+    cbBorderStyle->setCurrentText(insSettings->value(srnBorderStyle->text().chopped(1), 0).toString());
     cpbHighLight->setCurColor(QColor(insSettings->value(borderColor->text().chopped(1), QColor("#db000f")).toString()));
     spBorder->setValue(insSettings->value(borderWidth->text().chopped(1), 2).toInt());
     cpbCrosshair->setCurColor(QColor(insSettings->value(srnCrosshair->text().chopped(1), QColor("#db000f")).toString()));
@@ -257,6 +251,15 @@ QWidget* Preference::tabInterface()
     cbEnableAutoCopy->setChecked(insSettings->value(cbEnableAutoCopy->text(), false).toBool());
 
     insSettings->endGroup();
+
+    connect(cbBorderStyle, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onBorderStyle);
+    connect(cpbHighLight, &ColorParaBar::sigColorChange, this, &Preference::onBorderColor);
+    connect(spBorder, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onBorderWidth);
+    connect(cpbCrosshair, &ColorParaBar::sigColorChange, this, &Preference::onCrosshairColor);
+    connect(spCrosshair, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onCrosshairWidth);
+    connect(cbEnableSamrtWindow, &QCheckBox::stateChanged, this, &Preference::onSmartWindow);
+    connect(cbEnableShowCursor, &QCheckBox::stateChanged, this, &Preference::onShowCursor);
+    connect(cbEnableAutoCopy, &QCheckBox::stateChanged, this, &Preference::onAutoCopyToClip);
 
     return page;
 }
@@ -273,7 +276,8 @@ QWidget* Preference::tabOutput()
     grid->setVerticalSpacing(TOG_SPACING_VER);
     grid->setHorizontalSpacing(TOG_SPACING_HOR);
     grid->setColumnStretch(0, 2);
-    grid->setColumnStretch(1, 5);
+    grid->setColumnStretch(1, 7);
+    grid->setColumnStretch(2, 1);
 
     auto imageQuailty = new QLabel(tr("Image quailty:"));
     auto fileName = new QLabel(tr("File Name:"));
@@ -289,6 +293,13 @@ QWidget* Preference::tabOutput()
     auto changeQuickSavePath = new QPushButton(tr("Change path"), this);
     auto changeAutoSavePath = new QPushButton(tr("Change path"), this);
     auto changeConfigPath = new QPushButton(tr("Change path"), this);
+
+    editQuickSavePath->setObjectName("QuickSavePath");
+    editAutoSavePath->setObjectName("AutoSavePath");
+    editConfigPath->setObjectName("ConfigPath");
+    changeQuickSavePath->setObjectName("QuickSavePath");
+    changeAutoSavePath->setObjectName("AutoSavePath");
+    changeConfigPath->setObjectName("ConfigPath");
 
     sbImageQuailty->setRange(-1, 100);
     sbImageQuailty->setFixedWidth(80);
@@ -341,8 +352,19 @@ QWidget* Preference::tabOutput()
     editFileName->setText(insSettings->value(fileName->text().chopped(1), "PicShot_xxxx.png").toString());
     editQuickSavePath->setText(insSettings->value(quickSavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
     editAutoSavePath->setText(insSettings->value(autoAavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
-    editConfigPath->setText(insSettings->value(autoAavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
+    editConfigPath->setText(insSettings->value(configurePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
     insSettings->endGroup();
+
+    connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
+    connect(editFileName, &QLineEdit::textChanged, this, &Preference::onFileName);
+    connect(editQuickSavePath, &QLineEdit::textChanged, this, &Preference::onQuickSavePath);
+    connect(editAutoSavePath, &QLineEdit::textChanged, this, &Preference::onAutoSavePath);
+    connect(editConfigPath, &QLineEdit::textChanged, this, &Preference::onConfigPath);
+
+    connect(changeQuickSavePath, &QPushButton::released, this, &Preference::onChoosePath);
+    connect(changeAutoSavePath, &QPushButton::released, this, &Preference::onChoosePath);
+    connect(changeConfigPath, &QPushButton::released, this, &Preference::onChoosePath);
+
 
     return page;
 }
@@ -559,6 +581,14 @@ QWidget *Preference::tabAbout()
     return page;
 }
 
+bool Preference::checkBoxState2Bool(int state)
+{
+    if (state == Qt::Checked)
+        return true;
+    else
+        return false;
+}
+
 void Preference::onLanuageChange(const QString &language)
 {
     auto bt = qobject_cast<QComboBox *>(sender());
@@ -568,4 +598,131 @@ void Preference::onLanuageChange(const QString &language)
     insSettings->beginGroup(INIT_GENERAL);
     insSettings->setValue("Lanuage", bt->itemData(bt->currentIndex()).toString());
     insSettings->endGroup();
+}
+
+void Preference::onLogLevelChange(const QString& language)
+{
+    insSettings->beginGroup(INIT_GENERAL);
+    insSettings->setValue("Log Level", language);
+    insSettings->endGroup();
+}
+
+void Preference::onBorderStyle(const QString& style)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Border Style", style);
+    insSettings->endGroup();
+}
+
+void Preference::onBorderColor(const QColor& color)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Border Color", color.name());
+    insSettings->endGroup();
+}
+
+void Preference::onBorderWidth(int val)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Border Width", val);
+    insSettings->endGroup();
+}
+
+void Preference::onCrosshairColor(const QColor& color)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Crosshair Color", color.name());
+    insSettings->endGroup();
+}
+
+void Preference::onCrosshairWidth(int val)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Crosshair Width", val);
+    insSettings->endGroup();
+}
+
+
+void Preference::onSmartWindow(int val)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Smart window", checkBoxState2Bool(val));
+    insSettings->endGroup();
+}
+
+void Preference::onShowCursor(int val)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Show cursor", checkBoxState2Bool(val));
+    insSettings->endGroup();
+}
+
+void Preference::onAutoCopyToClip(int val)
+{
+    insSettings->beginGroup(INIT_INTERFACE);
+    insSettings->setValue("Automatically copy to clipboard", checkBoxState2Bool(val));
+    insSettings->endGroup();
+}
+
+void Preference::onImageQuailty(int val)
+{
+    insSettings->beginGroup(INIT_OUTPUT);
+    insSettings->setValue("Image quailty", val);
+    insSettings->endGroup();
+}
+
+void Preference::onFileName(const QString& name)
+{
+    insSettings->beginGroup(INIT_OUTPUT);
+    insSettings->setValue("File Name", name);
+    insSettings->endGroup();
+}
+
+void Preference::onQuickSavePath(const QString& path)
+{
+    insSettings->beginGroup(INIT_OUTPUT);
+    insSettings->setValue("Quick save path", path);
+    insSettings->endGroup();
+}
+
+void Preference::onAutoSavePath(const QString& path)
+{
+    insSettings->beginGroup(INIT_OUTPUT);
+    insSettings->setValue("Auto save path", path);
+    insSettings->endGroup();
+}
+
+void Preference::onConfigPath(const QString& path)
+{
+    insSettings->beginGroup(INIT_OUTPUT);
+    insSettings->setValue("Config path", path);
+    insSettings->endGroup();
+}
+
+void Preference::onChoosePath()
+{
+    auto btn = qobject_cast<QPushButton*>(sender());
+    auto btnQuickSavePath = findChild<QPushButton*>("QuickSavePath");
+    auto btnAutoSavePath = findChild<QPushButton*>("AutoSavePath");
+    auto btnConfigPath = findChild<QPushButton*>("ConfigPath");
+
+    auto editQuickSavePath = findChild<QLineEdit*>("QuickSavePath");
+    auto editAutoSavePath = findChild<QLineEdit*>("AutoSavePath");
+    auto editConfigPath = findChild<QLineEdit*>("ConfigPath");
+
+    if (!btn || !btnQuickSavePath || !btnAutoSavePath || !btnConfigPath
+        || !editQuickSavePath || !editAutoSavePath || !editConfigPath)
+        return;
+
+    QString path = QFileDialog::getExistingDirectory(this, tr("select a path"), "./", QFileDialog::ShowDirsOnly);
+    if (!path.isEmpty())
+        setProperty("path", path);
+
+    if (btn == btnQuickSavePath) {
+        editQuickSavePath->setText(path);
+    } else if (btn == btnAutoSavePath) {
+        editAutoSavePath->setText(path);
+    } else if (btn == btnConfigPath) {
+        editConfigPath->setText(path);
+    }
 }

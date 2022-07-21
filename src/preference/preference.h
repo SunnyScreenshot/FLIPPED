@@ -38,8 +38,32 @@ private:
     QWidget* tabHotkeys();             // 快捷键
     QWidget* tabAbout();               // 关于
 
+    inline bool checkBoxState2Bool(int state);
+
 protected slots:
-    void onLanuageChange(const QString & language);
+    // tabGeneral
+    void onLanuageChange(const QString& language);
+    void onLogLevelChange(const QString& language);
+
+    // tabInterface
+    void onBorderStyle(const QString& style);
+    void onBorderColor(const QColor& color);
+    void onBorderWidth(int val);
+    void onCrosshairColor(const QColor& color);
+    void onCrosshairWidth(int val);
+    void onSmartWindow(int val);
+    void onShowCursor(int val);
+    void onAutoCopyToClip(int val);
+
+    // tabOutput
+    void onImageQuailty(int val);
+    void onFileName(const QString& name);
+    void onQuickSavePath(const QString& path);
+    void onAutoSavePath(const QString& path);
+    void onConfigPath(const QString& path);
+
+    void onChoosePath();
+   
 
 private:
     double m_scale;

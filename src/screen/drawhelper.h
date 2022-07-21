@@ -23,7 +23,7 @@
 #include <QCoreApplication>
 #include <QSettings>
 #include <QString>
-#include <Format>
+//#include <Format>
 
 class QPainterPath;
 class QLine;
@@ -211,7 +211,7 @@ QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
 
 // ------------------------
 // 创建全局静态 单例 的对象, 就不浪费生命重新创建了，  路径后面替换为 ConfigLocation
-Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, (QCoreApplication::applicationDirPath() + "/config.ini", QSettings::IniFormat));
+Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, ("D:/config.ini", QSettings::IniFormat));
 
 // perference UI config
 const QString INIT_GENERAL("General");                   // 初始化 常规
