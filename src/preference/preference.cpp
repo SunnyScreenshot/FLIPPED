@@ -15,6 +15,7 @@
 #include "../tool/base/colorparabar.h"
 #include "../screen/drawhelper.h"
 #include "../screen/tray.h"
+#include "appellation.h"
 #include "hotkeyswidget.h"
 #include <QPushButton>
 #include <QTabWidget>
@@ -38,6 +39,8 @@
 #include <QStandardPaths>
 #include <QSizePolicy>
 
+using namespace XC;
+
 // test
 #include <QCoreApplication>
 #include <QDebug>
@@ -45,6 +48,30 @@
 #include <QTranslator>
 #include <QVector>
 #include <QFileDialog>
+
+// 对象名、类型、命名的对象名称
+#define NEW_OBJECT(_object, _type, _objectName) \
+    auto _object = new _type(this); \
+    if (_object) \
+        _object->setObjectName(_objectName);
+
+// 对象名、类型、命名的对象名称、可能需要显示的文本
+#define NEW_OBJECT_AND_TEXT(_object, _type, _objectName, _text) \
+    auto _object = new _type(_text, this); \
+    if (_object) \
+        _object->setObjectName(_objectName);
+
+// 写入配置文件 .ini 的内容
+#define WRITE_CONFIG_INI(group, key, value) \
+    insSettings->beginGroup(group); \
+    insSettings->setValue(key, value); \
+    insSettings->endGroup();
+
+// 所有页面的 Reset Btn 都连接到同一个槽函数，内部统一处理
+#define CONNECT_RESET_BTN(objectName) \
+    auto btn = findChild<QPushButton *>(objectName);\
+    if (btn) \
+        connect(btn, &QPushButton::released, this, &Preference::onReset);
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
@@ -78,14 +105,24 @@ void Preference::initUI()
     vLayout->addWidget(tabPages);
 }
 
-QHBoxLayout* Preference::creatResetBtn()
+QHBoxLayout* Preference::creatResetBtn(QString objectName)
 {
     QHBoxLayout* hLay = new QHBoxLayout();
     hLay->setContentsMargins(0, 0, 0, 0);
     hLay->addSpacing(0);
     hLay->addStretch(7);
-    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    auto btn = new QPushButton(tr("Reset"), this);
+    if (btn) {
+        btn->setObjectName(objectName);
+        hLay->addWidget(btn, 1, Qt::AlignRight);
+        connect(btn, &QPushButton::released, this, &Preference::onReset);
+    }
     return hLay;
+}
+
+bool Preference::checkBoxState2Bool(int state)
+{
+    return state == Qt::Checked ? true : false;
 }
 
 QWidget *Preference::tabGeneral()
@@ -102,29 +139,25 @@ QWidget *Preference::tabGeneral()
     grid->setColumnStretch(0, 3);
     grid->setColumnStretch(1, 5);
 
-    QFont font;
-    font.setPointSizeF(9);
-    QLabel* lanuage = new QLabel(tr("Lanuage:"));
-    QLabel* launch = new QLabel(tr("Launch:"));
-    QLabel* logLevel = new QLabel(tr("Log Level:"));
-    QLabel* update = new QLabel(tr("Update:"));
-    lanuage->setFont(font);
-    launch->setFont(font);
-    logLevel->setFont(font);
-    update->setFont(font);
+    NEW_OBJECT_AND_TEXT(lanuage, QLabel, tgLanuage, tr("Lanuage:"));
+    NEW_OBJECT_AND_TEXT(launch, QLabel, tgSelfStarting, tr("Launch:"));
+    NEW_OBJECT_AND_TEXT(logLevel, QLabel, tgLogLevel, tr("Log Level:"));
+    NEW_OBJECT_AND_TEXT(update, QLabel, tgUpdate, tr("Update:"));
 
-    auto cbLanuage = new QComboBox(this);
-    cbLanuage->setObjectName("cbLanuage");
-    auto cbLogLevel = new QComboBox(this);
-    cbLogLevel->setObjectName("cbLogLevel");
+    NEW_OBJECT(cbLanuage, QComboBox, tgLanuage);
+    NEW_OBJECT_AND_TEXT(cbSelfStart, QCheckBox, tgSelfStarting, tr("Run on system startup"));
+    NEW_OBJECT_AND_TEXT(cbAsAdmin, QCheckBox, tgAsAdmin, tr("As administrator"));
+    NEW_OBJECT(cbLogLevel, QComboBox, tgLogLevel);
+    NEW_OBJECT_AND_TEXT(cbAutoCheck, QCheckBox, tgUpdate, tr("Automatic check"));
+    NEW_OBJECT_AND_TEXT(pbUpdate, QPushButton, tgUpdate, tr("Update"));
 
     int i = 0;
     int j = 0;
     grid->addWidget(lanuage, i, j, Qt::AlignRight);
     grid->addWidget(cbLanuage, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(launch, i, j, Qt::AlignRight);
-    grid->addWidget(new QCheckBox(tr("Run on system startup")), i++, j + 1, Qt::AlignLeft);
-    grid->addWidget(new QCheckBox(tr("As administrator")), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbSelfStart, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbAsAdmin, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(logLevel, i, j, Qt::AlignRight);
     grid->addWidget(cbLogLevel, i++, j + 1, Qt::AlignLeft);
 
@@ -133,16 +166,16 @@ QWidget *Preference::tabGeneral()
     QHBoxLayout* tHLay = new QHBoxLayout();
     tHLay->setContentsMargins(0, 0, 0, 0);
     tHLay->addSpacing(0);
-    tHLay->addWidget(new QCheckBox(tr("Automatic check")), 1, Qt::AlignLeft);
+    tHLay->addWidget(cbAutoCheck, 1, Qt::AlignLeft);
     tHLay->addSpacing(20);
-    tHLay->addWidget(new QPushButton(tr("Update")), 1, Qt::AlignLeft);
+    tHLay->addWidget(pbUpdate, 1, Qt::AlignLeft);
     tHLay->addStretch(8);
     grid->addLayout(tHLay, i, j + 1, Qt::AlignLeft);
 
     qDebug() << "tabGeneral:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-    vLay->addLayout(creatResetBtn(), 1);
+    vLay->addLayout(creatResetBtn(tgReset), 1);
 
     QMap<QString, QString> mapLanuage = { {tr("English"), "es_US"},
                                           {tr("简体中文"), "zh_CN"},
@@ -155,12 +188,19 @@ QWidget *Preference::tabGeneral()
     cbLogLevel->addItems(lLogLevel);
 
     insSettings->beginGroup(INIT_GENERAL);
-    cbLanuage->setCurrentText(mapLanuage.key(insSettings->value("Lanuage", mapLanuage.key("English")).toString()));
+    cbLanuage->setCurrentText(mapLanuage.key(insSettings->value(tgLanuage, mapLanuage.key("English")).toString()));
+    cbSelfStart->setChecked(insSettings->value(tgSelfStarting, false).toBool());
+    cbAsAdmin->setChecked(insSettings->value(tgAsAdmin, false).toBool());
+    cbLogLevel->setCurrentText(insSettings->value(tgLogLevel, "warn").toString());
+    cbAutoCheck->setChecked(insSettings->value(tgAutoCheckUpdate, false).toBool());
     insSettings->endGroup();
 
     connect(cbLanuage, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
+    connect(cbSelfStart, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
+    connect(cbAsAdmin, &QCheckBox::stateChanged, this, &Preference::onAsAdmin);
     connect(cbLogLevel, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLogLevelChange);
-
+    connect(cbAutoCheck, &QCheckBox::stateChanged, this, &Preference::onAutoCheck);
+    connect(pbUpdate, &QPushButton::released, this, &Preference::onUpdate);
     return page;
 }
 
@@ -178,24 +218,25 @@ QWidget* Preference::tabInterface()
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
-    QFont font;
-    font.setPointSizeF(9);
-    QLabel* srnBorderStyle = new QLabel(tr("Border Style:"));
-    QLabel* borderColor = new QLabel(tr("Border Color:"));
-    QLabel* borderWidth = new QLabel(tr("Border Width:"));
-    QLabel* srnCrosshair = new QLabel(tr("Crosshair Color:"));
-    QLabel* srnCrosshairWidth = new QLabel(tr("Crosshair Width:"));
+    NEW_OBJECT_AND_TEXT(srnBorderStyle, QLabel, tiBorderStyle, tr("Border Style:"));
+    NEW_OBJECT_AND_TEXT(borderColor, QLabel, tiBorderColor, tr("Border Color:"));
+    NEW_OBJECT_AND_TEXT(borderWidth, QLabel, tiBorderWidth, tr("Crosshair Color:"));
+    NEW_OBJECT_AND_TEXT(srnCrosshair, QLabel, tiCrosshairColor, tr("Crosshair Color:"));
+    NEW_OBJECT_AND_TEXT(srnCrosshairWidth, QLabel, tiCrosshairWidth, tr("Crosshair Width:"));
 
-    auto cbBorderStyle = new QComboBox(this);
+    NEW_OBJECT(cbBorderStyle, QComboBox, tiBorderStyle);
     auto cpbHighLight = new ColorParaBar(ColorParaBarMode::CPB_HighLight);
-    auto spBorder = new QSpinBox(this);
-    spBorder->setRange(1, 100);
+    NEW_OBJECT(spBorder, QSpinBox, tiBorderWidth);
     auto cpbCrosshair = new ColorParaBar(ColorParaBarMode::CPB_HighLight);
-    auto spCrosshair = new QSpinBox(this);
+    NEW_OBJECT(spCrosshair, QSpinBox, tiCrosshairWidth);
+    NEW_OBJECT_AND_TEXT(cbEnableSamrtWindow, QCheckBox, tiSmartWindow, tr("Smart window"));
+    NEW_OBJECT_AND_TEXT(cbEnableShowCursor, QCheckBox, tiShowCursor, tr("Show cursor"));
+    NEW_OBJECT_AND_TEXT(cbEnableAutoCopy, QCheckBox, tiAutoCopyToClipboard, tr("Automatically copy to clipboard"));
+
+    cpbHighLight->setObjectName(tiBorderColor);
+    cpbHighLight->setObjectName(tiCrosshairColor);
+    spBorder->setRange(1, 100);
     spCrosshair->setRange(1, 100);
-    auto cbEnableSamrtWindow = new QCheckBox(tr("Smart window"));
-    auto cbEnableShowCursor = new QCheckBox(tr("Show cursor"));
-    auto cbEnableAutoCopy = new QCheckBox(tr("Automatically copy to clipboard"));
 
     QMap<QString, QString> styels = { {tr("picshot"), "0"}, {tr("black and white"), "1"}, {tr("blue"), "2"} };
     for (auto it = styels.cbegin(); it != styels.cend(); ++it)
@@ -209,7 +250,6 @@ QWidget* Preference::tabInterface()
     grid->addWidget(cpbHighLight, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(borderWidth, i, j, Qt::AlignRight);
     grid->addWidget(spBorder, i++, j + 1, Qt::AlignLeft);
-
 
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     grid->addWidget(srnCrosshair, i, j, Qt::AlignRight);
@@ -226,30 +266,17 @@ QWidget* Preference::tabInterface()
     qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-    vLay->addLayout(creatResetBtn(), 1);
+    vLay->addLayout(creatResetBtn(tiReset), 1);
 
     insSettings->beginGroup(INIT_INTERFACE);
-    //insSettings->setValue(srnBorderStyle->text().chopped(1), cbBorderStyle->currentText());
-    //insSettings->setValue(borderColor->text().chopped(1), cpbHighLight->getCurColor().name());
-    //insSettings->setValue(borderWidth->text().chopped(1), spBorder->value());
-
-    //insSettings->setValue(srnCrosshair->text().chopped(1), cpbCrosshair->getCurColor().name());
-    //insSettings->setValue(srnCrosshairWidth->text().chopped(1), spCrosshair->value());
-
-    //insSettings->setValue(cbEnableSamrtWindow->text(), false);
-    //insSettings->setValue(cbEnableShowCursor->text(), false);
-    //insSettings->setValue(cbEnableAutoCopy->text(), false);
-
-    cbBorderStyle->setCurrentText(insSettings->value(srnBorderStyle->text().chopped(1), 0).toString());
-    cpbHighLight->setCurColor(QColor(insSettings->value(borderColor->text().chopped(1), QColor("#db000f")).toString()));
-    spBorder->setValue(insSettings->value(borderWidth->text().chopped(1), 2).toInt());
-    cpbCrosshair->setCurColor(QColor(insSettings->value(srnCrosshair->text().chopped(1), QColor("#db000f")).toString()));
-    spCrosshair->setValue(insSettings->value(srnCrosshairWidth->text().chopped(1), 2).toInt());
-
-    cbEnableSamrtWindow->setChecked(insSettings->value(cbEnableSamrtWindow->text(), false).toBool());
-    cbEnableShowCursor->setChecked(insSettings->value(cbEnableShowCursor->text(), false).toBool());
-    cbEnableAutoCopy->setChecked(insSettings->value(cbEnableAutoCopy->text(), false).toBool());
-
+    cbBorderStyle->setCurrentText(insSettings->value(tiBorderStyle, 0).toString());
+    cpbHighLight->setCurColor(QColor(insSettings->value(tiBorderColor, QColor("#db000f")).toString())); // TODO: 2022.07.24: 需要修复外圈读取配置文件时候，显示位置的错误
+    spBorder->setValue(insSettings->value(tiBorderWidth, 2).toInt());
+    cpbCrosshair->setCurColor(QColor(insSettings->value(tiCrosshairColor, QColor("#db000f")).toString()));
+    spCrosshair->setValue(insSettings->value(tiCrosshairWidth, 2).toInt());
+    cbEnableSamrtWindow->setChecked(insSettings->value(tiSmartWindow, false).toBool());
+    cbEnableShowCursor->setChecked(insSettings->value(tiShowCursor, false).toBool());
+    cbEnableAutoCopy->setChecked(insSettings->value(tiAutoCopyToClipboard, false).toBool());
     insSettings->endGroup();
 
     connect(cbBorderStyle, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onBorderStyle);
@@ -279,27 +306,22 @@ QWidget* Preference::tabOutput()
     grid->setColumnStretch(1, 7);
     grid->setColumnStretch(2, 1);
 
-    auto imageQuailty = new QLabel(tr("Image quailty:"));
-    auto fileName = new QLabel(tr("File Name:"));
-    auto quickSavePath = new QLabel(tr("Quick save path:"));
-    auto autoAavePath = new QLabel(tr("Auto save path:"));
-    auto configurePath = new QLabel(tr("Config path:"));
-    auto sbImageQuailty = new QSpinBox(this);
-    auto editFileName = new QLineEdit(this);
-    auto editQuickSavePath = new QLineEdit(this);
-    auto editAutoSavePath = new QLineEdit(this);
-    auto editConfigPath = new QLineEdit(this);
-    auto changeFileName = new QPushButton(tr("Hint"), this);
-    auto changeQuickSavePath = new QPushButton(tr("Change path"), this);
-    auto changeAutoSavePath = new QPushButton(tr("Change path"), this);
-    auto changeConfigPath = new QPushButton(tr("Change path"), this);
+    NEW_OBJECT_AND_TEXT(imageQuailty, QLabel, toImageQuailty, tr("Image quailty:"));
+    NEW_OBJECT_AND_TEXT(fileName, QLabel, toFileName, tr("File Name:"));
+    NEW_OBJECT_AND_TEXT(quickSavePath, QLabel, toQuickSavePath, tr("Quick save path:"));
+    NEW_OBJECT_AND_TEXT(autoAavePath, QLabel, toAutoSavePath, tr("Auto save path:"));
+    NEW_OBJECT_AND_TEXT(configurePath, QLabel, toConfigPath, tr("Config path:"));
 
-    editQuickSavePath->setObjectName("QuickSavePath");
-    editAutoSavePath->setObjectName("AutoSavePath");
-    editConfigPath->setObjectName("ConfigPath");
-    changeQuickSavePath->setObjectName("QuickSavePath");
-    changeAutoSavePath->setObjectName("AutoSavePath");
-    changeConfigPath->setObjectName("ConfigPath");
+    NEW_OBJECT(sbImageQuailty, QSpinBox, toImageQuailty);
+    NEW_OBJECT(editFileName, QLineEdit, toFileName);
+    NEW_OBJECT(editQuickSavePath, QLineEdit, toQuickSavePath);
+    NEW_OBJECT(editAutoSavePath, QLineEdit, toAutoSavePath);
+    NEW_OBJECT(editConfigPath, QLineEdit, toConfigPath);
+
+    NEW_OBJECT_AND_TEXT(changeFileName, QPushButton, toFileName, tr("Hint"));
+    NEW_OBJECT_AND_TEXT(changeQuickSavePath, QPushButton, toQuickSavePath, tr("Change path"));
+    NEW_OBJECT_AND_TEXT(changeAutoSavePath, QPushButton, toAutoSavePath, tr("Change path"));
+    NEW_OBJECT_AND_TEXT(changeConfigPath, QPushButton, toConfigPath, tr("Change path"));
 
     sbImageQuailty->setRange(-1, 100);
     sbImageQuailty->setFixedWidth(80);
@@ -309,37 +331,21 @@ QWidget* Preference::tabOutput()
     grid->addWidget(imageQuailty, i, j, Qt::AlignRight);
     grid->addWidget(sbImageQuailty, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TOV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
-    grid->addWidget(fileName, i, j, Qt::AlignRight);
-    QHBoxLayout* hLay0 = new QHBoxLayout();
-    hLay0->setMargin(0);
-    hLay0->addSpacing(0);
-    hLay0->addWidget(editFileName, 4);
-    hLay0->addWidget(changeFileName, 1);
-    grid->addLayout(hLay0, i++, j + 1);
 
-    grid->addWidget(quickSavePath, i, j, Qt::AlignRight);
-    QHBoxLayout* hLay1 = new QHBoxLayout();
-    hLay1->setMargin(0);
-    hLay1->addSpacing(0);
-    hLay1->addWidget(editQuickSavePath, 4);    // 去掉位置，即可自动策略为伸长
-    hLay1->addWidget(changeQuickSavePath, 1);
-    grid->addLayout(hLay1, i++, j + 1);
+    auto creatPathEdit = [&](QLabel* label, QLineEdit* edit, QPushButton* btn) {
+        grid->addWidget(label, i, j, Qt::AlignRight);
+        QHBoxLayout* hLay = new QHBoxLayout();
+        hLay->setMargin(0);
+        hLay->addSpacing(0);
+        hLay->addWidget(edit, 4);  // 去掉位置，即可自动策略为伸长
+        hLay->addWidget(btn, 1);
+        grid->addLayout(hLay, i++, j + 1);
+    };
 
-    grid->addWidget(autoAavePath, i, j, Qt::AlignRight);
-    QHBoxLayout* hLay2 = new QHBoxLayout();
-    hLay2->setMargin(0);
-    hLay2->addSpacing(0);
-    hLay2->addWidget(editAutoSavePath, 4);
-    hLay2->addWidget(changeAutoSavePath, 1);
-    grid->addLayout(hLay2, i++, j + 1);
-
-    grid->addWidget(configurePath, i, j, Qt::AlignRight);
-    QHBoxLayout* hLay3 = new QHBoxLayout();
-    hLay3->setMargin(0);
-    hLay3->addSpacing(0);
-    hLay3->addWidget(editConfigPath, 4);
-    hLay3->addWidget(changeConfigPath, 1);
-    grid->addLayout(hLay3, i++, j + 1);
+    creatPathEdit(fileName, editFileName, changeFileName);
+    creatPathEdit(quickSavePath, editQuickSavePath, changeQuickSavePath);
+    creatPathEdit(autoAavePath, editAutoSavePath, changeAutoSavePath);
+    creatPathEdit(configurePath, editConfigPath, changeConfigPath);
 
     qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
@@ -348,11 +354,11 @@ QWidget* Preference::tabOutput()
 
     insSettings->beginGroup(INIT_OUTPUT);
     bool ok = false;
-    sbImageQuailty->setValue(insSettings->value(imageQuailty->text().chopped(1), "-1").toInt(&ok));
-    editFileName->setText(insSettings->value(fileName->text().chopped(1), "PicShot_xxxx.png").toString());
-    editQuickSavePath->setText(insSettings->value(quickSavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
-    editAutoSavePath->setText(insSettings->value(autoAavePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
-    editConfigPath->setText(insSettings->value(configurePath->text().chopped(1), QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toString());
+    sbImageQuailty->setValue(insSettings->value(toImageQuailty, -1).toInt(&ok));
+    editFileName->setText(insSettings->value(toFileName, "PicShot_xxxx.png").toString());
+    editQuickSavePath->setText(insSettings->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toStringList().at(0));
+    editAutoSavePath->setText(insSettings->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toStringList().at(0));
+    editConfigPath->setText(insSettings->value(toConfigPath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toStringList().at(0));
     insSettings->endGroup();
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
@@ -360,11 +366,9 @@ QWidget* Preference::tabOutput()
     connect(editQuickSavePath, &QLineEdit::textChanged, this, &Preference::onQuickSavePath);
     connect(editAutoSavePath, &QLineEdit::textChanged, this, &Preference::onAutoSavePath);
     connect(editConfigPath, &QLineEdit::textChanged, this, &Preference::onConfigPath);
-
     connect(changeQuickSavePath, &QPushButton::released, this, &Preference::onChoosePath);
     connect(changeAutoSavePath, &QPushButton::released, this, &Preference::onChoosePath);
     connect(changeConfigPath, &QPushButton::released, this, &Preference::onChoosePath);
-
 
     return page;
 }
@@ -383,74 +387,56 @@ QWidget* Preference::tabPin()
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
-    QLabel* shade = new QLabel(tr("Window shade:"));
-    QLabel* opacity = new QLabel(tr("Opacity:"));
-    QLabel* maxSize = new QLabel(tr("Maximum size:"));
+    NEW_OBJECT_AND_TEXT(shade, QLabel, tpWindowShadow, tr("Enable Window shadow:"));
+    NEW_OBJECT_AND_TEXT(opacity, QLabel, tpOpacity, tr("Opacity:"));
+    NEW_OBJECT_AND_TEXT(maxSize, QLabel, tpMaxSize, tr("Maximum size:"));
+
+    NEW_OBJECT_AND_TEXT(cbWindowShadow, QCheckBox, tpWindowShadow, tr("Window shadow"));
+    NEW_OBJECT(sbOpacity, QSpinBox, tpOpacity);
+    NEW_OBJECT(sbMaxSize, QSpinBox, tpMaxSize);
+
+    sbOpacity->setRange(0, 100);
+    sbMaxSize->setRange(100, 100000);
 
     int i = 0;
     int j = 0;
     grid->addWidget(shade, i, j, Qt::AlignRight);
-    grid->addWidget(new QCheckBox(tr("Enable window shadow"), this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbWindowShadow, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(opacity, i, j, Qt::AlignRight);
-    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(sbOpacity, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(maxSize, i, j, Qt::AlignRight);
-    grid->addWidget(new QSpinBox(this), i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(sbMaxSize, i++, j + 1, Qt::AlignLeft);
 
     qDebug() << "tabPin:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-    vLay->addLayout(creatResetBtn(), 1);
+    vLay->addLayout(creatResetBtn(tpReset), 1);
+
+    insSettings->beginGroup(INIT_PIN);
+    cbWindowShadow->setChecked(insSettings->value(tpWindowShadow, true).toBool());
+    sbOpacity->setValue(insSettings->value(tpOpacity, 100).toInt());
+    sbMaxSize->setValue(insSettings->value(tpMaxSize, 100).toInt());
+    insSettings->endGroup();
+
+    connect(cbWindowShadow, &QCheckBox::stateChanged, this, &Preference::onWindowShadow);
+    connect(sbOpacity, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onOpacity);
+    connect(sbMaxSize, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onMaxSize);
 
     return page;
 }
 
 QWidget *Preference::tabHotkeys()
 {
-    return new HotkeysWidget();
-//    QWidget* page = new QWidget(nullptr);
-//    page->setContentsMargins(0, 0, 0, 0);
-//    QVBoxLayout* vLay = new QVBoxLayout(page);
-//    vLay->setContentsMargins(THV_MARGIN_HOR, THV_MARGIN_VER_TOP, THV_MARGIN_HOR, THV_MARGIN_VER_BOTTOM);
+    auto w = new HotkeysWidget();
+    if (w) {
+        auto btnReset = w->findChild<QPushButton *>(thReset);
+        if (btnReset)
+            connect(btnReset, &QPushButton::released, this, &Preference::onReset);
 
-//    // 快捷键框。若是出现乱码则因为混用了 QKeySequence(Qt::CTRL + Qt::Key_Shift + Qt::Key_Y)
-//    //QKeySequence(QKeySequence::Print);
-//    //QKeySequence(tr("Ctrl+P"));
-//    //QKeySequence(tr("Ctrl+p"));
-//    //QKeySequence(Qt::CTRL + Qt::Key_P);
-
-
-//    int i = 0;
-//    int j = 0;
-//    QGridLayout* grid = new QGridLayout();
-//    grid->setMargin(0);
-//    grid->setVerticalSpacing(THG_SPACING_VER);
-//    grid->setHorizontalSpacing(THG_SPACING_HOR);
-//    grid->setColumnStretch(0, 7);
-//    grid->setColumnStretch(1, 9);
-
-//    for (auto& it : Tray::instance().getVHotKeys()) {
-//        // TODO 2022.07.17: 虽然是值传递，但 std::get<0>(it) 为空，以后研究下
-//        QString& hotkey = std::get<1>(it);
-//        QString& describe = std::get<2>(it);
-//        XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
-//        pEdit->setObjectName(describe);
-//        pEdit->setMinimumWidth(110 * m_scale);                // 估的一个数值
-
-//        connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
-
-//        grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
-//        grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
-
-//        if (i == 5)
-//            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
-//    }
-
-//    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
-//    vLay->addLayout(grid, grid->rowCount());
-//    vLay->addStretch(3);
-//    vLay->addLayout(creatResetBtn(), 1);
-
-//    return page;
+        return w;
+    } else {
+        return nullptr;
+    }
 }
 
 QWidget *Preference::tabAbout()
@@ -581,12 +567,25 @@ QWidget *Preference::tabAbout()
     return page;
 }
 
-bool Preference::checkBoxState2Bool(int state)
+void Preference::onReset()
 {
-    if (state == Qt::Checked)
-        return true;
-    else
-        return false;
+    // 所有页面的 reset 集中到此处理
+    auto btn = qobject_cast<QPushButton*>(sender());
+    if (!btn)
+        return;
+
+    auto name = btn->objectName();
+    if (name == tgReset) {
+        WRITE_CONFIG_INI(INIT_GENERAL, tgReset, tgReset);
+    } else if (name == tiReset) {
+        WRITE_CONFIG_INI(INIT_INTERFACE, tiReset, tiReset);
+    } else if (name == toReset) {
+        WRITE_CONFIG_INI(INIT_OUTPUT, toReset, toReset);
+    } else if (name == tpReset) {
+        WRITE_CONFIG_INI(INIT_PIN, tpReset, tpReset);
+    } else if (name == thReset) {
+        WRITE_CONFIG_INI(INIT_HOTKEYS, thReset, thReset);
+    }
 }
 
 void Preference::onLanuageChange(const QString &language)
@@ -596,119 +595,113 @@ void Preference::onLanuageChange(const QString &language)
         return;
 
     insSettings->beginGroup(INIT_GENERAL);
-    insSettings->setValue("Lanuage", bt->itemData(bt->currentIndex()).toString());
+    insSettings->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
     insSettings->endGroup();
+}
+
+void Preference::onSelfStart(int sta)
+{
+    WRITE_CONFIG_INI(INIT_GENERAL, tgSelfStarting, checkBoxState2Bool(sta));
+}
+
+void Preference::onAsAdmin(int sta)
+{
+    WRITE_CONFIG_INI(INIT_GENERAL, tgAsAdmin, checkBoxState2Bool(sta));
 }
 
 void Preference::onLogLevelChange(const QString& language)
 {
     insSettings->beginGroup(INIT_GENERAL);
-    insSettings->setValue("Log Level", language);
+    insSettings->setValue(tgLogLevel, language);
     insSettings->endGroup();
+}
+
+void Preference::onAutoCheck(int sta)
+{
+    WRITE_CONFIG_INI(INIT_GENERAL, tgAutoCheckUpdate, checkBoxState2Bool(sta));
+}
+
+void Preference::onUpdate()
+{
+    // TODO 检查更新
 }
 
 void Preference::onBorderStyle(const QString& style)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Border Style", style);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderStyle, style);
 }
 
 void Preference::onBorderColor(const QColor& color)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Border Color", color.name());
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderColor, color.name());
 }
 
 void Preference::onBorderWidth(int val)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Border Width", val);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Crosshair Color", color.name());
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, color.name());
 }
 
 void Preference::onCrosshairWidth(int val)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Crosshair Width", val);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairWidth, val);
 }
 
 
 void Preference::onSmartWindow(int val)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Smart window", checkBoxState2Bool(val));
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, checkBoxState2Bool(val));
 }
 
 void Preference::onShowCursor(int val)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Show cursor", checkBoxState2Bool(val));
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiShowCursor, checkBoxState2Bool(val));
 }
 
 void Preference::onAutoCopyToClip(int val)
 {
-    insSettings->beginGroup(INIT_INTERFACE);
-    insSettings->setValue("Automatically copy to clipboard", checkBoxState2Bool(val));
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiAutoCopyToClipboard, checkBoxState2Bool(val));
 }
 
 void Preference::onImageQuailty(int val)
 {
-    insSettings->beginGroup(INIT_OUTPUT);
-    insSettings->setValue("Image quailty", val);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_OUTPUT, toImageQuailty, val);
 }
 
 void Preference::onFileName(const QString& name)
 {
-    insSettings->beginGroup(INIT_OUTPUT);
-    insSettings->setValue("File Name", name);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_OUTPUT, toFileName, name);
 }
 
 void Preference::onQuickSavePath(const QString& path)
 {
-    insSettings->beginGroup(INIT_OUTPUT);
-    insSettings->setValue("Quick save path", path);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_OUTPUT, toQuickSavePath, path);
 }
 
 void Preference::onAutoSavePath(const QString& path)
 {
-    insSettings->beginGroup(INIT_OUTPUT);
-    insSettings->setValue("Auto save path", path);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_OUTPUT, toAutoSavePath, path);
 }
 
 void Preference::onConfigPath(const QString& path)
 {
-    insSettings->beginGroup(INIT_OUTPUT);
-    insSettings->setValue("Config path", path);
-    insSettings->endGroup();
+    WRITE_CONFIG_INI(INIT_OUTPUT, toConfigPath, path);
 }
 
 void Preference::onChoosePath()
 {
     auto btn = qobject_cast<QPushButton*>(sender());
-    auto btnQuickSavePath = findChild<QPushButton*>("QuickSavePath");
-    auto btnAutoSavePath = findChild<QPushButton*>("AutoSavePath");
-    auto btnConfigPath = findChild<QPushButton*>("ConfigPath");
+    auto btnQuickSavePath = findChild<QPushButton*>(toQuickSavePath);
+    auto btnAutoSavePath = findChild<QPushButton*>(toAutoSavePath);
+    auto btnConfigPath = findChild<QPushButton*>(toConfigPath);
 
-    auto editQuickSavePath = findChild<QLineEdit*>("QuickSavePath");
-    auto editAutoSavePath = findChild<QLineEdit*>("AutoSavePath");
-    auto editConfigPath = findChild<QLineEdit*>("ConfigPath");
+    auto editQuickSavePath = findChild<QLineEdit*>(toQuickSavePath);
+    auto editAutoSavePath = findChild<QLineEdit*>(toAutoSavePath);
+    auto editConfigPath = findChild<QLineEdit*>(toConfigPath);
 
     if (!btn || !btnQuickSavePath || !btnAutoSavePath || !btnConfigPath
         || !editQuickSavePath || !editAutoSavePath || !editConfigPath)
@@ -725,4 +718,19 @@ void Preference::onChoosePath()
     } else if (btn == btnConfigPath) {
         editConfigPath->setText(path);
     }
+}
+
+void Preference::onWindowShadow(int sta)
+{
+    WRITE_CONFIG_INI(INIT_PIN, tpWindowShadow, checkBoxState2Bool(sta));
+}
+
+void Preference::onOpacity(int val)
+{
+    WRITE_CONFIG_INI(INIT_PIN, tpOpacity, val);
+}
+
+void Preference::onMaxSize(int val)
+{
+    WRITE_CONFIG_INI(INIT_PIN, tpMaxSize, val);
 }

@@ -29,7 +29,8 @@ public:
 
 private:
     void initUI();
-    QHBoxLayout* creatResetBtn();
+    QHBoxLayout* creatResetBtn(QString objectName = "");
+    inline bool checkBoxState2Bool(int state);
 
     QWidget* tabGeneral();             // 常规
     QWidget* tabInterface();           // 界面
@@ -38,12 +39,16 @@ private:
     QWidget* tabHotkeys();             // 快捷键
     QWidget* tabAbout();               // 关于
 
-    inline bool checkBoxState2Bool(int state);
-
 protected slots:
+    void onReset();
+
     // tabGeneral
     void onLanuageChange(const QString& language);
+    void onSelfStart(int sta);
+    void onAsAdmin(int sta);
     void onLogLevelChange(const QString& language);
+    void onAutoCheck(int sta);
+    void onUpdate();
 
     // tabInterface
     void onBorderStyle(const QString& style);
@@ -61,9 +66,12 @@ protected slots:
     void onQuickSavePath(const QString& path);
     void onAutoSavePath(const QString& path);
     void onConfigPath(const QString& path);
-
     void onChoosePath();
-   
+
+    // tabPin
+    void onWindowShadow(int sta);
+    void onOpacity(int val);
+    void onMaxSize(int val);
 
 private:
     double m_scale;

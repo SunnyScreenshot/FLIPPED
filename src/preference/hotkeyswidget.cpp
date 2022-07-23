@@ -14,6 +14,7 @@
 #include "../widget/xhorizontalline.h"
 #include "../widget/xkeysequenceedit.h"
 #include "../screen/drawhelper.h"
+#include "appellation.h"
 #include <QBoxLayout>
 #include <QList>
 #include <QMouseEvent>
@@ -60,7 +61,11 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     hLay->setContentsMargins(0, 0, 0, 0);
     hLay->addSpacing(0);
     hLay->addStretch(7);
-    hLay->addWidget(new QPushButton(tr("Reset")), 1, Qt::AlignRight);
+    auto btn = new QPushButton(tr("Reset"), this);
+    if (btn) {
+        btn->setObjectName(thReset);
+        hLay->addWidget(btn, 1, Qt::AlignRight);
+    }
     vLay->addLayout(hLay, 1);
 }
 

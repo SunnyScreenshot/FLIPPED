@@ -216,8 +216,9 @@ Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, ("D:/config.ini", QSettings::I
 // perference UI config
 const QString INIT_GENERAL("General");                   // 初始化 常规
 const QString INIT_INTERFACE("Interface");               // 初始化 界面
-const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
 const QString INIT_OUTPUT("Output");                     // 初始化 输出
+const QString INIT_PIN("Pin");                           // 初始化 贴图
+const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
 
 
 #endif // XDRAW_H

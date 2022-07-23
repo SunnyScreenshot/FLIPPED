@@ -6,11 +6,7 @@ set(_version ${PROJECT_VERSION})
 #set(PROJECT_VERSION_MINOR 2)
 #set(PROJECT_VERSION_PATCH 0)
 
-#add_subdirectory(i18n)
-
 project(${PROJECT_NAME})   
-
-#CMAKE_BINARY_DIR   CMAKE_CURRENT_SOURCE_DIR
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin) # 更改二进制输出路径
 
 # 此处配合 VMSVC 的 UTF8-BOM 插件，达到跨平台
@@ -57,8 +53,6 @@ set(SRCS_CORE
 
 # platform
 set(SRCS_PLATFORM
-    platform/xtype.h
-    platform/xtype.cpp
     platform/iwininfo.h
     platform/iwininfo.cpp
     platform/wininfo.h
@@ -122,8 +116,7 @@ set(SRCS_TOOL
     tool/selectbar.h
     tool/selectbar.cpp
     tool/parameterbar.h
-    tool/parameterbar.cpp
-    )
+    tool/parameterbar.cpp)
 
 # tool
 set(SRCS_PERFERENCE
@@ -131,7 +124,8 @@ set(SRCS_PERFERENCE
     preference/preference.cpp
     preference/hotkeyswidget.h
     preference/hotkeyswidget.cpp
-    )
+    preference/appellation.h
+    preference/appellation.cpp)
 
 # screen
 set(SRCS_WINSCREEN
@@ -159,8 +153,7 @@ set(SRCS_PLUGIN_INTERFACE
 # 资源模块
 set(SRCS_RESOURCES
     Resources.qrc
-    logo.rc
-    )
+    logo.rc)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)

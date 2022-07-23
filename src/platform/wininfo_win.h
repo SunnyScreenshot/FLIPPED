@@ -10,7 +10,6 @@
  ******************************************************************/
 #ifndef WININFO_WIN_H
 #define WININFO_WIN_H
-#include "xtype.h"
 #include "iwininfo.h"
 
 #include <windows.h>
