@@ -224,11 +224,28 @@ double getScale(QScreen *screen)
 #endif
 }
 
-QColor highlightColor(QColor highlight)
+static QColor g_highlightColor("#1F7AFF");
+static int g_highlightWidth(1);
+void setHighlightColor(QColor color /*= QColor("#1F7AFF")*/)
 {
-    highlight.setAlphaF(1);
-    return highlight;
+    g_highlightColor = color;
 }
+
+const QColor highlightColor()
+{
+    return g_highlightColor;
+}
+
+void setHighlightWidth(const int width /*= 1*/)
+{
+    g_highlightWidth = width;
+}
+
+const int highlightWidth()
+{
+    return g_highlightWidth;
+}
+
 }
 
 

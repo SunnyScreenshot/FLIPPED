@@ -15,6 +15,7 @@
 #include "../tool/base/colorparabar.h"
 #include "../screen/drawhelper.h"
 #include "../screen/tray.h"
+#include "../core/xlog.h"
 #include "appellation.h"
 #include "hotkeyswidget.h"
 #include <QPushButton>
@@ -220,7 +221,7 @@ QWidget* Preference::tabInterface()
 
     NEW_OBJECT_AND_TEXT(srnBorderStyle, QLabel, tiBorderStyle, tr("Border Style:"));
     NEW_OBJECT_AND_TEXT(borderColor, QLabel, tiBorderColor, tr("Border Color:"));
-    NEW_OBJECT_AND_TEXT(borderWidth, QLabel, tiBorderWidth, tr("Crosshair Color:"));
+    NEW_OBJECT_AND_TEXT(borderWidth, QLabel, tiBorderWidth, tr("Border Width:"));
     NEW_OBJECT_AND_TEXT(srnCrosshair, QLabel, tiCrosshairColor, tr("Crosshair Color:"));
     NEW_OBJECT_AND_TEXT(srnCrosshairWidth, QLabel, tiCrosshairWidth, tr("Crosshair Width:"));
 
@@ -614,6 +615,8 @@ void Preference::onLogLevelChange(const QString& language)
     insSettings->beginGroup(INIT_GENERAL);
     insSettings->setValue(tgLogLevel, language);
     insSettings->endGroup();
+
+    XLog::instance()->setLevel(language.toStdString());
 }
 
 void Preference::onAutoCheck(int sta)
@@ -634,11 +637,15 @@ void Preference::onBorderStyle(const QString& style)
 void Preference::onBorderColor(const QColor& color)
 {
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderColor, color.name());
+
+    XHelp::setHighlightColor(color);
 }
 
 void Preference::onBorderWidth(int val)
 {
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, val);
+
+    XHelp::setHighlightWidth(val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)

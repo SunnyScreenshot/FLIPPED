@@ -163,12 +163,14 @@ void Tray::onSrnShot()
         m_pSrnShot = new ScreenShot();
 
     QHotkey* hk = qobject_cast<QHotkey*>(sender());
-    if (!hk) {
+    const auto act = qobject_cast<QAction*>(sender());
+    if (!hk && !act)
         return;
-    } else if (hk->objectName() == "Active Window") { // TODO 2022.07.17： 替换为枚举
+    
+    if (act || hk->objectName() == "Active Window") { // TODO 2022.07.17： 替换为枚举
         m_pSrnShot->getScrnShots();
     }
-    
+
     m_pSrnShot->activateWindow();
     m_pSrnShot->setFocus();
 }
@@ -180,6 +182,7 @@ void Tray::onPreference(bool checked)
     if (!m_pPref)
         m_pPref = new Preference();
 
+    m_pPref->setMinimumWidth(910);
     m_pPref->setVisible(true);
 }
 
@@ -222,4 +225,3 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
 
     insSettings->endGroup();
 }
-

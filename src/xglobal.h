@@ -18,8 +18,8 @@
 #define HAIF_R_BORDER_MARK 4               // 边框上标记点的半径
 
 // 截图-选中矩形
-#define SELECT_RECT_PEN_WIDTH  1           // 选中矩形的边框, 其画笔的默认宽度
-#define SELECT_ASSIST_RECT_PEN_WIDTH  4    // 四角落辅助的 ∟，其画笔的默认宽度
+//#define SELECT_RECT_PEN_WIDTH  1           // 选中矩形的边框, 其画笔的默认宽度
+#define SELECT_ASSIST_RECT_PEN_WIDTH  4    // 四角落辅助的 ∟，其画笔的默认宽度 = 矩形的边框 + 4
 #define SELECT_ASSIST_RECT_WIDTH  30       // 四角周辅助的 ∟ 的宽度
 #define SELECT_ASSIST_RECT_HEIGHT 30       // 四角周辅助的 ∟ 的高度
 

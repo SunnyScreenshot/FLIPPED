@@ -44,6 +44,13 @@ public slots:
     void onPreference(bool checked);
     void onKeySequenceChanged(const QKeySequence& keySequence);
 
+    // tabGeneral
+    //void onLanuageChange(const QString& language);
+    //void onSelfStart(int sta);
+    //void onAsAdmin(int sta);
+    //void onAutoCheck(int sta);
+    //void onUpdate();
+
 private:
 	QPointer<ScreenShot> m_pSrnShot;           // 前台截图 UI
     QPointer<Preference> m_pPref;              // 偏好设置 UI 

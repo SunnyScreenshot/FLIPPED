@@ -193,19 +193,23 @@ struct  XDrawStep
 
 // ------------------------
 namespace XHelp {
-double getScale(QScreen *screen = QApplication::primaryScreen());
-QColor highlightColor(QColor highlight = QColor("#1F7AFF"));
+    double getScale(QScreen* screen = QApplication::primaryScreen());
+	void setHighlightColor(QColor color = QColor("#1F7AFF"));
+    const QColor highlightColor();
 
-QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size);
-void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval);
+    void setHighlightWidth(const int width = 1);
+    const int highlightWidth();
 
-// Mosaics draw
-const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
-const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
+    QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size);
+    void setAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
 
-// Arrow Line draw
-QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
-QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
+    // Mosaics draw
+    const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
+    const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
+
+    // Arrow Line draw
+    QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
+    QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
 }
 
 

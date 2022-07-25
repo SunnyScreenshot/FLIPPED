@@ -30,6 +30,8 @@ public:
         return m_logger;
     }
 
+    void setLevel(const std::string val) { m_level = val; }
+
 private:
     XLog() {
         m_logger = spdlog::rotating_logger_mt("fileLogger", "picshot.log", 1024 * 1024 * 20, 10, true);
@@ -39,26 +41,27 @@ private:
         //m_logger->set_pattern("%Y-%m-%d %H:%M:%S %t %l [%@] [%!] %v");
         m_logger->set_pattern("%Y-%m-%d %H:%M:%S %t %l [%!] %v");
 
-        std::string level = "debug";
-        if (level == "trace") {
+        
+        setLevel("debug");
+        if (m_level == "trace") {
             m_logger->set_level(spdlog::level::trace);
             m_logger->flush_on(spdlog::level::trace);
-        } else if (level == "debug") {
+        } else if (m_level == "debug") {
             m_logger->set_level(spdlog::level::debug);
             m_logger->flush_on(spdlog::level::debug);
-        } else if (level == "info") {
+        } else if (m_level == "info") {
             m_logger->set_level(spdlog::level::info);
             m_logger->flush_on(spdlog::level::info);
-        } else if (level == "warn") {
+        } else if (m_level == "warn") {
             m_logger->set_level(spdlog::level::warn);
             m_logger->flush_on(spdlog::level::warn);
-        } else if (level == "error") {
+        } else if (m_level == "error") {
             m_logger->set_level(spdlog::level::err);
             m_logger->flush_on(spdlog::level::err);
-        } else if (level == "critical") {
+        } else if (m_level == "critical") {
             m_logger->set_level(spdlog::level::critical);
             m_logger->flush_on(spdlog::level::critical);
-        } else if (level == "off") {
+        } else if (m_level == "off") {
             m_logger->set_level(spdlog::level::off);
             m_logger->flush_on(spdlog::level::off);
         } else {
@@ -75,6 +78,7 @@ private:
     void operator= (const XLog&) = delete;
 
 private:
+    std::string m_level;
     std::shared_ptr<spdlog::logger> m_logger;
 };
 
