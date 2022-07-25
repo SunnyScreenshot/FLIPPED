@@ -67,7 +67,7 @@ void XLabel::init()
     setAttribute(Qt::WA_TranslucentBackground);   // 设置透明，自绘画为圆角矩形
 //    setAutoFillBackground(false);
 
-    QColor col = this->palette().background().color();
+    QColor col = this->palette().window().color();
     m_bPickColor = false;
 }
 

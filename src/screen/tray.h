@@ -51,8 +51,6 @@ private:
     QPointer<QSystemTrayIcon> m_trayIcon;
 
     std::vector<std::tuple<QHotkey*, QString, QString>> m_vHotKeys;
-
-    //QPointer<HotkeySvs> m_hkManage;
 };
 
 #endif // TARY_H
