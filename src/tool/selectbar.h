@@ -11,7 +11,6 @@
 #ifndef SELECTBAR_H
 #define SELECTBAR_H
 
-#include "../widget/xframewidget.h"
 #include "../screen/drawhelper.h"
 #include "base/blurwidget.h"
 #include <QVector>

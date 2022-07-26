@@ -42,14 +42,12 @@ endif()
 # main
 set(SRCS_MAIN
     xglobal.h
-    main.cpp
-    )
+    main.cpp)
 
 # core
 set(SRCS_CORE
     core/isingleton.h
-    core/xlog.h
-    )
+    core/xlog.h)
 
 # platform
 set(SRCS_PLATFORM
@@ -62,8 +60,7 @@ set(SRCS_PLATFORM
     platform/wininfo_win.h
     platform/wininfo_win.cpp
     platform/wininfo_x11.h
-    platform/wininfo_x11.cpp
-    )
+    platform/wininfo_x11.cpp)
 
 
 # 正则 http://blog.icodeten.com/cmake/2015/01/22/cmake-experience/
@@ -99,7 +96,8 @@ set(SRCS_WIDGET
     widget/xframewidget.cpp
     widget/xcombobox.h
     widget/xcombobox.cpp
-    )
+    widget/xframelesswidget.h
+    widget/xframelesswidget.cpp)
 
 # tool
 set(SRCS_TOOL
@@ -136,8 +134,7 @@ set(SRCS_WINSCREEN
     screen/screenshot.h
     screen/screenshot.cpp
     screen/tray.h
-    screen/tray.cpp
-)
+    screen/tray.cpp)
 
 # 测试模块
 set(SRCS_EXAMPLE
@@ -204,11 +201,9 @@ message("#2---->" ${QM_FILES})
 #endforeach()
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
-    ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey
-    )
+    ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey)
 link_directories(${CMAKE_BINARY_DIR}/bin
-    ${CMAKE_BINARY_DIR}/3rdparty/QHotkey
-    )
+    ${CMAKE_BINARY_DIR}/3rdparty/QHotkey)
 
 if (APPLE)
     set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})

@@ -1111,13 +1111,17 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         //        .arg(m_savePixmap.width()).arg(m_savePixmap.height());
         //pa.drawText(rtSel.topLeft() + QPoint(0, -10), str);
 
-        #if 1
+        // 绘画边框样式
+
+        const int styleIndex = XHelp::boardStyle();
+        if (styleIndex == 1) {
             drawBorderPS(pa, rtSel);
-            //drawBorderMac(pa, rtSel);
-        #else
+        } else if (styleIndex == 2) {
+            drawBorderMac(pa, rtSel);
+        } else if (styleIndex == 3) {
             pa.drawRect(rtSel);
             drawBorderBlue(pa, rtSel);
-        #endif
+        }
     }
 
     // 绘画工具栏

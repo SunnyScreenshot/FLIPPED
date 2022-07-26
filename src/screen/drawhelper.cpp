@@ -226,6 +226,17 @@ double getScale(QScreen *screen)
 
 static QColor g_highlightColor("#1F7AFF");
 static int g_highlightWidth(1);
+static int g_boardStyleIndex(1);
+void setBoardStyle(const int index /*= 1*/)
+{
+    g_boardStyleIndex = index;
+}
+
+const int boardStyle()
+{
+    return g_boardStyleIndex;
+}
+
 void setHighlightColor(QColor color /*= QColor("#1F7AFF")*/)
 {
     g_highlightColor = color;

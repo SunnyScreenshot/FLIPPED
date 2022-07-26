@@ -10,7 +10,6 @@
  ******************************************************************/
 #include "selectbar.h"
 #include "../xglobal.h"
-#include "../widget/xframewidget.h"
 #include "../widget/xhorizontalline.h"
 #include "../widget/xverticalline.h"
 #include <QToolButton>

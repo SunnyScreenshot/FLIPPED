@@ -196,9 +196,11 @@ namespace XHelp {
     double getScale(QScreen* screen = QApplication::primaryScreen());
 	void setHighlightColor(QColor color = QColor("#1F7AFF"));
     const QColor highlightColor();
-
     void setHighlightWidth(const int width = 1);
     const int highlightWidth();
+
+    void setBoardStyle(const int index = 1);
+    const int boardStyle();
 
     QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size);
     void setAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);

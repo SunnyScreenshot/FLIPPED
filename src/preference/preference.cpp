@@ -14,6 +14,7 @@
 #include "../widget/xkeysequenceedit.h"
 #include "../tool/base/colorparabar.h"
 #include "../screen/drawhelper.h"
+#include "../screen/screenshot.h"
 #include "../screen/tray.h"
 #include "../core/xlog.h"
 #include "appellation.h"
@@ -631,6 +632,14 @@ void Preference::onUpdate()
 
 void Preference::onBorderStyle(const QString& style)
 {
+    auto bt = qobject_cast<QComboBox *>(sender());
+    if (!bt)
+        return;
+
+    bool ok = false;
+    int idx = bt->itemData(bt->currentIndex()).toInt(&ok);
+    XHelp::setBoardStyle(idx);
+
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderStyle, style);
 }
 

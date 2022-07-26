@@ -19,6 +19,7 @@
 // test
 //#include <QHotkey>
 #include "./screen/tray.h"
+#include "widget/xframelesswidget.h"
 #include "widget/xroundwidget.h"
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"
