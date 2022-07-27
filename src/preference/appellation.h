@@ -29,6 +29,7 @@ const QString tiBorderColor("Border Color");
 const QString tiBorderWidth("Border Width");
 const QString tiCrosshairColor("Crosshair Color");
 const QString tiCrosshairWidth("Crosshair Width");
+const QString tiCrosshair("Ccrosshair");
 const QString tiSmartWindow("Smart window");
 const QString tiShowCursor("Show cursor");
 const QString tiAutoCopyToClipboard("Automatically copy to clipboard");

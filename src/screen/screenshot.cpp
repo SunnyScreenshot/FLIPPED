@@ -53,6 +53,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_rtCalcu(this)
     , m_rtVirDesktop(0, 0, 0, 0)
     , m_bFirstSel(false)
+    , m_bFirstPress(false)
     , m_pCurrShape(nullptr)
 	, m_textEdit(new XTextWidget(this))
     , m_rtAtuoMonitor(0, 0, 0, 0)
@@ -236,6 +237,7 @@ void ScreenShot::onClearScreen()
 #elif  defined(Q_OS_LINUX)
 #endif
     
+    m_bFirstPress = false;
     m_vWholeScrn.clear();
 
 	//m_screens、m_primaryScreen 还保留
@@ -545,8 +547,8 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     pa.save();
     pa.setRenderHint(QPainter::Antialiasing, true);
     QPen pen;
-    pen.setWidth(XHelp::highlightWidth() * m_scal + SELECT_ASSIST_RECT_PEN_WIDTH);
-    pen.setColor(XHelp::highlightColor());  //
+    pen.setWidth(XHelp::borderWidth() * m_scal + SELECT_ASSIST_RECT_PEN_WIDTH);
+    pen.setColor(XHelp::borderColor());  //
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
@@ -579,7 +581,7 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     pa.drawLine(l7.translated(QPoint(penWidth / 2, 0)));
     pa.drawLine(l8.translated(QPoint(penWidth / 2, 0)));
 
-    pen.setWidth(XHelp::highlightWidth() * m_scal);
+    pen.setWidth(XHelp::borderWidth() * m_scal);
     pa.setPen(pen);
     pa.drawRect(rt);
     pa.restore();
@@ -1134,6 +1136,20 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         }
     }
 
+    // 绘画十字线
+    if (XHelp::enableCrosshair() && !m_bFirstPress) {
+        pa.save();
+        pa.setPen(QPen(XHelp::crosshairColor(), XHelp::crosshairWidth()));
+        pa.setBrush(Qt::NoBrush);
+
+        QPoint p(QCursor::pos());
+        QLine l1(QPoint(m_rtVirDesktop.left(), p.y()), QPoint(m_rtVirDesktop.right(), p.y()));
+        QLine l2(QPoint(p.x(), m_rtVirDesktop.top()), QPoint(p.x(), m_rtVirDesktop.bottom()));
+        pa.drawLine(l1);
+        pa.drawLine(l2);
+        pa.restore();
+    }
+
     //#ifdef _DEBUG  调试信息
     // 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
     // TODO 2022.01.28: 要屏蔽部分窗口；尤其那个 "设置窗口名称的"，还要做一下区分
@@ -1276,6 +1292,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 	if (event->button() != Qt::LeftButton)
 		return;
 
+    m_bFirstPress = true;
 	setMouseTracking(false);
 	if (m_rtCalcu.getSelRect().isEmpty() && m_rtCalcu.scrnType == ScrnType::Wait) {
 		//m_rtCalcu.clear();

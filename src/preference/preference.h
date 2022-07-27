@@ -29,7 +29,7 @@ public:
 
 private:
     void initUI();
-    QHBoxLayout* creatResetBtn(QString objectName = "");
+    QHBoxLayout* creatResetBtn(QString objectName);
     inline bool checkBoxState2Bool(int state);
 
     QWidget* tabGeneral();             // 常规
@@ -57,6 +57,7 @@ protected slots:
     void onCrosshairColor(const QColor& color);
     void onCrosshairWidth(int val);
     void onSmartWindow(int val);
+    void onShowCrosshair(int val);
     void onShowCursor(int val);
     void onAutoCopyToClip(int val);
 

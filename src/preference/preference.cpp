@@ -232,6 +232,7 @@ QWidget* Preference::tabInterface()
     auto cpbCrosshair = new ColorParaBar(ColorParaBarMode::CPB_HighLight);
     NEW_OBJECT(spCrosshair, QSpinBox, tiCrosshairWidth);
     NEW_OBJECT_AND_TEXT(cbEnableSamrtWindow, QCheckBox, tiSmartWindow, tr("Smart window"));
+    NEW_OBJECT_AND_TEXT(cbEnableCrosshair, QCheckBox, tiCrosshair, tr("Crosshair"));
     NEW_OBJECT_AND_TEXT(cbEnableShowCursor, QCheckBox, tiShowCursor, tr("Show cursor"));
     NEW_OBJECT_AND_TEXT(cbEnableAutoCopy, QCheckBox, tiAutoCopyToClipboard, tr("Automatically copy to clipboard"));
 
@@ -240,9 +241,18 @@ QWidget* Preference::tabInterface()
     spBorder->setRange(1, 100);
     spCrosshair->setRange(1, 100);
 
-    QMap<QString, QString> styels = { {tr("picshot"), "0"}, {tr("black and white"), "1"}, {tr("blue"), "2"} };
-    for (auto it = styels.cbegin(); it != styels.cend(); ++it)
-        cbBorderStyle->addItem(it.key(), it.value());
+    QStringList styles;
+    styles << tr("1_picshot") << tr("2_mac") << tr("3_deepin");
+
+    for (const auto t : styles) {
+        bool ok = false;
+        int idx = t.left(1).toInt(&ok);
+
+        if (!ok)
+            idx;
+
+        cbBorderStyle->addItem(t, idx);
+    }
 
     int i = 0;
     int j = 0;
@@ -262,6 +272,7 @@ QWidget* Preference::tabInterface()
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TIV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
     grid->addWidget(cbEnableSamrtWindow, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbEnableCrosshair, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbEnableShowCursor, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbEnableAutoCopy, i++, j + 1, Qt::AlignLeft);
 
@@ -277,6 +288,7 @@ QWidget* Preference::tabInterface()
     cpbCrosshair->setCurColor(QColor(insSettings->value(tiCrosshairColor, QColor("#db000f")).toString()));
     spCrosshair->setValue(insSettings->value(tiCrosshairWidth, 2).toInt());
     cbEnableSamrtWindow->setChecked(insSettings->value(tiSmartWindow, false).toBool());
+    cbEnableCrosshair->setChecked(insSettings->value(tiCrosshair, false).toBool());
     cbEnableShowCursor->setChecked(insSettings->value(tiShowCursor, false).toBool());
     cbEnableAutoCopy->setChecked(insSettings->value(tiAutoCopyToClipboard, false).toBool());
     insSettings->endGroup();
@@ -287,6 +299,7 @@ QWidget* Preference::tabInterface()
     connect(cpbCrosshair, &ColorParaBar::sigColorChange, this, &Preference::onCrosshairColor);
     connect(spCrosshair, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onCrosshairWidth);
     connect(cbEnableSamrtWindow, &QCheckBox::stateChanged, this, &Preference::onSmartWindow);
+    connect(cbEnableCrosshair, &QCheckBox::stateChanged, this, &Preference::onShowCrosshair);
     connect(cbEnableShowCursor, &QCheckBox::stateChanged, this, &Preference::onShowCursor);
     connect(cbEnableAutoCopy, &QCheckBox::stateChanged, this, &Preference::onAutoCopyToClip);
 
@@ -352,7 +365,7 @@ QWidget* Preference::tabOutput()
     qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
-    vLay->addLayout(creatResetBtn(), 1);
+    vLay->addLayout(creatResetBtn(toReset), 1);
 
     insSettings->beginGroup(INIT_OUTPUT);
     bool ok = false;
@@ -645,25 +658,25 @@ void Preference::onBorderStyle(const QString& style)
 
 void Preference::onBorderColor(const QColor& color)
 {
+    XHelp::setBorderColor(color);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderColor, color.name());
-
-    XHelp::setHighlightColor(color);
 }
 
 void Preference::onBorderWidth(int val)
 {
+    XHelp::setBorderWidth(val);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, val);
-
-    XHelp::setHighlightWidth(val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)
 {
+    XHelp::setCrosshairColor(color);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, color.name());
 }
 
 void Preference::onCrosshairWidth(int val)
 {
+    XHelp::setCrosshairWidth(val);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairWidth, val);
 }
 
@@ -671,6 +684,13 @@ void Preference::onCrosshairWidth(int val)
 void Preference::onSmartWindow(int val)
 {
     WRITE_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, checkBoxState2Bool(val));
+}
+
+void Preference::onShowCrosshair(int val)
+{
+    const bool b = checkBoxState2Bool(val);
+    XHelp::setEnableCrosshair(b);
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshair, b);
 }
 
 void Preference::onShowCursor(int val)

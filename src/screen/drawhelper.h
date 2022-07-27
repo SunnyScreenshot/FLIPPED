@@ -192,28 +192,45 @@ struct  XDrawStep
 };
 
 // ------------------------
-namespace XHelp {
-    double getScale(QScreen* screen = QApplication::primaryScreen());
-	void setHighlightColor(QColor color = QColor("#1F7AFF"));
-    const QColor highlightColor();
-    void setHighlightWidth(const int width = 1);
-    const int highlightWidth();
+class XHelp
+{
+public:
+    static double getScale(QScreen* screen = QApplication::primaryScreen());
 
-    void setBoardStyle(const int index = 1);
-    const int boardStyle();
+    static void setBoardStyle(const int index) { m_boardStyleIndex = index; }
+    static const int boardStyle() { return m_boardStyleIndex; }
+    static void setBorderColor(QColor color) { m_borderColor = color; }
+    static const QColor borderColor() { return m_borderColor; }
+    static void setBorderWidth(const int width) { m_borderWidth = width; }
+    static const int borderWidth() { return m_borderWidth; }
 
-    QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size);
-    void setAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
+    static void setCrosshairColor(QColor color) { m_crosshairColor = color; }
+    static const QColor crosshairColor() { return m_crosshairColor; }
+    static void setCrosshairWidth(const int width) { m_crosshairWidth = width; }
+    static const int crosshairWidth() { return m_crosshairWidth; }
+    static const bool enableCrosshair() { return m_enableCrosshair; }
+    static void setEnableCrosshair(bool enable) { m_enableCrosshair = enable; }
+
+	static QIcon ChangeSVGColor(QString path, QString shape, QColor color, QSize size);
+    static void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
 
     // Mosaics draw
-    const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
-    const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
+    static const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
+    static const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
 
     // Arrow Line draw
-    QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
-    QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
-}
+    static QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
+    static QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
 
+private:
+    static QColor m_borderColor;                      // 边框
+    static int m_borderWidth;
+    static QColor m_crosshairColor;                   // 边框
+    static int m_crosshairWidth;
+	static bool m_enableCrosshair;
+
+    static int m_boardStyleIndex;
+};
 
 // ------------------------
 // 创建全局静态 单例 的对象, 就不浪费生命重新创建了，  路径后面替换为 ConfigLocation

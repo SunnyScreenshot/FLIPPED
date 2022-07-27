@@ -158,7 +158,7 @@ void SelectBar::onToolBtn()
             if (it->isCheckable()) {
                 if (it->isChecked()) {
                     enableDraw = true;
-                    it->setIcon(XHelp::changeSVGColor(path, "path", XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+                    it->setIcon(XHelp::ChangeSVGColor(path, "path", XHelp::borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
                 } else {
                     it->setIcon(QIcon(path));
                 }

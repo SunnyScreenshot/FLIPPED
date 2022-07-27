@@ -124,6 +124,7 @@ private:
 	RectCalcu m_rtCalcu;                   // 选中矩形区域
     QRect m_rtVirDesktop;                  // 截图时刻的虚拟桌面的大小
     bool m_bFirstSel;                      // 初次选中 截图矩形 完成
+    bool m_bFirstPress;                    // 初次 左键按下 完成(十字线)
 
     XDrawStep m_step;                      // 当前绘画一步骤
 

@@ -90,7 +90,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
         tb->setChecked(false);
         if (i == 0) {  // 第一个为默认选中
             tb->setChecked(true);
-            tb->setIcon(XHelp::changeSVGColor(it.value(), "rect", XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+            tb->setIcon(XHelp::ChangeSVGColor(it.value(), "rect", XHelp::borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
         }
 
         if (!tb->setProperty("path", it.value()))
@@ -272,7 +272,7 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
 
         auto ptr = qobject_cast<QToolButton*>(btn);
         if (it == ptr) {
-            it->setIcon(XHelp::changeSVGColor(path, "rect", XHelp::highlightColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+            it->setIcon(XHelp::ChangeSVGColor(path, "rect", XHelp::borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
 
             //enum class DrawShape {
             //    NoDraw,

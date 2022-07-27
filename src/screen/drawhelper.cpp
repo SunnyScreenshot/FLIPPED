@@ -30,7 +30,6 @@
 int XDrawStep::totalIdx = 0;
 
 // 辅助功能函数
-namespace XHelp {
 
 /*!
  * \brief changeSVGColor 修改 .svg 的填充色
@@ -40,7 +39,7 @@ namespace XHelp {
  * \param size   svg 伸缩后的尺寸
  * \return 一个 QIcon 对象
  */
-QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size)
+QIcon XHelp::ChangeSVGColor(QString path, QString shape, QColor color, QSize size)
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly);
@@ -49,7 +48,7 @@ QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size)
     QDomDocument doc;
     doc.setContent(baData);
     QDomElement elem = doc.documentElement(); // const 和 值传递
-    setAttrRecur(elem, shape, "fill", color.name());
+    SetAttrRecur(elem, shape, "fill", color.name());
 
     QSvgRenderer svgRenderer(doc.toByteArray());
     // create pixmap target (could be a QImage)
@@ -63,7 +62,7 @@ QIcon changeSVGColor(QString path, QString shape, QColor color, QSize size)
     return myicon;
 }
 
-void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval)
+void XHelp::SetAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval)
 {
     // if it has the tagname then overwritte desired attribute
     if (elem.tagName().compare(strtagname) == 0)
@@ -75,11 +74,11 @@ void setAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QStrin
             continue;
 
         QDomElement t = elem.childNodes().at(i).toElement();
-        setAttrRecur(t, strtagname, strattr, strattrval);
+        SetAttrRecur(t, strtagname, strattr, strattrval);
     }
 }
 
-const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px)
+const QPixmap* XHelp::SetMosaicSmooth(QPixmap* pixmap, int px)
 {
     if (!pixmap)
         return nullptr;
@@ -106,7 +105,7 @@ const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px)
     return pixmap;
 }
 
-const QImage SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
+const QImage XHelp::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
 {
     if (!pixmap)
         return QImage();
@@ -142,7 +141,7 @@ const QImage SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
 
 const int ArrowWidth = 10;
 const int ArrowHeight = 18;
-QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness /*= 10*/)
+QPainterPath XHelp::GetArrowHead(QPoint p1, QPoint p2, const int thickness /*= 10*/)
 {
     QLineF base(p1, p2);
     // Create the vector for the position of the base  of the arrowhead
@@ -174,7 +173,7 @@ QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness /*= 10*/)
     return path;
 }
 
-QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
+QLine XHelp::GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
 {
     QLineF l(p1, p2);
     int val = ArrowHeight + thickness * 4;
@@ -187,7 +186,7 @@ QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
 
 #define _MYDEBUG
 
-double getScale(QScreen *screen)
+double XHelp::getScale(QScreen *screen)
 {
 #ifdef _MYDEBUG
     return 2;
@@ -224,39 +223,60 @@ double getScale(QScreen *screen)
 #endif
 }
 
-static QColor g_highlightColor("#1F7AFF");
-static int g_highlightWidth(1);
-static int g_boardStyleIndex(1);
-void setBoardStyle(const int index /*= 1*/)
-{
-    g_boardStyleIndex = index;
-}
+QColor XHelp::m_borderColor("#1F7AFF");
+int XHelp::m_borderWidth(1);
+QColor XHelp::m_crosshairColor("#1F7AFF");
+int XHelp::m_crosshairWidth(1);
+bool XHelp::m_enableCrosshair(true);
+int XHelp::m_boardStyleIndex(1);
 
-const int boardStyle()
-{
-    return g_boardStyleIndex;
-}
+//void XHelp::setBoardStyle(const int index)
+//{
+//    m_boardStyleIndex = index;
+//}
+//
+//const int XHelp::boardStyle()
+//{
+//    return m_boardStyleIndex;
+//}
 
-void setHighlightColor(QColor color /*= QColor("#1F7AFF")*/)
-{
-    g_highlightColor = color;
-}
+//void XHelp::setBorderColor(QColor color)
+//{
+//    m_borderColor = color;
+//}
+//
+//const QColor XHelp::borderColor()
+//{
+//    return m_borderColor;
+//}
+//
+//void XHelp::setBorderWidth(const int width)
+//{
+//    m_borderWidth = width;
+//}
+//
+//const int XHelp::borderWidth()
+//{
+//    return m_borderWidth;
+//}
 
-const QColor highlightColor()
-{
-    return g_highlightColor;
-}
-
-void setHighlightWidth(const int width /*= 1*/)
-{
-    g_highlightWidth = width;
-}
-
-const int highlightWidth()
-{
-    return g_highlightWidth;
-}
-
-}
-
+//void XHelp::setCrosshairColor(QColor color)
+//{
+//    m_crosshairColor = color;
+//}
+//
+//const QColor XHelp::crosshairColor()
+//{
+//    return m_crosshairColor;
+//}
+//
+//void XHelp::setCrosshairWidth(const int width)
+//{
+//    m_crosshairWidth = width;
+//}
+//
+//const int XHelp::crosshairWidth()
+//{
+//    return m_crosshairWidth;
+//}
 
