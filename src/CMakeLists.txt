@@ -2,30 +2,13 @@
 set(PROJECT_NAME PicShot)
 set(PROJECT_VERSION 0.2)
 set(_version ${PROJECT_VERSION})
-#set(PROJECT_VERSION_MAJOR 0)
-#set(PROJECT_VERSION_MINOR 2)
-#set(PROJECT_VERSION_PATCH 0)
 
 project(${PROJECT_NAME})   
-set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin) # 更改二进制输出路径
+set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
+file(COPY config/config.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
-# 此处配合 VMSVC 的 UTF8-BOM 插件，达到跨平台
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    message("---using Clang---")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    message("---using GCC---")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    message("---using Intel C++---")
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    message("---using Visual Studio C++---")
-    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-endif()
-
-# msvc multicore compilation
-if (WIN32)
-    add_definitions(-DUNICODE -D_UNICODE)   # 设置 DUNICODE 编码
-
+# msvc multicore compilation and UNICODE
+if(WIN32)
     if(MSVC)
         OPTION(USE_MP "use multiple" ON)
         OPTION(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP
@@ -35,10 +18,12 @@ if (WIN32)
                 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
         endif()
         set(VS_STARTUP_PROJECT ${PROJECT_NAME})
-    endif(MSVC)
+
+        add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+        add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+    endif()
 endif()
 
-# Sources files
 # main
 set(SRCS_MAIN
     xglobal.h
@@ -61,7 +46,6 @@ set(SRCS_PLATFORM
     platform/wininfo_win.cpp
     platform/wininfo_x11.h
     platform/wininfo_x11.cpp)
-
 
 # 正则 http://blog.icodeten.com/cmake/2015/01/22/cmake-experience/
 # 删除特定平台相关的 file
@@ -325,12 +309,30 @@ else()
     message(STATUS "host processor architecture is unknown")
 endif()
 
+## 此处配合 VMSVC 的 UTF8-BOM 插件，达到跨平台
+#if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+#    message("---using Clang---")
+#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+#    message("---using GCC---")
+#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+#    message("---using Intel C++---")
+#elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+#    message("---using Visual Studio C++---")
+#endif()
+
 # 定义一些变量，可以在 CPP 中使用
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")           # PicShot
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${_version}")            # 0.2 这个没打印出来，很奇怪，改用下面这个
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH="${_bit_arch}")                  # x64/x86
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
+if(WIN32)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE
+        WIN32_LEAN_AND_MEAN                            # 仅仅包含常用的 API 的头文件，加快编译速度，效果明显
+        _CRT_SECURE_NO_WARNINGS                        # 允许使用 strcpy，scanf等不安全的函数
+        UNICODE
+        _UNICODE)
+endif()
 
 message("==========BRGIN============")
 message("_PROJECT_NAME:${PROJECT_NAME}")

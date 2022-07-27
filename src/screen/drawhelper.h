@@ -11,7 +11,6 @@
 #ifndef XDRAW_H
 #define XDRAW_H
 
-#include "../xglobal.h"
 #include <QObject>
 #include <QPen>
 #include <QRect>
@@ -21,6 +20,7 @@
 #include <QScreen>
 #include <QColor>
 #include <QCoreApplication>
+#include <QApplication>
 #include <QSettings>
 #include <QString>
 //#include <Format>
@@ -234,7 +234,7 @@ private:
 
 // ------------------------
 // 创建全局静态 单例 的对象, 就不浪费生命重新创建了，  路径后面替换为 ConfigLocation
-Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, ("D:/config.ini", QSettings::IniFormat));
+Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, (qApp->applicationDirPath() + "/config.ini", QSettings::IniFormat));
 
 // perference UI config
 const QString INIT_GENERAL("General");                   // 初始化 常规
