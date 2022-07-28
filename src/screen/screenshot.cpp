@@ -46,7 +46,7 @@ namespace Util {
 
 ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
-    , m_scal(XHelp::getScale())
+    , m_scal(insXHelp->getScale())
     , m_screens(QApplication::screens())
 	, m_primaryScreen(QApplication::primaryScreen())
 	, m_currPixmap(nullptr)
@@ -547,8 +547,8 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     pa.save();
     pa.setRenderHint(QPainter::Antialiasing, true);
     QPen pen;
-    pen.setWidth(XHelp::borderWidth() * m_scal + SELECT_ASSIST_RECT_PEN_WIDTH);
-    pen.setColor(XHelp::borderColor());  //
+    pen.setWidth(insXHelp->borderWidth() * m_scal + SELECT_ASSIST_RECT_PEN_WIDTH);
+    pen.setColor(insXHelp->borderColor());  //
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
@@ -581,7 +581,7 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
     pa.drawLine(l7.translated(QPoint(penWidth / 2, 0)));
     pa.drawLine(l8.translated(QPoint(penWidth / 2, 0)));
 
-    pen.setWidth(XHelp::borderWidth() * m_scal);
+    pen.setWidth(insXHelp->borderWidth() * m_scal);
     pa.setPen(pen);
     pa.drawRect(rt);
     pa.restore();
@@ -637,8 +637,8 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         if (step.bStyele == 0) {
             pa.drawLine(step.p1, step.p2);
         } else if (step.bStyele == 1 || step.bStyele == 2) {
-            pa.drawLine(XHelp::GetShorterLine(step.p1, step.p2));  // 0, 1, 2
-            QPainterPath arrowPath = XHelp::GetArrowHead(step.p1, step.p2);
+            pa.drawLine(insXHelp->GetShorterLine(step.p1, step.p2));  // 0, 1, 2
+            QPainterPath arrowPath = insXHelp->GetArrowHead(step.p1, step.p2);
             pa.fillPath(arrowPath, step.brush);
         }
         break;
@@ -676,10 +676,10 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         
         QPixmap mosaicPixmap = m_currPixmap->copy(QRect(mapFromGlobal(step.rt.topLeft()) * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
         if (step.bStyele == 0) {
-            const QPixmap* pix = XHelp::SetMosaicSmooth(&mosaicPixmap, step.mscPx);
+            const QPixmap* pix = insXHelp->SetMosaicSmooth(&mosaicPixmap, step.mscPx);
             pa.drawPixmap(step.rt, *pix);
 		} else if (step.bStyele == 1) {
-            const QImage img = XHelp::SetMosaicPixlelated(&mosaicPixmap, step.mscPx);
+            const QImage img = insXHelp->SetMosaicPixlelated(&mosaicPixmap, step.mscPx);
             pa.drawImage(step.rt, img);
 		}
 
@@ -1115,7 +1115,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
         // 绘画边框样式
 
-        const int styleIndex = XHelp::boardStyle();
+        const int styleIndex = insXHelp->boardStyle();
         if (styleIndex == 1) {
             drawBorderPS(pa, rtSel);
         } else if (styleIndex == 2) {
@@ -1137,9 +1137,9 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     }
 
     // 绘画十字线
-    if (XHelp::enableCrosshair() && !m_bFirstPress) {
+    if (insXHelp->enableCrosshair() && !m_bFirstPress) {
         pa.save();
-        pa.setPen(QPen(XHelp::crosshairColor(), XHelp::crosshairWidth()));
+        pa.setPen(QPen(insXHelp->crosshairColor(), insXHelp->crosshairWidth()));
         pa.setBrush(Qt::NoBrush);
 
         QPoint p(QCursor::pos());

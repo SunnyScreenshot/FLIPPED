@@ -20,7 +20,7 @@
 
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
-    , m_scal(XHelp::getScale())
+    , m_scal(insXHelp->getScale())
     , m_blur(new BlurWidget(this))
     , m_orien(orien)
     , m_layout(nullptr)
@@ -152,13 +152,13 @@ void SelectBar::onToolBtn()
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* it : listBtn) {
         QString path = ":/resources/tool/" + it->objectName() + ".svg";
-        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale());
+        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * insXHelp->getScale());
 
         if (it == tb) {
             if (it->isCheckable()) {
                 if (it->isChecked()) {
                     enableDraw = true;
-                    it->setIcon(XHelp::ChangeSVGColor(path, "path", XHelp::borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelp::getScale()));
+                    it->setIcon(insXHelp->ChangeSVGColor(path, "path", insXHelp->borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * insXHelp->getScale()));
                 } else {
                     it->setIcon(QIcon(path));
                 }

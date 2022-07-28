@@ -29,7 +29,16 @@
 
 int XDrawStep::totalIdx = 0;
 
-// 辅助功能函数
+XHelper::XHelper()
+    : m_borderColor("#1F7AFF")
+    , m_borderWidth(1)
+    , m_crosshairColor("#1F7AFF")
+    , m_crosshairWidth(1)
+    , m_enableCrosshair(true)
+    , m_boardStyleIndex(1)
+{
+
+}
 
 /*!
  * \brief changeSVGColor 修改 .svg 的填充色
@@ -39,7 +48,7 @@ int XDrawStep::totalIdx = 0;
  * \param size   svg 伸缩后的尺寸
  * \return 一个 QIcon 对象
  */
-QIcon XHelp::ChangeSVGColor(QString path, QString shape, QColor color, QSize size)
+QIcon XHelper::ChangeSVGColor(QString path, QString shape, QColor color, QSize size)
 {
     QFile file(path);
     file.open(QIODevice::ReadOnly);
@@ -62,7 +71,7 @@ QIcon XHelp::ChangeSVGColor(QString path, QString shape, QColor color, QSize siz
     return myicon;
 }
 
-void XHelp::SetAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval)
+void XHelper::SetAttrRecur(QDomElement &elem, QString strtagname, QString strattr, QString strattrval)
 {
     // if it has the tagname then overwritte desired attribute
     if (elem.tagName().compare(strtagname) == 0)
@@ -78,7 +87,7 @@ void XHelp::SetAttrRecur(QDomElement &elem, QString strtagname, QString strattr,
     }
 }
 
-const QPixmap* XHelp::SetMosaicSmooth(QPixmap* pixmap, int px)
+const QPixmap* XHelper::SetMosaicSmooth(QPixmap* pixmap, int px)
 {
     if (!pixmap)
         return nullptr;
@@ -105,7 +114,7 @@ const QPixmap* XHelp::SetMosaicSmooth(QPixmap* pixmap, int px)
     return pixmap;
 }
 
-const QImage XHelp::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
+const QImage XHelper::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
 {
     if (!pixmap)
         return QImage();
@@ -141,7 +150,7 @@ const QImage XHelp::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
 
 const int ArrowWidth = 10;
 const int ArrowHeight = 18;
-QPainterPath XHelp::GetArrowHead(QPoint p1, QPoint p2, const int thickness /*= 10*/)
+QPainterPath XHelper::GetArrowHead(QPoint p1, QPoint p2, const int thickness /*= 10*/)
 {
     QLineF base(p1, p2);
     // Create the vector for the position of the base  of the arrowhead
@@ -173,7 +182,7 @@ QPainterPath XHelp::GetArrowHead(QPoint p1, QPoint p2, const int thickness /*= 1
     return path;
 }
 
-QLine XHelp::GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
+QLine XHelper::GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
 {
     QLineF l(p1, p2);
     int val = ArrowHeight + thickness * 4;
@@ -186,7 +195,7 @@ QLine XHelp::GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/)
 
 #define _MYDEBUG
 
-double XHelp::getScale(QScreen *screen)
+double XHelper::getScale(QScreen *screen)
 {
 #ifdef _MYDEBUG
     return 2;
@@ -222,61 +231,3 @@ double XHelp::getScale(QScreen *screen)
     #endif
 #endif
 }
-
-QColor XHelp::m_borderColor("#1F7AFF");
-int XHelp::m_borderWidth(1);
-QColor XHelp::m_crosshairColor("#1F7AFF");
-int XHelp::m_crosshairWidth(1);
-bool XHelp::m_enableCrosshair(true);
-int XHelp::m_boardStyleIndex(1);
-
-//void XHelp::setBoardStyle(const int index)
-//{
-//    m_boardStyleIndex = index;
-//}
-//
-//const int XHelp::boardStyle()
-//{
-//    return m_boardStyleIndex;
-//}
-
-//void XHelp::setBorderColor(QColor color)
-//{
-//    m_borderColor = color;
-//}
-//
-//const QColor XHelp::borderColor()
-//{
-//    return m_borderColor;
-//}
-//
-//void XHelp::setBorderWidth(const int width)
-//{
-//    m_borderWidth = width;
-//}
-//
-//const int XHelp::borderWidth()
-//{
-//    return m_borderWidth;
-//}
-
-//void XHelp::setCrosshairColor(QColor color)
-//{
-//    m_crosshairColor = color;
-//}
-//
-//const QColor XHelp::crosshairColor()
-//{
-//    return m_crosshairColor;
-//}
-//
-//void XHelp::setCrosshairWidth(const int width)
-//{
-//    m_crosshairWidth = width;
-//}
-//
-//const int XHelp::crosshairWidth()
-//{
-//    return m_crosshairWidth;
-//}
-

@@ -17,7 +17,7 @@
 
 ManageBar::ManageBar(Qt::Orientations orien /*= Qt::Horizontal*/, QWidget* parent /*= nullptr*/)
     : QWidget(parent)
-    , m_scal(XHelp::getScale())
+    , m_scal(insXHelp->getScale())
     , m_orien(orien)
     , m_layout(nullptr)
 {

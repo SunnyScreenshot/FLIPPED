@@ -25,7 +25,7 @@
 
 ExWidget::ExWidget(Qt::Orientations orien, QWidget* parent)
     : QWidget(parent)
-    , m_scal(XHelp::getScale())
+    , m_scal(insXHelp->getScale())
     , m_orien(orien)
     , m_layout(new QGridLayout())
     , m_curLab(nullptr)

@@ -77,7 +77,7 @@ using namespace XC;
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
-    , m_scale(XHelp::getScale())
+    , m_scale(insXHelp->getScale())
 {
     initUI();
 }
@@ -651,32 +651,32 @@ void Preference::onBorderStyle(const QString& style)
 
     bool ok = false;
     int idx = bt->itemData(bt->currentIndex()).toInt(&ok);
-    XHelp::setBoardStyle(idx);
+    insXHelp->setBoardStyle(idx);
 
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderStyle, style);
 }
 
 void Preference::onBorderColor(const QColor& color)
 {
-    XHelp::setBorderColor(color);
+    insXHelp->setBorderColor(color);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderColor, color.name());
 }
 
 void Preference::onBorderWidth(int val)
 {
-    XHelp::setBorderWidth(val);
+    insXHelp->setBorderWidth(val);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)
 {
-    XHelp::setCrosshairColor(color);
+    insXHelp->setCrosshairColor(color);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, color.name());
 }
 
 void Preference::onCrosshairWidth(int val)
 {
-    XHelp::setCrosshairWidth(val);
+    insXHelp->setCrosshairWidth(val);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairWidth, val);
 }
 
@@ -689,7 +689,7 @@ void Preference::onSmartWindow(int val)
 void Preference::onShowCrosshair(int val)
 {
     const bool b = checkBoxState2Bool(val);
-    XHelp::setEnableCrosshair(b);
+    insXHelp->setEnableCrosshair(b);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshair, b);
 }
 

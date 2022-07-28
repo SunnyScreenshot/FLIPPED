@@ -45,7 +45,7 @@ void SelectSize::paintEvent(QPaintEvent* e)
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-    QColor col(XHelp::borderColor());
+    QColor col(insXHelp->borderColor());
     pa.setPen(Qt::NoPen);
     pa.setBrush(col);
     pa.drawRoundedRect(rect(), SS_RADIRS, SS_RADIRS);
