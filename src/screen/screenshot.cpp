@@ -56,7 +56,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_bFirstPress(false)
     , m_pCurrShape(nullptr)
 	, m_textEdit(new XTextWidget(this))
-    , m_rtAtuoMonitor(0, 0, 0, 0)
+    , m_rtSmartWindow(0, 0, 0, 0)
     , m_barOrien(Qt::Horizontal)  // Horizontal | Vertical
     , m_selSize(new SelectSize("test", this))
     , m_selBar(new SelectBar(m_barOrien, this))
@@ -200,7 +200,7 @@ void ScreenShot::updateCursorShape(const QPoint pos)
     } else if (m_rtCalcu.scrnType == ScrnType::Wait) {
         if (cursArea == CursorArea::External) {
 
-            (m_rtAtuoMonitor.contains(pos, false) && !m_bFirstSel) || m_rtCalcu.getSelRect().contains(pos, true) ? 
+            (m_rtSmartWindow.contains(pos, false) && !m_bFirstSel) || m_rtCalcu.getSelRect().contains(pos, true) ? 
                 setCursor(Qt::ArrowCursor) : setCursor(Qt::ForbiddenCursor);
         } else if (cursArea == CursorArea::Internal){
             setCursor(Qt::SizeAllCursor);
@@ -257,7 +257,7 @@ void ScreenShot::onClearScreen()
     m_paraBar->setVisible(false);
     m_step.clear();
 
-    m_rtAtuoMonitor = QRect();
+    m_rtSmartWindow = QRect();
     if (m_rtCalcu.scrnType == ScrnType::Wait) // 状态重置
         setMouseTracking(true);
 };
@@ -1019,7 +1019,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     // 选中矩形图片
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
     if (m_rtCalcu.bSmartMonitor)
-        rtSel = m_rtAtuoMonitor;
+        rtSel = m_rtSmartWindow;
 
     m_rtCalcu.limitBound(rtSel, m_rtVirDesktop);           // 修复边界时图片被拉伸
     if (rtSel.width() > 0 && rtSel.height() > 0) {
@@ -1204,7 +1204,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.drawText(tPosText - QPoint(0, space * 5), QString("pos(): (%1, %2)")
                 .arg(pos().x()).arg(pos().y()));
     pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2, %3 * %4)")
-        .arg(m_rtAtuoMonitor.x()).arg(m_rtAtuoMonitor.y()).arg(m_rtAtuoMonitor.width()).arg(m_rtAtuoMonitor.height()));
+        .arg(m_rtSmartWindow.x()).arg(m_rtSmartWindow.y()).arg(m_rtSmartWindow.width()).arg(m_rtSmartWindow.height()));
     pa.drawText(tPosText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
         .arg(m_rtCalcu.bSmartMonitor));
     pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
@@ -1408,7 +1408,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 		m_rtCalcu.pos2 = event->globalPos();
 
         if (m_rtCalcu.pos1 == m_rtCalcu.pos2) {  // 点击到一个点，视作智能检测窗口； 否则就是手动选择走下面逻辑
-            m_rtCalcu.setRtSel(m_rtAtuoMonitor);
+            m_rtCalcu.setRtSel(m_rtSmartWindow);
         }
 
         m_rtCalcu.bSmartMonitor = false; // 自动选择也结束
@@ -1601,7 +1601,7 @@ void ScreenShot::updateGetWindowsInfo()
     winId._xWindow = (unsigned long)0;
 #endif
 
-    Util::getRectFromCurrentPoint(winId, m_rtAtuoMonitor);
+    Util::getRectFromCurrentPoint(winId, m_rtSmartWindow);
 }
 
 double ScreenShot::getScale(QScreen * screen)

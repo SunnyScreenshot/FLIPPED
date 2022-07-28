@@ -11,11 +11,8 @@
 #include "preference.h"
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"
-#include "../widget/xkeysequenceedit.h"
 #include "../tool/base/colorparabar.h"
 #include "../screen/drawhelper.h"
-#include "../screen/screenshot.h"
-#include "../screen/tray.h"
 #include "../core/xlog.h"
 #include "appellation.h"
 #include "hotkeyswidget.h"
@@ -40,8 +37,6 @@
 #include <QLineEdit>
 #include <QStandardPaths>
 #include <QSizePolicy>
-
-using namespace XC;
 
 // test
 #include <QCoreApplication>
@@ -244,7 +239,7 @@ QWidget* Preference::tabInterface()
     QStringList styles;
     styles << tr("1_picshot") << tr("2_mac") << tr("3_deepin");
 
-    for (const auto t : styles) {
+    for (const auto &t : styles) {
         bool ok = false;
         int idx = t.left(1).toInt(&ok);
 
@@ -710,21 +705,25 @@ void Preference::onImageQuailty(int val)
 
 void Preference::onFileName(const QString& name)
 {
+    insXHelp->setPath(toFileName, name);
     WRITE_CONFIG_INI(INIT_OUTPUT, toFileName, name);
 }
 
 void Preference::onQuickSavePath(const QString& path)
 {
+    insXHelp->setPath(toQuickSavePath, path);
     WRITE_CONFIG_INI(INIT_OUTPUT, toQuickSavePath, path);
 }
 
 void Preference::onAutoSavePath(const QString& path)
 {
+    insXHelp->setPath(toAutoSavePath, path);
     WRITE_CONFIG_INI(INIT_OUTPUT, toAutoSavePath, path);
 }
 
 void Preference::onConfigPath(const QString& path)
 {
+    insXHelp->setPath(toConfigPath, path);
     WRITE_CONFIG_INI(INIT_OUTPUT, toConfigPath, path);
 }
 
@@ -758,15 +757,19 @@ void Preference::onChoosePath()
 
 void Preference::onWindowShadow(int sta)
 {
-    WRITE_CONFIG_INI(INIT_PIN, tpWindowShadow, checkBoxState2Bool(sta));
+    bool checked = checkBoxState2Bool(sta);
+    insXHelp->setWinShadow(checked);
+    WRITE_CONFIG_INI(INIT_PIN, tpWindowShadow, checked);
 }
 
 void Preference::onOpacity(int val)
 {
+    insXHelp->setPinOpacity(val);
     WRITE_CONFIG_INI(INIT_PIN, tpOpacity, val);
 }
 
 void Preference::onMaxSize(int val)
 {
+    insXHelp->setPinMaxSize(val);
     WRITE_CONFIG_INI(INIT_PIN, tpMaxSize, val);
 }

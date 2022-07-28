@@ -226,14 +226,34 @@ public:
     QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
     QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
 
+    // tabGeneral
+    // tabInterface
+
+    // tabOutput
+	QString path(const QString key) const;
+    void setPath(const QString key, const QString val);
+
+    // tabPin
+    bool winShadow() const;
+    void setWinShadow(bool newWinShadow);
+    int pinOpacity() const;
+    void setPinOpacity(int newPinOpacity);
+    int pinMaxSize() const;
+    void setPinMaxSize(int newPinMaxSize);
+
 private:
+    int m_boardStyleIndex;
     QColor m_borderColor;                      // 边框
     int m_borderWidth;
     QColor m_crosshairColor;                   // 边框
     int m_crosshairWidth;
 	bool m_enableCrosshair;
 
-    int m_boardStyleIndex;
+	QMap<QString, QString> m_path;
+
+    bool m_winShadow;
+    int m_pinOpacity;
+    int m_pinMaxSize;
 };
 
 // ------------------------

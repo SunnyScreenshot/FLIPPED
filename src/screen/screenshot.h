@@ -135,9 +135,9 @@ private:
 
 	// test
 	XTextWidget* m_textEdit;
-	QRect m_rtAtuoMonitor;                 // 自动检测窗口矩形大小；用以给其它赋值
 
     // new refactor
+	QRect m_rtSmartWindow;                 // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
     QPointer<SelectSize> m_selSize;        // 左上角显示窗口大小
     QPointer<SelectBar> m_selBar;

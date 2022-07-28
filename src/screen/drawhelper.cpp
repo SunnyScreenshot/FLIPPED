@@ -9,7 +9,7 @@
  * Description: 
  ******************************************************************/
 #include "drawhelper.h"
-
+#include "../preference/appellation.h"
 #include <QScreen>
 #include <QFile>
 #include <QByteArray>
@@ -30,14 +30,20 @@
 int XDrawStep::totalIdx = 0;
 
 XHelper::XHelper()
-    : m_borderColor("#1F7AFF")
+    : m_boardStyleIndex(1)
+    , m_borderColor("#1F7AFF")
     , m_borderWidth(1)
     , m_crosshairColor("#1F7AFF")
     , m_crosshairWidth(1)
     , m_enableCrosshair(true)
-    , m_boardStyleIndex(1)
+    , m_winShadow(true)
+    , m_pinOpacity(90)
+    , m_pinMaxSize(100000)
 {
-
+    m_path = { {toFileName, "PicShot_xxxx.png"},
+               {toQuickSavePath, qApp->applicationDirPath() + "/History/QuickSave"},
+               {toAutoSavePath, qApp->applicationDirPath() + "/History/AutoSave"},
+               {toConfigPath, qApp->applicationDirPath() + "/History/Config"}};
 }
 
 /*!
@@ -191,6 +197,46 @@ QLine XHelper::GetShorterLine(QPoint p1, QPoint p2, const int thickness /*= 10*/
     }
     l.setLength(l.length() + thickness * 2 - val);
     return l.toLine();
+}
+
+QString XHelper::path(const QString key) const
+{
+    return m_path.value(key, "");
+}
+
+void XHelper::setPath(const QString key, const QString val)
+{
+    m_path.insert(key, val);
+}
+
+int XHelper::pinOpacity() const
+{
+    return m_pinOpacity;
+}
+
+void XHelper::setPinOpacity(int newPinOpacity)
+{
+    m_pinOpacity = newPinOpacity;
+}
+
+int XHelper::pinMaxSize() const
+{
+    return m_pinMaxSize;
+}
+
+void XHelper::setPinMaxSize(int newPinMaxSize)
+{
+    m_pinMaxSize = newPinMaxSize;
+}
+
+bool XHelper::winShadow() const
+{
+    return m_winShadow;
+}
+
+void XHelper::setWinShadow(bool newWinShadow)
+{
+    m_winShadow = newWinShadow;
 }
 
 #define _MYDEBUG
