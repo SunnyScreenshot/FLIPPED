@@ -37,17 +37,19 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
              << "mosaic"
              << "text"
              << "serialnumber"
+             << "pin"
              << "revocation"
              << "renewal"
              << "save"
              << "cancel"
              << "finish";
 
-    m_tbOnlyClickName << "revocation"
-                    << "renewal"
-                    << "save"
-                    << "cancel"
-                    << "finish";
+    m_tbOnlyClickName << "pin"
+                      << "revocation"
+                      << "renewal"
+                      << "save"
+                      << "cancel"
+                      << "finish";
 
     QStringList barTip;
     barTip << tr("rectangle")
@@ -57,6 +59,7 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
            << tr("mosaic")
            << tr("text")
            << tr("serialnumber")
+           << tr("pin")
            << tr("revocation")
            << tr("renewal")
            << tr("save")
@@ -88,9 +91,7 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
         addWidget(m_vItem[i]);
 
         QString tbName(m_tbName[i]);
-        if (tbName == "serialnumber"
-                || tbName == "renewal"
-                || tbName == "serialnumber")
+        if (tbName == "pin" || tbName == "renewal")
             addSpacer();
 
         connect(m_vItem[i], &QToolButton::released, this, &SelectBar::onToolBtn);
@@ -186,6 +187,7 @@ void SelectBar::onToolBtn()
     // mosaic  、 smooth
     // text
     // serialnumber
+    // pin
     // gif 暂不添加
     // revocation
     // renewal
@@ -215,6 +217,8 @@ void SelectBar::onToolBtn()
         emit sigSelShape(XC::DrawShape::Text, isChecked);
     } else if (tb->objectName() == "serialnumber") {
         emit sigSelShape(XC::DrawShape::SerialNumber, isChecked);
+    } else if (tb->objectName() == "pin") {
+        emit sigPin();
     } else if (tb->objectName() == "revocation") {
         emit sigRevocation();
     } else if (tb->objectName() == "renewal") {

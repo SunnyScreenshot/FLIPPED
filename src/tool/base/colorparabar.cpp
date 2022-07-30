@@ -24,7 +24,7 @@
 #include <QPen>
 #include <QColor>
 #include <QColorDialog>
-
+#include <QMetaProperty>
 //test
 #include <QMessageBox>
 #include <QDebug>
@@ -34,6 +34,8 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
     , m_scal(insXHelp->getScale())
     , m_orien(orien)
     , m_layout(nullptr)
+    , m_curXLab(nullptr)
+    , m_curCol()
 {
     m_labMap = { {"lab0_Red", "#DB000F"}
    , {"lab1_Yellow", "#FFCF53"}
@@ -47,9 +49,9 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
     if (mode == ColorParaBarMode::CPB_ParaBar) {
         m_layout = new QGridLayout(this);
         QGridLayout* layout = static_cast<QGridLayout *>(m_layout);
-
         int rowMax = 0;
         int colMax = 0;
+
         if (m_orien == Qt::Horizontal) {
             rowMax = 2;
             colMax = m_labMap.size() / rowMax;
@@ -61,15 +63,10 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
         auto it = m_labMap.begin();
         for (int i = 0; i < rowMax; ++i) {
             for (int j = 0; j < colMax; ++j) {
-
                 XLabel* lab = new XLabel(this);
-
                 if (i == 0 && j == 0) { // 初始化为默认的第一个 XLabel 颜色 
-                    if (!setProperty("curPick", QVariant::fromValue((void*)lab)))
-                        XLOG_INFO("Property [curPick] initialization faile.");
-
-                    if (!setProperty("curColor", QColor(it.value())))
-                        XLOG_INFO("Property [curColor] initialization faile.");
+                    m_curXLab = lab;
+                    m_curCol.setNamedColor(it.value());
                 }
 
                 lab->setObjectName(it.key());
@@ -77,11 +74,10 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
                 lab->setFixedSize(width, width);
                 lab->installEventFilter(this);
 
-                if ((it + 1) == m_labMap.end()) {  // 最后一个渐变色
+                if ((it + 1) == m_labMap.end()) // 最后一个渐变色
                     lab->setIsPickColor(true);
-                } else {
+                else
                     lab->setColor(it.value(), 1);
-                }
 
                 layout->addWidget(lab, i, j);
                 it++;
@@ -95,17 +91,11 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
     } else if (mode == ColorParaBarMode::CPB_HighLight) {
         m_layout = new QHBoxLayout(this);
         QHBoxLayout* layout = static_cast<QHBoxLayout*>(m_layout);
-
-        auto it = m_labMap.begin();
-        for (int i = 0; i < m_labMap.size(); ++i) {
-
+        for (auto& it = m_labMap.cbegin(); it != m_labMap.cend(); ++it) {
                 XLabel* lab = new XLabel(this);
-                if (i == 0) { // 初始化为默认的第一个 XLabel 颜色 
-                    if (!setProperty("curPick", QVariant::fromValue((void*)lab)))
-                        XLOG_INFO("Property [curPick] initialization faile.");
-
-                    if (!setProperty("curColor", QColor(it.value())))
-                        XLOG_INFO("Property [curColor] initialization faile.");
+                if (it == m_labMap.cbegin()) { // 初始化为默认的第一个 XLabel 颜色 
+                    m_curXLab = lab;
+                    m_curCol.setNamedColor(it.value());
                 }
 
                 lab->setObjectName(it.key());
@@ -113,14 +103,12 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
                 lab->setFixedSize(width, width);
                 lab->installEventFilter(this);
 
-                if ((it + 1) == m_labMap.end()) {  // 最后一个渐变色
+                if (it + 1 == m_labMap.cend())  // 最后一个渐变色
                     lab->setIsPickColor(true);
-                } else {
+                else
                     lab->setColor(it.value(), 1);
-                }
 
                 layout->addWidget(lab);
-                it++;
         }
 
         //this->installEventFilter(this);
@@ -132,10 +120,6 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
     setWindowFlags(Qt::FramelessWindowHint | windowFlags());
 }
 
-ColorParaBar::~ColorParaBar()
-{
-}
-
 void ColorParaBar::setOrientations(Qt::Orientations orien)
 {
     m_orien = orien;
@@ -143,17 +127,31 @@ void ColorParaBar::setOrientations(Qt::Orientations orien)
 
 QColor ColorParaBar::setCurColor(const QColor col)
 {
-    if (col.isValid()) {
-        if (!setProperty("curColor", col))
-            XLOG_INFO("Property [curColor] pick-uo new color faile, color:{}.", col.name().toUtf8().data());
+    if (col.isValid() || m_curCol.name() != col.name()) {
+        m_curCol.setNamedColor(col.name());
+        onUpdateSel(col);
     }
 
-    return property("curColor").value<QColor>();
+    return m_curCol;
 }
 
 const QColor ColorParaBar::getCurColor()
 {
-    return property("curColor").value<QColor>();
+    return m_curCol;
+}
+
+void ColorParaBar::onUpdateSel(const QColor& col)
+{
+    m_curXLab = findChild<XLabel*>(m_labMap.lastKey());
+    m_curCol.setNamedColor(col.name());
+
+    for (auto& it = m_labMap.cbegin(); it != m_labMap.cend(); ++it){
+        qDebug() << "col.name():" << col.name() << "   it.value():" << it.value();
+        if (it.value().compare(col.name(), Qt::CaseInsensitive) == 0) {
+            m_curXLab = findChild<XLabel*>(it.key());
+            break;
+        }
+    }
 }
 
 // #see: 用法 https://blog.csdn.net/xiezhongyuan07/article/details/79992099
@@ -165,28 +163,15 @@ bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
         return false;
 
     if (event->type() == QEvent::MouseButtonRelease) {
-        QColor color = property("curColor").value<QColor>();
-        if (lab->objectName().compare("lab7_Pick") == 0) {
-            color = QColorDialog::getColor(lab->palette().color(QPalette::Window), this, tr("选择文本颜色"));
+        if (lab->objectName().compare(m_labMap.lastKey()) == 0) {
+            m_curCol = QColorDialog::getColor(lab->palette().color(QPalette::Window), this, tr("选择文本颜色"));
         } else {
             const auto& it = m_labMap.find(lab->objectName());
-            color = it.value();
+            m_curCol.setNamedColor(it.value());
         }
 
-        emit sigColorChange(color);
-        //QMessageBox::about(nullptr, lab->objectName(), it.value());
-        //for (const auto& it : findChildren<XLabel*>()) {
-        //    qDebug() << it << " --> " << it->objectName() << it->isVisible() << "  " << it->rect();
-        //}
-
-        if (!setProperty("curPick", QVariant::fromValue(static_cast<void*>(lab))))
-            XLOG_INFO("Property [curPick] pick-up new ptr faile, ptr:{}.", static_cast<void*>(lab));
-
-        if (color.isValid()) {
-            if (!setProperty("curColor", color))
-                XLOG_INFO("Property [curColor] pick-uo new color faile, color:{}.", color.name().toUtf8().data());
-        }
-        
+        emit sigColorChange(m_curCol);
+        m_curXLab = lab;
         update();
         return true;
 
@@ -200,25 +185,19 @@ bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
 void ColorParaBar::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
-    XLabel* lab = static_cast<XLabel*>(property("curPick").value<void*>());
-    //XLabel* lab = static_cast<XLabel *>(childAt(mapFromGlobal(cursor().pos()))); // 通过此刻的光标的位置，选中对应 XLabel*
-    //for (const auto& it : findChildren<XLabel*>()) {
-    //    qDebug() << it << "  " << it->objectName() << it->isVisible() << "  " << it->rect();
-    //}
-
-    if (!lab)
+    if (!m_curXLab)
         return;
 
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    QPen pen(property("curColor").value<QColor>());
+    QPen pen(m_curCol);
     pen.setWidth(CPB_WIDTH_SELECTED * m_scal);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
     int margin = CPB_MARGIN_SELECTED * m_scal;
-    auto topLeft = lab->mapToGlobal(QPoint(0, 0)); // 子控件的窗口的（左上角的）绝对坐标; QPoint(0, 0) 为子控件的左上角坐标，子窗口的总是(0, 0)
+    auto topLeft = m_curXLab->mapToGlobal(QPoint(0, 0)); // 子控件的窗口的（左上角的）绝对坐标; QPoint(0, 0) 为子控件的左上角坐标，子窗口的总是(0, 0)
     topLeft = mapFromGlobal(topLeft);              // 切换为相对父窗口的绝对坐标
-    const QRect rt = QRect(topLeft, lab->size()).adjusted(-margin, -margin, margin, margin);
+    const QRect rt = QRect(topLeft, m_curXLab->size()).adjusted(-margin, -margin, margin, margin);
     pa.drawEllipse(rt.center(), rt.width() / 2, rt.height() / 2);
 }

@@ -11,6 +11,7 @@
 #include "screenshot.h"
 #include "../core/xlog.h"
 #include "../platform/wininfo.h"
+#include "../tool/pin/pinwidget.h"
 #include <QScreen>
 #include <QPixmap>
 #include <QApplication>
@@ -155,6 +156,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_selBar, &SelectBar::sigSelShape, this, &ScreenShot::onSelShape);
     connect(m_selBar, &SelectBar::sigRevocation, this, &ScreenShot::onRevocation);
     connect(m_selBar, &SelectBar::sigRenewal, this, &ScreenShot::onRenewal);
+    connect(m_selBar, &SelectBar::sigPin, this, &ScreenShot::onPin);
     connect(m_selBar, &SelectBar::sigSave, this, &ScreenShot::onSave);
     connect(m_selBar, &SelectBar::sigCancel, this, &ScreenShot::onCancel);
     connect(m_selBar, &SelectBar::sigFinish, this, &ScreenShot::onFinish);
@@ -348,6 +350,16 @@ void ScreenShot::onRenewal()
     m_vDrawUndo.pop_back();
     qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
     update();
+}
+
+void ScreenShot::onPin()
+{
+    if (m_savePixmap.isNull())
+        return;
+
+    auto pin = new PinWidget(m_savePixmap, m_savePixmap.rect(), nullptr);   // 使用 nullptr，不会泄露
+    pin->move(m_rtCalcu.getSelRect().topLeft());
+    pin->show();
 }
 
 void ScreenShot::onSave()

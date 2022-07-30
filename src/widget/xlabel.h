@@ -33,4 +33,7 @@ private:
     bool m_bPickColor;    // 默认为非渐变色
 };
 
+//Q_DECLARE_METATYPE(XLabel);  // 另外自定义类型中一定要有默认构造函数
+Q_DECLARE_METATYPE(XLabel*); // 提供给 QVariant 使用
+
 #endif // XLABEL_H

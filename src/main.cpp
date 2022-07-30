@@ -19,7 +19,7 @@
 // test
 //#include <QHotkey>
 #include "./screen/tray.h"
-#include "widget/xframelesswidget.h"
+#include "tool/pin/pinwidget.h"
 #include "widget/xroundwidget.h"
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"
@@ -130,8 +130,8 @@ int main(int argc, char *argv[])
 //    t4->move(100, 200);
 //    t4->show();
 
-    XFrameLessWidget* w5 = new XFrameLessWidget(QPixmap("C:/Users/xmuli/Desktop/Snipaste_2022-07-16_02-13-39.png"), QRect(100, 100, 400, 400));
-    w5->show();
+//    PinWidget* w5 = new PinWidget(QPixmap("C:/Users/xmuli/Desktop/Snipaste_2022-07-16_02-13-39.png"), QRect(100, 100, 400, 400));
+//    w5->show();
 
     return QApplication::exec();
 }

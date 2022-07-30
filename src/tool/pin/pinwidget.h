@@ -20,11 +20,11 @@ class QMouseEvent;
 class QWheelEvent;
 class QGraphicsDropShadowEffect;
 
-class XFrameLessWidget : public QWidget
+class PinWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit XFrameLessWidget(const QPixmap& pixmap, const QRect& geometry, QWidget* parent = nullptr);
+    explicit PinWidget(const QPixmap& pixmap, const QRect& geometry, QWidget* parent = nullptr);
 
 private:
     void setScaledPixmapToLabel(const QSize& newSize, const qreal scale, const bool expanding);

@@ -79,9 +79,7 @@ set(SRCS_WIDGET
     widget/xframewidget.h
     widget/xframewidget.cpp
     widget/xcombobox.h
-    widget/xcombobox.cpp
-    widget/xframelesswidget.h
-    widget/xframelesswidget.cpp)
+    widget/xcombobox.cpp)
 
 # tool
 set(SRCS_TOOL
@@ -95,6 +93,8 @@ set(SRCS_TOOL
     tool/selectsize/selectsize.cpp
     tool/magnifier/magnifier.h
     tool/magnifier/magnifier.cpp
+    tool/pin/pinwidget.h
+    tool/pin/pinwidget.cpp
     tool/selectbar.h
     tool/selectbar.cpp
     tool/parameterbar.h

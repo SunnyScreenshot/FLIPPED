@@ -29,6 +29,7 @@ class BlurWidget;
 // mosaic  、 smooth
 // text
 // serialnumber
+// pin
 // gif 暂不添加
 // revocation
 // renewal
@@ -57,6 +58,7 @@ signals:
     void sigSelShape(DrawShape shape, bool checked);
     void sigRevocation();
     void sigRenewal();
+    void sigPin();
     void sigSave();
     void sigCancel();
     void sigFinish();

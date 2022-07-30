@@ -32,7 +32,7 @@ class ColorParaBar : public QWidget
     Q_OBJECT
 public:
     ColorParaBar(ColorParaBarMode mode = ColorParaBarMode::CPB_ParaBar, Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
-    virtual ~ColorParaBar();
+    virtual ~ColorParaBar() = default;
 
     void setOrientations(Qt::Orientations orien = Qt::Horizontal);
     QColor setCurColor(const QColor col);
@@ -40,6 +40,9 @@ public:
 
 signals:
     void sigColorChange(const QColor&);
+
+private:
+    void onUpdateSel(const QColor& col);
 
 public:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -52,6 +55,8 @@ private:
     Qt::Orientations m_orien;
     QLayout* m_layout;
     QMap<QString, QString> m_labMap;
+    XLabel* m_curXLab;
+    QColor m_curCol;
 };
 
 #endif // COLORPARABAR_H

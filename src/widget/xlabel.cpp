@@ -18,6 +18,9 @@ XLabel::XLabel(QWidget *parent, Qt::WindowFlags f)
 
 XLabel::XLabel(const QString &text, QWidget *parent, Qt::WindowFlags f)
     : QLabel(text, parent, f)
+    , m_color("#DB000F")
+    , m_alpha(1)
+    , m_bPickColor(false)
 {
     init();
 }

@@ -74,6 +74,7 @@ public slots:
     void onSelShape(DrawShape shape, bool checked);
     void onRevocation();
     void onRenewal();
+    void onPin();
     void onSave();
     void onCancel();
     void onFinish();

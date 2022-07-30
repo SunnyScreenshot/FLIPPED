@@ -8,7 +8,7 @@
  * Date: 2022.07.27
  * Description: 无标题栏的窗口，支持拖曳，用作 Pin 贴图使用
  ******************************************************************/
-#include "xframelesswidget.h"
+#include "pinwidget.h"
 #include <QGuiApplication>
 #include <QColor>
 #include <QPoint>
@@ -20,7 +20,7 @@
 #include <QWheelEvent>
 #include <QGraphicsDropShadowEffect>
 
-XFrameLessWidget::XFrameLessWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *parent)
+PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *parent)
     : QWidget(parent)
     , m_pixmap(pixmap)
 {
@@ -58,7 +58,7 @@ XFrameLessWidget::XFrameLessWidget(const QPixmap &pixmap, const QRect &geometry,
     adjustSize();
 }
 
-void XFrameLessWidget::setScaledPixmapToLabel(const QSize &newSize, const qreal scale, const bool expanding)
+void PinWidget::setScaledPixmapToLabel(const QSize &newSize, const qreal scale, const bool expanding)
 {
     QPixmap scaledPixmap;
     const auto aspectRatio = expanding ? Qt::KeepAspectRatioByExpanding : Qt::KeepAspectRatio;
@@ -68,7 +68,7 @@ void XFrameLessWidget::setScaledPixmapToLabel(const QSize &newSize, const qreal 
     m_label->setPixmap(scaledPixmap);
 }
 
-void XFrameLessWidget::mousePressEvent(QMouseEvent *e)
+void PinWidget::mousePressEvent(QMouseEvent *e)
 {
     if(e->buttons() == Qt::LeftButton) {
         m_p1 = e->globalPos();
@@ -77,7 +77,7 @@ void XFrameLessWidget::mousePressEvent(QMouseEvent *e)
     }
 }
 
-void XFrameLessWidget::mouseMoveEvent(QMouseEvent *e)
+void PinWidget::mouseMoveEvent(QMouseEvent *e)
 {
     if(e->buttons() == Qt::LeftButton) {
         m_p2 = e->globalPos();
@@ -85,7 +85,7 @@ void XFrameLessWidget::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void XFrameLessWidget::mouseReleaseEvent(QMouseEvent *e)
+void PinWidget::mouseReleaseEvent(QMouseEvent *e)
 {
     if(e->buttons() == Qt::LeftButton) {
         m_p2 = e->globalPos();
@@ -93,13 +93,13 @@ void XFrameLessWidget::mouseReleaseEvent(QMouseEvent *e)
     }
 }
 
-void XFrameLessWidget::mouseDoubleClickEvent(QMouseEvent *e)
+void PinWidget::mouseDoubleClickEvent(QMouseEvent *e)
 {
     if(e->buttons() == Qt::LeftButton)
         close();
 }
 
-void XFrameLessWidget::wheelEvent(QWheelEvent *event)
+void PinWidget::wheelEvent(QWheelEvent *event)
 {
     const QPoint degrees = event->angleDelta() / 8;
     const int direction = degrees.y() > 0 ? 1 : -1;       // zooming in or out
