@@ -21,7 +21,7 @@
 
 HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 {
-    double m_scale = insXHelp->getScale();
+    double m_scale = XHelper::instance().getScale();
 
     setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(this);

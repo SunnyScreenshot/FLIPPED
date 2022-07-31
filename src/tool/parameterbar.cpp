@@ -31,7 +31,7 @@
 
 ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     : XFrameWidget(parent)
-    , m_scal(insXHelp->getScale())
+    , m_scal(XHelper::instance().getScale())
     , m_orien(orien)
     , m_layout(nullptr)
     , m_colorBar(new ColorParaBar())
@@ -90,7 +90,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
         tb->setChecked(false);
         if (i == 0) {  // 第一个为默认选中
             tb->setChecked(true);
-            tb->setIcon(insXHelp->ChangeSVGColor(it.value(), "rect", insXHelp->borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * insXHelp->getScale()));
+            tb->setIcon(XHelper::instance().ChangeSVGColor(it.value(), "rect", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
         }
 
         if (!tb->setProperty("path", it.value()))
@@ -268,11 +268,11 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
 
     for (auto& it : parent->findChildren<QToolButton *>()) {
         QString path = it->property("path").value<QString>();
-        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * insXHelp->getScale());
+        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
 
         auto ptr = qobject_cast<QToolButton*>(btn);
         if (it == ptr) {
-            it->setIcon(insXHelp->ChangeSVGColor(path, "rect", insXHelp->borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * insXHelp->getScale()));
+            it->setIcon(XHelper::instance().ChangeSVGColor(path, "rect", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
 
             //enum class DrawShape {
             //    NoDraw,

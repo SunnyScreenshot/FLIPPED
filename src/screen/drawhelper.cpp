@@ -31,14 +31,14 @@ int XDrawStep::totalIdx = 0;
 
 XHelper::XHelper()
     : m_boardStyleIndex(1)
-    , m_borderColor("#1F7AFF")
-    , m_borderWidth(1)
-    , m_crosshairColor("#1F7AFF")
-    , m_crosshairWidth(1)
-    , m_enableCrosshair(true)
-    , m_winShadow(true)
-    , m_pinOpacity(90)
-    , m_pinMaxSize(100000)
+    , m_borderColor(insSettings->value("/Interface/Border Color", "#1F7AFF").toString())
+    , m_borderWidth(insSettings->value("/Interface/Border Width", 1).toInt())
+    , m_crosshairColor(insSettings->value("/Interface/Crosshair Color", "#1F7AFF").toString())
+    , m_crosshairWidth(insSettings->value("/Interface/Crosshair Width", 1).toInt())
+    , m_enableCrosshair(insSettings->value("/Interface/Ccrosshair", false).toBool())
+    , m_winShadow(insSettings->value("/Interface/Smart window", true).toBool())
+    , m_pinOpacity(insSettings->value("/Pin/Opacity", 100).toInt())
+    , m_pinMaxSize(insSettings->value("/Pin/Maximum size", 100000).toInt())
 {
     m_path = { {toFileName, "PicShot_xxxx.png"},
                {toQuickSavePath, qApp->applicationDirPath() + "/History/QuickSave"},

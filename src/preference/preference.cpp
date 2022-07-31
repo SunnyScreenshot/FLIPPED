@@ -64,6 +64,10 @@
     insSettings->setValue(key, value); \
     insSettings->endGroup();
 
+// 读取配置文件 .ini 的内容
+#define READ_CONFIG_INI(group, key, _value) \
+    insSettings->value("/"##group##"/"##key, _value).toString();
+
 // 所有页面的 Reset Btn 都连接到同一个槽函数，内部统一处理
 #define CONNECT_RESET_BTN(objectName) \
     auto btn = findChild<QPushButton *>(objectName);\
@@ -72,7 +76,7 @@
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
-    , m_scale(insXHelp->getScale())
+    , m_scale(XHelper::instance().getScale())
 {
     initUI();
 }
@@ -646,32 +650,34 @@ void Preference::onBorderStyle(const QString& style)
 
     bool ok = false;
     int idx = bt->itemData(bt->currentIndex()).toInt(&ok);
-    insXHelp->setBoardStyle(idx);
+    XHelper::instance().setBoardStyle(idx);
 
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderStyle, style);
 }
 
 void Preference::onBorderColor(const QColor& color)
 {
-    insXHelp->setBorderColor(color);
+    auto t = color.name();
+    XHelper::instance().setBorderColor(color);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderColor, color.name());
 }
 
 void Preference::onBorderWidth(int val)
 {
-    insXHelp->setBorderWidth(val);
+    XHelper::instance().setBorderWidth(val);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)
 {
-    insXHelp->setCrosshairColor(color);
+    auto t = color.name();
+    XHelper::instance().setCrosshairColor(color);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, color.name());
 }
 
 void Preference::onCrosshairWidth(int val)
 {
-    insXHelp->setCrosshairWidth(val);
+    XHelper::instance().setCrosshairWidth(val);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairWidth, val);
 }
 
@@ -684,7 +690,7 @@ void Preference::onSmartWindow(int val)
 void Preference::onShowCrosshair(int val)
 {
     const bool b = checkBoxState2Bool(val);
-    insXHelp->setEnableCrosshair(b);
+    XHelper::instance().setEnableCrosshair(b);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshair, b);
 }
 
@@ -705,25 +711,25 @@ void Preference::onImageQuailty(int val)
 
 void Preference::onFileName(const QString& name)
 {
-    insXHelp->setPath(toFileName, name);
+    XHelper::instance().setPath(toFileName, name);
     WRITE_CONFIG_INI(INIT_OUTPUT, toFileName, name);
 }
 
 void Preference::onQuickSavePath(const QString& path)
 {
-    insXHelp->setPath(toQuickSavePath, path);
+    XHelper::instance().setPath(toQuickSavePath, path);
     WRITE_CONFIG_INI(INIT_OUTPUT, toQuickSavePath, path);
 }
 
 void Preference::onAutoSavePath(const QString& path)
 {
-    insXHelp->setPath(toAutoSavePath, path);
+    XHelper::instance().setPath(toAutoSavePath, path);
     WRITE_CONFIG_INI(INIT_OUTPUT, toAutoSavePath, path);
 }
 
 void Preference::onConfigPath(const QString& path)
 {
-    insXHelp->setPath(toConfigPath, path);
+    XHelper::instance().setPath(toConfigPath, path);
     WRITE_CONFIG_INI(INIT_OUTPUT, toConfigPath, path);
 }
 
@@ -758,18 +764,18 @@ void Preference::onChoosePath()
 void Preference::onWindowShadow(int sta)
 {
     bool checked = checkBoxState2Bool(sta);
-    insXHelp->setWinShadow(checked);
+    XHelper::instance().setWinShadow(checked);
     WRITE_CONFIG_INI(INIT_PIN, tpWindowShadow, checked);
 }
 
 void Preference::onOpacity(int val)
 {
-    insXHelp->setPinOpacity(val);
+    XHelper::instance().setPinOpacity(val);
     WRITE_CONFIG_INI(INIT_PIN, tpOpacity, val);
 }
 
 void Preference::onMaxSize(int val)
 {
-    insXHelp->setPinMaxSize(val);
+    XHelper::instance().setPinMaxSize(val);
     WRITE_CONFIG_INI(INIT_PIN, tpMaxSize, val);
 }

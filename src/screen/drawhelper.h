@@ -193,23 +193,38 @@ struct  XDrawStep
 };
 
 // ------------------------
-class XHelper
+class XHelper : public ISingleton<XHelper>
 {
-public:
+    FRIEND_CREAT_SINGLETION(XHelper);
+private:
     XHelper();
-    ~XHelper() = default;
 
+public:
     double getScale(QScreen* screen = QApplication::primaryScreen());
 
     void setBoardStyle(const int index) { m_boardStyleIndex = index; }
     const int boardStyle() { return m_boardStyleIndex; }
-    void setBorderColor(QColor color) { m_borderColor = color; }
-    const QColor borderColor() { return m_borderColor; }
+    void setBorderColor(QColor color) { 
+        auto t = color.name();
+        auto t1 = m_borderColor.name();
+        m_borderColor = color; 
+
+        t = color.name();
+        t1 = m_borderColor.name();
+    }
+    const QColor borderColor() {
+        auto t1 = m_borderColor.name();
+        return m_borderColor; 
+    }
     void setBorderWidth(const int width) { m_borderWidth = width; }
     const int borderWidth() { return m_borderWidth; }
 
-    void setCrosshairColor(QColor color) { m_crosshairColor = color; }
-    const QColor crosshairColor() { return m_crosshairColor; }
+    void setCrosshairColor(QColor color) { 
+        auto t = m_crosshairColor.name();
+        m_crosshairColor = color; }
+    const QColor crosshairColor() {
+        auto t = m_crosshairColor.name();
+        return m_crosshairColor; }
     void setCrosshairWidth(const int width) { m_crosshairWidth = width; }
     const int crosshairWidth() { return m_crosshairWidth; }
     const bool enableCrosshair() { return m_enableCrosshair; }
@@ -259,7 +274,7 @@ private:
 // ------------------------
 // 创建全局静态 单例 的对象, 就不浪费生命重新创建了，  路径后面替换为 ConfigLocation
 Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, (qApp->applicationDirPath() + "/config.ini", QSettings::IniFormat));
-Q_GLOBAL_STATIC(XHelper, insXHelp);
+//Q_GLOBAL_STATIC(XHelper, insXHelp);
 
 
 // perference UI config
