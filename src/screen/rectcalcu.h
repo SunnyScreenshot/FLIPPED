@@ -95,7 +95,6 @@ public:
 	QPoint pos1;
 	QPoint pos2;
 	ScrnType scrnType;          // 程序状态（对应此时鼠标的操作类型）
-    bool bSmartMonitor;          // 模式为：是否智能获取窗口
 
 private:
 	QRect  rtSel;               // 由 pos1, pos2 所得

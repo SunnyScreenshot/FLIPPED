@@ -76,8 +76,12 @@ public slots:
     void onRenewal();
     void onPin();
     void onSave();
+
+    void clearnAndClose();
+
     void onCancel();
     void onFinish();
+
     void onParaBtnId(DrawShape shape, QToolButton* tb);
     void onSelColor(QColor col);
 
@@ -107,6 +111,8 @@ private:
 
     // refactor
     void selectedShapeMove(QPainter& pa); // flameshot 选中图形的效果
+
+    void drawCrosshair(QPainter& pa);
 
 protected:
 	void paintEvent(QPaintEvent *event) override;

@@ -46,34 +46,6 @@
 #include <QVector>
 #include <QFileDialog>
 
-// 对象名、类型、命名的对象名称
-#define NEW_OBJECT(_object, _type, _objectName) \
-    auto _object = new _type(this); \
-    if (_object) \
-        _object->setObjectName(_objectName);
-
-// 对象名、类型、命名的对象名称、可能需要显示的文本
-#define NEW_OBJECT_AND_TEXT(_object, _type, _objectName, _text) \
-    auto _object = new _type(_text, this); \
-    if (_object) \
-        _object->setObjectName(_objectName);
-
-// 写入配置文件 .ini 的内容
-#define WRITE_CONFIG_INI(group, key, value) \
-    insSettings->beginGroup(group); \
-    insSettings->setValue(key, value); \
-    insSettings->endGroup();
-
-// 读取配置文件 .ini 的内容
-#define READ_CONFIG_INI(group, key, _value) \
-    insSettings->value("/"##group##"/"##key, _value).toString();
-
-// 所有页面的 Reset Btn 都连接到同一个槽函数，内部统一处理
-#define CONNECT_RESET_BTN(objectName) \
-    auto btn = findChild<QPushButton *>(objectName);\
-    if (btn) \
-        connect(btn, &QPushButton::released, this, &Preference::onReset);
-
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
     , m_scale(XHelper::instance().getScale())
@@ -233,12 +205,13 @@ QWidget* Preference::tabInterface()
     NEW_OBJECT_AND_TEXT(cbEnableSamrtWindow, QCheckBox, tiSmartWindow, tr("Smart window"));
     NEW_OBJECT_AND_TEXT(cbEnableCrosshair, QCheckBox, tiCrosshair, tr("Crosshair"));
     NEW_OBJECT_AND_TEXT(cbEnableShowCursor, QCheckBox, tiShowCursor, tr("Show cursor"));
-    NEW_OBJECT_AND_TEXT(cbEnableAutoCopy, QCheckBox, tiAutoCopyToClipboard, tr("Automatically copy to clipboard"));
+    NEW_OBJECT_AND_TEXT(cbEnableAutoCopy, QCheckBox, tiAutoCopyToClipboard, tr("Auto copy to clipboard"));
 
     cpbHighLight->setObjectName(tiBorderColor);
     cpbHighLight->setObjectName(tiCrosshairColor);
     spBorder->setRange(1, 100);
     spCrosshair->setRange(1, 100);
+    cbEnableShowCursor->setEnabled(false); // TODO 2022.08.02: 待实现功能
 
     QStringList styles;
     styles << tr("1_picshot") << tr("2_mac") << tr("3_deepin");
@@ -286,7 +259,7 @@ QWidget* Preference::tabInterface()
     spBorder->setValue(insSettings->value(tiBorderWidth, 2).toInt());
     cpbCrosshair->setCurColor(QColor(insSettings->value(tiCrosshairColor, QColor("#db000f")).toString()));
     spCrosshair->setValue(insSettings->value(tiCrosshairWidth, 2).toInt());
-    cbEnableSamrtWindow->setChecked(insSettings->value(tiSmartWindow, false).toBool());
+    cbEnableSamrtWindow->setChecked(insSettings->value(tiSmartWindow, true).toBool());
     cbEnableCrosshair->setChecked(insSettings->value(tiCrosshair, false).toBool());
     cbEnableShowCursor->setChecked(insSettings->value(tiShowCursor, false).toBool());
     cbEnableAutoCopy->setChecked(insSettings->value(tiAutoCopyToClipboard, false).toBool());
@@ -684,24 +657,30 @@ void Preference::onCrosshairWidth(int val)
 
 void Preference::onSmartWindow(int val)
 {
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, checkBoxState2Bool(val));
+    const bool b = checkBoxState2Bool(val);
+    XHelper::instance().setSmartWindow(b);
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, b);
 }
 
 void Preference::onShowCrosshair(int val)
 {
     const bool b = checkBoxState2Bool(val);
-    XHelper::instance().setEnableCrosshair(b);
+    XHelper::instance().setCrosshair(b);
     WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshair, b);
 }
 
 void Preference::onShowCursor(int val)
 {
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiShowCursor, checkBoxState2Bool(val));
+    const bool b = checkBoxState2Bool(val);
+    XHelper::instance().setShowCursor(b);
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiShowCursor, b);
 }
 
 void Preference::onAutoCopyToClip(int val)
 {
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiAutoCopyToClipboard, checkBoxState2Bool(val));
+    const bool b = checkBoxState2Bool(val);
+    XHelper::instance().setAutoCpoyClip(b);
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiAutoCopyToClipboard, b);
 }
 
 void Preference::onImageQuailty(int val)

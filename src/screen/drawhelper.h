@@ -204,31 +204,22 @@ public:
 
     void setBoardStyle(const int index) { m_boardStyleIndex = index; }
     const int boardStyle() { return m_boardStyleIndex; }
-    void setBorderColor(QColor color) { 
-        auto t = color.name();
-        auto t1 = m_borderColor.name();
-        m_borderColor = color; 
-
-        t = color.name();
-        t1 = m_borderColor.name();
-    }
-    const QColor borderColor() {
-        auto t1 = m_borderColor.name();
-        return m_borderColor; 
-    }
+    void setBorderColor(QColor color) { m_borderColor = color; }
+    const QColor borderColor() { return m_borderColor; }
     void setBorderWidth(const int width) { m_borderWidth = width; }
     const int borderWidth() { return m_borderWidth; }
-
-    void setCrosshairColor(QColor color) { 
-        auto t = m_crosshairColor.name();
-        m_crosshairColor = color; }
-    const QColor crosshairColor() {
-        auto t = m_crosshairColor.name();
-        return m_crosshairColor; }
+    void setCrosshairColor(QColor color) { m_crosshairColor = color; }
+    const QColor crosshairColor() { return m_crosshairColor; }
     void setCrosshairWidth(const int width) { m_crosshairWidth = width; }
     const int crosshairWidth() { return m_crosshairWidth; }
-    const bool enableCrosshair() { return m_enableCrosshair; }
-    void setEnableCrosshair(bool enable) { m_enableCrosshair = enable; }
+    bool smartWindow() const { return m_enableSmartWindow; }
+    void setSmartWindow(bool enable) { m_enableSmartWindow = enable; }
+    bool crosshair() const { return m_enableCrosshair; }
+    void setCrosshair(bool enable) { m_enableCrosshair = enable; }
+    bool showCursor() const { return m_enableShowCursor; }
+    void setShowCursor(bool enable) { m_enableShowCursor = enable; }
+    bool autoCpoyClip() const { return m_enableAutoCpoyClip; }
+    void setAutoCpoyClip(bool enable) { m_enableAutoCpoyClip = enable; }
 
 	QIcon ChangeSVGColor(QString path, QString shape, QColor color, QSize size);
     void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
@@ -256,13 +247,17 @@ public:
     int pinMaxSize() const;
     void setPinMaxSize(int newPinMaxSize);
 
+
 private:
     int m_boardStyleIndex;
     QColor m_borderColor;                      // 边框
     int m_borderWidth;
     QColor m_crosshairColor;                   // 边框
     int m_crosshairWidth;
+    bool m_enableSmartWindow;
 	bool m_enableCrosshair;
+    bool m_enableShowCursor;
+    bool m_enableAutoCpoyClip;
 
 	QMap<QString, QString> m_path;
 
@@ -276,13 +271,11 @@ private:
 Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, (qApp->applicationDirPath() + "/config.ini", QSettings::IniFormat));
 //Q_GLOBAL_STATIC(XHelper, insXHelp);
 
-
-// perference UI config
+ // perference UI config
 const QString INIT_GENERAL("General");                   // 初始化 常规
 const QString INIT_INTERFACE("Interface");               // 初始化 界面
 const QString INIT_OUTPUT("Output");                     // 初始化 输出
 const QString INIT_PIN("Pin");                           // 初始化 贴图
 const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
-
 
 #endif // XDRAW_H

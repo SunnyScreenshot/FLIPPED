@@ -204,7 +204,6 @@ RectCalcu::RectCalcu(ScreenShot* pSrnShot)
 	: pos1(0, 0)
 	, pos2(0, 0)
 	, scrnType(ScrnType::Wait)
-    , bSmartMonitor(true)
 	, rtSel(0, 0, -1, -1)
 	, m_bClear(false)
 	, cursArea(CursorArea::Unknow)
@@ -258,7 +257,6 @@ void RectCalcu::clear()
 	rtSel = QRect();
 	scrnType = ScrnType::Wait;
 	m_bClear = true;
-    bSmartMonitor = true;
 }
 
 void RectCalcu::setClear(bool clear)

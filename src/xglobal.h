@@ -12,6 +12,8 @@
 #ifndef XGLOBAL_H
 #define XGLOBAL_H
 
+//#define _MYDEBUG // 调试
+
 // 1. HAIF_INTERVAL 为一半间隔，边框宽度一半高; 2 * HAIF_INTERVAL 为边框的宽度，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
 // 2. HAIF_INTERVAL 为边框一般的灵敏度，光标移动到上面便会变化形态
 #define HAIF_INTERVAL 4
@@ -55,22 +57,22 @@
 
 // 取色盘 ColorParaBar 的八个圆 
   // Mode: CPB_ParaBar --> QGridLayout
-#define CPB_PB_LABEL_WIDTH 12              // 圆形取色盘宽度
+#define CPB_PB_LABEL_WIDTH 14              // 圆形取色盘宽度
 #define CPB_PB_MARGIN_HOR 10               // 取色盘, 圆形按钮的边框 左右 距离
 #define CPB_PB_MARGIN_VER 6                // 取色盘, 圆形按钮的边框 上下 距离
 #define CPB_PB_SPACING_HOR  7              // 取色盘, 圆形按钮之间的水平间距
 #define CPB_PB_SPACING_VER  4              // 取色盘, 圆形按钮之间的竖直间距
 
   // Mode: CPB_HighLight  -> QHBoxLayout
-#define CPB_HL_LABEL_WIDTH 10              // 圆形取色盘宽度
+#define CPB_HL_LABEL_WIDTH 14              // 圆形取色盘宽度
 #define CPB_HL_MARGIN_HOR 10               // 取色盘, 圆形按钮的边框 左右 距离
 #define CPB_HL_MARGIN_VER 6                // 取色盘, 圆形按钮的边框 上下 距离
 #define CPB_HL_SPACING_HOR  5              // 取色盘, 圆形按钮之间的水平间距
 #define CPB_HL_SPACING_VER  0              // 取色盘, 圆形按钮之间的竖直间距
 
   // 其中的外圆
-#define CPB_MARGIN_SELECTED  1             // 取色盘, 选中颜色的圆距离外框圆的距离
-#define CPB_WIDTH_SELECTED  1              // 取色盘, 圆形按钮之间的竖直间距
+#define CPB_MARGIN_SELECTED  2             // 取色盘, 选中颜色的内圆距离外框圆的距离
+#define CPB_WIDTH_SELECTED  2              // 取色盘, 外圆画笔的宽度
                                            
 // 几个 combobox 的详细（序号、大小）        
 #define COMBOBOX_WIDTH 48                  // combobox 宽度

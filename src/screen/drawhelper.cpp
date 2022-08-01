@@ -9,6 +9,7 @@
  * Description: 
  ******************************************************************/
 #include "drawhelper.h"
+#include "../xglobal.h"
 #include "../preference/appellation.h"
 #include <QScreen>
 #include <QFile>
@@ -26,19 +27,21 @@
 #include <QPainterPath>
 #include <QLine>
 
-
 int XDrawStep::totalIdx = 0;
 
 XHelper::XHelper()
     : m_boardStyleIndex(1)
-    , m_borderColor(insSettings->value("/Interface/Border Color", "#1F7AFF").toString())
-    , m_borderWidth(insSettings->value("/Interface/Border Width", 1).toInt())
-    , m_crosshairColor(insSettings->value("/Interface/Crosshair Color", "#1F7AFF").toString())
-    , m_crosshairWidth(insSettings->value("/Interface/Crosshair Width", 1).toInt())
-    , m_enableCrosshair(insSettings->value("/Interface/Ccrosshair", false).toBool())
-    , m_winShadow(insSettings->value("/Interface/Smart window", true).toBool())
-    , m_pinOpacity(insSettings->value("/Pin/Opacity", 100).toInt())
-    , m_pinMaxSize(insSettings->value("/Pin/Maximum size", 100000).toInt())
+    , m_borderColor(READ_CONFIG_INI(INIT_INTERFACE, tiBorderColor, "#1F7AFF").toString())
+    , m_borderWidth(READ_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, 1).toInt())
+    , m_crosshairColor(READ_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, "#1F7AFF").toString())
+    , m_crosshairWidth(READ_CONFIG_INI(INIT_INTERFACE, tiCrosshairWidth, 1).toInt())
+    , m_enableSmartWindow(READ_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, true).toBool())
+    , m_enableCrosshair(READ_CONFIG_INI(INIT_INTERFACE, tiCrosshair, false).toBool())
+    , m_enableShowCursor(READ_CONFIG_INI(INIT_INTERFACE, tiShowCursor, false).toBool())
+    , m_enableAutoCpoyClip(READ_CONFIG_INI(INIT_INTERFACE, tiAutoCopyToClipboard, true).toBool())
+    , m_winShadow(READ_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, true).toBool())
+    , m_pinOpacity(READ_CONFIG_INI(INIT_PIN, tpOpacity, 100).toInt())
+    , m_pinMaxSize(READ_CONFIG_INI(INIT_PIN, tpMaxSize, 10000).toInt())
 {
     m_path = { {toFileName, "PicShot_xxxx.png"},
                {toQuickSavePath, qApp->applicationDirPath() + "/History/QuickSave"},
@@ -238,8 +241,6 @@ void XHelper::setWinShadow(bool newWinShadow)
 {
     m_winShadow = newWinShadow;
 }
-
-#define _MYDEBUG
 
 double XHelper::getScale(QScreen *screen)
 {

@@ -13,6 +13,8 @@
 
 #include <QWidget>
 
+
+class QMenu;
 class QLabel;
 class QPoint;
 class QPixmap;
@@ -35,6 +37,10 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void mouseDoubleClickEvent(QMouseEvent *e) override;
     void wheelEvent(QWheelEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent* event) override;
+
+private slots:
+    void onSetWindowOpacity(double opacity);
 
 private:
     QPoint m_p;   // 窗口的左上角
@@ -44,6 +50,8 @@ private:
     QPixmap m_pixmap;
     QLabel* m_label;
     QGraphicsDropShadowEffect* m_shadowEffect;
+
+    QMenu* m_menu;
 };
 
 #endif // XFRAMELESSWIDGET_H

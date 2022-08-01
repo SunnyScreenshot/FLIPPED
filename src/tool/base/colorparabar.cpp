@@ -191,11 +191,11 @@ void ColorParaBar::paintEvent(QPaintEvent *event)
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     QPen pen(m_curCol);
-    pen.setWidth(CPB_WIDTH_SELECTED * m_scal);
+    pen.setWidth(CPB_WIDTH_SELECTED);
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
-    int margin = CPB_MARGIN_SELECTED * m_scal;
+    int margin = CPB_MARGIN_SELECTED;
     auto topLeft = m_curXLab->mapToGlobal(QPoint(0, 0)); // 子控件的窗口的（左上角的）绝对坐标; QPoint(0, 0) 为子控件的左上角坐标，子窗口的总是(0, 0)
     topLeft = mapFromGlobal(topLeft);              // 切换为相对父窗口的绝对坐标
     const QRect rt = QRect(topLeft, m_curXLab->size()).adjusted(-margin, -margin, margin, margin);

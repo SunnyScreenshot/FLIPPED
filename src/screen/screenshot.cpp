@@ -29,8 +29,8 @@
 #include <QToolButton>
 #include <QPainterPath>
 
-#define _MYDEBUG
-#define CURR_TIME QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")
+
+
 
 namespace Util {
     bool getRectFromCurrentPoint(WinID winId, QRect &outRect)
@@ -200,6 +200,9 @@ void ScreenShot::updateCursorShape(const QPoint pos)
         setCursor(Qt::CrossCursor);
     } else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
     } else if (m_rtCalcu.scrnType == ScrnType::Wait) {
+        if (!XHelper::instance().smartWindow())
+            return;
+
         if (cursArea == CursorArea::External) {
 
             (m_rtSmartWindow.contains(pos, false) && !m_bFirstSel) || m_rtCalcu.getSelRect().contains(pos, true) ? 
@@ -360,42 +363,46 @@ void ScreenShot::onPin()
     auto pin = new PinWidget(m_savePixmap, m_savePixmap.rect(), nullptr);   // 使用 nullptr，不会泄露
     pin->move(m_rtCalcu.getSelRect().topLeft());
     pin->show();
+
+    clearnAndClose();
 }
 
 void ScreenShot::onSave()
 {
     if (drawToCurrPixmap()) {
+        if (XHelper::instance().autoCpoyClip())
+            QApplication::clipboard()->setPixmap(m_savePixmap);
+
         QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
-        QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "PicShot_" + CURR_TIME + ".png", fileter);
+        QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "picshot_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".png", fileter);
 
         QTime startTime = QTime::currentTime();
         m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
         QTime stopTime = QTime::currentTime();
         int elapsed = startTime.msecsTo(stopTime);
         qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
-        m_currPixmap->save("a2.png");
+        //m_currPixmap->save("a2.png");
     }
 
+    clearnAndClose();
+}
+
+void ScreenShot::clearnAndClose()
+{
     emit sigClearScreen();
     close();
 }
 
 void ScreenShot::onCancel()
 {
-    emit sigClearScreen();
-    close();
+    clearnAndClose();
 }
 
 void ScreenShot::onFinish()
 {
-    if (drawToCurrPixmap()) {
-        if (!m_savePixmap.isNull())
-            QApplication::clipboard()->setPixmap(m_savePixmap);
-    }
-
-    //qDebug()<<"--------------onCopy"<<parent() << "  " << m_savePixmap.size();
-    emit sigClearScreen();
-    close();
+    if (drawToCurrPixmap() && !m_savePixmap.isNull())
+        QApplication::clipboard()->setPixmap(m_savePixmap);
+    clearnAndClose();
 }
 
 void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
@@ -1030,7 +1037,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // 选中矩形图片
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
-    if (m_rtCalcu.bSmartMonitor)
+    if (XHelper::instance().smartWindow())
         rtSel = m_rtSmartWindow;
 
     m_rtCalcu.limitBound(rtSel, m_rtVirDesktop);           // 修复边界时图片被拉伸
@@ -1151,18 +1158,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     }
 
     // 绘画十字线
-    if (XHelper::instance().enableCrosshair() && !m_bFirstPress) {
-        pa.save();
-        pa.setPen(QPen(XHelper::instance().crosshairColor(), XHelper::instance().crosshairWidth()));
-        pa.setBrush(Qt::NoBrush);
+    drawCrosshair(pa);
 
-        QPoint p(QCursor::pos());
-        QLine l1(QPoint(m_rtVirDesktop.left(), p.y()), QPoint(m_rtVirDesktop.right(), p.y()));
-        QLine l2(QPoint(p.x(), m_rtVirDesktop.top()), QPoint(p.x(), m_rtVirDesktop.bottom()));
-        pa.drawLine(l1);
-        pa.drawLine(l2);
-        pa.restore();
-    }
 
     //#ifdef _DEBUG  调试信息
     // 构造函数有偏移 geom.topLeft(); 绘画时候要偏移回来
@@ -1219,8 +1216,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
                 .arg(pos().x()).arg(pos().y()));
     pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2, %3 * %4)")
         .arg(m_rtSmartWindow.x()).arg(m_rtSmartWindow.y()).arg(m_rtSmartWindow.width()).arg(m_rtSmartWindow.height()));
-    pa.drawText(tPosText - QPoint(0, space * 7), QString("m_rtCalcu.bSmartMonitor: %1")
-        .arg(m_rtCalcu.bSmartMonitor));
+    pa.drawText(tPosText - QPoint(0, space * 7), QString("XHelper::instance().smartWindow(): %1")
+        .arg(XHelper::instance().smartWindow()));
     pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
     if (m_pCurrShape) {
         QRect rtCurMove = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
@@ -1283,6 +1280,22 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	/*qDebug() << "【paintEvent】  :" << m_rtCalcu.scrnType << m_rtCalcu.getSelRect() << rtSel << m_rtCalcu.getSelRect() << "   " << m_rtCalcu.selEndPos << "  " << m_basePixmap << "  " << QRect();*/
 	//<< "外部矩形：" << rtOuter << "内部矩形：" << rtInner;
 #endif // 1
+}
+
+void ScreenShot::drawCrosshair(QPainter& pa)
+{
+    if (XHelper::instance().crosshair() && !m_bFirstPress) {
+        pa.save();
+        pa.setPen(QPen(XHelper::instance().crosshairColor(), XHelper::instance().crosshairWidth()));
+        pa.setBrush(Qt::NoBrush);
+
+        QPoint p(QCursor::pos());
+        QLine l1(QPoint(m_rtVirDesktop.left(), p.y()), QPoint(m_rtVirDesktop.right(), p.y()));
+        QLine l2(QPoint(p.x(), m_rtVirDesktop.top()), QPoint(p.x(), m_rtVirDesktop.bottom()));
+        pa.drawLine(l1);
+        pa.drawLine(l2);
+        pa.restore();
+    }
 }
 
 void ScreenShot::keyReleaseEvent(QKeyEvent *event)
@@ -1385,13 +1398,13 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
 	// 此时为 Qt::NoButton
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
-        if (m_rtCalcu.bSmartMonitor)
+        if (XHelper::instance().smartWindow())
             updateGetWindowsInfo();
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
         m_rtCalcu.pos2 = event->globalPos();
 
-        m_rtCalcu.bSmartMonitor = false;
+        XHelper::instance().setSmartWindow(false);
         //if (m_rtCalcu.pos1 != m_rtCalcu.pos2)
         //  不显示 TODO: 2022.02.10 再添加一个变量即可
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
@@ -1425,7 +1438,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
             m_rtCalcu.setRtSel(m_rtSmartWindow);
         }
 
-        m_rtCalcu.bSmartMonitor = false; // 自动选择也结束
+        XHelper::instance().setSmartWindow(false); // 自动选择也结束
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Move) {
 		m_rtCalcu.pos2 = event->globalPos();

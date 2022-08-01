@@ -9,7 +9,9 @@
  * Description: 无标题栏的窗口，支持拖曳，用作 Pin 贴图使用
  ******************************************************************/
 #include "pinwidget.h"
-#include <QGuiApplication>
+#include "../../screen/drawhelper.h"
+
+#include <QMenu>
 #include <QColor>
 #include <QPoint>
 #include <QLabel>
@@ -18,15 +20,29 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QGuiApplication>
+#include <QContextMenuEvent>
 #include <QGraphicsDropShadowEffect>
 
 PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *parent)
     : QWidget(parent)
     , m_pixmap(pixmap)
+    , m_menu(new QMenu(this))
 {
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);           // Otherwise it is a black background
     setAttribute(Qt::WA_DeleteOnClose);
+
+    m_menu->addAction(new QAction(tr("Copy")));
+    m_menu->addSeparator();
+    m_menu->addAction(new QAction(tr("Shadow")));
+    m_menu->addAction(new QAction(tr("Ppicaty")));
+    m_menu->addSeparator();
+    m_menu->addAction(new QAction(tr("Close")));
+
+    const int maxWidth = XHelper::instance().pinMaxSize();
+    setMaximumSize(maxWidth, maxWidth);
+    setWindowOpacity(XHelper::instance().pinOpacity() / 100.0);
 
     auto vLayout = new QVBoxLayout(this);
     const int margin = 7;
@@ -117,6 +133,15 @@ void PinWidget::wheelEvent(QWheelEvent *event)
     event->accept();
 }
 
+void PinWidget::contextMenuEvent(QContextMenuEvent* event)
+{
+    m_menu->exec(event->globalPos());
+}
 
+void PinWidget::onSetWindowOpacity(double opacity)
+{
+    if (opacity >= 0)
+        setWindowOpacity(opacity);
+}
 
 
