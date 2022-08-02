@@ -16,6 +16,7 @@
 #include <QPoint>
 #include <QLabel>
 #include <QPixmap>
+#include <QAction>
 #include <QShortcut>
 #include <QBoxLayout>
 #include <QMouseEvent>
@@ -23,38 +24,45 @@
 #include <QGuiApplication>
 #include <QContextMenuEvent>
 #include <QGraphicsDropShadowEffect>
+#include "../../xglobal.h"
+
+//QPoint m_p;   // 窗口的左上角
+//QPoint m_p1;
+//QPoint m_p2;
+//
+//QPixmap m_pixmap;
+//QLabel* m_label;
+//QGraphicsDropShadowEffect* m_shadowEffect;
+//
+//QMenu* m_menu;
 
 PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *parent)
     : QWidget(parent)
+    , m_p(0, 0)
+    , m_p1(0, 0)
+    , m_p2(0, 0)
     , m_pixmap(pixmap)
+    , m_label(new QLabel(this))
+    , m_shadowEffect(new QGraphicsDropShadowEffect(this))
     , m_menu(new QMenu(this))
 {
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground);           // Otherwise it is a black background
     setAttribute(Qt::WA_DeleteOnClose);
 
-    m_menu->addAction(new QAction(tr("Copy")));
-    m_menu->addSeparator();
-    m_menu->addAction(new QAction(tr("Shadow")));
-    m_menu->addAction(new QAction(tr("Ppicaty")));
-    m_menu->addSeparator();
-    m_menu->addAction(new QAction(tr("Close")));
-
     const int maxWidth = XHelper::instance().pinMaxSize();
     setMaximumSize(maxWidth, maxWidth);
     setWindowOpacity(XHelper::instance().pinOpacity() / 100.0);
 
     auto vLayout = new QVBoxLayout(this);
-    const int margin = 7;
+    const int margin = PW_MARGIN;
     vLayout->setContentsMargins(margin, margin, margin, margin);
 
-    m_shadowEffect = new QGraphicsDropShadowEffect(this);
-    m_shadowEffect->setColor(QColor(255, 0, 0));
+    m_shadowEffect->setColor(XHelper::instance().borderColor());
     m_shadowEffect->setBlurRadius(2 * margin);
     m_shadowEffect->setOffset(0, 0);
     setGraphicsEffect(m_shadowEffect);
 
-    m_label = new QLabel();
     m_label->setPixmap(m_pixmap);
     vLayout->addWidget(m_label);
 
@@ -70,8 +78,32 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
     const int m = margin * devicePixelRatio;
     QRect adjusted_pos = geometry + QMargins(m, m, m, m);
     setGeometry(adjusted_pos);
-
     adjustSize();
+
+    connect(&XHelper::instance(), &XHelper::sigChangeWinShadow, this, &PinWidget::onChangeWinShadow);
+    connect(&XHelper::instance(), &XHelper::sigChangeOpacity, this, &PinWidget::onChangeOpacity);
+    connect(&XHelper::instance(), &XHelper::sigChangeMaxSize, this, &PinWidget::onChangeMaxSize);
+
+    initUI();
+}
+
+void PinWidget::initUI()
+{
+    QAction* aCopy = m_menu->addAction(tr("Copy"));
+ 
+    auto aSave = m_menu->addAction(tr("Save"));
+    m_menu->addSeparator();
+    auto aShadow = m_menu->addAction(tr("Shadow"));
+    auto aOpicaty = m_menu->addAction(tr("Opicaty"));
+    m_menu->addSeparator();
+    auto aGrop = m_menu->addAction(tr("Muve to grop"));
+    m_menu->addSeparator();
+    auto aColse = m_menu->addAction(tr("Close"));
+
+    aShadow->setCheckable(true);
+    aShadow->setChecked(true);
+    // 使用单值捕获，不然有问题： https://zhuanlan.zhihu.com/p/346991724
+    connect(aShadow, &QAction::toggled, this, [&, aShadow](bool checked) { aShadow->setChecked(checked); });
 }
 
 void PinWidget::setScaledPixmapToLabel(const QSize &newSize, const qreal scale, const bool expanding)
@@ -82,6 +114,18 @@ void PinWidget::setScaledPixmapToLabel(const QSize &newSize, const qreal scale, 
     scaledPixmap = m_pixmap.scaled(newSize * scale, aspectRatio, Qt::SmoothTransformation); // Qt::FastTransformation
     scaledPixmap.setDevicePixelRatio(scale);
     m_label->setPixmap(scaledPixmap);
+}
+
+void PinWidget::createShadowEffect()
+{
+    //if (!m_shadowEffect)
+    //    m_shadowEffect = new QGraphicsDropShadowEffect(this);
+
+    //const int margin = PW_MARGIN;
+    //m_shadowEffect->setColor(XHelper::instance().borderColor());
+    //m_shadowEffect->setBlurRadius(2 * margin);
+    //m_shadowEffect->setOffset(0, 0);
+    //setGraphicsEffect(m_shadowEffect);
 }
 
 void PinWidget::mousePressEvent(QMouseEvent *e)
@@ -138,10 +182,32 @@ void PinWidget::contextMenuEvent(QContextMenuEvent* event)
     m_menu->exec(event->globalPos());
 }
 
-void PinWidget::onSetWindowOpacity(double opacity)
+void PinWidget::onChangeWinShadow(bool enable)
 {
-    if (opacity >= 0)
-        setWindowOpacity(opacity);
+    //if (enable) {
+    //    if (!m_shadowEffect)
+    //        m_shadowEffect = new QGraphicsDropShadowEffect(this);
+
+    //    // TODO 2022.08.03: 重新加载后有点问题。
+    //    const int margin = PW_MARGIN;
+    //    m_shadowEffect->setColor(XHelper::instance().borderColor());
+    //    m_shadowEffect->setBlurRadius(2 * margin);
+    //    ////m_shadowEffect->setOffset(0, 0);
+    //    setGraphicsEffect(m_shadowEffect);
+
+    //} else {
+    //    setGraphicsEffect(nullptr);  // 旧的 shadowEffect 会被 qt 底层删除，见此函数实现，所以每次都会新建
+    //}
+}
+
+void PinWidget::onChangeOpacity(int opacity)
+{
+    setWindowOpacity(opacity / 100.0);
+}
+
+void PinWidget::onChangeMaxSize(double val)
+{
+    setMaximumSize(val, val);
 }
 
 

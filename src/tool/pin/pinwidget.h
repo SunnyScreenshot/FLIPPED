@@ -12,7 +12,7 @@
 #define XFRAMELESSWIDGET_H
 
 #include <QWidget>
-
+#include <QPointer>
 
 class QMenu;
 class QLabel;
@@ -29,7 +29,9 @@ public:
     explicit PinWidget(const QPixmap& pixmap, const QRect& geometry, QWidget* parent = nullptr);
 
 private:
+    void initUI();
     void setScaledPixmapToLabel(const QSize& newSize, const qreal scale, const bool expanding);
+    void createShadowEffect();
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
@@ -40,7 +42,9 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private slots:
-    void onSetWindowOpacity(double opacity);
+    void onChangeWinShadow(bool enable);
+    void onChangeOpacity(int opacity);
+    void onChangeMaxSize(double val);
 
 private:
     QPoint m_p;   // 窗口的左上角
@@ -49,7 +53,7 @@ private:
 
     QPixmap m_pixmap;
     QLabel* m_label;
-    QGraphicsDropShadowEffect* m_shadowEffect;
+    QPointer<QGraphicsDropShadowEffect> m_shadowEffect;
 
     QMenu* m_menu;
 };

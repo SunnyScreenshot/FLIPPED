@@ -12,7 +12,7 @@
 #ifndef XGLOBAL_H
 #define XGLOBAL_H
 
-//#define _MYDEBUG // 调试
+#define _MYDEBUG // 调试
 
 // 1. HAIF_INTERVAL 为一半间隔，边框宽度一半高; 2 * HAIF_INTERVAL 为边框的宽度，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
 // 2. HAIF_INTERVAL 为边框一般的灵敏度，光标移动到上面便会变化形态
@@ -146,4 +146,6 @@
 #define TAG_SPACING_HOR  7              // GridLayout 的 ver spacing
 
 
+// PinWidget 
+#define PW_MARGIN 7                    // pinwidgt 对应的 shadow 宽度
 #endif // XGLOBAL_H

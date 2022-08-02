@@ -30,7 +30,8 @@
 int XDrawStep::totalIdx = 0;
 
 XHelper::XHelper()
-    : m_boardStyleIndex(1)
+    : QObject(nullptr)
+    , m_boardStyleIndex(1)
     , m_borderColor(READ_CONFIG_INI(INIT_INTERFACE, tiBorderColor, "#1F7AFF").toString())
     , m_borderWidth(READ_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, 1).toInt())
     , m_crosshairColor(READ_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, "#1F7AFF").toString())
@@ -217,9 +218,10 @@ int XHelper::pinOpacity() const
     return m_pinOpacity;
 }
 
-void XHelper::setPinOpacity(int newPinOpacity)
+void XHelper::setPinOpacity(int opacity)
 {
-    m_pinOpacity = newPinOpacity;
+    m_pinOpacity = opacity;
+    emit sigChangeOpacity(opacity);
 }
 
 int XHelper::pinMaxSize() const
@@ -227,9 +229,10 @@ int XHelper::pinMaxSize() const
     return m_pinMaxSize;
 }
 
-void XHelper::setPinMaxSize(int newPinMaxSize)
+void XHelper::setPinMaxSize(int val)
 {
-    m_pinMaxSize = newPinMaxSize;
+    m_pinMaxSize = val;
+    emit sigChangeMaxSize(val);
 }
 
 bool XHelper::winShadow() const
@@ -237,9 +240,10 @@ bool XHelper::winShadow() const
     return m_winShadow;
 }
 
-void XHelper::setWinShadow(bool newWinShadow)
+void XHelper::setWinShadow(bool enable)
 {
-    m_winShadow = newWinShadow;
+    m_winShadow = enable;
+    emit sigChangeWinShadow(enable);
 }
 
 double XHelper::getScale(QScreen *screen)

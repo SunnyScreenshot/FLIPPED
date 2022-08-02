@@ -193,11 +193,22 @@ struct  XDrawStep
 };
 
 // ------------------------
-class XHelper : public ISingleton<XHelper>
+
+class XHelper : public QObject
 {
-    FRIEND_CREAT_SINGLETION(XHelper);
+    Q_OBJECT
+public:
+    static XHelper& instance() {
+        static XHelper instance;
+        return instance;
+    }
+
+    XHelper(XHelper&&) = delete;
+    XHelper(const XHelper&) = delete;
+    void operator= (const XHelper&) = delete;
 private:
     XHelper();
+    virtual ~XHelper() = default;
 
 public:
     double getScale(QScreen* screen = QApplication::primaryScreen());
@@ -241,11 +252,18 @@ public:
 
     // tabPin
     bool winShadow() const;
-    void setWinShadow(bool newWinShadow);
+    void setWinShadow(bool enable);
+
     int pinOpacity() const;
-    void setPinOpacity(int newPinOpacity);
+    void setPinOpacity(int opacity);
     int pinMaxSize() const;
-    void setPinMaxSize(int newPinMaxSize);
+    void setPinMaxSize(int val);
+
+
+signals:
+    void sigChangeWinShadow(bool enable);
+    void sigChangeOpacity(int opacity);
+    void sigChangeMaxSize(int val);
 
 
 private:
