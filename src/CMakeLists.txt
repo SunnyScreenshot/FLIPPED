@@ -343,12 +343,12 @@ message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
 message("==========END============")
 
 #  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
-if(WIN32)
-    set (BIN_INSTALL_DIR "") # seems useless, don't know why...
-else()
-    if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-        set(CMAKE_INSTALL_PREFIX /usr)
-    endif ()
-
-    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)
-endif()
+#if(WIN32)
+#    set (BIN_INSTALL_DIR "") # seems useless, don't know why...
+#else()
+#    if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+#        set(CMAKE_INSTALL_PREFIX /usr)
+#    endif ()
+#
+#    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)
+#endif()
