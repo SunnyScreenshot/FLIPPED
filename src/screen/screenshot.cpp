@@ -1188,6 +1188,8 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::white);
     pa.setPen(pen);
 
+
+#ifdef _MYDEBUG
     // 调试的实时数据
     QFont font;//(font());
     font.setPointSize(12);  // 默认大小为 9
@@ -1203,17 +1205,17 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     pa.drawText(tPosText - QPoint(0, space * -1), QString("Wait(0) Select(1) Move(2) Draw(3) Stretch(4)"));
     pa.drawText(tPosText - QPoint(0, space * 0), QString("m_rtCalcu.scrnType: %1")
-                .arg(int(m_rtCalcu.scrnType)));
+        .arg(int(m_rtCalcu.scrnType)));
     pa.drawText(tPosText - QPoint(0, space * 1), QString("pos1: (%1, %2)  pos2: (%3, %4)")
-                .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
+        .arg(m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos1.y()).arg(m_rtCalcu.pos2.x()).arg(m_rtCalcu.pos2.y()));
     pa.drawText(tPosText - QPoint(0, space * 2), QString("pos2 - pos1:(%1, %2)")
-                .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
+        .arg(m_rtCalcu.pos2.x() - m_rtCalcu.pos1.x()).arg(m_rtCalcu.pos2.y() - m_rtCalcu.pos1.y()));
     pa.drawText(tPosText - QPoint(0, space * 3), QString("m_rtCalcu.getSelRect(): (%1, %2, %3 * %4)")
-                .arg(m_rtCalcu_selRect.x()).arg(m_rtCalcu_selRect.y()).arg(m_rtCalcu_selRect.width()).arg(m_rtCalcu_selRect.height()));
+        .arg(m_rtCalcu_selRect.x()).arg(m_rtCalcu_selRect.y()).arg(m_rtCalcu_selRect.width()).arg(m_rtCalcu_selRect.height()));
     pa.drawText(tPosText - QPoint(0, space * 4), QString("rtSel: (%1, %2, %3 * %4)")
-                .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
+        .arg(rtSel.x()).arg(rtSel.y()).arg(rtSel.width()).arg(rtSel.height()));
     pa.drawText(tPosText - QPoint(0, space * 5), QString("pos(): (%1, %2)")
-                .arg(pos().x()).arg(pos().y()));
+        .arg(pos().x()).arg(pos().y()));
     pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2, %3 * %4)")
         .arg(m_rtSmartWindow.x()).arg(m_rtSmartWindow.y()).arg(m_rtSmartWindow.width()).arg(m_rtSmartWindow.height()));
     pa.drawText(tPosText - QPoint(0, space * 7), QString("XHelper::instance().smartWindow(): %1")
@@ -1225,7 +1227,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
             .arg(rtCurMove.width()).arg(rtCurMove.height()));
     }
     pa.drawText(tPosText - QPoint(0, space * 10), QString("m_step=>pos1(%1, %2)  pos2(%3 * %4) editPos(%5, %6)  rt(%7, %8, %9 * %10)  text:%11")
-        .arg(m_step.p1.x()).arg(m_step.p1.y()) .arg(m_step.p2.x()).arg(m_step.p2.y())
+        .arg(m_step.p1.x()).arg(m_step.p1.y()).arg(m_step.p2.x()).arg(m_step.p2.y())
         .arg(m_step.editPos.x()).arg(m_step.editPos.y())
         .arg(m_step.rt.x()).arg(m_step.rt.y()).arg(m_step.rt.width()).arg(m_step.rt.height())
         .arg(m_step.text));
@@ -1247,6 +1249,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         .arg(barMaxTop).arg(barMaxBottom).arg(m_rtVirDesktop.left()).arg(m_rtVirDesktop.top()).arg(m_rtVirDesktop.right()).arg(m_rtVirDesktop.bottom()));
     pa.drawText(tPosText - QPoint(0, space * 12), QString("rtScrn 左上右下(%1, %2, %3 * %4) topLimit:%5  bottomLimit:%6")
         .arg(rtScrn.left()).arg(rtScrn.top()).arg(rtScrn.right()).arg(rtScrn.bottom()).arg(topLimit).arg(bottomLimit));
+#endif
 
 #if 0
     QRect rtOuter = m_rtCalcu.getExteRect(rtSel);

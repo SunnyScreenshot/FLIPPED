@@ -10,21 +10,26 @@
  ******************************************************************/
 #include "pinwidget.h"
 #include "../../screen/drawhelper.h"
-
+#include "../../xglobal.h"
 #include <QMenu>
 #include <QColor>
 #include <QPoint>
 #include <QLabel>
+#include <QDebug>
 #include <QPixmap>
 #include <QAction>
+#include <QDateTime>
 #include <QShortcut>
 #include <QBoxLayout>
+#include <QClipboard>
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QFileDialog>
+#include <QApplication>
 #include <QGuiApplication>
 #include <QContextMenuEvent>
 #include <QGraphicsDropShadowEffect>
-#include "../../xglobal.h"
+#include "QActionGroup"
 
 //QPoint m_p;   // 窗口的左上角
 //QPoint m_p1;
@@ -89,21 +94,43 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
 
 void PinWidget::initUI()
 {
-    QAction* aCopy = m_menu->addAction(tr("Copy"));
- 
+    auto aCopy = m_menu->addAction(tr("Copy"));
     auto aSave = m_menu->addAction(tr("Save"));
     m_menu->addSeparator();
     auto aShadow = m_menu->addAction(tr("Shadow"));
-    auto aOpicaty = m_menu->addAction(tr("Opicaty"));
+
+    
+    auto aOpicaty = new QMenu(tr("Opicaty"), this);
+    auto opicatyGroup = new QActionGroup(this);
+    opicatyGroup->setExclusive(true);
+    for (int i = 10; i >= 1; --i) {
+        auto act = aOpicaty->addAction(tr("%1%").arg(i * 10));
+        act->setCheckable(true);
+        i == 10 ? act->setChecked(true) : act->setChecked(false);
+        opicatyGroup->addAction(act);
+        connect(act, &QAction::triggered, this, [&, i]() { onChangeOpacity(i * 10); });
+    }
+
+    m_menu->addMenu(aOpicaty);
     m_menu->addSeparator();
-    auto aGrop = m_menu->addAction(tr("Muve to grop"));
+    auto aGrop = m_menu->addAction(tr("Move to grop"));
     m_menu->addSeparator();
-    auto aColse = m_menu->addAction(tr("Close"));
+    auto aDel = m_menu->addAction(tr("Delete"), this, &PinWidget::close, QKeySequence(Qt::Key_Delete));   // 但是按键是不生效的，很奇怪
+    auto aColse = m_menu->addAction(tr("Close"), this, &PinWidget::close, QKeySequence(Qt::CTRL + Qt::Key_W));
 
     aShadow->setCheckable(true);
     aShadow->setChecked(true);
+    
+    //void changed();
+    //void triggered(bool checked = false);  // 可以不用设置 setCheckable(true) 而直接触发
+    //void hovered();
+    //void toggled(bool);
+
+    connect(aCopy, &QAction::triggered, this, &PinWidget::onCopy);
+    connect(aSave, &QAction::triggered, this, &PinWidget::onSave);
+
     // 使用单值捕获，不然有问题： https://zhuanlan.zhihu.com/p/346991724
-    connect(aShadow, &QAction::toggled, this, [&, aShadow](bool checked) { aShadow->setChecked(checked); });
+    connect(aShadow, &QAction::triggered, this, [&, aShadow](bool checked) { aShadow->setChecked(checked); });
 }
 
 void PinWidget::setScaledPixmapToLabel(const QSize &newSize, const qreal scale, const bool expanding)
@@ -210,4 +237,24 @@ void PinWidget::onChangeMaxSize(double val)
     setMaximumSize(val, val);
 }
 
+void PinWidget::onCopy()
+{
+    if (!m_pixmap.isNull())
+        QApplication::clipboard()->setPixmap(m_pixmap);
+}
+
+void PinWidget::onSave()
+{
+    if (m_pixmap.isNull())
+        return;
+
+    QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
+    QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "picshot_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".png", fileter);
+    
+    QTime startTime = QTime::currentTime();
+    m_pixmap.save(fileNmae);
+    QTime stopTime = QTime::currentTime();
+    int elapsed = startTime.msecsTo(stopTime);
+    qDebug() << "save m_pixmap tim =" << elapsed << "ms" << m_pixmap.size();
+}
 

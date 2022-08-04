@@ -42,6 +42,9 @@ protected:
     void contextMenuEvent(QContextMenuEvent* event) override;
 
 private slots:
+    void onCopy();
+    void onSave();
+
     void onChangeWinShadow(bool enable);
     void onChangeOpacity(int opacity);
     void onChangeMaxSize(double val);

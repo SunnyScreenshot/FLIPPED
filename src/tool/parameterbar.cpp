@@ -345,7 +345,7 @@ void ParameterBar::initUI()
     initLineWidthBar();
 
     if (m_colorBar)
-        m_colorBar->setVisible(true);
+        m_colorBar->setVisible(false);
 
     m_layout->setMargin(0);
     //const int bbMarginHor = BAR_MARGIN_HOR;
