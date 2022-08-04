@@ -1,3 +1,17 @@
+picshot (0.3-1) unstable; urgency=medium
+
+  * 添加贴图功能
+  * 添加十字线功能
+  * 添加高亮活动色的支持
+  * 偏好界面的槽函数实现
+  * Qt 升级 5.12.11 --> 5.15.2
+  * 添加国际化支持
+  * 优化的 1080 和 4K 屏幕下各自的控件大小，优化 UI 显示
+  * 优化 CMake 的书写
+  * 优化冗余和注释代码
+
+ -- XMuli <xmulitech@gmail.com>  Aug, 04 Jul 2022 23:53:03 +0800
+
 picshot (0.2-1) unstable; urgency=medium
 
   * 采用全新 UI 设计：截图工具栏和偏好设置界面

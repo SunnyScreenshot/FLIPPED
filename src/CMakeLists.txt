@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.3)
 set(PROJECT_NAME PicShot)
-set(PROJECT_VERSION 0.2)
+set(PROJECT_VERSION 0.3)
 set(_version ${PROJECT_VERSION})
 
 project(${PROJECT_NAME})   
