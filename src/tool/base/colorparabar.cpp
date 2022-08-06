@@ -10,7 +10,6 @@
  ******************************************************************/
 #include "colorparabar.h"
 #include "../../xglobal.h"
-#include "../../core/xlog.h"
 #include "../../widget/xlabel.h"
 #include "../../screen/drawhelper.h"
 #include <QLabel>
@@ -91,7 +90,7 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
     } else if (mode == ColorParaBarMode::CPB_HighLight) {
         m_layout = new QHBoxLayout(this);
         QHBoxLayout* layout = static_cast<QHBoxLayout*>(m_layout);
-        for (auto& it = m_labMap.cbegin(); it != m_labMap.cend(); ++it) {
+        for (auto it = m_labMap.begin(); it != m_labMap.end(); ++it) {
                 XLabel* lab = new XLabel(this);
                 if (it == m_labMap.cbegin()) { // 初始化为默认的第一个 XLabel 颜色 
                     m_curXLab = lab;
@@ -145,7 +144,7 @@ void ColorParaBar::onUpdateSel(const QColor& col)
     m_curXLab = findChild<XLabel*>(m_labMap.lastKey());
     m_curCol.setNamedColor(col.name());
 
-    for (auto& it = m_labMap.cbegin(); it != m_labMap.cend(); ++it){
+    for (auto it = m_labMap.cbegin(); it != m_labMap.cend(); ++it){
         qDebug() << "col.name():" << col.name() << "   it.value():" << it.value();
         if (it.value().compare(col.name(), Qt::CaseInsensitive) == 0) {
             m_curXLab = findChild<XLabel*>(it.key());
