@@ -90,7 +90,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
-    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags());
+    setWindowFlags(Qt::FramelessWindowHint | windowFlags());  // | Qt::WindowStaysOnTopHint
     #ifdef _MYDEBUG
         setWindowFlag(Qt::WindowStaysOnTopHint, false); // 删除置顶
         m_virGeom = currentScreen(QCursor::pos())->geometry();
@@ -439,7 +439,7 @@ QPixmap* ScreenShot::getVirScrnPixmap()
 #endif
     }
 
-    m_currPixmap->save("123456.png");
+    //m_currPixmap->save("123456.png");
     return m_currPixmap;
 }
 
@@ -719,9 +719,15 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
     const int barMaxRight = rtSel.right() + sBarHeight;
 
 
-    QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
-    QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight() - QPoint(0, 1)))->geometry(); // geometry 则左上角坐标非 0，0； (0, 1) 为修正底部置底后， 返回为（错的)另一个显示器
-    //QRect rtScrn = currentScreen(rtSel.bottomRight())->geometry();  // 取代上面的那个，但有个 bug，光标在底部或者之外，返回 nullptr
+//    QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
+//    QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight() - QPoint(0, 1)))->geometry(); // geometry 则左上角坐标非 0，0； (0, 1) 为修正底部置底后， 返回为（错的)另一个显示器
+    QScreen* curScrn = qGuiApp->screenAt(rtSel.bottomRight());
+    if (!curScrn)
+        curScrn = qGuiApp->screenAt(rtSel.topRight());
+    if (!curScrn)
+        curScrn = qGuiApp->screenAt(QCursor::pos());
+
+    QRect rtScrn = curScrn->geometry();  // 取代上面的那个，但有个 bug，光标在底部或者之外，返回 nullptr
     QPoint p1;  // selBar
     QPoint p2;  // paraBar
     if (orien == Qt::Horizontal) {
@@ -984,7 +990,6 @@ void ScreenShot::showAllDrawedShape(QPainter& pa)
 void ScreenShot::paintEvent(QPaintEvent *event)
 {
 	Q_UNUSED(event);
-
     if (m_rtCalcu.scrnType == ScrnType::Draw)
         setCursor(Qt::CrossCursor);
 
@@ -1014,12 +1019,6 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         //pa.drawPixmap(mousePos + QPoint(100, 100), m_currPixmap->copy(rtPick).scaled(tSize * 4, Qt::KeepAspectRatio)); // 放大 4 倍
 
         // m_savePixmap 和 m_currPixmap 的地址没有改变，但前者的 cacheKey 总在变化???
-        //qInfo() << "ScreenShot::paintEvent()";
-        //qInfo() << "---------##-> m_savePixmap:[" << m_savePixmap << "],   &m_savePixmap:[" << &m_savePixmap << "]";
-        //qInfo() << "---------##->*m_currPixmap:[" << *m_currPixmap << "],   m_currPixmap:[" << m_currPixmap << "]";
-
-        //qInfo() << "m_currPixmap:" << m_currPixmap << "    &m_savePixmap:" << &m_savePixmap<< "    m_savePixmap:" << m_savePixmap;
-        //qInfo() << "--------------->rtSel:" << rtSel << "  m_rtCalcu.getSelRect:" << m_rtCalcu.getSelRect();
     }
 
     // 画家准备
@@ -1099,9 +1098,9 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         }
 
         // 添加磨砂透明效果
-        auto leftTop = m_selBar->rect().topLeft();
+        auto leftTop = v.at(0); // m_selBar->rect().topLeft();
         auto t = m_currPixmap->copy(QRect(leftTop * getDevicePixelRatio(), m_selBar->rect().size() * getDevicePixelRatio()));
-        m_selBar->setBlurBackground(t, 5);
+        m_selBar->setBlurBackground(t, 18);
     }
 
     // 绘画十字线
@@ -1343,9 +1342,8 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
 	// 此时为 Qt::NoButton
 	if (m_rtCalcu.scrnType == ScrnType::Wait) {
-        if (XHelper::instance().smartWindow())
+        if (m_bSmartWin)
             updateGetWindowsInfo();
-
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
         m_rtCalcu.pos2 = event->pos();
         m_bSmartWin = false;
@@ -1472,6 +1470,9 @@ void ScreenShot::getScrnShots()
     getVirScrnPixmap(); // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
     show();
 
+    if (m_bSmartWin)
+        updateGetWindowsInfo();
+
     // fix: 初次使用全局热键召唤截图窗口，对 Esc 无响应。 考虑跨平台或需参考 https://zhuanlan.zhihu.com/p/161299504
     if (!isActiveWindow()) {
         activateWindow();
@@ -1529,7 +1530,6 @@ double ScreenShot::getDevicePixelRatio(QScreen * screen)
 void ScreenShot::updateGetWindowsInfo()
 {
     WinID winId;
-
 
 #ifdef Q_OS_WIN
     winId._hWnd = (void *)QWidget::winId();

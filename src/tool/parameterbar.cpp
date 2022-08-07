@@ -13,8 +13,6 @@
 #include "../widget/xhorizontalline.h"
 #include "../widget/xverticalline.h"
 #include "../widget/xcombobox.h"
-#include "../widget/xlabel.h"
-
 #include "../core/xlog.h"
 #include <QColor>
 #include <QSize>
@@ -78,7 +76,6 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
     group->setExclusive(true); // toolBtn 互斥
 
     auto it = map.begin();
-    QToolButton* firstBtn = nullptr;
     for (int i = 0; i < items.size(); ++i) {
         QToolButton* tb = new QToolButton();
         tb->setIconSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
@@ -185,71 +182,46 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
 {
     removeAllBar();
 
-    int n = m_layout->count();
+#define ADDWIDGET_AND_SHOE(w, bAddSpacer) \
+    addWidget(w); \
+    w->setVisible(true); \
+    if (bAddSpacer) \
+        addSpacer();
+
+
     if (shape == DrawShape::NoDraw) {
         XLOG_INFO("[shape] is DrawShape::NoDraw.");
     } else if (shape == DrawShape::Rectangles) {
-        addWidget(m_rectBar);
-        m_rectBar->setVisible(true);
-        addSpacer();
-        addWidget(m_lienWidthBar);
-        m_lienWidthBar->setVisible(true);
-        addSpacer();
-        addWidget(m_colorBar);
-        m_colorBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_rectBar, true);
+        ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
+        ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::Ellipses) {
-        addWidget(m_ellipseBar);
-        m_ellipseBar->setVisible(true);
-        addSpacer();
-        addWidget(m_lienWidthBar);
-        m_lienWidthBar->setVisible(true);
-        addSpacer();
-        addWidget(m_colorBar);
-        m_colorBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_ellipseBar, true);
+        ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
+        ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::LineWidth) {
-        addWidget(m_lienWidthBar);
-        m_lienWidthBar->setVisible(true);
-        addSpacer();
-        addWidget(m_colorBar);
-        m_colorBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
+        ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::Arrows) {
-        addWidget(m_arrowBar);
-        m_arrowBar->setVisible(true);
-        addSpacer();
-        addWidget(m_lienWidthBar);
-        m_lienWidthBar->setVisible(true);
-        addSpacer();
-        addWidget(m_colorBar);
-        m_colorBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_arrowBar, true);
+        ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
+        ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::Pen) {
-        addWidget(m_lienWidthBar);
-        m_lienWidthBar->setVisible(true);
-        addSpacer();
-        addWidget(m_colorBar);
-        m_colorBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
+        ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::Mosaics) {
-        addWidget(m_mosaicBar);
-        m_mosaicBar->setVisible(true);
-        addSpacer();
-        addWidget(m_lienWidthBar);
-        m_lienWidthBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_mosaicBar, true);
+        ADDWIDGET_AND_SHOE(m_lienWidthBar, false);
     } else if (shape == DrawShape::Text) {
-        addWidget(m_ellipseBar);        // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
-        m_ellipseBar->setVisible(true);   
-        addSpacer();
-        addWidget(m_colorBar);
-        m_colorBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_ellipseBar, true);  // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
+        ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::SerialNumber) {
-        addWidget(m_ellipseBar);        // TODO 2022.06.27： 还需要添加一个 font size 大小的 combobox
-        m_ellipseBar->setVisible(true);
-        addSpacer();
-        addWidget(m_colorBar);
-        m_colorBar->setVisible(true);
+        ADDWIDGET_AND_SHOE(m_ellipseBar, true);  // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
+        ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else {
         XLOG_ERROR("[shape] is not any enumeration.");
     }
 
-    //setVisible(m_layout->count());
     setVisible(checked);
     adjustSize();
     update();
@@ -297,7 +269,7 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
             //m_lienWidthBar;
             // TODO: 此为当前点击选中这个
             QString name = it->objectName();
-            int n = it->objectName().right(1).toInt();
+//            int n = it->objectName().right(1).toInt();
             
             //const QString cTb1("tb1");
             //const QString cTb2("tb2");
