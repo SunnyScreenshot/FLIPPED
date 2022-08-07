@@ -13,7 +13,6 @@
 
 #include "rectcalcu.h"
 #include "drawhelper.h"
-#include "../xglobal.h"
 #include "../widget/xtextwidget.h"
 #include "../tool/selectbar.h"
 #include "../tool/parameterbar.h"
@@ -23,6 +22,7 @@
 #include <QColor>
 #include <QVector>
 #include <QPointer>
+#include <QScreen>
 
 #ifdef Q_OS_WIN
     #include "../platform/wininfo_win.h"
@@ -31,7 +31,7 @@
 #endif
 
 QT_BEGIN_NAMESPACE
-class QScreen;
+//class QScreen;
 class QPixmap;
 QT_END_NAMESPACE
 
@@ -51,7 +51,10 @@ public:
 
     const Qt::Orientation getBarOrien() const; 
     void setBarOrien(Qt::Orientation val);
+
 private:
+    const QScreen *currentScreen(const QPoint &pos = QCursor::pos());
+
     void getScrnInfo();
 	double getDevicePixelRatio();
 	double getDevicePixelRatio(QScreen *screen);
@@ -89,7 +92,7 @@ private:
 	ScrnType updateScrnType(const QPoint pos);
 	void updateCursorShape(const QPoint pos);
     void updateBorderCursorShape(const CursorArea& cursArea);
-    QPixmap* getVirtualScreen();
+    QPixmap* getVirScrnPixmap();
     bool drawToCurrPixmap();
     bool getDrawedShapeRect();
 
@@ -103,7 +106,7 @@ private:
     bool isDrawShape(XDrawStep& step);
 
     const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
-    const QPoint drawSelSizePosition(QRect& rt);
+    const QPoint drawSelSizePosition(const QRect rt);
     
     //--------------test begin-------------
     void showAllDrawedShape(QPainter& pa);
@@ -124,12 +127,13 @@ protected:
 
 private:
     double m_scal;
-	QList<QScreen *> m_screens;            // 所有屏幕
-	QScreen* m_primaryScreen;              // 主屏幕
+    QList<QScreen *> m_scrns;              // 所有屏幕
+    QScreen* m_priScrn;                    // 主屏幕
+    QRect m_virGeom;               // 截图时刻的虚拟桌面的大小
 	QPixmap* m_currPixmap;                 // 当前屏幕截图
     QPixmap m_savePixmap;                  // 当前屏幕截图 + 遮罩   无构造初始化
 	RectCalcu m_rtCalcu;                   // 选中矩形区域
-    QRect m_rtVirDesktop;                  // 截图时刻的虚拟桌面的大小
+    bool m_bSmartWin;                      //
     bool m_bFirstSel;                      // 初次选中 截图矩形 完成
     bool m_bFirstPress;                    // 初次 左键按下 完成(十字线)
 

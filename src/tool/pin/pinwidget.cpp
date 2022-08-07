@@ -76,9 +76,7 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
 
     qreal devicePixelRatio = 1;
 #if defined(Q_OS_MACOS)
-    QScreen* currentScreen = QGuiAppCurrentScreen().currentScreen();
-    if (currentScreen)
-        devicePixelRatio = currentScreen->devicePixelRatio();
+    devicePixelRatio = 2;
 #endif
     const int m = margin * devicePixelRatio;
     QRect adjusted_pos = geometry + QMargins(m, m, m, m);
