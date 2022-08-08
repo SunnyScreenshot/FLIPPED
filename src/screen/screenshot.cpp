@@ -956,7 +956,7 @@ void ScreenShot::showAllDrawedShape(QPainter& pa)
 {
     QPoint posText(0, 100);
     const int space = 15;
-    QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
+//    QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
 
     int i = 0;
     pa.drawText(posText + QPoint(0, space * i), QString("m_vDrawed:%0").arg(m_vDrawed.count()));
@@ -1094,9 +1094,10 @@ void ScreenShot::paintEvent(QPaintEvent *event)
         }
 
         // 添加磨砂透明效果
-        auto leftTop = v.at(0); // m_selBar->rect().topLeft();
-        auto t = m_currPixmap->copy(QRect(leftTop * getDevicePixelRatio(), m_selBar->rect().size() * getDevicePixelRatio()));
-        m_selBar->setBlurBackground(t, 18);
+        auto t1 = m_currPixmap->copy(QRect(v.at(0) * getDevicePixelRatio(), m_selBar->rect().size() * getDevicePixelRatio()));
+        m_selBar->setBlurBackground(t1, 7);
+        auto t2 = m_currPixmap->copy(QRect(v.at(1) * getDevicePixelRatio(), m_paraBar->rect().size() * getDevicePixelRatio()));
+        m_paraBar->setBlurBackground(t2, 7);
     }
 
     // 绘画十字线
@@ -1179,6 +1180,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
     //QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight()))->geometry();  // geometry 则左上角坐标非 0，0
     QRect rtScrn = m_scrns.at(desktop->screenNumber(rtSel.bottomRight()))->geometry();
+    // QRect rtScrn = currentScreen(rtSel.bottomRight())->geometry(); // 使用此替换有个 bug， 不在时候返回空
     int topLimit = qMax(m_virGeom.top(), rtScrn.top());
     int bottomLimit = qMin(m_virGeom.bottom(), rtScrn.bottom());
 
@@ -1368,7 +1370,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
     if (event->button() != Qt::LeftButton)
         return;
 
-	if (m_rtCalcu.scrnType == ScrnType::Wait) {
+    if (m_rtCalcu.scrnType == ScrnType::Wait) {
 	} else if (m_rtCalcu.scrnType == ScrnType::Select) {
 		m_rtCalcu.pos2 = event->pos();
 

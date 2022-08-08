@@ -14,6 +14,7 @@
 #include "../widget/xverticalline.h"
 #include "../widget/xcombobox.h"
 #include "../core/xlog.h"
+#include "base/blurwidget.h"
 #include <QColor>
 #include <QSize>
 #include <QPainter>
@@ -28,8 +29,9 @@
 #include <QDebug>
 
 ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
-    : XFrameWidget(parent)
+    : QWidget(parent)
     , m_scal(XHelper::instance().getScale())
+    , m_blur(new BlurWidget(this))
     , m_orien(orien)
     , m_layout(nullptr)
     , m_colorBar(new ColorParaBar())
@@ -43,6 +45,15 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     initUI();
 
     connect(m_colorBar, &ColorParaBar::sigColorChange, this, &ParameterBar::sigSelColor);
+}
+
+void ParameterBar::setBlurBackground(const QPixmap &pix, double blurRadius)
+{
+    if (!m_blur)
+        return;
+
+    m_blur->setPixmap(pix, blurRadius);
+    m_blur->lower();
 }
 
 void ParameterBar::addWidget(QWidget *w)
@@ -230,6 +241,12 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
 void ParameterBar::enterEvent(QEvent* event)
 {
     setCursor(Qt::ArrowCursor);
+}
+
+void ParameterBar::resizeEvent(QResizeEvent *event)
+{
+    m_blur->setGeometry(0, 0, width(), height());
+    return QWidget::resizeEvent(event);
 }
 
 void ParameterBar::onTBReleased(QAbstractButton* btn)

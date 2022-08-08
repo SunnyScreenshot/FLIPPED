@@ -15,13 +15,11 @@
 #include "base/blurwidget.h"
 #include <QVector>
 
-QT_BEGIN_NAMESPACE
+class BlurWidget;
 class QToolButton;
 class QStringList;
 class QBoxLayout;
-QT_END_NAMESPACE
 
-class BlurWidget;
 // rectangle
 // ellipse
 // arrow
@@ -42,7 +40,6 @@ class SelectBar : public QWidget
 public:
     SelectBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~SelectBar() = default;
-
     void setBlurBackground(const QPixmap& pix, double blurRadius);
 
 private:

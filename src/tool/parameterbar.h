@@ -11,25 +11,24 @@
 #ifndef PARAMETERBAR_H
 #define PARAMETERBAR_H
 
-#include "../widget/xframewidget.h"
 #include "../screen/drawhelper.h"
 #include "base/colorparabar.h"
 #include "base/managebar.h"
 #include <QPointer>
 
-QT_BEGIN_NAMESPACE
-class QBoxLayout;
 class XComboBox;
+class BlurWidget;
+class QBoxLayout;
 class QAbstractButton;
 class QToolButton;
-QT_END_NAMESPACE
 
-class ParameterBar : public XFrameWidget
+class ParameterBar : public QWidget
 {
     Q_OBJECT
 public:
     explicit ParameterBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~ParameterBar() = default;
+    void setBlurBackground(const QPixmap& pix, double blurRadius);
 
     void updateParaBar();
 
@@ -58,9 +57,11 @@ public slots:
 
 protected:
     void enterEvent(QEvent* event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     double m_scal;
+    BlurWidget* m_blur;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 
