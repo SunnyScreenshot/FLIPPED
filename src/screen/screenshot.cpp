@@ -84,11 +84,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     m_textEdit->setTextColor(Qt::red);
     m_textEdit->hide();
 	
-	// 注意显示器摆放的位置不相同~；最大化的可能异常修复
-    
-
-
-
+    // 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
     setWindowFlags(Qt::FramelessWindowHint | windowFlags());  // | Qt::WindowStaysOnTopHint
     #ifdef _MYDEBUG
@@ -102,10 +98,10 @@ ScreenShot::ScreenShot(QWidget *parent)
 #else // Q_OS_MAC
     setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
     #ifdef _MYDEBUG
-        geom = currentScreen(QCursor::pos())->geometry();
+        m_virGeom = currentScreen(QCursor::pos())->geometry();
         if (m_scrns.size() == 1)
-            geom.setWidth(geom.width() / 2);
-        setFixedSize(geom.size());
+            m_virGeom.setWidth(m_virGeom.width() / 2);
+        setFixedSize(m_virGeom.size());
     #else
         showFullScreen();
     #endif

@@ -42,8 +42,7 @@ public:
     static std::wstring getWindowPath(DWORD processId);
     static std::wstring windowPath2Name(std::wstring path);
 
-//    error: LNK2005: "protected: static struct HWND__ * WinInfoWin::m_hWndTarget" (?m_hWndTarget@WinInfoWin@@1PAUHWND__@@A) already defined in mocs_compilation.cpp.obj
-
+    // error: LNK2005: "protected: static struct HWND__ * WinInfoWin::m_hWndTarget" (?m_hWndTarget@WinInfoWin@@1PAUHWND__@@A) already defined in mocs_compilation.cpp.obj
     // 静态成员变量只能在 cpp 中初始化，坑了一会 https://stackoverflow.com/questions/40991522
 public:
     static HWND m_hWndTarget;

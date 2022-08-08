@@ -32,14 +32,11 @@ WinInfo_Win::~WinInfo_Win()
 {
 }
 
-// cout <<用
 void WinInfo_Win::getAllWinInfoCache()
 {
     m_vWinData.clear();
     m_hWndTarget = nullptr;
     ::EnumWindows(WinInfo_Win::EnumWindowsProc, m_level); // 0 为 z 序最顶层的
-
-
 
 //    int i = 0;
 //    setlocale(LC_ALL, "");
@@ -101,8 +98,7 @@ HWND WinInfo_Win::getAllWinInfoRealTime(POINT pt)
 // 设置窗口过滤
 void WinInfo_Win::setWinIdFilter(WinID target /*= nullptr*/)
 {
-//    if (target)
-        m_vWinIdFilter.push_back(target);
+    m_vWinIdFilter.push_back(target);
 }
 
 WinData* WinInfo_Win::getWinInfoFromPoint(QPoint pt, bool bPrevCache /*= false*/)
@@ -112,7 +108,6 @@ WinData* WinInfo_Win::getWinInfoFromPoint(QPoint pt, bool bPrevCache /*= false*/
     pos.y = pt.y();
 
     HWND hWndTarget = nullptr;
-
     if (bPrevCache) {
         getAllWinInfoCache();
         hWndTarget = getWinInfoFromCache(pos);
@@ -121,9 +116,8 @@ WinData* WinInfo_Win::getWinInfoFromPoint(QPoint pt, bool bPrevCache /*= false*/
     }
 
     for (WinData& it : m_vWinData) {
-        if (hWndTarget && hWndTarget == (HWND)(it.id._hWnd)) {
+        if (hWndTarget && hWndTarget == (HWND)(it.id._hWnd))
             return &it;
-        }
     }
 
     return nullptr;
@@ -270,7 +264,6 @@ BOOL WinInfo_Win::EnumWindowsProc(HWND hWnd, LPARAM lParam)
         //if (!EnumChildWindows(hWnd, EnumChildWindowsProc, lParam))
         //    m_level++;
         // 关于等级看怎么设置一下
-
 	}
 
 	return TRUE;
@@ -287,7 +280,6 @@ BOOL WinInfo_Win::WindowsContainsPoint(HWND hWnd, POINT pt)
 HWND WinInfo_Win::getWinInfoFromCache(POINT pt)
 {
     WinData winData;
-
     for (const auto& it : m_vWinData) {
         RECT rt;
         rt.left = it.rect.left();
@@ -295,36 +287,15 @@ HWND WinInfo_Win::getWinInfoFromCache(POINT pt)
         rt.right = it.rect.right();
         rt.bottom = it.rect.bottom();
 
-
         if (PtInRect(&rt, pt)) {
-
-            if (winData.totalIndex <= it.totalIndex) {
+            if (winData.totalIndex <= it.totalIndex)
                 winData = it;
-            }
 		}
 	}
 
     return (HWND)winData.id._hWnd;
 }
 
-// 过滤不可见等的窗口
-/* spy 抓的 不可见窗口类型 参考
-WS_POPUP
-WS_CLIPSIBLINGS
-WS_EX_TOPMOST
-WS_BORDER
-WS_SIZEBOX
-
-WS_MINIMIZEBOX
-WS_SYSMENU
-WS_CLIPCHILDREN
-
-// 扩展类型
-WS_EX_TOPMOST
-WS_EX_TOOLWINDOW
-WS_EX_PALETTEWINDOW
-00080000
-*/
 BOOL WinInfo_Win::WindowsFilter(HWND hWnd)
 {
     if (!hWnd)
@@ -342,9 +313,11 @@ BOOL WinInfo_Win::WindowsFilter(HWND hWnd)
 		|| rect.bottom - rect.top <= 0 || rect.right - rect.left <= 0)     // 宽度不存在
         return FALSE;
 
+    // https://docs.microsoft.com/en-us/windows/win32/winmsg/window-styles
+    // https://docs.microsoft.com/en-us/windows/win32/winmsg/extended-window-styles
     DWORD styles = ::GetWindowLong(hWnd, GWL_STYLE);
     DWORD ex_styles = ::GetWindowLong(hWnd, GWL_EXSTYLE);
-    if (styles & WS_EX_TOOLWINDOW || ex_styles & WS_EX_TRANSPARENT) // TODO: 看下使用什么合适
+    if ((!(styles & WS_VISIBLE)) | ex_styles & WS_EX_TRANSPARENT | ex_styles & WS_EX_NOREDIRECTIONBITMAP)  // spy++ 抓的 不可见窗口类型
         return FALSE;
 
     return ::IsWindowVisible(hWnd);
@@ -355,9 +328,9 @@ std::wstring WinInfo_Win::getWindowPath(DWORD processId)
     wchar_t path[MAX_PATH] = L"";
     HANDLE hProc = ::OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, processId);
 
-#ifdef Q_CC_MINGW   // mingw 编译器
-    // 坑，mingw 不支持
-#elif Q_CC_MSVC  //msvc编译器
+#ifdef Q_CC_MINGW
+    //pit, mingw does not support
+#elif Q_CC_MSVC
     GetProcessImageFileName(hProc, path, MAX_PATH);
 #endif
 
