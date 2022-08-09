@@ -17,6 +17,7 @@
 #include "../tool/selectbar.h"
 #include "../tool/parameterbar.h"
 #include "../tool/selectsize/selectsize.h"
+#include "../preference/appellation.h"
 #include <QWidget>
 #include <QList>
 #include <QColor>

@@ -11,6 +11,8 @@
 #ifndef XDRAW_H
 #define XDRAW_H
 
+#include "../core/isingleton.h"
+#include "../preference/appellation.h"
 #include <QObject>
 #include <QPen>
 #include <QRect>
@@ -23,7 +25,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QString>
-#include "../core/isingleton.h"
+
 //#include <Format>
 
 class QPainterPath;
@@ -231,6 +233,8 @@ public:
     void setShowCursor(bool enable) { m_enableShowCursor = enable; }
     bool autoCpoyClip() const { return m_enableAutoCpoyClip; }
     void setAutoCpoyClip(bool enable) { m_enableAutoCpoyClip = enable; }
+
+    const QString formatToName(const QString str = XHelper::instance().path(toFileName).trimmed());
 
 	QIcon ChangeSVGColor(QString path, QString shape, QColor color, QSize size);
     void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);

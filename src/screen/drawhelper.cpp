@@ -26,6 +26,8 @@
 #include <QGraphicsScene>
 #include <QPainterPath>
 #include <QLine>
+#include <QDateTime>
+#include <QStandardPaths>
 
 int XDrawStep::totalIdx = 0;
 
@@ -44,10 +46,26 @@ XHelper::XHelper()
     , m_pinOpacity(READ_CONFIG_INI(INIT_PIN, tpOpacity, 100).toInt())
     , m_pinMaxSize(READ_CONFIG_INI(INIT_PIN, tpMaxSize, 10000).toInt())
 {
-    m_path = { {toFileName, "PicShot_xxxx.png"},
-               {toQuickSavePath, qApp->applicationDirPath() + "/History/QuickSave"},
-               {toAutoSavePath, qApp->applicationDirPath() + "/History/AutoSave"},
-               {toConfigPath, qApp->applicationDirPath() + "/History/Config"}};
+    //m_path = { {toFileName, "picshot_$yyyyMMdd_hhmmss$.png"},
+    //           {toQuickSavePath, qApp->applicationDirPath() + "/History/QuickSave"},
+    //           {toAutoSavePath, qApp->applicationDirPath() + "/History/AutoSave"},
+    //           {toConfigPath, qApp->applicationDirPath() + "/History/Config"}};
+
+    m_path = { {toFileName, "picshot_$yyyyMMdd_hhmmss$.png"},
+           {toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()},
+           {toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()},
+           {toConfigPath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()} };
+}
+
+const QString XHelper::formatToName(const QString str /*= path(toFileName).trimmed()*/)
+{
+    auto fileName = str;
+    auto first = fileName.indexOf("$");
+    auto second = fileName.lastIndexOf("$");
+    auto nameTime = fileName.mid(first + 1, second - first - 1);
+    auto finalyName = fileName.replace(first, second - first + 1, QDateTime::currentDateTime().toString(nameTime));
+
+    return finalyName;
 }
 
 /*!

@@ -30,6 +30,7 @@
 #include <QPainterPath>
 #include <QGuiApplication>
 #include <QDebug>
+#include "QDir"
 
 
 namespace Util {
@@ -336,8 +337,11 @@ void ScreenShot::onSave()
         if (XHelper::instance().autoCpoyClip())
             QApplication::clipboard()->setPixmap(m_savePixmap);
 
+        const QString imageName = XHelper::instance().formatToName();
         QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
-        QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), "picshot_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".png", fileter);
+        QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), imageName, fileter);
+        if (fileNmae.isEmpty())
+            return;
 
         QTime startTime = QTime::currentTime();
         m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
@@ -345,6 +349,11 @@ void ScreenShot::onSave()
         int elapsed = startTime.msecsTo(stopTime);
         qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
         //m_currPixmap->save("a2.png");
+
+        const QString path = XHelper::instance().formatToName(XHelper::instance().path(toAutoSavePath).trimmed());
+        if (!path.isEmpty()) {
+            m_savePixmap.save(path + QDir::separator() + imageName);
+        }
     }
 
     clearnAndClose();

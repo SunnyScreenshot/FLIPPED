@@ -354,10 +354,10 @@ QWidget* Preference::tabOutput()
     insSettings->beginGroup(INIT_OUTPUT);
     bool ok = false;
     sbImageQuailty->setValue(insSettings->value(toImageQuailty, -1).toInt(&ok));
-    editFileName->setText(insSettings->value(toFileName, "PicShot_xxxx.png").toString());
-    editQuickSavePath->setText(insSettings->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toStringList().at(0));
-    editAutoSavePath->setText(insSettings->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toStringList().at(0));
-    editConfigPath->setText(insSettings->value(toConfigPath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)).toStringList().at(0));
+    editFileName->setText(insSettings->value(toFileName, "picshot_$yyyyMMdd_hhmmss$.png").toString());
+    editQuickSavePath->setText(insSettings->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
+    editAutoSavePath->setText(insSettings->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
+    editConfigPath->setText(insSettings->value(toConfigPath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()).toString());
     insSettings->endGroup();
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);

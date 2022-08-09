@@ -31,6 +31,8 @@
 #include "preference/preference.h"
 #include "tool/base/blurwidget.h"
 #include <QTranslator>
+#include <QStandardPaths>
+#include <QDir>
 // test
 #ifdef Q_OS_WIN
     //#include "./platform/wininfo_win.h"
@@ -38,6 +40,7 @@
 #elif  defined(Q_OS_LINUX)
     #include "./platform/wininfo_x11.h"
 #endif
+
 
 
 int main(int argc, char *argv[])
@@ -92,6 +95,17 @@ int main(int argc, char *argv[])
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
+
+
+    //auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    //if (path.isEmpty()) qFatal("Cannot determine settings storage location");
+    //QDir d{ path };
+    //if (d.mkpath(d.absolutePath()) && QDir::setCurrent(d.absolutePath())) {
+    //    qDebug() << "settings in" << QDir::currentPath();
+    //    QFile f{ "settings.txt" };
+    //    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    //        f.write("Hello, World");
+    //}
 
     //XFrameWidget *m_pw1 = new XFrameWidget();
     ////m_pw1->setPixmap(QPixmap("../../p2.jpg"));
