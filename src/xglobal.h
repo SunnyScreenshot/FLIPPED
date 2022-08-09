@@ -12,7 +12,7 @@
 #ifndef XGLOBAL_H
 #define XGLOBAL_H
 
-#define _MYDEBUG // 调试
+// #define _MYDEBUG // 调试
 
 // 1. HAIF_INTERVAL 为一半间隔，边框宽度一半高; 2 * HAIF_INTERVAL 为边框的宽度，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
 // 2. HAIF_INTERVAL 为边框一般的灵敏度，光标移动到上面便会变化形态
@@ -57,14 +57,14 @@
 
 // 取色盘 ColorParaBar 的八个圆 
   // Mode: CPB_ParaBar --> QGridLayout
-#define CPB_PB_LABEL_WIDTH 14              // 圆形取色盘宽度
+#define CPB_PB_LABEL_WIDTH 12              // 圆形取色盘宽度
 #define CPB_PB_MARGIN_HOR 10               // 取色盘, 圆形按钮的边框 左右 距离
 #define CPB_PB_MARGIN_VER 6                // 取色盘, 圆形按钮的边框 上下 距离
 #define CPB_PB_SPACING_HOR  7              // 取色盘, 圆形按钮之间的水平间距
 #define CPB_PB_SPACING_VER  4              // 取色盘, 圆形按钮之间的竖直间距
 
   // Mode: CPB_HighLight  -> QHBoxLayout
-#define CPB_HL_LABEL_WIDTH 14              // 圆形取色盘宽度
+#define CPB_HL_LABEL_WIDTH 12              // 圆形取色盘宽度
 #define CPB_HL_MARGIN_HOR 10               // 取色盘, 圆形按钮的边框 左右 距离
 #define CPB_HL_MARGIN_VER 6                // 取色盘, 圆形按钮的边框 上下 距离
 #define CPB_HL_SPACING_HOR  5              // 取色盘, 圆形按钮之间的水平间距
@@ -79,7 +79,7 @@
 #define COMBOBOX_HEIGHT 20                 // combobox 宽度
 
 // 选择线宽度 WidthParaBar 的 3 个圆，已经替换，后面可以删
-#define WIDTH_LABEL_WIDTH 24               // 色盘宽度
+#define WIDTH_LABEL_WIDTH 20               // 色盘宽度
 #define WIDTH_PARA_MARGIN 0                // 等大的小圆形按钮的边框距离
 #define WIDTH_PARA_HOR_SPACING  0          // 等大的小圆形按钮之间的水平间距
 #define WIDTH_PARA_VER_SPACING  0          // 等大的小圆形按钮之间的竖直间距

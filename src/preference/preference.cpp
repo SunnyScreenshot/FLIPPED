@@ -145,6 +145,12 @@ QWidget *Preference::tabGeneral()
     tHLay->addStretch(8);
     grid->addLayout(tHLay, i, j + 1, Qt::AlignLeft);
 
+    // #ToBeImproved
+    cbSelfStart->setDisabled(true);
+    cbAsAdmin->setDisabled(true);
+    cbAutoCheck->setDisabled(true);
+    pbUpdate->setDisabled(true);
+
     qDebug() << "tabGeneral:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
@@ -211,7 +217,6 @@ QWidget* Preference::tabInterface()
     cpbHighLight->setObjectName(tiCrosshairColor);
     spBorder->setRange(1, 100);
     spCrosshair->setRange(1, 100);
-    cbEnableShowCursor->setEnabled(false); // TODO 2022.08.02: 待实现功能
 
     QStringList styles;
     styles << tr("1_picshot") << tr("2_mac") << tr("3_deepin");
@@ -247,6 +252,10 @@ QWidget* Preference::tabInterface()
     grid->addWidget(cbEnableCrosshair, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbEnableShowCursor, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbEnableAutoCopy, i++, j + 1, Qt::AlignLeft);
+
+    // #ToBeImproved
+    cbEnableShowCursor->setDisabled(true);
+    cbEnableAutoCopy->setDisabled(true);
 
     qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
@@ -334,6 +343,9 @@ QWidget* Preference::tabOutput()
     creatPathEdit(autoAavePath, editAutoSavePath, changeAutoSavePath);
     creatPathEdit(configurePath, editConfigPath, changeConfigPath);
 
+    // #ToBeImproved
+    sbImageQuailty->setDisabled(true);
+
     qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
@@ -382,6 +394,8 @@ QWidget* Preference::tabPin()
     NEW_OBJECT(sbOpacity, QSpinBox, tpOpacity);
     NEW_OBJECT(sbMaxSize, QSpinBox, tpMaxSize);
 
+    sbOpacity->setSuffix("%");
+    sbOpacity->setSingleStep(10);
     sbOpacity->setRange(0, 100);
     sbMaxSize->setRange(100, 100000);
 
@@ -393,6 +407,9 @@ QWidget* Preference::tabPin()
     grid->addWidget(sbOpacity, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(maxSize, i, j, Qt::AlignRight);
     grid->addWidget(sbMaxSize, i++, j + 1, Qt::AlignLeft);
+
+    // #ToBeImproved
+    cbWindowShadow->setDisabled(true);
 
     qDebug() << "tabPin:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());

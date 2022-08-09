@@ -96,7 +96,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
     setFixedSize(m_virGeom.size());
 #else // Q_OS_MAC
-    setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
+//    setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
     #ifdef _MYDEBUG
         m_virGeom = currentScreen(QCursor::pos())->geometry();
         if (m_scrns.size() == 1)
@@ -919,6 +919,13 @@ void ScreenShot::whichShape()
     m_pCurrShape = nullptr;  // 没有选中任何一个
 }
 
+void ScreenShot::savePixmap(bool quickSave /*= true*/, bool autoSave /*= true*/)
+{
+    if (quickSave) {
+        //auto path = XHelper::instance().path(toQuickSavePath);
+    }
+}
+
 // 样式一: 浅蓝色
 void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
 {
@@ -1509,11 +1516,11 @@ void ScreenShot::getScrnInfo()
 
 double ScreenShot::getDevicePixelRatio()
 {
-#ifdef Q_OS_MAC
-    return 2;  // TODO 2022.03.11 无奈之举；使用 CMake MACOSX_BUNDLE 则返回的缩放比不正常
-#else
+//#ifdef Q_OS_MAC
+//    return 2;  // TODO 2022.03.11 无奈之举；使用 CMake MACOSX_BUNDLE 则返回的缩放比不正常,  return 1 ???
+//#endif
     return m_priScrn->devicePixelRatio();
-#endif
+
 }
 
 double ScreenShot::getDevicePixelRatio(QScreen * screen)

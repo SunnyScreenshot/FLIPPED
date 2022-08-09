@@ -62,6 +62,8 @@ private:
 	void updateGetWindowsInfo();
     void whichShape();
 
+    void savePixmap(bool quickSave = true, bool autoSave = true);
+
 signals:
 	void sigClearScreen();
 
@@ -114,7 +116,6 @@ private:
 
     // refactor
     void selectedShapeMove(QPainter& pa); // flameshot 选中图形的效果
-
     void drawCrosshair(QPainter& pa);
 
 protected:

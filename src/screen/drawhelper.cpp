@@ -277,8 +277,6 @@ double XHelper::getScale(QScreen *screen)
     #elif  defined(Q_OS_MAC)
         double scale = screen->logicalDotsPerInch() / 72.0;
         return scale;
-    #else
-        return screen->logicalDotsPerInch() / 96.0;  //
     #endif
 #endif
 }

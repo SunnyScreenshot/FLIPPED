@@ -140,7 +140,7 @@ void Tray::initGlobalHotKeys()
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
 
-        hotkey = insSettings->value(describe).toString(); // 读取配置文件
+        hotkey = insSettings->value(describe, hotkey).toString(); // 读取配置文件
 
         pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
         pHK->setObjectName(describe);
@@ -150,8 +150,6 @@ void Tray::initGlobalHotKeys()
 //        qDebug() << "hotkey" << hotkey;
 //        qDebug() << "hk Is Registered(" << describe << "):"  << pHK->isRegistered();
 //        qDebug() << "------------------------";
-
-        insSettings->setValue(describe, hotkey);
     }
     insSettings->endGroup();
 }
