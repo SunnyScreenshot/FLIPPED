@@ -1,3 +1,12 @@
+picshot (0.3.1-1) unstable; urgency=medium
+
+  * 修复 Linux 和 MacOS 编译失败
+  * 修复 MacOS 显示图片区域不正常
+  * Ubuntu apt 安装 qt 最大 5.12.8，故control 切换回 5.12.0
+
+ -- XMuli <xmulitech@gmail.com> Tue , 09 Aug 2022 23:57:03 +0800
+
+
 picshot (0.3-1) unstable; urgency=medium
 
   * 添加贴图功能
@@ -10,7 +19,7 @@ picshot (0.3-1) unstable; urgency=medium
   * 优化 CMake 的书写
   * 优化冗余和注释代码
 
- -- XMuli <xmulitech@gmail.com>  Aug, 04 Jul 2022 23:53:03 +0800
+ -- XMuli <xmulitech@gmail.com>  Thu, 04 Aug 2022 23:53:03 +0800
 
 picshot (0.2-1) unstable; urgency=medium
 
