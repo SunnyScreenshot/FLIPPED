@@ -320,7 +320,7 @@ QWidget* Preference::tabOutput()
     NEW_OBJECT_AND_TEXT(changeConfigPath, QPushButton, toConfigPath, tr("Change path"));
 
     sbImageQuailty->setRange(-1, 100);
-    sbImageQuailty->setFixedWidth(80);
+    sbImageQuailty->setFixedWidth(100);
 
     int i = 0;
     int j = 0;
@@ -342,9 +342,7 @@ QWidget* Preference::tabOutput()
     creatPathEdit(quickSavePath, editQuickSavePath, changeQuickSavePath);
     creatPathEdit(autoAavePath, editAutoSavePath, changeAutoSavePath);
     creatPathEdit(configurePath, editConfigPath, changeConfigPath);
-
-    // #ToBeImproved
-    sbImageQuailty->setDisabled(true);
+    sbImageQuailty->setToolTip(tr("Range [0,100] or -1.\nSpecify 0 to obtain small compressed files, 100 for large uncompressed files.\nand -1 to use the default settings."));
 
     qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
@@ -368,6 +366,9 @@ QWidget* Preference::tabOutput()
     connect(changeQuickSavePath, &QPushButton::released, this, &Preference::onChoosePath);
     connect(changeAutoSavePath, &QPushButton::released, this, &Preference::onChoosePath);
     connect(changeConfigPath, &QPushButton::released, this, &Preference::onChoosePath);
+
+    const QString tooltip = XHelper::instance().formatToName(editFileName->text());
+    editFileName->setToolTip(tooltip);
 
     return page;
 }
@@ -702,6 +703,7 @@ void Preference::onAutoCopyToClip(int val)
 
 void Preference::onImageQuailty(int val)
 {
+    XHelper::instance().setImgQuailty(val);
     WRITE_CONFIG_INI(INIT_OUTPUT, toImageQuailty, val);
 }
 
@@ -744,16 +746,26 @@ void Preference::onChoosePath()
         || !editQuickSavePath || !editAutoSavePath || !editConfigPath)
         return;
 
-    QString path = QFileDialog::getExistingDirectory(this, tr("select a path"), "./", QFileDialog::ShowDirsOnly);
-    if (!path.isEmpty())
-        setProperty("path", path);
-
+    QString defPath;
+    QString selPath;
     if (btn == btnQuickSavePath) {
-        editQuickSavePath->setText(path);
+        defPath = editQuickSavePath->text();
+        selPath = QFileDialog::getExistingDirectory(this, tr("select a path"), defPath, QFileDialog::ShowDirsOnly);
+
+        if (!selPath.isEmpty() && defPath != selPath)
+            editQuickSavePath->setText(selPath);
     } else if (btn == btnAutoSavePath) {
-        editAutoSavePath->setText(path);
+        defPath = editAutoSavePath->text();
+        selPath = QFileDialog::getExistingDirectory(this, tr("select a path"), defPath, QFileDialog::ShowDirsOnly);
+
+        if (!selPath.isEmpty() && defPath != selPath)
+            editQuickSavePath->setText(selPath);
     } else if (btn == btnConfigPath) {
-        editConfigPath->setText(path);
+        defPath = editConfigPath->text();
+        selPath = QFileDialog::getExistingDirectory(this, tr("select a path"), defPath, QFileDialog::ShowDirsOnly);
+
+        if (!selPath.isEmpty() && defPath != selPath)
+            editConfigPath->setText(selPath);
     }
 }
 

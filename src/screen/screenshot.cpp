@@ -344,12 +344,13 @@ void ScreenShot::onSave()
             return;
 
         QTime startTime = QTime::currentTime();
-        m_savePixmap.save(fileNmae);  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
+        m_savePixmap.save(fileNmae, nullptr, XHelper::instance().imgQuailty());  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
         QTime stopTime = QTime::currentTime();
         int elapsed = startTime.msecsTo(stopTime);
         qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
         //m_currPixmap->save("a2.png");
 
+        // auto save pixmap
         const QString path = XHelper::instance().formatToName(XHelper::instance().path(toAutoSavePath).trimmed());
         if (!path.isEmpty()) {
             m_savePixmap.save(path + QDir::separator() + imageName);

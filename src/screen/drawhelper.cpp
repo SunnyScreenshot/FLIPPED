@@ -42,7 +42,8 @@ XHelper::XHelper()
     , m_enableCrosshair(READ_CONFIG_INI(INIT_INTERFACE, tiCrosshair, false).toBool())
     , m_enableShowCursor(READ_CONFIG_INI(INIT_INTERFACE, tiShowCursor, false).toBool())
     , m_enableAutoCpoyClip(READ_CONFIG_INI(INIT_INTERFACE, tiAutoCopyToClipboard, true).toBool())
-    , m_winShadow(READ_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, true).toBool())
+    , m_imgQuailty(READ_CONFIG_INI(INIT_OUTPUT, toImageQuailty, -1).toInt())
+    , m_winShadow(READ_CONFIG_INI(INIT_PIN, tpWindowShadow, true).toBool())
     , m_pinOpacity(READ_CONFIG_INI(INIT_PIN, tpOpacity, 100).toInt())
     , m_pinMaxSize(READ_CONFIG_INI(INIT_PIN, tpMaxSize, 10000).toInt())
 {
@@ -57,9 +58,9 @@ XHelper::XHelper()
            {toConfigPath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()} };
 }
 
-const QString XHelper::formatToName(const QString str /*= path(toFileName).trimmed()*/)
+const QString XHelper::formatToName(const QString str /*= path(toFileName)*/)
 {
-    auto fileName = str;
+    auto fileName = str.trimmed();
     auto first = fileName.indexOf("$");
     auto second = fileName.lastIndexOf("$");
     auto nameTime = fileName.mid(first + 1, second - first - 1);

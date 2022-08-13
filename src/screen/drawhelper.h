@@ -234,7 +234,9 @@ public:
     bool autoCpoyClip() const { return m_enableAutoCpoyClip; }
     void setAutoCpoyClip(bool enable) { m_enableAutoCpoyClip = enable; }
 
-    const QString formatToName(const QString str = XHelper::instance().path(toFileName).trimmed());
+    int imgQuailty() const { return m_imgQuailty; }
+    void setImgQuailty(int val) { m_imgQuailty = val; }
+    const QString formatToName(const QString str = XHelper::instance().path(toFileName));
 
 	QIcon ChangeSVGColor(QString path, QString shape, QColor color, QSize size);
     void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
@@ -281,6 +283,7 @@ private:
     bool m_enableShowCursor;
     bool m_enableAutoCpoyClip;
 
+    int m_imgQuailty;
 	QMap<QString, QString> m_path;
 
     bool m_winShadow;
