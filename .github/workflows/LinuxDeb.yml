@@ -52,6 +52,7 @@ jobs:
           echo "productDebName=$productDebName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       # 安装一些包  # libqt5*-dev
+      # sudo apt install wget tar dh-make debmake lintian cmake qtbase5-dev qt5-default libqt5x11extras5-dev libqt5svg5-dev  libqt5*-dev
       - name: AptInstallTool
         id: AptInstallTool      
         if: startsWith(github.event.ref, 'refs/tags/')
@@ -59,7 +60,7 @@ jobs:
         run: |
           sudo apt clean
           sudo apt update
-          sudo apt install wget tar dh-make debmake lintian cmake qtbase5-dev qt5-default libqt5x11extras5-dev libqt5svg5-dev  libqt5*-dev
+          sudo apt install wget tar dh-make debmake lintian cmake libqt5x11extras5-dev
 
       # tag 打包 .deb，无动态库
       - name: DebPackage

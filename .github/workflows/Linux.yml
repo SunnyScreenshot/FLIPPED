@@ -84,7 +84,7 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          $systemInfo="${{ env.targetOS }}-x64"
+          $systemInfo="${{ env.targetOS }}-${{ matrix.arch }}-x64"
           $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
           $productName="${{ env.targetName }}-$productVersion-beta-$systemInfo"
 
