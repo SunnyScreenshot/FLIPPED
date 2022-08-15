@@ -6,8 +6,8 @@ Build-Depends:
  cmake (>= 3.13~),
  debhelper (>= 11),
  qtbase5-dev (>= 5.12.0~),
- qt5-default,
  libqt5x11extras5-dev
+# qt5-default (>= 5.12.0~),
 #  qttools5-dev (>= 5.12.0~),
 Standards-Version: 4.4.1
 Homepage: https://github.com/XMuli

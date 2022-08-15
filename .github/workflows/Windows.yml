@@ -30,6 +30,7 @@ jobs:
             qt_arch_install: msvc2019_64
     env:
       targetName: PicShot
+      targetLowerName: picshot
       targetOS: windows
     # 步骤
     steps:
@@ -60,7 +61,7 @@ jobs:
 
       - name: Install Qt
         # if: steps.cache-qt.outputs.cache-hit != 'true'
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
           version: ${{ matrix.qt_ver }}
           arch: ${{ matrix.qt_arch }}
@@ -109,7 +110,7 @@ jobs:
         run: |
           $systemInfo="${{ env.targetOS }}-${{ matrix.msvc_arch }}"
           $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
-          $productName="${{ env.targetName }}-$productVersion-beta-$systemInfo"
+          $productName="${{ env.targetLowerName }}-$productVersion-beta-$systemInfo"
 
           echo "systemInfo=$systemInfo" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "productVersion=$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
