@@ -25,22 +25,20 @@
 #include <QApplication>
 #include <QSettings>
 #include <QString>
-
 //#include <Format>
 
 class QPainterPath;
 class QLine;
 class QPoint;
-
-
 class QDomElement;
+
 namespace XC {
 	//enum ScrnStatus {
 	//	// 基础的几种状态
 	//	SS_WaitBase,                                // 基础的等待状态（未有，和已有矩形局域）
 	//	SS_SelectBase,                              // 基础的选中状态
 	//	SS_MoveBase,                                // 基础的移动状态
-	//	SS_DrawBase,                                // 基础的绘画状态    
+	//	SS_DrawBase,                                // 基础的绘画状态
 	//	SS_StretchBase,                             // 基础的拉伸状态
 	//};
 
@@ -63,14 +61,12 @@ namespace XC {
 	//	TLAndBR = TopLeft | BottomRight,         // 斜对角（左上、右下）
 	//	TRAndBL = TopRight | BottomLeft,         // 斜对角（右上、左下）
 	//	Corner = TLAndBR | TRAndBL,              // 斜任意一斜角（左上、右下、右上、左下）
-	//	Frame = Edge | Corner,                   // 矩形任意一边或一斜角（左、右、上、下；左上、右下、右上、左下）         
+	//	Frame = Edge | Corner,                   // 矩形任意一边或一斜角（左、右、上、下；左上、右下、右上、左下）
 
 	//	UnknowCursorType                         // 未知
 	//};
 	//Q_DECLARE_FLAGS(CursorTypes, ScreenStatus)     // 枚举 ScrnType 生成宏 CursorTypes
 	//	Q_DECLARE_OPERATORS_FOR_FLAGS(CursorTypes)   // 重载宏 ScrnType 的 |() 函数
-
-
 
 	// C++11 新增带作用域的枚举，用 enum class  或enum struct（两者等价）声明。
 	// https://blog.csdn.net/luckysym/article/details/1666114
@@ -118,8 +114,6 @@ namespace XC {
 }
 
 using namespace XC;
-
-
 // NoDraw,
 // Rectangles,
 // Ellipses,
@@ -131,7 +125,7 @@ using namespace XC;
 // SerialNumber
 
 struct  XDrawStep
-{   
+{
 	//new refactor
 	// base element ------------------
     QPoint p1;                                  // 起点
@@ -155,11 +149,11 @@ struct  XDrawStep
 	// Arrows ------------------------
     // Pen ---------------------------
 	QVector<QPoint> custPath;                   // 手绘路径
-											    
-    // Mosaics -----------------------		    
+
+    // Mosaics -----------------------
 	int mscPx = 3;                              // 马赛克默认模糊块
-											    
-    // Text --------------------------		    
+
+    // Text --------------------------
     bool bDisplay = false;                      // true 准备显示，显示；false 显示结束，隐藏起来
     bool bTextComplete = true;                  // 文字编辑完成
     QPoint editPos;                             // 显示控件
@@ -195,7 +189,6 @@ struct  XDrawStep
 };
 
 // ------------------------
-
 class XHelper : public QObject
 {
     Q_OBJECT
@@ -265,12 +258,10 @@ public:
     int pinMaxSize() const;
     void setPinMaxSize(int val);
 
-
 signals:
     void sigChangeWinShadow(bool enable);
     void sigChangeOpacity(int opacity);
     void sigChangeMaxSize(int val);
-
 
 private:
     int m_boardStyleIndex;
