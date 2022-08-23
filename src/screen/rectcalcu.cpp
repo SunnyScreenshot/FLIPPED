@@ -14,21 +14,6 @@
 #include "screenshot.h"
 #include "../core/xlog.h"
 
-//// 通过任意两点获取一个选中矩形
-//const QRect& RectCalcu::setSelRect()
-//{
-//	if (scrnType == ScrnType::Move) {
-//		rtSel.translate(pos2 - pos1);
-//	} else if (scrnType == ScrnType::Stretch) {
-//		if (!rtSel.isValid())
-//			rtSel = QRect();
-//		else
-//			rtSel = getStretchRect();
-//	}
-//
-//	return  rtSel;
-//}
-
 // 返回副本
 const QRect RectCalcu::getStretchRect()
 {
@@ -41,9 +26,6 @@ const QRect RectCalcu::getStretchRect()
 	const int height = pos2.y() - pos1.y();
 	const QPoint offset(pos2 - pos1);
 	const CursorArea cursArea = getCursorArea(pos1, true);
-
-	//XLOG_DEBUG("a1 拉伸返回副本 => cursArea[{}], offset({}, {})  rt({}, {}, {} * {})]  pos1({}, {})  pos2({}, {})"
-	//	, (int)cursArea, offset.x(), offset.y(), rt.x(), rt.y(), rt.width(), rt.height(), pos1.x(), pos1.y(), pos2.x(), pos2.y());
 
 	if (cursArea == CursorArea::Left) {
 		rt.setLeft(rt.left() + width);
@@ -65,8 +47,6 @@ const QRect RectCalcu::getStretchRect()
 		XLOG_ERROR("此时处于未知状态 CursorArea::Unknow 513");
 	}
 
-    //XLOG_DEBUG("a2 拉伸返回副本 => cursArea[{}], offset({}, {})  rt({}, {}, {} * {})]  pos1({}, {})  pos2({}, {})"
-    //    , (int)cursArea, offset.x(), offset.y(), rt.x(), rt.y(), rt.width(), rt.height(), pos1.x(), pos1.y(), pos2.x(), pos2.y());
     // 修复拉伸矩形为负数但却可以绘画的场景
     if (!rt.isValid()) {
         if (rt.width() <= 0 || rt.height() <= 0) {
@@ -76,8 +56,6 @@ const QRect RectCalcu::getStretchRect()
         }
     }
 
-    //XLOG_DEBUG("a3 拉伸返回副本 => cursArea[{}], offset({}, {})  rt({}, {}, {} * {})]  pos1({}, {})  pos2({}, {})"
-    //    , (int)cursArea, offset.x(), offset.y(), rt.x(), rt.y(), rt.width(), rt.height(), pos1.x(), pos1.y(), pos2.x(), pos2.y());
 	return rt;
 }
 
@@ -85,7 +63,6 @@ const QRect RectCalcu::getStretchRect()
 const QRect RectCalcu::calcurRsultOnce()
 {
     rtSel = getSelRect();
-
     pos1 = QPoint();
     pos2 = QPoint();
 
@@ -96,7 +73,6 @@ const QRect RectCalcu::calcurRsultOnce()
 void RectCalcu::setRtSel(const QRect rt)
 {
     rtSel = rt;
-
 	pos1 = rtSel.topLeft();
 	pos2 = rtSel.bottomRight();
 }
@@ -106,7 +82,6 @@ QRect& RectCalcu::limitBound(QRect& rt, QRect rtDesktop)
 {
 	if (!rt.isValid())
 		return rt;
-
 	if (rt.left() <= rtDesktop.left())
 		rt.setLeft(rtDesktop.left());
 	if (rt.top() <= rtDesktop.top())
@@ -130,7 +105,6 @@ const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details)
 	QRect rtOuter = getExteRect(rt);
 	QRect rtInner = getInteRect(rt);
 	int interval = (rtOuter.height() - rtInner.height()) / 2;
-
 
   //  XLOG_DEBUG("矩形测试 rtOuter0({}, {}, {} * {})   rtOuter0({}, {}, {} * {})  rtOuter0({}, {}, {} * {})  rtOuter0({}, {}, {} * {})  rtOuter0({}, {}, {} * {})"
   //      , rtOuter.x(), rtOuter.y(), rtOuter.width(), rt.height()
@@ -197,7 +171,7 @@ QRect RectCalcu::getRect(QPoint pos1, QPoint pos2)
         return QRect(0, 0, -1, -1);
     else
         return QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
-	
+
 }
 
 RectCalcu::RectCalcu(ScreenShot* pSrnShot)

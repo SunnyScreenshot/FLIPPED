@@ -16,17 +16,14 @@
 #include <QString>
 #include <QWidget>
 
-class XLabel;
-class QLayout;
-//class QGridLayout;
-
-//ColorParaBarMode
 enum class ColorParaBarMode
 {
     CPB_ParaBar,                                 // 默认的 GridLayout 布局，用途为 draw bar 的取色器
     CPB_HighLight                                //  QHBoxLayout 的水平布局，为活动色选择
 };
 
+class XLabel;
+class QLayout;
 class ColorParaBar : public QWidget
 {
     Q_OBJECT

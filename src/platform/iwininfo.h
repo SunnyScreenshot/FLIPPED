@@ -11,9 +11,6 @@
 #ifndef IWININFO_H
 #define IWININFO_H
 
-//#include "xtype.h"
-
-
 #include <QRect>
 #include <QPoint>
 #include <QString>
@@ -81,12 +78,9 @@ public:
     virtual WinData* getWinInfoFromPoint(QPoint pt, bool bPrevCache = false) = 0;
 
 //protected:
-
     static std::vector<WinData> m_vWinData;
     static std::vector<WinID> m_vWinIdFilter;
 };
-
-
 
 #endif // IWININFO_H
 

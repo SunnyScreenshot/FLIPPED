@@ -13,10 +13,7 @@
 
 #include <QWidget>
 
-QT_BEGIN_NAMESPACE
 class QBoxLayout;
-QT_END_NAMESPACE
-
 class ManageBar : public QWidget
 {
     Q_OBJECT

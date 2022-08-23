@@ -18,6 +18,7 @@
 #include <QBoxLayout>
 #include <QList>
 #include <QMouseEvent>
+#include <QPushButton>
 
 HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 {
