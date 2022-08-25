@@ -1194,7 +1194,7 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa)
     m_selSize->move(drawSelSizePosition(rtSel));
 
     QRect rt(rtSel);
-    for (auto& it = m_specifyRts.cbegin(); it != m_specifyRts.cend(); ++it) {
+    for (auto it = m_specifyRts.cbegin(); it != m_specifyRts.cend(); ++it) {
         if (*it == rtSel) {
             const int offset = pen.width();
             rt.adjust(offset, offset, -offset, -offset);

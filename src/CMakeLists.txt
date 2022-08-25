@@ -1,9 +1,11 @@
 ﻿cmake_minimum_required(VERSION 3.20)
 set(PROJECT_NAME PicShot)
-set(PROJECT_VERSION 0.3)
-set(_version ${PROJECT_VERSION})
+project(${PROJECT_NAME} VERSION 0.4 LANGUAGES CXX)
+#set(PROJECT_VERSION 0.3)
+#set(_version ${PROJECT_VERSION})
 
-project(${PROJECT_NAME})   
+set(_version)
+#project(${PROJECT_NAME})
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 file(COPY config/config.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
@@ -136,7 +138,6 @@ endforeach()
 file(GLOB TS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/i18n/*.ts)                 # .ts transition .qm
 #qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/i18n ${TS_FILES} OPTIONS -source-language en_US -noobsolete)
 
-
 foreach(_ts_file ${TS_FILES})                                             # Compile-time update of .ts .qm
     execute_process(COMMAND ${LUPDATE_EXECUTABLE} -recursive ${CMAKE_CURRENT_SOURCE_DIR}/i18n -ts ${_ts_file})
     execute_process(COMMAND lrelease ${_ts_file})
@@ -154,66 +155,43 @@ include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
 link_directories(${CMAKE_BINARY_DIR}/bin
     ${CMAKE_BINARY_DIR}/3rdparty/QHotkey)
 
-if (APPLE)
-    set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
-    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.XMuli.PicShot")
-    set(MACOSX_BUNDLE_INFO_STRING "A cross-platform screenshot software")
-    # set(MACOSX_BUNDLE_ICON_FILE "xxx.icns")
-    # set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
-    # set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
-    # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
+add_executable(${PROJECT_NAME}
+    #${QM_FILES}
+    ${SRC_MAIN}
+    ${SRC_PLATFORM}
+    ${SRC_CORE}
+    ${SRC_WIDGET}
+    ${SRC_TOOL}
+    ${SRC_PERFERENCE}
+    ${SRC_WINSCREEN}
+    ${SRC_EXAMPLE}
+    ${SRC_PLUGIN_INTERFACE}
+    ${SRC_RESOURCES})
 
-    add_executable(${PROJECT_NAME} MACOSX_BUNDLE
-    ${SRC_MAIN}
-    ${SRC_PLATFORM}
-    ${SRC_CORE}
-    ${SRC_WIDGET}
-    ${SRC_TOOL}
-    ${SRC_PERFERENCE}
-    ${SRC_WINSCREEN}
-    ${SRC_EXAMPLE}
-    ${SRC_PLUGIN_INTERFACE}
-    ${SRC_RESOURCES}
-    #${QM_FILES}
-    )
-else()
-    add_executable(${PROJECT_NAME} WIN32
-    ${SRC_MAIN}
-    ${SRC_PLATFORM}
-    ${SRC_CORE}
-    ${SRC_WIDGET}
-    ${SRC_TOOL}
-    ${SRC_PERFERENCE}
-    ${SRC_WINSCREEN}
-    ${SRC_EXAMPLE}
-    ${SRC_PLUGIN_INTERFACE}
-    ${SRC_RESOURCES}
-    #${QM_FILES}
-    )
-endif()
+#if (APPLE)
+#    set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
+#    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.XMuli.PicShot")
+#    set(MACOSX_BUNDLE_INFO_STRING "A cross-platform screenshot software")
+#    # set(MACOSX_BUNDLE_ICON_FILE "xxx.icns")
+#    # set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
+#    # set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
+#    # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
+#endif()
 
 IF (WIN32)
-    target_link_libraries(${PROJECT_NAME}
-        ${QT_VERSION_MODULES}
-        qhotkey)
+    target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey)
 ELSEIF (APPLE)
-    target_link_libraries(${PROJECT_NAME}
-        ${QT_VERSION_MODULES}
-        qhotkey)
+    target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey)
 ELSEIF (UNIX)
-    target_link_libraries(${PROJECT_NAME}
-        ${QT_VERSION_MODULES}
-        qhotkey
-        X11)
+    target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey X11)
 ENDIF ()
 
-#set_target_properties(${PROJECT_NAME} PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER org.XMuli.PicShot
-#    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-#    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-#    MACOSX_BUNDLE TRUE
-#    WIN32_EXECUTABLE TRUE
-#)
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER org.XMuli.PicShot
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE)
 
 # 文件归类, ref:
 # https://stackoverflow.com/questions/33808087/cmake-how-to-create-visual-studio-filters
@@ -224,7 +202,6 @@ file(GLOB_RECURSE _source_list LIST_DIRECTORIES false
     "${_src_root_path}/*.h")
 
 source_group(TREE ${_src_root_path} FILES ${_source_list})                                   # will be organized according to the actual directory structure, .h.cpp is put together
-
 
 # Define some variables that can be used in *.cpp
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")
@@ -247,6 +224,14 @@ message("_BIT_ARCH:" ${_bit_arch})
 message("_COMPILER:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
 message("==========END============")
+
+install(TARGETS ${PROJECT_NAME}
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(PicShot)
+endif()
 
 #  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
 #if(WIN32)
