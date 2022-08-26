@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.20)
+﻿cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME PicShot)
 project(${PROJECT_NAME} VERSION 0.4 LANGUAGES CXX)
 #set(PROJECT_VERSION 0.3)
@@ -205,7 +205,7 @@ source_group(TREE ${_src_root_path} FILES ${_source_list})                      
 
 # Define some variables that can be used in *.cpp
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")
-target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${_version}")
+target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VERSION}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # x64/x86
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
@@ -219,27 +219,59 @@ endif()
 
 message("==========BRGIN============")
 message("_PROJECT_NAME:${PROJECT_NAME}")
-message("_PROJECT_VERSION:" ${_version})
-message("_BIT_ARCH:" ${_bit_arch})
+message("_PROJECT_VERSION:" ${PROJECT_VERSION})
+message("_BIT_ARCH:" ${CMAKE_SIZEOF_VOID_P})
 message("_COMPILER:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
 message("==========END============")
-
-install(TARGETS ${PROJECT_NAME}
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(PicShot)
 endif()
 
-#  CMAKE_INSTALL_PREFIX:   /usr/local   或 c:/Program Files/${PROJECT_NAME}
-#if(WIN32)
-#    set (BIN_INSTALL_DIR "") # seems useless, don't know why...
-#else()
-#    if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-#        set(CMAKE_INSTALL_PREFIX /usr)
-#    endif ()
-#
-#    install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)
+message("---@3--->" "\n PROJECT_NAME:"  ${PROJECT_NAME}
+    "\n CMAKE_INSTALL_PREFIX: "  ${CMAKE_INSTALL_PREFIX}
+    "\n PROJECT_BINARY_DIR: "  ${PROJECT_BINARY_DIR}
+    "\n CMAKE_INSTALL_BINDIR: "  ${CMAKE_INSTALL_BINDIR}
+    "\n CMAKE_INSTALL_LIBDIR: "  ${CMAKE_INSTALL_LIBDIR}
+    "\n CMAKE_INSTALL_INCLUDEDIR: "  ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Install settings   CMAKE_NSTALL_PREFIX: "/usr/local" or "c:/Program Files/${PROJECT_NAME}"
+if (WIN32)
+#    install(TARGETS ${PROJECT_NAME} qhotkey
+#            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
+elseif (APPLE)
+    # ...
+elseif (UNIX)
+    if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+        set(CMAKE_INSTALL_PREFIX "/bin")
+    endif ()
+
+    install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}   # bin
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   # lib
+    )
+endif()
+
+# CPACK: General Settings
+#set(CPACK_PACKAGE_NAME "picshot")
+#set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lightweight, beautiful and cross-platform screenshot tool")
+#set(CPACK_PACKAGE_CONTACT "https://github.com/XMuli/PicShot/issues")
+##set (CPACK_GENERATOR "TBZ2")
+#set(CPACK_SET_DESTDIR ON)                            # 支持指定安装目录的控制为 ON
+##set(CPACK_INSTALL_PREFIX "/home/vesoft/install")     # 安装到的目录路径
+#set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})        # 生成的安装的版本号信息
+#set(CPACK_RPM_PACKAGE_GROUP "XMuli")
+#set(CPACK_PACKAGE_VENDOR "XMuli")
+#set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+#if (WIN32)
+#    # ...
+#elseif (APPLE)
+#    # ...
+#elseif (UNIX)
+#    set (CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+#    set (CPACK_DEBIAN_PACKAGE_SHILIBDEPS ON)
+##    set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "kimageformat-plugins")
 #endif()
+
+#include(CPack)
