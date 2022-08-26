@@ -1,11 +1,7 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME PicShot)
 project(${PROJECT_NAME} VERSION 0.4 LANGUAGES CXX)
-#set(PROJECT_VERSION 0.3)
-#set(_version ${PROJECT_VERSION})
 
-set(_version)
-#project(${PROJECT_NAME})
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 file(COPY config/config.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
@@ -229,7 +225,7 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(PicShot)
 endif()
 
-message("---@3--->" "\n PROJECT_NAME:"  ${PROJECT_NAME}
+message("---@3--->" "PROJECT_NAME:"  ${PROJECT_NAME}
     "\n CMAKE_INSTALL_PREFIX: "  ${CMAKE_INSTALL_PREFIX}
     "\n PROJECT_BINARY_DIR: "  ${PROJECT_BINARY_DIR}
     "\n CMAKE_INSTALL_BINDIR: "  ${CMAKE_INSTALL_BINDIR}
@@ -238,8 +234,8 @@ message("---@3--->" "\n PROJECT_NAME:"  ${PROJECT_NAME}
 
 # Install settings   CMAKE_NSTALL_PREFIX: "/usr/local" or "c:/Program Files/${PROJECT_NAME}"
 if (WIN32)
-#    install(TARGETS ${PROJECT_NAME} qhotkey
-#            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(TARGETS ${PROJECT_NAME}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
 elseif (APPLE)
     # ...
 elseif (UNIX)
@@ -253,25 +249,48 @@ elseif (UNIX)
     )
 endif()
 
-# CPACK: General Settings
-#set(CPACK_PACKAGE_NAME "picshot")
-#set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lightweight, beautiful and cross-platform screenshot tool")
-#set(CPACK_PACKAGE_CONTACT "https://github.com/XMuli/PicShot/issues")
-##set (CPACK_GENERATOR "TBZ2")
-#set(CPACK_SET_DESTDIR ON)                            # 支持指定安装目录的控制为 ON
-##set(CPACK_INSTALL_PREFIX "/home/vesoft/install")     # 安装到的目录路径
-#set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})        # 生成的安装的版本号信息
-#set(CPACK_RPM_PACKAGE_GROUP "XMuli")
-#set(CPACK_PACKAGE_VENDOR "XMuli")
-#set(CPACK_RPM_PACKAGE_LICENSE "MIT")
-#if (WIN32)
-#    # ...
-#elseif (APPLE)
-#    # ...
-#elseif (UNIX)
-#    set (CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
-#    set (CPACK_DEBIAN_PACKAGE_SHILIBDEPS ON)
-##    set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "kimageformat-plugins")
-#endif()
+message("---@4--->" "CMake_SOURCE_DIR:" ${CMake_SOURCE_DIR}
+    "\n CMAKE_CURRENT_SOURCE_DIR:" ${CMAKE_CURRENT_SOURCE_DIR}
+    "\n CPACK_PACKAGE_INSTALL_DIRECTORY:" ${CPACK_PACKAGE_INSTALL_DIRECTORY})
 
-#include(CPack)
+
+# CPACK: General Settings
+set(CPACK_PACKAGE_NAME "PicShot")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lightweight, beautiful and cross-platform screenshot tool")
+set(CPACK_PACKAGE_CONTACT "https://github.com/XMuli/PicShot/issues")
+#set (CPACK_GENERATOR "TBZ2")
+set(CPACK_SET_DESTDIR ON)                             # ON 安装指定路径，设置下一个; OFF 则使用 CMAKE_INSTALL_PREFIX
+set(CPACK_INSTALL_PREFIX "C:/Program Files(x86)/PicShot")   # 安装到的目录路径
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})         # 生成的安装的版本号信息
+set(CPACK_RPM_PACKAGE_GROUP "XMuli")
+set(CPACK_PACKAGE_VENDOR "XMuli")
+set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+
+if (WIN32)
+    # see: https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html
+    set(CPACK_GENERATOR NSIS)
+#    set(CPACK_NSIS_MUI_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
+#    set(CPACK_NSIS_MUI_UNIICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
+#    set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\cmake-gui.exe")
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}")
+#    set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeInstall.bmp")
+#    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
+
+    set(CPACK_NSIS_MODIFY_PATH ON)
+    set(CPACK_CREATE_DESKTOP_LINKS ${PROJECT_NAME})
+
+#    set (CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
+    set(CPACK_PACKAGE_EXECUTABLES "${PROJECT_NAME}" "${PROJECT_NAME}" )
+    set(CPACK_NSIS_MENU_LINKS
+        "doc/${PROJECT_NAME}-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}/${PROJECT_NAME}.html"
+        "${PROJECT_NAME} Help" "https://github.com/XMuli/PicShot" "${PROJECT_NAME} Web Site")
+
+elseif (APPLE)
+    # ...
+elseif (UNIX)
+    set (CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+    set (CPACK_DEBIAN_PACKAGE_SHILIBDEPS ON)
+#    set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "kimageformat-plugins")
+endif()
+
+include(CPack)
