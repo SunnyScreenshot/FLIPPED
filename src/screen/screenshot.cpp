@@ -1442,6 +1442,8 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     if (m_step.shape == DrawShape::Text) {
         // TODO 2022.07.03: 待优化，需同时调整输入框的大小
         m_step.font.setPointSize(m_step.font.pointSize() + numSteps.y());
+
+        m_edit->setFont(m_step.font);
     } else {
         m_step.pen.setWidth(m_step.pen.width() + numSteps.y());
         if (m_step.pen.width() <= 0)

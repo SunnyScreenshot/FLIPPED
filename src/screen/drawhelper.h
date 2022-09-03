@@ -158,7 +158,7 @@ struct  XDrawStep
     bool bTextComplete = true;                  // 文字编辑完成
     QPoint editPos;                             // 显示控件
     QString text = "[Test Text]";               // 文字内容
-	QFont font;                                 // 字体
+	QFont font = QFont("KaiTi", 14);            // 字体
 
     // SerialNumber ------------------
 
