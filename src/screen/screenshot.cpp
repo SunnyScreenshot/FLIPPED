@@ -82,7 +82,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     //QFont font("STXingkai", 40); // 设置默认值
     //m_textEdit->setFont(font);
     m_edit->setTextColor(Qt::red);
-    m_edit->hide();
+    m_edit->setVisible(false);
 
     // 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
@@ -1316,6 +1316,9 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 
             m_edit->move(m_step.editPos);
             m_edit->setVisible(m_step.bDisplay);
+
+            if (m_step.bDisplay)
+                m_edit->setFocus();
 
             XLOG_DEBUG("m_textEdit是否显示[{}]  event->pos({}, {})  m_step.editPos({}, {})  perviousPos({}, {}) m_textEdit->rect({}, {}, {} * {}) m_textEdit->toPlainText[{}]  m_step.text[{}]"
                 , m_edit->isVisible(), event->pos().x(), event->pos().y(), m_step.editPos.x(), m_step.editPos.y(), perviousPos.x(), perviousPos.y()

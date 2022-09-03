@@ -140,15 +140,13 @@ private:
     std::set<QRect, comp> m_specifyRts;    // 特殊窗口的矩形，绘画时需略调整
     XDrawStep* m_pCurrShape;               // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
 
-    // test
-    XTextWidget* m_edit;
-
     // new refactor
     QRect m_rtSmartWindow;                 // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
     QPointer<SelectSize> m_selSize;        // 左上角显示窗口大小
     QPointer<SelectBar> m_selBar;
     QPointer<ParameterBar> m_paraBar;
+    QPointer<XTextWidget> m_edit;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H
