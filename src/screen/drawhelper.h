@@ -27,7 +27,6 @@
 #include <QString>
 //#include <Format>
 
-class QPainterPath;
 class QLine;
 class QPoint;
 class QDomElement;
@@ -136,6 +135,8 @@ struct  XDrawStep
     int tbIdx = 0;                              // 某个绘画类型的样式: 为 ParameterBar 的子序号
     int idxLevel = -1;                          // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
     static int totalIdx;                        // 所有已绘画类型 的总的序号，越大越上层
+
+    //QPainterPath path;                          // 存储所有绘画类型
 
 	// color, pen width
 	QPen pen = QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // 默认红色，画笔宽度为 2px

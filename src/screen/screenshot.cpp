@@ -84,6 +84,8 @@ ScreenShot::ScreenShot(QWidget *parent)
     m_edit->setTextColor(Qt::red);
     m_edit->setVisible(false);
 
+    m_edit->setFont(QFont("KaiTi", 14));
+
     // 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
     setWindowFlags(Qt::FramelessWindowHint | windowFlags());  // | Qt::WindowStaysOnTopHint
@@ -619,7 +621,6 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         break;
     }
     case DrawShape::Pen: {
-
 		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
 	}
@@ -629,7 +630,8 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
             QFontMetrics metrics(m_edit->font());
 
             //QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
-            //QPoint pos(step.editPos.x(), step.editPos.y() + metrics.ascent() + metrics.leading()); // 偏移得到视觉的“正确”
+            const QMargins& margins = m_edit->contentsMargins();
+            QPoint pos(step.editPos + QPoint(margins.left(), margins.top() + metrics.ascent())); // 偏移得到视觉的“正确”
 
             int flags = Qt::TextWordWrap; // 自动换行
             QRect textBoundingRect = metrics.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
@@ -638,9 +640,11 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
             //https://doc.qt.io/qt-5/qpainter.html#drawText-5
             //const QFont font(pa.font());
 
-            qDebug() << step.font.pointSize();
+            qDebug() << "#1--->"<< step.editPos << "  " << margins  << step.font.pointSize();
             pa.setFont(step.font);
-            pa.drawText(QRect(step.editPos, textBoundingRect.size()), flags, step.text);
+            //QFontMetrics metrics = pa.fontMetrics();
+            //pa.drawText(QRect(step.editPos, textBoundingRect.size()), flags, step.text);
+            pa.drawText(pos, step.text);
             //pa.setFont(font);
         }
         break;
@@ -1364,7 +1368,9 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
         m_step.p2 = event->pos();
         m_step.editPos = event->pos();
 
-        m_step.custPath.append(event->pos());
+        if (m_step.shape == DrawShape::Arrows)
+            m_step.custPath.append(event->pos());
+
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {
 		m_rtCalcu.pos2 = event->pos();
@@ -1398,8 +1404,11 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         }
 
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
+        
         m_step.p2 = event->pos();
-        m_step.custPath.append(event->pos());
+        if (m_step.shape == DrawShape::Arrows)
+            m_step.custPath.append(event->pos());
+
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 
         // DrawShape::Text  在按下时候单独处理 m_vDrawed.push_back
