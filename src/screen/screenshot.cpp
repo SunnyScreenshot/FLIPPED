@@ -79,12 +79,9 @@ ScreenShot::ScreenShot(QWidget *parent)
     setAttribute(Qt::WA_DeleteOnClose, true);
     //setAttribute(Qt::WA_QuitOnClose, false);
 
-    //QFont font("STXingkai", 40); // 设置默认值
-    //m_textEdit->setFont(font);
     m_edit->setTextColor(Qt::red);
+    m_edit->setFont(m_step.font);
     m_edit->setVisible(false);
-
-    m_edit->setFont(QFont("KaiTi", 14));
 
     // 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
@@ -222,6 +219,8 @@ void ScreenShot::onClearScreen()
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     m_step.clear();
+
+    m_edit->deleteLater();
 
     m_rtSmartWindow = QRect();
     if (m_rtCalcu.scrnType == ScrnType::Wait) // 状态重置
@@ -626,26 +625,19 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 	}
     case DrawShape::Text: {
         // 记住：这是每一个 step 都会绘画的
-        if (step.bTextComplete && !step.bDisplay && step.text.size()) {
-            QFontMetrics metrics(m_edit->font());
+        // http://qtdebug.com/qtbook-paint-text or https://doc.qt.io/qt-5/qpainter.html#drawText-5
+        if (!step.text.isEmpty() && m_edit) {
+            const QFontMetrics fm(step.font);
+            const int val = 5;
+            int flags = Qt::TextWordWrap;                                                                         // Auto line feed
+            QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
 
-            //QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
-            const QMargins& margins = m_edit->contentsMargins();
-            QPoint pos(step.editPos + QPoint(margins.left(), margins.top() + metrics.ascent())); // 偏移得到视觉的“正确”
-
-            int flags = Qt::TextWordWrap; // 自动换行
-            QRect textBoundingRect = metrics.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
-
-            //http://qtdebug.com/qtbook-paint-text
-            //https://doc.qt.io/qt-5/qpainter.html#drawText-5
-            //const QFont font(pa.font());
-
-            qDebug() << "#1--->"<< step.editPos << "  " << margins  << step.font.pointSize();
             pa.setFont(step.font);
-            //QFontMetrics metrics = pa.fontMetrics();
-            //pa.drawText(QRect(step.editPos, textBoundingRect.size()), flags, step.text);
-            pa.drawText(pos, step.text);
-            //pa.setFont(font);
+            pa.drawText(QRect(step.rt.topLeft() + QPoint(val, val), textBoundingRect.size()), flags, step.text);
+
+            //const QMargins& margins = m_edit->contentsMargins();
+            //QPoint pos(step.rt.topLeft() + QPoint(margins.left() + val, margins.top() + val + fm.ascent()));    // Offset to get the visual "right"
+            //pa.drawText(pos, step.text);
         }
         break;
     }
@@ -1096,9 +1088,8 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
         pa.drawText(tPosText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtCurMove.x()).arg(rtCurMove.y())
             .arg(rtCurMove.width()).arg(rtCurMove.height()));
     }
-    pa.drawText(tPosText - QPoint(0, space * 10), QString("m_step=>pos1(%1, %2)  pos2(%3 * %4) editPos(%5, %6)  rt(%7, %8, %9 * %10)  text:%11")
+    pa.drawText(tPosText - QPoint(0, space * 10), QString("m_step=>pos1(%1, %2)  pos2(%3 * %4)  rt(%5, %6, %7 * %8)  text:%9")
         .arg(m_step.p1.x()).arg(m_step.p1.y()).arg(m_step.p2.x()).arg(m_step.p2.y())
-        .arg(m_step.editPos.x()).arg(m_step.editPos.y())
         .arg(m_step.rt.x()).arg(m_step.rt.y()).arg(m_step.rt.width()).arg(m_step.rt.height())
         .arg(m_step.text));
 
@@ -1284,51 +1275,37 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
         m_rtCalcu.pos1 = event->pos();
         m_rtCalcu.pos2 = m_rtCalcu.pos1;
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
-        m_step.p1 = event->pos();
-        m_step.p2 = m_step.p1;
 
         if (m_step.shape == DrawShape::Text) {
-            QPoint perviousPos = m_step.editPos;   // 修改之前的显示坐标
+            if (!m_edit) return;
+            m_step.p2 = m_step.p1;   // p2 as perviousPos
+            m_step.p1 = event->pos();
+        } else {
+            m_step.p2 = m_step.p1 = event->pos();
+        }
+        
+        if (m_step.shape == DrawShape::Text) {
 
-            m_step.editPos = event->pos();
-            m_step.rt = m_edit->rect();
-            m_step.rt.setTopLeft(m_step.editPos);
+            m_edit->move(m_step.p1);
+            const QRect rtEdit(mapFromGlobal(m_edit->mapToGlobal(QPoint(0, 0))), m_edit->size());
+            if (!rtEdit.contains(m_step.p1, true)) {  // 编辑完成 || 初次编辑
 
-            if (m_step.bDisplay) {  // 输入框显示中
-                //m_step.editPos = event->pos(); // pos1、pos2 松开鼠标时候会重置，而editPos不会
-                //m_step.rt = m_textEdit->rect();
-                //m_step.rt.setTopLeft(m_step.editPos);
-                //m_textEdit->move(m_step.editPos);
-
-                if (!m_step.rt.contains(event->pos(), true)) {  // 编辑完成
-                    m_step.bTextComplete = true;
-                    m_step.bDisplay = false;
-
+                if (!m_edit->isVisible() && m_step.text.isEmpty()) {
+                    m_edit->setVisible(true);
+                    m_edit->setFocus();
+                    
+                } else {       // 显示中
                     m_step.text = m_edit->toPlainText();
-                    m_edit->clear();
-
-                    m_step.editPos = perviousPos;
-                    m_vDrawed.push_back(m_step);  // 绘画文字为单独处理【暂时特例】
                     m_step.idxLevel = m_step.totalIdx++;
-                } else {   // 编辑ing
-                    m_step.bTextComplete = false;
+                    m_step.rt.setTopLeft(m_step.p2);
+                    m_vDrawed.push_back(m_step);  // 暂时特例：绘画文字为单独处理
+                    m_edit->clear();
+                    m_step.text.clear();
+                    m_edit->setVisible(false);
                 }
-            } else {  // 输入框未显示
-                m_step.bDisplay = true;
-                m_edit->clear();
             }
 
-            m_edit->move(m_step.editPos);
-            m_edit->setVisible(m_step.bDisplay);
-
-            if (m_step.bDisplay)
-                m_edit->setFocus();
-
-            XLOG_DEBUG("m_textEdit是否显示[{}]  event->pos({}, {})  m_step.editPos({}, {})  perviousPos({}, {}) m_textEdit->rect({}, {}, {} * {}) m_textEdit->toPlainText[{}]  m_step.text[{}]"
-                , m_edit->isVisible(), event->pos().x(), event->pos().y(), m_step.editPos.x(), m_step.editPos.y(), perviousPos.x(), perviousPos.y()
-                , m_edit->rect().left(), m_edit->rect().top(), m_edit->rect().width(), m_edit->rect().height()
-                , m_edit->toPlainText().toUtf8().data()
-                , m_step.text.toUtf8().data());
+            m_step.p2 = m_step.p1;
         }
 
 	} else {  // 则可能为移动、拉伸、等待状态
@@ -1366,10 +1343,13 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 		m_rtCalcu.pos2 = event->pos();
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
         m_step.p2 = event->pos();
-        m_step.editPos = event->pos();
 
         if (m_step.shape == DrawShape::Arrows)
             m_step.custPath.append(event->pos());
+        else if (m_step.shape == DrawShape::Text) {
+            if (m_edit)
+                m_edit->move(m_step.p2);
+        }
 
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 	} else if (m_rtCalcu.scrnType == ScrnType::Stretch) {

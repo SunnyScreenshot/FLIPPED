@@ -155,10 +155,7 @@ struct  XDrawStep
 	int mscPx = 3;                              // 马赛克默认模糊块
 
     // Text --------------------------
-    bool bDisplay = false;                      // true 准备显示，显示；false 显示结束，隐藏起来
-    bool bTextComplete = true;                  // 文字编辑完成
-    QPoint editPos;                             // 显示控件
-    QString text = "[Test Text]";               // 文字内容
+    QString text;                               // 文字内容
 	QFont font = QFont("KaiTi", 14);            // 字体
 
     // SerialNumber ------------------
