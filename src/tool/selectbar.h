@@ -14,11 +14,15 @@
 #include "../screen/drawhelper.h"
 #include "base/blurwidget.h"
 #include <QVector>
+#include <QMap>
+#include <QString>
 
 class BlurWidget;
 class QToolButton;
 class QStringList;
 class QBoxLayout;
+class QAbstractButton;
+class QButtonGroup;
 
 // rectangle
 // ellipse
@@ -49,6 +53,7 @@ private:
 
 public slots:
     void onToolBtn();
+    //void onTBReleased(QAbstractButton* btn);
 
 signals:
     void sigEnableDraw(bool enable);
@@ -70,8 +75,8 @@ private:
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
 
-    QStringList m_tbName;
-    QStringList m_tbOnlyClickName;
+    //QButtonGroup* m_group;
+    std::vector<std::pair<QString, bool>> m_vTbName;    // tbName checkable
     QVector<QToolButton *> m_vItem;
 };
 

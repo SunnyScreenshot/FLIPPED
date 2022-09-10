@@ -16,7 +16,8 @@
 #include <QStringList>
 #include <QBoxLayout>
 #include <QIcon>
-#include <QToolButton>
+#include <QButtonGroup>
+#include <QDebug>
 
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
@@ -24,78 +25,50 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     , m_blur(new BlurWidget(this))
     , m_orien(orien)
     , m_layout(nullptr)
-    , m_tbName()
-    , m_tbOnlyClickName()
+    //, m_group(new QButtonGroup(this))
     , m_vItem()
 {
     initUI();
 
-    m_tbName << "rectangle"
-             << "ellipse"
-             << "arrow"
-             << "pen"
-             << "mosaic"
-             << "text"
-             << "serialnumber"
-             << "pin"
-             << "revocation"
-             << "renewal"
-             << "save"
-             << "cancel"
-             << "finish";
+    QStringList tbName1 = { "rectangle", "ellipse", "arrow", "pen", "mosaic", "text", "serialnumber"};
+    QStringList tbName2 = { "pin", "revocation", "renewal", "save", "cancel", "finish" };
+    QStringList tbName = tbName1 + tbName2;
+    QStringList barTip = { tr("rectangle"), tr("ellipse"), tr("arrow"), tr("pen"), tr("mosaic"), tr("text"), tr("serialnumber")
+                     , tr("pin"), tr("revocation"), tr("renewal"), tr("save"), tr("cancel"), tr("finish") };
 
-    m_tbOnlyClickName << "pin"
-                      << "revocation"
-                      << "renewal"
-                      << "save"
-                      << "cancel"
-                      << "finish";
+    for (const auto& it : tbName1)
+        m_vTbName.push_back(std::make_pair(it, true));
+    for (const auto& it : tbName2)
+        m_vTbName.push_back(std::make_pair(it, false));
 
-    QStringList barTip;
-    barTip << tr("rectangle")
-           << tr("ellipse")
-           << tr("arrow")
-           << tr("pen")
-           << tr("mosaic")
-           << tr("text")
-           << tr("serialnumber")
-           << tr("pin")
-           << tr("revocation")
-           << tr("renewal")
-           << tr("save")
-           << tr("cancel")
-           << tr("finish");
+    //m_group->setExclusive(true);
+    m_vItem.fill(nullptr, tbName.count());
+    int i = 0;
+    for (const auto it : m_vTbName){
+        auto tb = new QToolButton();
+        tb->setObjectName(it.first);
+        tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        tb->setAutoRaise(true);
+        tb->setIcon(QIcon(":/resources/tool/" + it.first + ".svg"));
+        tb->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
+        tb->setContentsMargins(0, 0, 0, 0);
+        tb->setFixedSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
+        tb->setToolTip(barTip[i++]);
+        tb->setChecked(false);
+        tb->setCheckable(it.second);
+        m_vItem.push_back(tb);
+        addWidget(tb);
 
-    m_vItem.fill(nullptr, m_tbName.count());
-
-    for (int i = 0; i < m_tbName.count(); ++i) {
-        if (!m_vItem[i])
-            m_vItem[i] = new QToolButton();
-
-        m_vItem[i]->setObjectName(m_tbName[i]);
-        m_vItem[i]->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        m_vItem[i]->setAutoRaise(true);   // 自动浮动模式
-        m_vItem[i]->setIcon(QIcon(":/resources/tool/" + m_tbName[i] + ".svg"));
-        m_vItem[i]->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
-        m_vItem[i]->setContentsMargins(0, 0, 0, 0);
-        m_vItem[i]->setFixedSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
-        m_vItem[i]->setToolTip(barTip[i]);
-        m_vItem[i]->setChecked(false);
-
-        if (m_tbOnlyClickName.contains(m_vItem[i]->objectName())) {
-            m_vItem[i]->setCheckable(false);
-        } else {
-            m_vItem[i]->setCheckable(true);
-        }
-
-        addWidget(m_vItem[i]);
-
-        QString tbName(m_tbName[i]);
-        if (tbName == "pin" || tbName == "renewal")
+        if (it.first == "pin" || it.first == "renewal")
             addSpacer();
+        //if (it.second)
+        //    m_group->addButton(tb);
 
-        connect(m_vItem[i], &QToolButton::released, this, &SelectBar::onToolBtn);
+        connect(tb, &QToolButton::released, this, &SelectBar::onToolBtn);
     }
+
+    //void (QButtonGroup:: * sigFun)(QAbstractButton*) = &QButtonGroup::buttonClicked;
+    //connect(m_group, sigFun, this, &SelectBar::onTBReleased);
 }
 
 void SelectBar::setBlurBackground(const QPixmap &pix, double blurRadius)
@@ -175,31 +148,7 @@ void SelectBar::onToolBtn()
     }
     
     emit sigEnableDraw(enableDraw);
-
-    //if (!enableDraw)
-    //    return;
-
-    // rectangle
-    // ellipse
-    // line
-    // arrow
-    // pen
-    // mosaic  、 smooth
-    // text
-    // serialnumber
-    // pin
-    // gif 暂不添加
-    // revocation
-    // renewal
-    // save
-    // cancel
-    // finish
-    // 发射信号
     bool isChecked = tb->isChecked();
-    
-    //if (!enableDraw) {
-    //    emit sigSelShape(XC::DrawShape::NoDraw, isChecked);
-    //} 
     
     if (tb->objectName() == "rectangle") {
         emit sigSelShape(XC::DrawShape::Rectangles, isChecked);
@@ -232,6 +181,87 @@ void SelectBar::onToolBtn()
     } else{
     }
 }
+//
+//void SelectBar::onTBReleased(QAbstractButton* btn)
+//{
+//    static QAbstractButton* prevTb = nullptr;
+//
+//    if (prevTb == btn) {
+//        if (m_group->exclusive()) {
+//            m_group->setExclusive(false);
+//            btn->setChecked(false);
+//        } else {
+//            m_group->setExclusive(true);
+//        }
+//    } else {
+//        m_group->setExclusive(true);
+//    }
+//
+//    const auto& parent = btn->parentWidget();
+//    if (!btn || !parent)
+//        return;
+//
+//    auto tb = qobject_cast<QToolButton*>(btn);
+//    if (!tb)
+//        return;
+//
+//    QString path = ":/resources/tool/" + tb->objectName() + ".svg";
+//    tb->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
+//    bool enableDraw = false;  // true 此 btn 被按下，处于绘画状态
+//    if (tb->isChecked()) {
+//        enableDraw = true;
+//        tb->setIcon(XHelper::instance().ChangeSVGColor(path, "path", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
+//    } else {
+//        tb->setIcon(QIcon(path));
+//    }
+//    
+//    for (const auto& it : m_group->buttons()) {
+//        if (it == tb)
+//            continue;
+//
+//        QString path = ":/resources/tool/" + it->objectName() + ".svg";
+//        tb->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
+//        it->setIcon(QIcon(path));  // 频繁切换 icon 应该不会有泄露，后面确认下。
+//        qDebug() << "it:" << it->isChecked();
+//    }
+//
+//    emit sigEnableDraw(enableDraw);
+//    bool isChecked = tb->isChecked();
+//    
+//    if (tb->objectName() == "rectangle") {
+//        emit sigSelShape(XC::DrawShape::Rectangles, isChecked);
+//    } else if (tb->objectName() == "ellipse") {
+//        emit sigSelShape(XC::DrawShape::Ellipses, isChecked);
+//    } else if (tb->objectName() == "line") {
+//        emit sigSelShape(XC::DrawShape::LineWidth, isChecked);
+//    } else if (tb->objectName() == "arrow") {
+//        emit sigSelShape(XC::DrawShape::Arrows, isChecked);
+//    } else if (tb->objectName() == "pen") {
+//        emit sigSelShape(XC::DrawShape::Pen, isChecked);
+//    } else if (tb->objectName() == "mosaic") {
+//        emit sigSelShape(XC::DrawShape::Mosaics, isChecked);
+//    } else if (tb->objectName() == "text") {
+//        emit sigSelShape(XC::DrawShape::Text, isChecked);
+//    } else if (tb->objectName() == "serialnumber") {
+//        emit sigSelShape(XC::DrawShape::SerialNumber, isChecked);
+//    } else if (tb->objectName() == "pin") {
+//        emit sigPin();
+//    } else if (tb->objectName() == "revocation") {
+//        emit sigRevocation();
+//    } else if (tb->objectName() == "renewal") {
+//        emit sigRenewal();
+//    } else if (tb->objectName() == "save") {
+//        emit sigSave();
+//    } else if (tb->objectName() == "cancel") {
+//        emit sigCancel();
+//    } else if (tb->objectName() == "finish") {
+//        emit sigFinish();
+//    } else{
+//    }
+//      
+//    prevTb = btn;
+//    qDebug() << " m_group:" << m_group->exclusive() << "----------\n";
+//}
 
 void SelectBar::enterEvent(QEvent* event)
 {
