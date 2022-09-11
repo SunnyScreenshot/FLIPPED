@@ -419,8 +419,8 @@ QWidget* Preference::tabPin()
 
     insSettings->beginGroup(INIT_PIN);
     cbWindowShadow->setChecked(insSettings->value(tpWindowShadow, true).toBool());
-    sbOpacity->setValue(insSettings->value(tpOpacity, 100).toInt());
-    sbMaxSize->setValue(insSettings->value(tpMaxSize, 100).toInt());
+    sbOpacity->setValue(insSettings->value(tpOpacity, sbOpacity->maximum()).toInt());
+    sbMaxSize->setValue(insSettings->value(tpMaxSize, sbMaxSize->maximum()).toInt());
     insSettings->endGroup();
 
     connect(cbWindowShadow, &QCheckBox::stateChanged, this, &Preference::onWindowShadow);

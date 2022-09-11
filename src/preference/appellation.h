@@ -91,7 +91,7 @@ const QString thReset("thReset");
 
 // 读取配置文件 .ini 的内容
 #define READ_CONFIG_INI(group, key, _value) \
-    insSettings->value("/##group##/##key", _value)
+    insSettings->value("/" + group + "/" + key, _value)
 
 // 所有页面的 Reset Btn 都连接到同一个槽函数，内部统一处理
 #define CONNECT_RESET_BTN(objectName) \

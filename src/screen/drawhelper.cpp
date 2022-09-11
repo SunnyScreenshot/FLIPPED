@@ -45,7 +45,7 @@ XHelper::XHelper()
     , m_imgQuailty(READ_CONFIG_INI(INIT_OUTPUT, toImageQuailty, -1).toInt())
     , m_winShadow(READ_CONFIG_INI(INIT_PIN, tpWindowShadow, true).toBool())
     , m_pinOpacity(READ_CONFIG_INI(INIT_PIN, tpOpacity, 100).toInt())
-    , m_pinMaxSize(READ_CONFIG_INI(INIT_PIN, tpMaxSize, 10000).toInt())
+    , m_pinMaxSize(READ_CONFIG_INI(INIT_PIN, tpMaxSize, 100000).toInt())
 {
     //m_path = { {toFileName, "picshot_$yyyyMMdd_hhmmss$.png"},
     //           {toQuickSavePath, qApp->applicationDirPath() + "/History/QuickSave"},
