@@ -17,7 +17,6 @@
 #include "../tool/selectbar.h"
 #include "../tool/parameterbar.h"
 #include "../tool/selectsize/selectsize.h"
-#include "../preference/appellation.h"
 #include <QWidget>
 #include <QList>
 #include <QColor>
@@ -77,7 +76,9 @@ public slots:
 
     void onCancel();
     void onFinish();
+    void onInterruptEdit(const QPoint& pos);
     void clearnAndClose();
+
 
     void onParaBtnId(DrawShape shape, QToolButton* tb);
     void onSelColor(QColor col);

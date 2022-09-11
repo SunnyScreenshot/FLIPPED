@@ -30,6 +30,7 @@
 #include <QPainterPath>
 #include <QGuiApplication>
 #include <QDir>
+#include <QMouseEvent>
 #include <QDebug>
 
 namespace Util {
@@ -122,6 +123,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_selBar, &SelectBar::sigSave, this, &ScreenShot::onSave);
     connect(m_selBar, &SelectBar::sigCancel, this, &ScreenShot::onCancel);
     connect(m_selBar, &SelectBar::sigFinish, this, &ScreenShot::onFinish);
+    connect(m_selBar, &SelectBar::sigInterruptEdit, this, &ScreenShot::onInterruptEdit);
 
     connect(m_paraBar, &ParameterBar::sigParaBtnId, this, &ScreenShot::onParaBtnId);
     connect(m_paraBar, &ParameterBar::sigSelColor, this, &ScreenShot::onSelColor);
@@ -369,6 +371,12 @@ void ScreenShot::onFinish()
     clearnAndClose();
 }
 
+void ScreenShot::onInterruptEdit(const QPoint& pos)
+{
+    QMouseEvent mousePressEvent(QEvent::MouseButtonPress, mapFromGlobal(pos), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QApplication::sendEvent(this, &mousePressEvent);
+}
+
 void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
 {
     if (!tb)
@@ -414,6 +422,10 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
 void ScreenShot::onSelColor(QColor col)
 {
     m_step.pen.setColor(col);
+
+    if (m_step.shape == DrawShape::Text) {
+        m_edit->setTextColor(col);
+    }
 }
 
 // 获取虚拟屏幕截图
@@ -624,12 +636,12 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 		break;
 	}
     case DrawShape::Text: {
-        // 记住：这是每一个 step 都会绘画的
-        // http://qtdebug.com/qtbook-paint-text or https://doc.qt.io/qt-5/qpainter.html#drawText-5
+        // Ref: http://qtdebug.com/qtbook-paint-text
+        //      https://doc.qt.io/qt-5/qpainter.html#drawText-5
         if (!step.text.isEmpty() && m_edit) {
             const QFontMetrics fm(step.font);
             const int val = 5;
-            int flags = Qt::TextWordWrap;                                                                         // Auto line feed
+            int flags = Qt::TextWordWrap;
             QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
 
             pa.setFont(step.font);

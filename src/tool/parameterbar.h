@@ -30,8 +30,6 @@ public:
     virtual ~ParameterBar() = default;
     void setBlurBackground(const QPixmap& pix, double blurRadius);
 
-    void updateParaBar();
-
 private:
     void initUI();
     void addWidget(QWidget *w);

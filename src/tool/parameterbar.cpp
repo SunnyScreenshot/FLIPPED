@@ -131,7 +131,7 @@ void ParameterBar::initEllipseBar()
 void ParameterBar::initMosaicBar()
 {
     QString path(":/resources/tool_para/mosaics/");
-    QStringList list = { "pixelated",  "smooth" };
+    QStringList list = { "smooth", "pixelated" };
     creatorParaBar(m_mosaicBar, path, list);
 }
 
@@ -193,12 +193,11 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
 {
     removeAllBar();
 
-#define ADDWIDGET_AND_SHOE(w, bAddSpacer) \
-    addWidget(w); \
-    w->setVisible(true); \
-    if (bAddSpacer) \
-        addSpacer();
-
+    #define ADDWIDGET_AND_SHOE(w, bAddSpacer) \
+        addWidget(w); \
+        w->setVisible(true); \
+        if (bAddSpacer) \
+            addSpacer();
 
     if (shape == DrawShape::NoDraw) {
         XLOG_INFO("[shape] is DrawShape::NoDraw.");

@@ -65,6 +65,8 @@ signals:
     void sigCancel();
     void sigFinish();
 
+    void sigInterruptEdit(const QPoint& pos);          // 文本编辑被打断，直接导致完成
+
 protected: 
     void enterEvent(QEvent* event) override;
     void resizeEvent(QResizeEvent *event) override;

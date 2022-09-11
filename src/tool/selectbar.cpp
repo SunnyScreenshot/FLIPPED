@@ -124,6 +124,11 @@ void SelectBar::onToolBtn()
     // 仅单选
     bool enableDraw = false;  // true 此 btn 被按下，处于绘画状态
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
+
+    //for (QToolButton* it : listBtn)
+    //    qDebug() << "it:" << it << "   it->isCheckable():" << it->isCheckable() << "  it->isChecked():" << it->isChecked();
+    //qDebug() << "\n";
+
     for (QToolButton* it : listBtn) {
         QString path = ":/resources/tool/" + it->objectName() + ".svg";
         it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
@@ -138,14 +143,21 @@ void SelectBar::onToolBtn()
                 }
             }
         } else {
+            if (it->objectName() == "text" && it->isChecked())  // fix: textedit edits half of the selected other drawing controls
+                emit sigInterruptEdit(QCursor::pos());
+
             if (it->isCheckable()) {
                 it->setChecked(false);
-                it->setIcon(QIcon(path));  // 频繁切换 icon 应该不会有泄露，后面确认下。
+                it->setIcon(QIcon(path));  // 频繁切换 icon 应该不会有泄露，后面确认下
             }
                 
             continue;
         }
     }
+
+    //for (QToolButton* it : listBtn)
+    //    qDebug() << "it:" << it  << "   it->isCheckable():" << it->isCheckable() << "  it->isChecked():" << it->isChecked();
+    //qDebug() << "---------------------------------------------\n";
     
     emit sigEnableDraw(enableDraw);
     bool isChecked = tb->isChecked();

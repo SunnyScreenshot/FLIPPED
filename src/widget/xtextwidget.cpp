@@ -10,6 +10,8 @@
  ******************************************************************/
 #include "xtextwidget.h"
 #include <QFontMetrics>
+#include <QTextCharFormat>
+#include <QPen>
 #include <QDebug>
 #include "../core/xlog.h"
 
@@ -99,6 +101,11 @@ void XTextWidget::setTextColor(const QColor & c)
 {
     QString s(QStringLiteral("XTextWidget { background: transparent; color: %1; }"));
     setStyleSheet(s.arg(c.name()));
+
+    //// 字体描边
+    //QTextCharFormat format;
+    //format.setTextOutline(QPen(Qt::white, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    //mergeCurrentCharFormat(format);
 }
 
 void XTextWidget::setAlignment(Qt::AlignmentFlag alignment)
