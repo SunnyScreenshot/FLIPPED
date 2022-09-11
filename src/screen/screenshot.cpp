@@ -1356,7 +1356,7 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
         m_step.p2 = event->pos();
 
-        if (m_step.shape == DrawShape::Arrows)
+        if (m_step.shape == DrawShape::Pen)
             m_step.custPath.append(event->pos());
         else if (m_step.shape == DrawShape::Text) {
             if (m_edit)
@@ -1398,7 +1398,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
         
         m_step.p2 = event->pos();
-        if (m_step.shape == DrawShape::Arrows)
+        if (m_step.shape == DrawShape::Pen)
             m_step.custPath.append(event->pos());
 
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
