@@ -53,7 +53,6 @@ private:
 
 public slots:
     void onToolBtn();
-    //void onTBReleased(QAbstractButton* btn);
 
 signals:
     void sigEnableDraw(bool enable);
@@ -64,8 +63,7 @@ signals:
     void sigSave();
     void sigCancel();
     void sigFinish();
-
-    void sigInterruptEdit(const QPoint& pos);          // 文本编辑被打断，直接导致完成
+    void sigInterruptEdit(const QPoint& pos);
 
 protected: 
     void enterEvent(QEvent* event) override;

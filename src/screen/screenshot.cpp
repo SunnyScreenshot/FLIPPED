@@ -1289,7 +1289,6 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
 
         if (m_step.shape == DrawShape::Text) {
-            if (!m_edit) return;
             m_step.p2 = m_step.p1;   // p2 as perviousPos
             m_step.p1 = event->pos();
         } else {
@@ -1356,11 +1355,11 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnType::Draw) {
         m_step.p2 = event->pos();
 
-        if (m_step.shape == DrawShape::Pen)
+        if (m_step.shape == DrawShape::Pen) {
             m_step.custPath.append(event->pos());
-        else if (m_step.shape == DrawShape::Text) {
-            if (m_edit)
-                m_edit->move(m_step.p2);
+        } else if (m_step.shape == DrawShape::Text) {
+            m_step.p1 = m_step.p2;
+            m_edit->move(m_step.p1);
         }
 
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
@@ -1444,9 +1443,7 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
         return;
 
     if (m_step.shape == DrawShape::Text) {
-        // TODO 2022.07.03: 待优化，需同时调整输入框的大小
         m_step.font.setPointSize(m_step.font.pointSize() + numSteps.y());
-
         m_edit->setFont(m_step.font);
     } else {
         m_step.pen.setWidth(m_step.pen.width() + numSteps.y());
@@ -1528,10 +1525,7 @@ double ScreenShot::getDevicePixelRatio()
 
 double ScreenShot::getDevicePixelRatio(QScreen * screen)
 {
-	if (!screen)
-        return 1.0;
-	else
-        return screen->devicePixelRatio();
+    return screen ? screen->devicePixelRatio() : 1.0;
 }
 
 // 随着光标移动，更新获取桌面所有窗口信息
