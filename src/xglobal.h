@@ -12,7 +12,7 @@
 #ifndef XGLOBAL_H
 #define XGLOBAL_H
 
- #define _MYDEBUG // 调试
+ //#define _MYDEBUG // 调试
 
 // 1. HAIF_INTERVAL 为一半间隔，边框宽度一半高; 2 * HAIF_INTERVAL 为边框的宽度，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
 // 2. HAIF_INTERVAL 为边框一般的灵敏度，光标移动到上面便会变化形态
@@ -86,8 +86,8 @@
 
 // 左上角用来显示，选中矩形区域 SelectSize 的大小
 #define SS_MARGIN_LEFT 3                   // 边框左部的间距
-#define SS_MARGIN_RIGHT 5                  // 边框右部的间距
-#define SS_MARGIN_TOP 2                    // 边框顶部的间距
+#define SS_MARGIN_RIGHT 3                  // 边框右部的间距
+#define SS_MARGIN_TOP 3                    // 边框顶部的间距
 #define SS_MARGIN_BOTTOM 3                 // 边框底部的间距
 #define SS_SPACE_TO_SELECTRECT 10          // 此部件 底部距离选中框的顶部的距离
 #define SS_RADIRS 2                        // 此部件 圆角矩形的圆角

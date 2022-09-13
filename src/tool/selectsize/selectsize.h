@@ -32,7 +32,6 @@ private:
 
 protected:
     void paintEvent(QPaintEvent* e) override;
-
 };
 
 #endif // SELECTSIZE_H

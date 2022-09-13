@@ -31,6 +31,7 @@
 #include <QGuiApplication>
 #include <QDir>
 #include <QMouseEvent>
+#include <QTimer>
 #include <QDebug>
 
 namespace Util {
@@ -61,7 +62,8 @@ ScreenShot::ScreenShot(QWidget *parent)
 	, m_edit(new XTextWidget(this))
     , m_rtSmartWindow(0, 0, 0, 0)
     , m_barOrien(Qt::Horizontal)  // Horizontal | Vertical
-    , m_selSize(new SelectSize("test", this))
+    , m_selSizeTip(new SelectSize("", this))
+    , m_lineWidthTip(new SelectSize("", this))
     , m_selBar(new SelectBar(m_barOrien, this))
     , m_paraBar(new ParameterBar(m_barOrien, this))
 {
@@ -112,7 +114,10 @@ ScreenShot::ScreenShot(QWidget *parent)
     m_rtCalcu.scrnType = ScrnType::Wait;
 
     // new refactor
-    m_selSize->setVisible(false);
+    m_selSizeTip->setVisible(false);
+    m_lineWidthTip->setVisible(false);
+    m_lineWidthTip->setFixedSize(75, 75);
+    m_lineWidthTip->move(15, 15);
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     connect(m_selBar, &SelectBar::sigEnableDraw, this, &ScreenShot::onEnableDraw);
@@ -131,6 +136,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_selBar, &SelectBar::sigEnableDraw, m_paraBar, &ParameterBar::onEnableDraw);
     connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
     connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
+    connect(this, &ScreenShot::sigLineWidthChange, this, &ScreenShot::onLineWidthChange);
 }
 
 ScreenShot::~ScreenShot()
@@ -217,7 +223,9 @@ void ScreenShot::onClearScreen()
 	m_rtCalcu.clear();
 
     m_bFirstSel = false;
-    m_selSize->setVisible(false);
+    m_selSizeTip->setVisible(false);
+    m_lineWidthTip->setVisible(false);
+
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     m_step.clear();
@@ -407,7 +415,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
             penWidth = 10;
 
         m_step.pen.setWidth(penWidth);
-
+        emit sigLineWidthChange(penWidth);
     } else if (bPen) {
     } else if (bArrows) {
         setProperty(std::to_string((int)shape).c_str(), idx);
@@ -417,6 +425,17 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     } else {
         //XLOG_INFO
     }
+}
+
+void ScreenShot::onLineWidthChange(int width)
+{
+    static QFont font(m_step.font);
+    font.setPointSize(14);
+    m_lineWidthTip->setText(QString::number(width));
+    m_lineWidthTip->setAlignment(Qt::AlignCenter);
+    m_lineWidthTip->setFont(font);
+    m_lineWidthTip->setVisible(true);
+    QTimer::singleShot(5000, [&]() { m_lineWidthTip->setVisible(false); });  // TODO 2022.09.14: 怎么有时候不到 5s 便消失覆盖了
 }
 
 void ScreenShot::onSelColor(QColor col)
@@ -805,24 +824,20 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
     return vec;
 }
 
-const QPoint ScreenShot::drawSelSizePosition(const QRect rt)
+const QPoint ScreenShot::drawSelSizeTip(const QRect& rt)
 {
-    QPoint ret;
-    if (!m_selSize)
-        return ret;
-
     //QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rt.left()).arg(rt.top()).arg(rt.width()).arg(rt.height())
     //    .arg(m_savePixmap.width()).arg(m_savePixmap.height());
 
     QString str = QString("%1 x %2").arg(rt.width()).arg(rt.height());
-
-    if (str.compare(m_selSize->text()) != 0) {
-        emit m_selSize->sigTextChanged(str);
-        m_selSize->setText(str);
+    if (str.compare(m_selSizeTip->text()) != 0) {
+        emit m_selSizeTip->sigTextChanged(str);
+        m_selSizeTip->setText(str);
     }
 
+    QPoint ret;
     ret.setX(rt.left());
-    ret.setY(rt.top() - m_selSize->height() - SS_SPACE_TO_SELECTRECT);
+    ret.setY(rt.top() - m_selSizeTip->height() - SS_SPACE_TO_SELECTRECT);
     return ret;
 }
 
@@ -1198,7 +1213,7 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa)
     const QPen pen(QPen(XHelper::instance().borderColor(), XHelper::instance().borderWidth()));
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
-    m_selSize->move(drawSelSizePosition(rtSel));
+    m_selSizeTip->move(drawSelSizeTip(rtSel));
 
     QRect rt(rtSel);
     for (auto it = m_specifyRts.cbegin(); it != m_specifyRts.cend(); ++it) {
@@ -1420,8 +1435,8 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         if (!m_selBar->isVisible())
             m_selBar->setVisible(true);
 
-        if (!m_selSize->isVisible())
-            m_selSize->setVisible(true);
+        if (!m_selSizeTip->isVisible())
+            m_selSizeTip->setVisible(true);
     }
 
 	if (m_rtCalcu.scrnType != ScrnType::Draw) {
@@ -1451,6 +1466,8 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
             m_step.pen.setWidth(1);
         if (m_step.pen.width() >= 100)
             m_step.pen.setWidth(100);
+
+        emit sigLineWidthChange(m_step.pen.width());
     }
 
     event->accept();

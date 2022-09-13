@@ -58,6 +58,7 @@ private:
 
 signals:
     void sigClearScreen();
+    void sigLineWidthChange(int width);
 
 public slots:
     void onClearScreen();
@@ -81,6 +82,8 @@ public slots:
 
 
     void onParaBtnId(DrawShape shape, QToolButton* tb);
+    void onLineWidthChange(int width);
+
     void onSelColor(QColor col);
 
 private:
@@ -95,7 +98,7 @@ private:
     bool isDrawShape(XDrawStep& step);
 
     const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
-    const QPoint drawSelSizePosition(const QRect rt);
+    const QPoint drawSelSizeTip(const QRect& rt);
 
     // Test
     void showAllDrawedShape(QPainter& pa);
@@ -144,7 +147,8 @@ private:
     // new refactor
     QRect m_rtSmartWindow;                 // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
-    QPointer<SelectSize> m_selSize;        // 左上角显示窗口大小
+    QPointer<SelectSize> m_selSizeTip;     // 选中矩形的尺寸提示
+    QPointer<SelectSize> m_lineWidthTip;    // 画笔宽度临时预览
     QPointer<SelectBar> m_selBar;
     QPointer<ParameterBar> m_paraBar;
     QPointer<XTextWidget> m_edit;

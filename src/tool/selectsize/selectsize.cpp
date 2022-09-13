@@ -29,9 +29,7 @@ void SelectSize::onTextChanged(QString text)
 {
     QFontMetrics fm(this->font());
     QRect bound = fm.boundingRect(QRect(), Qt::AlignCenter, text);
-
-    setMinimumWidth(bound.width());  // TODO 2022.07.02: 需要优化，x 坐标比较大时候，则右侧留白会过长
-    update(rect());
+    adjustSize();
 }
 
 void SelectSize::initUI()
@@ -52,5 +50,5 @@ void SelectSize::paintEvent(QPaintEvent* e)
 
     pa.setPen("#FFFFFF");
     pa.setBrush(Qt::NoBrush);
-    pa.drawText(contentsRect(), text());
+    pa.drawText(contentsRect(), Qt::AlignCenter, text());
 }
