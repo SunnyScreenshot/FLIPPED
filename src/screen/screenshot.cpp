@@ -1476,6 +1476,7 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
 
 void ScreenShot::getScrnShots()
 {
+    XLOG_INFO("---------------@#1----------------");
     m_specifyRts.clear();
     m_specifyRts.insert(m_virGeom);
     for (const auto& it : m_scrns)
@@ -1490,6 +1491,7 @@ void ScreenShot::getScrnShots()
 #endif
 
     getScrnInfo();
+    XLOG_INFO("---------------@#2----------------");
     getVirScrnPixmap(); // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
     show();
 
@@ -1498,6 +1500,7 @@ void ScreenShot::getScrnShots()
 
     // fix: 初次使用全局热键召唤截图窗口，对 Esc 无响应。 考虑跨平台或需参考 https://zhuanlan.zhihu.com/p/161299504
     if (!isActiveWindow()) {
+        XLOG_INFO("---------------@#3----------------");
         activateWindow();
         //setFocus()；
     }

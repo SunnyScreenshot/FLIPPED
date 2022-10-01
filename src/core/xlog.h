@@ -34,7 +34,7 @@ public:
 
 private:
     XLog() {
-        m_logger = spdlog::rotating_logger_mt("fileLogger", "picshot_debug.log", 1024 * 1024 * 20, 10, true);
+        m_logger = spdlog::rotating_logger_mt("fileLogger", "/Users/winks/Desktop/picshot_debug.log", 1024 * 1024 * 20, 10, true);
 
         // 默认类型：[2022-03-19 22:15:15.885] [fileLogger] [info] [screenshot.cpp:941]
         // https://github.com/gabime/spdlog/wiki/3.-Custom-formatting
