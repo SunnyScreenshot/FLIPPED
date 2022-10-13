@@ -68,6 +68,8 @@ signals:
 protected: 
     void enterEvent(QEvent* event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;   // 仅单独适配 MAC 效果
+
 
 private:
     double m_scal;

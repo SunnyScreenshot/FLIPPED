@@ -31,7 +31,7 @@
 ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     : QWidget(parent)
     , m_scal(XHelper::instance().getScale())
-    , m_blur(new BlurWidget(this))
+    , m_blur(nullptr)
     , m_orien(orien)
     , m_layout(nullptr)
     , m_colorBar(new ColorParaBar())
@@ -43,6 +43,18 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_lienWidthBar(nullptr)
 {
     initUI();
+
+#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+    m_blur = new BlurWidget(this);
+#else
+//    setAttribute(Qt::WA_TranslucentBackground, true);
+
+//    setWindowOpacity(0.8);
+
+//    QPalette pal = palette();  // 在其 parent 中效果会透明，但是
+//    pal.setColor(QPalette::Window, QColor(255, 255, 255, 0.7 * 255));
+//    setPalette(pal);
+#endif
 
     connect(m_colorBar, &ColorParaBar::sigColorChange, this, &ParameterBar::sigSelColor);
 }
@@ -93,6 +105,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
         tb->setFixedSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
         tb->setObjectName(it.key());
         tb->setIcon(QIcon(it.value()));
+        tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
         tb->setAutoRaise(true);   // 自动浮动模式
         tb->setCheckable(true);
         tb->setChecked(false);
@@ -244,8 +257,27 @@ void ParameterBar::enterEvent(QEvent* event)
 
 void ParameterBar::resizeEvent(QResizeEvent *event)
 {
-    m_blur->setGeometry(0, 0, width(), height());
+    if (m_blur)
+        m_blur->setGeometry(0, 0, width(), height());
+
     return QWidget::resizeEvent(event);
+}
+
+void ParameterBar::paintEvent(QPaintEvent *event)
+{
+#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+    QWidget::paintEvent(event);
+#else
+    Q_UNUSED(event)
+//    updateToolBtnIcon();
+    QPainter pa(this);
+    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    pa.setPen(Qt::NoPen);
+    pa.setBrush(QColor(255, 255, 255, 0.7 * 255));
+
+    const int round = 4;
+    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), round, round);
+#endif
 }
 
 void ParameterBar::onTBReleased(QAbstractButton* btn)

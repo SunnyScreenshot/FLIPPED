@@ -33,6 +33,9 @@
 #include <QTranslator>
 #include <QStandardPaths>
 #include <QDir>
+#include <QDateTime>
+#include <QGuiApplication>
+
 // test
 #ifdef Q_OS_WIN
     //#include "./platform/wininfo_win.h"
@@ -119,15 +122,20 @@ int main(int argc, char *argv[])
 
 //    WinSetting* set = new WinSetting();
 //    set->show();
-    //SelectBar* t1 = new SelectBar();
-    //t1 ->setBlurBackground(QPixmap("D:/projects/PicShot/src/p1.jpg"), 4);
-    //t1->move(200, 100);
-    //t1->show();
+    auto t0 = new QWidget();
+    t0->resize(800, 400);
+    t0->show();
 
-    //ParameterBar* t2 = new ParameterBar();
-    //t2->setPixmap(QPixmap("D:/projects/PicShot/src/p2.jpg"));
-    //t2->move(200, 200);
-    //t2->show();
+    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);
+    t1->setWindowFlags(Qt::FramelessWindowHint);
+//    t1 ->setBlurBackground(QPixmap("D:/projects/PicShot/src/p1.jpg"), 4);
+    t1->move(200, 100);
+    t1->show();
+
+    ParameterBar* t2 = new ParameterBar(Qt::Horizontal, t0);
+//    t2->setBlurBackground(QPixmap("D:/projects/PicShot/src/p2.jpg"), 5);
+    t2->move(200, 200);
+    t2->show();
 
 //    ColorParaBar* t3 = new ColorParaBar(ColorParaBarMode::CPB_ParaBar, Qt::Horizontal);
 ////    t3->resize(400, 300);
@@ -146,6 +154,18 @@ int main(int argc, char *argv[])
 
 //    PinWidget* w5 = new PinWidget(QPixmap("C:/Users/xmuli/Desktop/Snipaste_2022-07-16_02-13-39.png"), QRect(100, 100, 400, 400));
 //    w5->show();
+
+//    QMouseEvent* evMouse = dynamic_cast<QMouseEvent*>(ev);
+//    cout << "Posicion: " << evMouse->x() << ", " << evMouse->y() << endl;
+
+//    QDesktopWidget* desktop = qApp->desktop();  // 获取桌面的窗体对象
+
+//    // 获取屏幕类
+//    QScreen *pScreen = QGuiApplication::primaryScreen();
+//    // 获取第一个屏幕的图片
+//    QPixmap mPixmap = pScreen->grabWindow(0, 0, 0, desktop->size().width(), desktop->size().height());
+//    // 设置名称为当前时间
+
 
     return QApplication::exec();
 }

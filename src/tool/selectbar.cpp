@@ -12,6 +12,7 @@
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"
 #include "../widget/xverticalline.h"
+#include "QtGui/qpainter.h"
 #include <QToolButton>
 #include <QStringList>
 #include <QBoxLayout>
@@ -22,13 +23,18 @@
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
     , m_scal(XHelper::instance().getScale())
-    , m_blur(new BlurWidget(this))
+    , m_blur(nullptr)
     , m_orien(orien)
     , m_layout(nullptr)
     //, m_group(new QButtonGroup(this))
     , m_vItem()
 {
     initUI();
+
+#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+    m_blur = new BlurWidget(this);
+#else
+#endif
 
     QStringList tbName1 = { "rectangle", "ellipse", "arrow", "pen", "mosaic", "text", "serialnumber"};
     QStringList tbName2 = { "pin", "revocation", "renewal", "save", "cancel", "finish" };
@@ -138,7 +144,7 @@ void SelectBar::onToolBtn()
             QIcon icon(path);
             if (it->isChecked()) {
                 enableDraw = true;
-                icon = XHelper::instance().ChangeSVGColor(path, "path", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
+//                icon = XHelper::instance().ChangeSVGColor(path, "path", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
             }
 
             it->setIcon(icon);
@@ -199,6 +205,27 @@ void SelectBar::enterEvent(QEvent* event)
 
 void SelectBar::resizeEvent(QResizeEvent *event)
 {
+    if (!m_blur)
+        return;
+
     m_blur->setGeometry(0, 0, width(), height());
     return QWidget::resizeEvent(event);
+}
+
+void SelectBar::paintEvent(QPaintEvent *event)
+{
+#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
+    QWidget::paintEvent(event);
+#else
+    Q_UNUSED(event)
+
+//    updateToolBtnIcon();
+    QPainter pa(this);
+    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    pa.setPen(Qt::NoPen);
+    pa.setBrush(QColor(255, 255, 255, 0.7 * 255));
+
+    const int round = 4;
+    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), round, round);
+#endif
 }

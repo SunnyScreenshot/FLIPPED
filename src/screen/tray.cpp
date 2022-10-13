@@ -171,6 +171,12 @@ void Tray::onSrnShot()
 
     m_pSrnShot->activateWindow();
     m_pSrnShot->setFocus();
+
+#ifdef Q_OS_MAC
+//    m_pSrnShot->showMaximized();
+//    m_pSrnShot->setWindowFlags(Qt::Window); // Fix: MACOS 下全屏截图显示的仅壁纸桌面
+//    m_pSrnShot->showFullScreen();
+#endif
 }
 
 void Tray::onPreference(bool checked)

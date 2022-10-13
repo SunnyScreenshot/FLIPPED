@@ -105,11 +105,18 @@ ScreenShot::ScreenShot(QWidget *parent)
             m_virGeom.setWidth(m_virGeom.width() / 2);
         setFixedSize(m_virGeom.size());
     #else
-        showFullScreen();
+//        showFullScreen();  // 并不是当前的屏幕大小
+        setWindowFlags(/*Qt::WindowStaysOnTopHint |*/ Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
+        setFixedSize(m_virGeom.size());
+        auto tt = QApplication::desktop()->rect().size();
+        setFixedSize(QApplication::desktop()->rect().size());
+//        setFixedSize(QSize(1600, 800));
+//        setFixedSize(QGuiApplication::screenAt(QCursor::pos())->size());    // 用 resize() 的话，发现会操蛋的蛋疼
+
     #endif
 #endif
 
-    move(m_virGeom.topLeft());
+//    move(m_virGeom.topLeft());
     setMouseTracking(true);
     m_rtCalcu.scrnType = ScrnType::Wait;
 
@@ -205,8 +212,10 @@ void ScreenShot::onClearScreen()
 {
 #ifdef Q_OS_WIN
 #elif  defined(Q_OS_MAC)
-    setWindowFlags(Qt::SubWindow);
-    showNormal();
+//    setWindowFlags(Qt::SubWindow); // TODO: 连续截屏在 MAC 下有 bug
+//    showNormal();
+
+//    setWindowState(Qt::WindowFullScreen);
 #elif  defined(Q_OS_LINUX)
 #endif
 
@@ -455,7 +464,23 @@ QPixmap* ScreenShot::getVirScrnPixmap()
         const QRect geom = currentScreen(QCursor::pos())->geometry();
 
 #if defined(Q_OS_MAC)
-        m_currPixmap = new QPixmap(m_priScrn->grabWindow(desktop->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
+//        QPoint mousePos = QCursor:: pos();
+
+//        int screenNumber = qApp->desktop()->screenNumber(mousePos);
+//        QScreen* screen = qApp->screenAt(QCursor::pos());
+
+
+//        qDebug() << "Mouse Pos: " << mousePos.x() << ", " << mousePos.y() << ". Screen " << screenNumber << endl;
+
+//        auto t1 = mapToGlobal(mousePos);
+//        QPixmap m_currPixmap = screen->grabWindow(qApp->desktop()->winId(), t1.x(), t1.y(), 1000, 1000);
+
+
+//        auto savePath = QString( "/Users/winks/Desktop/main_%2.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmmss"));
+//        // 保存图片
+//        qDebug() << "savePath" << savePath;
+//        m_currPixmap.save(savePath);
+        m_currPixmap = new QPixmap(m_priScrn->grabWindow(0/*desktop->winId()*/, geom.x(), geom.y(), geom.width(), geom.height()));
 #else
     #ifdef _MYDEBUG
         m_currPixmap = new QPixmap(m_priScrn->grabWindow(desktop->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
@@ -466,7 +491,7 @@ QPixmap* ScreenShot::getVirScrnPixmap()
 #endif
     }
 
-    //m_currPixmap->save("123456.png");
+    m_currPixmap->save("/Users/winks/Desktop/123456.png");//m_currPixmap->save("123456.png");
     return m_currPixmap;
 }
 
@@ -1264,12 +1289,16 @@ void ScreenShot::drawToolBar()
             m_paraBar->move(v.at(1));
         }
 
+#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
         // 添加磨砂透明效果
         const double blurRadius = 7;
         auto t1 = m_currPixmap->copy(QRect(v[0] * getDevicePixelRatio(), m_selBar->rect().size() * getDevicePixelRatio()));
         m_selBar->setBlurBackground(t1, blurRadius);
         auto t2 = m_currPixmap->copy(QRect(v[1] * getDevicePixelRatio(), m_paraBar->rect().size() * getDevicePixelRatio()));
         m_paraBar->setBlurBackground(t2, blurRadius);
+#else
+#endif
+
     }
 }
 
