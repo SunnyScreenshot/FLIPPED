@@ -14,12 +14,14 @@
 #include <QDebug>
 #include <QtGlobal>
 #include <QObject>
+#include <QStyleFactory>
 #include "screen/screenshot.h"
 
 // test
 //#include <QHotkey>
 #include "./screen/tray.h"
 #include "tool/pin/pinwidget.h"
+#include "tool/testbtstyle.h"
 #include "widget/xroundwidget.h"
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"
@@ -72,7 +74,8 @@ int main(int argc, char *argv[])
 
 #if(QT_VERSION > QT_VERSION_CHECK(5,6,0))
 //    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);  // 2K、4K 2@ 倍；获取的分辨率 4K 下实际为 /2 后。 此行需在 QApplication a(argc,argv);前面
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。                此行无需在 QApplication a(argc,argv);前面
+//    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。                此行无需在 QApplication a(argc,argv);前面
+    qApp->setAttribute(Qt::AA_UseHighDpiPixmaps);  // 上面一行没有生效，但是此行可以生效
 #endif
 
     // 因多处使用 QSettings，故声明组织等信息
@@ -119,6 +122,22 @@ int main(int argc, char *argv[])
     //Preference* pre = new Preference(nullptr);
     //pre->show();
 
+    QStringList listStyle = QStyleFactory::keys();
+    foreach(QString val, listStyle)
+      qDebug()<<val<<"  ";
+
+#ifdef Q_OS_MAC
+    const QString value = "Fusion";  // macintosh Windows Fusion
+    QApplication::setStyle(value);
+#else
+#endif
+
+    auto t = new TestBTStyle();
+    t->setWindowTitle(QString("MacOS 12.6 + Qt 5.15.2 + Style: %1").arg(value));
+    t->show();
+
+    auto t100 = new TestBTStyle();
+    t100->show();
 
 //    WinSetting* set = new WinSetting();
 //    set->show();
