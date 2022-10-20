@@ -52,6 +52,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_scal(XHelper::instance().getScale())
     , m_scrns(qGuiApp->screens())
     , m_priScrn(qGuiApp->primaryScreen())
+    , m_curScrn(nullptr)
     , m_virGeom(m_priScrn->virtualGeometry())
 	, m_currPixmap(nullptr)
 	, m_rtCalcu(this)
@@ -97,6 +98,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     #endif
 
     setFixedSize(m_virGeom.size());
+    move(m_virGeom.topLeft());
 #else // Q_OS_MAC
 //    setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
     #ifdef _MYDEBUG
@@ -106,17 +108,16 @@ ScreenShot::ScreenShot(QWidget *parent)
         setFixedSize(m_virGeom.size());
     #else
 //        showFullScreen();  // 并不是当前的屏幕大小
-        setWindowFlags(/*Qt::WindowStaysOnTopHint |*/ Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
-        setFixedSize(m_virGeom.size());
-        auto tt = QApplication::desktop()->rect().size();
-        setFixedSize(QApplication::desktop()->rect().size());
-//        setFixedSize(QSize(1600, 800));
-//        setFixedSize(QGuiApplication::screenAt(QCursor::pos())->size());    // 用 resize() 的话，发现会操蛋的蛋疼
-
+        setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
+        m_curScrn = qApp->screenAt(QCursor::pos());
+        const QRect geom = m_curScrn->geometry();
+        setFixedSize(geom.size());   // resize() cannot get the desired effect
     #endif
+
+    move(geom.topLeft());
 #endif
 
-//    move(m_virGeom.topLeft());
+
     setMouseTracking(true);
     m_rtCalcu.scrnType = ScrnType::Wait;
 
@@ -1053,11 +1054,14 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
     if (m_bSmartWin)
         rtSel = m_rtSmartWindow;
-
-    const auto & virGeom = QRect(mapFromGlobal(m_virGeom.topLeft()), m_virGeom.size()); // 修复为相对窗口的
-    m_rtCalcu.limitBound(rtSel, virGeom);  // 修复边界时图片被拉伸
+    QRect shotGeom(mapFromGlobal(m_virGeom.topLeft()), m_virGeom.size()); // 修复为相对窗口的
+    #ifdef Q_OS_MAC
+        shotGeom = QRect(mapFromGlobal(m_curScrn->geometry().topLeft()), m_curScrn->geometry().size());
+    #endif
+     m_rtCalcu.limitBound(rtSel, shotGeom); // 修复边界时图片被拉伸
     if (rtSel.width() > 0 && rtSel.height() > 0) {
-        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
+        double devPixRatio = getDevicePixelRatio(m_curScrn);
+        m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * devPixRatio, rtSel.size() * devPixRatio));  // NOTE: devicePixelRatio（macox = 2）
         pa.drawPixmap(rtSel, m_savePixmap);
 
         // 放大镜实现
@@ -1091,7 +1095,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
     // drawWinInfo(pa);
     selectedShapeMove(pa);
-    drawMaskLayer(virGeom, rtSel, pa);
+    drawMaskLayer(shotGeom, rtSel, pa);
     drawBorder(rtSel, pa);
     drawCrosshair(pa);
     drawToolBar();
@@ -1546,6 +1550,22 @@ void ScreenShot::getScrnInfo()
 
     XLOG_INFO("---------------m_screens[] Info BEGIN----------------");
     for (const auto& it : m_scrns) {
+        qDebug() << "序号 it:" << m_scrns.indexOf(it)
+                 << "\n可用几何 availableGeometry:" << it->availableGeometry()
+                 << "\n可用虚拟几何 availableVirtualSize:" << it->availableVirtualSize()
+                 << "\n虚拟几何 virtualGeometry:" << it->virtualGeometry()
+                 << "\n几何 geometry:" << it->geometry()
+                 << "\n尺寸 size:" << it->size()
+                 << "\n物理尺寸 physicalSize:" << it->physicalSize()
+                 << "\n刷新率 refreshRate:" << it->refreshRate()
+                 << "\n尺寸 size:" << it->size()
+                 << "\n虚拟尺寸 virtualSize:" << it->virtualSize()
+                 << "\n设备像素比 devicePixelRatio:" << it->devicePixelRatio()
+                 << "\n逻辑DPI logicalDotsPerInch:" << int(it->logicalDotsPerInch()) << " DPIX:" << int(it->logicalDotsPerInchX()) << " DPIY:" << int(it->logicalDotsPerInchY())
+                 << "\n物理DPI physicalDotsPerInch:" << int(it->physicalDotsPerInch()) << " DPIX:" << int(it->physicalDotsPerInchX()) << " DPIY:" << int(it->physicalDotsPerInchY())
+                 << "\n手算缩放比 getScale:" << getScale(it)
+                 << "\n虚拟尺寸 m_virGeom:" << m_virGeom << "\n\n";
+
         XLOG_DEBUG("屏幕详细信息：index[{}]", m_scrns.indexOf(it));
         XLOG_DEBUG("size({}, {})", it->size().width(), it->size().height());
         XLOG_DEBUG("geometry({}, {}, {} * {})", it->geometry().left(), it->geometry().top(), it->geometry().width(), it->geometry().height());
@@ -1556,25 +1576,21 @@ void ScreenShot::getScrnInfo()
         XLOG_INFO("序号 serialNumber[{}]  刷新率 refreshRate[{}]  模式 model[{}]", it->serialNumber().toUtf8().data(), it->refreshRate(), it->model().toUtf8().data());
         XLOG_INFO("虚拟几何 virtualGeometry:({}, {}, {} * {})  缩放比 getScale[{}]", it->availableGeometry().left(), it->availableGeometry().top(), it->availableGeometry().width(), it->availableGeometry().height(), getScale(it));
         XLOG_INFO("物理几何 physicalSize:({} * {})  大小 size({} * {})", it->physicalSize().width(), it->physicalSize().height(), it->physicalSize().width(), it->physicalSize().height());
-        XLOG_INFO("物理 DPI physicalDotsPerInch: {}  DPIX: {}  DPIY: {} ", it->physicalDotsPerInch(), it->physicalDotsPerInchX(), it->physicalDotsPerInchY());
-        XLOG_INFO("逻辑 DPI logicalDotsPerInch: {}  DPIX: {}  DPIY: {}\n", it->logicalDotsPerInch(), it->logicalDotsPerInchX(), it->logicalDotsPerInchX());
+        XLOG_INFO("物理 DPI physicalDotsPerInch: {}  DPIX: {}  DPIY: {} ", int(it->physicalDotsPerInch()), int(it->physicalDotsPerInchX()), int(it->physicalDotsPerInchY()));
+        XLOG_INFO("逻辑 DPI logicalDotsPerInch: {}  DPIX: {}  DPIY: {}\n", int(it->logicalDotsPerInch()), int(it->logicalDotsPerInchX()), int(it->logicalDotsPerInchX()));
     }
 
     XLOG_INFO("m_virtualGeometry({}, {}, {} * {})\n", m_virGeom.left(), m_virGeom.top(), m_virGeom.width(), m_virGeom.height());
     XLOG_INFO("---------------m_screens[] Info END----------------");
 }
 
-double ScreenShot::getDevicePixelRatio()
-{
-//#ifdef Q_OS_MAC
-//    return 2;  // TODO 2022.03.11 无奈之举；使用 CMake MACOSX_BUNDLE 则返回的缩放比不正常,  return 1 ???
-//#endif
-    return m_priScrn->devicePixelRatio();
-}
-
 double ScreenShot::getDevicePixelRatio(QScreen * screen)
 {
-    return screen ? screen->devicePixelRatio() : 1.0;
+#ifdef Q_OS_MAC
+    return screen ? screen->devicePixelRatio() : 2;  // TODO 2022.03.11 无奈之举；使用 CMake MACOSX_BUNDLE 则返回的缩放比不正常,  return 1 ???
+#else
+    return screen ? screen->devicePixelRatio() : 1;
+#endif
 }
 
 // 随着光标移动，更新获取桌面所有窗口信息
@@ -1610,7 +1626,7 @@ double ScreenShot::getScale(QScreen * screen)
 		return 2;
 	else if (2.25 <= scale && scale < 2.5)
 		return 2.25;
-	else if (2.5 <= scale && scale < 3)
+    else if (2.5 <= scale && scale < 3)get
 		return 2.5;
 	else if (3 <= scale && scale < 3.5)
 		return 3;

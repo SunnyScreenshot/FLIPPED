@@ -21,8 +21,6 @@ TestBTStyle::TestBTStyle(QWidget *parent)
 
 
     auto layout = new QHBoxLayout(this);
-
-
     int i = 0;
 
     QStringList listName;

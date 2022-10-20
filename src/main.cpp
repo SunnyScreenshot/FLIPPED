@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
 #if(QT_VERSION > QT_VERSION_CHECK(5,6,0))
 //    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);  // 2K、4K 2@ 倍；获取的分辨率 4K 下实际为 /2 后。 此行需在 QApplication a(argc,argv);前面
-//    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。                此行无需在 QApplication a(argc,argv);前面
+//    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。   此行无需在 QApplication a(argc,argv);前面
     qApp->setAttribute(Qt::AA_UseHighDpiPixmaps);  // 上面一行没有生效，但是此行可以生效
 #endif
 
@@ -132,29 +132,26 @@ int main(int argc, char *argv[])
 #else
 #endif
 
-    auto t = new TestBTStyle();
-    t->setWindowTitle(QString("MacOS 12.6 + Qt 5.15.2 + Style: %1").arg(value));
-    t->show();
-
-    auto t100 = new TestBTStyle();
-    t100->show();
+//    auto t = new TestBTStyle();
+//    t->setWindowTitle(QString("MacOS 12.6 + Qt 5.15.2 + Style: %1").arg(value));
+//    t->show();
 
 //    WinSetting* set = new WinSetting();
 //    set->show();
-    auto t0 = new QWidget();
-    t0->resize(800, 400);
-    t0->show();
+//    auto t0 = new QWidget();
+//    t0->resize(800, 400);
+//    t0->show();
 
-    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);
-    t1->setWindowFlags(Qt::FramelessWindowHint);
-//    t1 ->setBlurBackground(QPixmap("D:/projects/PicShot/src/p1.jpg"), 4);
-    t1->move(200, 100);
-    t1->show();
+//    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);
+//    t1->setWindowFlags(Qt::FramelessWindowHint);
+////    t1 ->setBlurBackground(QPixmap("D:/projects/PicShot/src/p1.jpg"), 4);
+//    t1->move(200, 100);
+//    t1->show();
 
-    ParameterBar* t2 = new ParameterBar(Qt::Horizontal, t0);
-//    t2->setBlurBackground(QPixmap("D:/projects/PicShot/src/p2.jpg"), 5);
-    t2->move(200, 200);
-    t2->show();
+//    ParameterBar* t2 = new ParameterBar(Qt::Horizontal, t0);
+////    t2->setBlurBackground(QPixmap("D:/projects/PicShot/src/p2.jpg"), 5);
+//    t2->move(200, 200);
+//    t2->show();
 
 //    ColorParaBar* t3 = new ColorParaBar(ColorParaBarMode::CPB_ParaBar, Qt::Horizontal);
 ////    t3->resize(400, 300);
