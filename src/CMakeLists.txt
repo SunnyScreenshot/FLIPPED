@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME PicShot)
-project(${PROJECT_NAME} VERSION 0.4.5 LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 0.4.6 LANGUAGES CXX)
 
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 file(COPY config/config.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)

@@ -1513,7 +1513,12 @@ void ScreenShot::getScrnShots()
     getScrnInfo();
     XLOG_INFO("---------------@#2----------------");
     getVirScrnPixmap(); // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
+
+#ifdef Q_OS_MAC
+    showFullScreen();
+#elif
     show();
+#endif
 
     if (m_bSmartWin)
         updateGetWindowsInfo();
@@ -1522,7 +1527,6 @@ void ScreenShot::getScrnShots()
     if (!isActiveWindow()) {
         XLOG_INFO("---------------@#3----------------");
         activateWindow();
-        //setFocus()；
     }
 }
 

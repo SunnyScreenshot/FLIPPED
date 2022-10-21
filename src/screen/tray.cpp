@@ -12,6 +12,7 @@
 #include "../preference/preference.h"
 #include "../widget/xkeysequenceedit.h"
 #include "../pluginsinterface/iplugininterface.h"
+#include "../screen/drawhelper.h"
 #include <QSystemTrayIcon>
 #include <QAction>
 #include <QMenu>
@@ -165,28 +166,15 @@ void Tray::onSrnShot()
     if (!hk && !act)
         return;
     
-    if (act || hk->objectName() == "Active Window") { // TODO 2022.07.17： 替换为枚举
+    if (act || hk->objectName() == "Active Window") // TODO 2022.07.17： 替换为枚举
         m_pSrnShot->getScrnShots();
-    }
-
-    m_pSrnShot->activateWindow();
-    m_pSrnShot->setFocus();
-
-#ifdef Q_OS_MAC
-//    m_pSrnShot->showMaximized();
-//    m_pSrnShot->setWindowFlags(Qt::Window); // Fix: MACOS 下全屏截图显示的仅壁纸桌面
-//    m_pSrnShot->showFullScreen();
-#endif
 }
 
 void Tray::onPreference(bool checked)
 {
     Q_UNUSED(checked);
 
-    if (!m_pPref)
-        m_pPref = new Preference();
-
-    m_pPref->setMinimumWidth(910);
+    if (!m_pPref) m_pPref = new Preference();
     m_pPref->setVisible(true);
 }
 
