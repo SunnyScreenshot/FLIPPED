@@ -32,6 +32,9 @@
 #include <QDir>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QWindow>
+#include <QStandardPaths>
+#include <QStringList>
 #include <QDebug>
 
 namespace Util {
@@ -460,39 +463,23 @@ void ScreenShot::onSelColor(QColor col)
 // 获取虚拟屏幕截图
 QPixmap* ScreenShot::getVirScrnPixmap()
 {
-	if (!m_currPixmap) {
-        QDesktopWidget* desktop = qApp->desktop();  // 获取桌面的窗体对象
-        const QRect geom = currentScreen(QCursor::pos())->geometry();
+    if (!m_currPixmap) {
+        const QScreen* curScrn = currentScreen(QCursor::pos());
+        const QRect geom = curScrn->geometry();
 
 #if defined(Q_OS_MAC)
-//        QPoint mousePos = QCursor:: pos();
-
-//        int screenNumber = qApp->desktop()->screenNumber(mousePos);
-//        QScreen* screen = qApp->screenAt(QCursor::pos());
-
-
-//        qDebug() << "Mouse Pos: " << mousePos.x() << ", " << mousePos.y() << ". Screen " << screenNumber << endl;
-
-//        auto t1 = mapToGlobal(mousePos);
-//        QPixmap m_currPixmap = screen->grabWindow(qApp->desktop()->winId(), t1.x(), t1.y(), 1000, 1000);
-
-
-//        auto savePath = QString( "/Users/winks/Desktop/main_%2.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmmss"));
-//        // 保存图片
-//        qDebug() << "savePath" << savePath;
-//        m_currPixmap.save(savePath);
-        m_currPixmap = new QPixmap(m_priScrn->grabWindow(0/*desktop->winId()*/, geom.x(), geom.y(), geom.width(), geom.height()));
+        m_currPixmap = new QPixmap(m_priScrn->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
 #else
     #ifdef _MYDEBUG
-        m_currPixmap = new QPixmap(m_priScrn->grabWindow(desktop->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
+        m_currPixmap = new QPixmap(m_priScrn->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
     #else
         // 多屏的矩形取并集
-        m_currPixmap = new QPixmap(m_priScrn->grabWindow(desktop->winId(), m_virGeom.x(), m_virGeom.y(), m_virGeom.width(), m_virGeom.height()));
+        m_currPixmap = new QPixmap(m_priScrn->grabWindow(qApp->desktop()->winId(), m_virGeom.x(), m_virGeom.y(), m_virGeom.width(), m_virGeom.height()));
     #endif
 #endif
     }
 
-    m_currPixmap->save("/Users/winks/Desktop/123456.png");//m_currPixmap->save("123456.png");
+    m_currPixmap->save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/m_currPixmap_123456.png");
     return m_currPixmap;
 }
 
@@ -1550,7 +1537,7 @@ void ScreenShot::getScrnInfo()
 
     XLOG_INFO("---------------m_screens[] Info BEGIN----------------");
     for (const auto& it : m_scrns) {
-        qDebug() << "序号 it:" << m_scrns.indexOf(it)
+        qDebug() << "序号 it:" << m_scrns.indexOf(it) << "  it:" << it
                  << "\n可用几何 availableGeometry:" << it->availableGeometry()
                  << "\n可用虚拟几何 availableVirtualSize:" << it->availableVirtualSize()
                  << "\n虚拟几何 virtualGeometry:" << it->virtualGeometry()

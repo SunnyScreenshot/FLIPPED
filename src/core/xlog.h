@@ -15,8 +15,10 @@
     #define SPDLOG_WCHAR_TO_UTF8_SUPPORT  // 需要定义在 spdlog 之前，以支持 wchar_t 的输出
 #endif
 
+#include <QStandardPaths>
 #include <spdlog/spdlog.h>
 #include "spdlog/sinks/rotating_file_sink.h"
+
 
 class XLog
 {
@@ -34,7 +36,7 @@ public:
 
 private:
     XLog() {
-        m_logger = spdlog::rotating_logger_mt("fileLogger", "/Users/winks/Desktop/picshot_debug.log", 1024 * 1024 * 20, 10, true);
+        m_logger = spdlog::rotating_logger_mt("fileLogger", QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first().toStdString() + "/picshot_debug.log", 1024 * 1024 * 20, 10, true);
 
         // 默认类型：[2022-03-19 22:15:15.885] [fileLogger] [info] [screenshot.cpp:941]
         // https://github.com/gabime/spdlog/wiki/3.-Custom-formatting

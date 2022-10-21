@@ -40,37 +40,15 @@
 
 // test
 #ifdef Q_OS_WIN
-    //#include "./platform/wininfo_win.h"
+    //#include "./platform/wininfo_win.h"Windows10环境下安装Qt Creator5.9.8作为c++的IDE开发工具，学习和使用qt.md
 #elif  defined(Q_OS_MAC)
 #elif  defined(Q_OS_LINUX)
     #include "./platform/wininfo_x11.h"
 #endif
 
-
-
 int main(int argc, char *argv[])
 {
-    // TODO 2022-06-18 高分屏适配的许多尝试:
-    // 【方案一】 Qt 5.14+, 解决 1.5会缩放到2倍，不过显示会有问题，比如按钮之间时不时会有虚线。
-    //    qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
-    //    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy);
-
-    // 【方案二】 Qt5.12 替代方案
-    //    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", "1.5");
-
-//    // 【方案三】 Qt5.12 替代方案
-//#if (QT_VERSION >= QT_VERSION_CHECK(5,9,0))
-//    qputenv("QT_SCALE_FACTOR", "1.0"); // 全局缩放因子 https://blog.csdn.net/u014410266/article/details/107488789
-//    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-//#endif
-
-    // 【方案四】 使用 windows 自带的
-    // exe 统计目录下使用 qt.conf 文件
-
-    // 三种方案 https://blog.csdn.net/hanjiang08/article/details/124653265
-    // https://blog.csdn.net/qq_18260845/article/details/103861201
-    // https://blog.csdn.net/feiyangqingyun/article/details/124860909
-
+    // 高分屏四种方案 https://blog.csdn.net/qq_33154343/article/details/108905279
 
 #if(QT_VERSION > QT_VERSION_CHECK(5,6,0))
 //    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);  // 2K、4K 2@ 倍；获取的分辨率 4K 下实际为 /2 后。 此行需在 QApplication a(argc,argv);前面
@@ -127,7 +105,7 @@ int main(int argc, char *argv[])
       qDebug()<<val<<"  ";
 
 #ifdef Q_OS_MAC
-    const QString value = "Fusion";  // macintosh Windows Fusion
+    const QString value = "macintosh";  // macintosh Windows Fusion
     QApplication::setStyle(value);
 #else
 #endif

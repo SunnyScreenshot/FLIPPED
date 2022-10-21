@@ -114,9 +114,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
             tb->setIcon(XHelper::instance().ChangeSVGColor(it.value(), "rect", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
         }
 
-        if (!tb->setProperty("path", it.value()))
-            XLOG_INFO("ToolButton Property [path] initialization faile.");
-        
+        tb->setProperty("path", it.value());
         group->addButton(tb);
         manageBar->addWidget(tb);
         it++;
