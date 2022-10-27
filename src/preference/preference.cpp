@@ -58,7 +58,8 @@ void Preference::initUI()
     setAttribute(Qt::WA_DeleteOnClose, true);
 
     // main layout
-    setContentsMargins(PRE_MARGIN_HOR, PRE_MARGIN_VER, PRE_MARGIN_HOR, PRE_MARGIN_VER);
+    setContentsMargins(PRE_MARGIN_HOR, PRE_MARGIN_VER + 10, PRE_MARGIN_HOR, PRE_MARGIN_VER);
+
     QVBoxLayout* vLayout = new QVBoxLayout(this);
     vLayout->setMargin(0);
     vLayout->setSpacing(0);
@@ -76,6 +77,13 @@ void Preference::initUI()
     tabPages->addTab(tabAbout(), tr("About"));
 
     vLayout->addWidget(tabPages);
+    setWindowTitle(_PROJECT_NAME);
+
+//    qDebug()<<"--->"<<tabPages->palette().window().color();
+//    QPalette pal = this->palette();
+//    pal.setColor(QPalette::Window, QColor("#EFEFEF")/*tabPages->palette().window().color()*/);  // tabPages->palette()
+//    setAutoFillBackground(true);
+//    this->setPalette(pal);
 }
 
 QHBoxLayout* Preference::creatResetBtn(QString objectName)
@@ -298,9 +306,9 @@ QWidget* Preference::tabOutput()
     grid->setMargin(0);
     grid->setVerticalSpacing(TOG_SPACING_VER);
     grid->setHorizontalSpacing(TOG_SPACING_HOR);
-    grid->setColumnStretch(0, 2);
-    grid->setColumnStretch(1, 7);
-    grid->setColumnStretch(2, 1);
+    grid->setColumnStretch(0, 3);
+    grid->setColumnStretch(1, 8);
+//    grid->setColumnStretch(2, 0);
 
     NEW_OBJECT_AND_TEXT(imageQuailty, QLabel, toImageQuailty, tr("Image quailty:"));
     NEW_OBJECT_AND_TEXT(fileName, QLabel, toFileName, tr("File Name:"));
@@ -314,13 +322,14 @@ QWidget* Preference::tabOutput()
     NEW_OBJECT(editAutoSavePath, QLineEdit, toAutoSavePath);
     NEW_OBJECT(editConfigPath, QLineEdit, toConfigPath);
 
+//    changeFileName = new QSpacerItem(20, 5, QSizePolicy::Minimum, QSizePolicy::Fixed);
     NEW_OBJECT_AND_TEXT(changeFileName, QPushButton, toFileName, tr("Hint"));
     NEW_OBJECT_AND_TEXT(changeQuickSavePath, QPushButton, toQuickSavePath, tr("Change path"));
     NEW_OBJECT_AND_TEXT(changeAutoSavePath, QPushButton, toAutoSavePath, tr("Change path"));
     NEW_OBJECT_AND_TEXT(changeConfigPath, QPushButton, toConfigPath, tr("Change path"));
 
     sbImageQuailty->setRange(-1, 100);
-    sbImageQuailty->setFixedWidth(100);
+    sbImageQuailty->setMinimumWidth(70);
 
     int i = 0;
     int j = 0;
@@ -330,11 +339,13 @@ QWidget* Preference::tabOutput()
 
     auto creatPathEdit = [&](QLabel* label, QLineEdit* edit, QPushButton* btn) {
         grid->addWidget(label, i, j, Qt::AlignRight);
+        btn->setMinimumWidth(100);
         QHBoxLayout* hLay = new QHBoxLayout();
         hLay->setMargin(0);
         hLay->addSpacing(0);
-        hLay->addWidget(edit, 4);  // 去掉位置，即可自动策略为伸长
+        hLay->addWidget(edit, 7);  // 去掉位置，即可自动策略为伸长
         hLay->addWidget(btn, 1);
+        hLay->addSpacerItem(new QSpacerItem(20, 5, QSizePolicy::Minimum, QSizePolicy::Fixed));
         grid->addLayout(hLay, i++, j + 1);
     };
 
@@ -387,18 +398,22 @@ QWidget* Preference::tabPin()
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
-    NEW_OBJECT_AND_TEXT(shade, QLabel, tpWindowShadow, tr("Enable Window shadow:"));
+    NEW_OBJECT_AND_TEXT(shade, QLabel, tpWindowShadow, tr("Window Shadow:"));
     NEW_OBJECT_AND_TEXT(opacity, QLabel, tpOpacity, tr("Opacity:"));
     NEW_OBJECT_AND_TEXT(maxSize, QLabel, tpMaxSize, tr("Maximum size:"));
 
-    NEW_OBJECT_AND_TEXT(cbWindowShadow, QCheckBox, tpWindowShadow, tr("Window shadow"));
+    NEW_OBJECT_AND_TEXT(cbWindowShadow, QCheckBox, tpWindowShadow, tr("Enable"));
     NEW_OBJECT(sbOpacity, QSpinBox, tpOpacity);
     NEW_OBJECT(sbMaxSize, QSpinBox, tpMaxSize);
 
     sbOpacity->setSuffix("%");
     sbOpacity->setSingleStep(10);
     sbOpacity->setRange(0, 100);
+    sbOpacity->setMinimumWidth(70);
+    sbOpacity->setAlignment(Qt::AlignHCenter);
     sbMaxSize->setRange(100, 100000);
+    sbMaxSize->setMinimumWidth(80);
+    sbMaxSize->setAlignment(Qt::AlignHCenter);
 
     int i = 0;
     int j = 0;
@@ -449,40 +464,42 @@ QWidget *Preference::tabAbout()
     QWidget* page = new QWidget(nullptr);
     page->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *vLay = new QVBoxLayout(page);
-    vLay->setContentsMargins(TAV_MARGIN_HOR, TAV_MARGIN_VER_TOP, TAV_MARGIN_HOR, TAV_MARGIN_VER_BOTTOM);
+    vLay->setContentsMargins(TAV_MARGIN_HOR, TAV_MARGIN_VER_TOP / 3, TAV_MARGIN_HOR, TAV_MARGIN_VER_BOTTOM);
 
     int i = 0;
     int j = 0;
     QGridLayout* grid = new QGridLayout();
     grid->setMargin(0);
     grid->setVerticalSpacing(TAG_SPACING_VER);
-    grid->setHorizontalSpacing(TAG_SPACING_VER);
+    grid->setHorizontalSpacing(TAG_SPACING_HOR);
     grid->setColumnStretch(0, 7);
     grid->setColumnStretch(1, 9);
 
-    QSize size(34, 34);
-    QToolButton* tb = new QToolButton();
-    tb->setIconSize(size * m_scale);
-    tb->setFixedSize(size * m_scale);
-    tb->setIcon(QIcon(":/resources/logo.svg"));
-    tb->setAutoRaise(true);
-    tb->setCheckable(false);
-    tb->setChecked(false);
-    tb->setDisabled(true);
-    grid->addWidget(tb, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
+    QLabel* logo = new QLabel();
+    logo->setPixmap(QIcon(":/resources/logo.svg").pixmap(QSize(48, 48) * m_scale));
+    grid->addWidget(logo, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
 
-
-    QFont font;
     QLabel* project = new QLabel(tr("%1").arg(_PROJECT_NAME));
-    font.setPointSizeF(11);
+    const double ponitSize = 16;
+    QFont font;
+    font.setPointSizeF(ponitSize);
     font.setBold(true);
     project->setFont(font);
 
+    QString bit;
+#if defined(Q_OS_MAC)
+    if (_BIT_ARCH == 8)
+        bit = "x86";
+    else if (_BIT_ARCH == 16)
+        bit = "x64";
+#else
+#endif
+
     QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
                                    .arg(_PROJECT_VERSION)
-                                   .arg(_BIT_ARCH)
+                                   .arg(bit)
                                    .arg(QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss")));  // hh:mm:ss
-    font.setPointSizeF(9);
+    font.setPointSizeF(ponitSize - 4);
     font.setBold(false);
     buildTime->setFont(font);
     QLabel* detail = new QLabel(tr("PicShot is a cross-platform screenshot tool."));
@@ -498,40 +515,38 @@ QWidget *Preference::tabAbout()
     QLabel* copyrightR = new QLabel(tr("2021-2022 XMuli"));
     copyrightR->setFont(font);
 
-    i = grid->rowCount();
-    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(project, i++, j, 1, 2, Qt::AlignCenter);
-    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(buildTime, i++, j, 1, 2, Qt::AlignCenter);
-    grid->addItem(new QSpacerItem(0, 10, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(detail, i++, j, 1, 2, Qt::AlignCenter);
-    grid->addItem(new QSpacerItem(0, 16, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
+//    grid->addItem(new QSpacerItem(0, 10, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(project, grid->rowCount(), j, 1, 2, Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 8, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(buildTime, grid->rowCount(), j, 1, 2, Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 14, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(detail, grid->rowCount(), j, 1, 2, Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 14, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
 
-    grid->addWidget(authorL, i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(authorR, i++, j + 1, 1, 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(copyrightL, i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(copyrightR, i++, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addWidget(authorL, grid->rowCount(), j, 1, 1, Qt::AlignRight);
+    grid->addWidget(authorR, grid->rowCount() - 1, j + 1, 1, 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 8, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(copyrightL, grid->rowCount(), j, 1, 1, Qt::AlignRight);
+    grid->addWidget(copyrightR, grid->rowCount() - 1, j + 1, 1, 1, Qt::AlignLeft);
 
-    grid->addItem(new QSpacerItem(0, 21, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TAV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
-    grid->addItem(new QSpacerItem(0, 14, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
+    grid->addItem(new QSpacerItem(0, 10, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TAV_MARGIN_HOR * m_scale * 2), grid->rowCount(), j, 1, grid->columnCount(), Qt::AlignCenter);
+    grid->addItem(new QSpacerItem(0, 5, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
 
     QLabel* ackmtR = new QLabel(tr("Acknowledgements"));
-    font.setPointSizeF(9);
+    font.setPointSizeF(ponitSize - 3);
     font.setBold(true);
     ackmtR->setFont(font);
     font.setBold(false);
 
     QLabel* ghL =new QLabel("GitHub:");
-    font.setPointSizeF(8);
+    font.setPointSizeF(ponitSize - 5);
     ghL->setFont(font);
     QLabel* ghR = new QLabel(tr("<a style='color: green;' href=https://github.com/XMuli/PicShot>PicShot</a>"));
     ghR->setOpenExternalLinks(true);
     ghR->setFont(font);
     QLabel* blogR = new QLabel(tr("<a style='color: green;' href=https://ifmet.cn>ifmet.cn</a>"));
     blogR->setOpenExternalLinks(true);
-    font.setPointSizeF(9);
     blogR->setFont(font);
 
     QLabel* UIL = new QLabel("UI:");
@@ -547,26 +562,26 @@ QWidget *Preference::tabAbout()
     QLabel* tsR = new QLabel("Tom Jerry");
     tsR->setFont(font);
 
-    grid->addWidget(ackmtR, i, j, 1, 2, Qt::AlignCenter);
-    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(ghL, ++i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(ghR, i, j + 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 1, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(new QLabel(" "), ++i, j, 1, 1, Qt::AlignRight);
-    grid->addWidget(blogR, i, j + 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(UIL, ++i, j, Qt::AlignRight);
-    grid->addWidget(UIR, i, j + 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(ctL, ++i, j, Qt::AlignRight);
-    grid->addWidget(ctR, i, j + 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), i++, j);
-    grid->addWidget(tsL, ++i, j, Qt::AlignRight);
-    grid->addWidget(tsR, i, j + 1, Qt::AlignLeft);
+    grid->addWidget(ackmtR, grid->rowCount(), j + 1, 1, 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(ghL, grid->rowCount(), j, 1, 1, Qt::AlignRight);
+    grid->addWidget(ghR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 1, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(new QLabel(" "), grid->rowCount(), j, 1, 1, Qt::AlignRight);
+    grid->addWidget(blogR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(UIL, grid->rowCount(), j, Qt::AlignRight);
+    grid->addWidget(UIR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(ctL, grid->rowCount(), j, Qt::AlignRight);
+    grid->addWidget(ctR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(tsL, grid->rowCount(), j, Qt::AlignRight);
+    grid->addWidget(tsR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
 
     qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();  // 创建一个空 grid 时，便默认有一个 1 item，添加第一个后，依旧计数 1 个；
     vLay->addLayout(grid, grid->rowCount());
-    vLay->addStretch(3);
+//    vLay->addStretch(3);
     vLay->addSpacing(TAV_MARGIN_VER_BOTTOM);
 
     return page;

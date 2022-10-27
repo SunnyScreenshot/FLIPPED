@@ -34,7 +34,7 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     grid->setMargin(0);
     grid->setVerticalSpacing(THG_SPACING_VER);
     grid->setHorizontalSpacing(THG_SPACING_HOR);
-    grid->setColumnStretch(0, 7);
+    grid->setColumnStretch(0, 8);
     grid->setColumnStretch(1, 9);
 
     for (auto& it : Tray::instance().getVHotKeys()) {

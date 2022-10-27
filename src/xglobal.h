@@ -100,8 +100,8 @@
 
 
 // 偏好主 UI 界面 Preference 缩写 PRE_
-#define PRE_MARGIN_HOR 10               // 布局到水平间隔
-#define PRE_MARGIN_VER 10               // 布局到垂直间隔
+#define PRE_MARGIN_HOR 0               // 布局到水平间隔
+#define PRE_MARGIN_VER 0               // 布局到垂直间隔
 
 // Tab General QVBoxLayout: 缩写 TIV_     
 #define TGV_MARGIN_HOR  21              // QVBoxLayout 的水平间隔
@@ -143,7 +143,7 @@
 #define TAV_MARGIN_VER_TOP  21          // QVBoxLayout 的 top 间隔
 #define TAV_MARGIN_VER_BOTTOM  25       // QVBoxLayout 的 bottom 间隔
 #define TAG_SPACING_VER  0             // GridLayout 的 ver spacing
-#define TAG_SPACING_HOR  7              // GridLayout 的 ver spacing
+#define TAG_SPACING_HOR  6              // GridLayout 的 Hor spacing
 
 
 // PinWidget 

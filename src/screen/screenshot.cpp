@@ -216,10 +216,6 @@ void ScreenShot::onClearScreen()
 {
 #ifdef Q_OS_WIN
 #elif  defined(Q_OS_MAC)
-//    setWindowFlags(Qt::SubWindow); // TODO: 连续截屏在 MAC 下有 bug
-//    showNormal();
-
-//    setWindowState(Qt::WindowFullScreen);
 #elif  defined(Q_OS_LINUX)
 #endif
 
