@@ -749,15 +749,13 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
     const int barMaxLeft = rtSel.left() - sBarHeight;
     const int barMaxRight = rtSel.right() + sBarHeight;
 
-//    QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
-//    QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight() - QPoint(0, 1)))->geometry(); // geometry 则左上角坐标非 0，0； (0, 1) 为修正底部置底后， 返回为（错的)另一个显示器
-    QScreen* curScrn = qGuiApp->screenAt(rtSel.bottomRight());
+    const QScreen* curScrn = currentScreen(rtSel.bottomRight());
     if (!curScrn)
         curScrn = qGuiApp->screenAt(rtSel.topRight());
     if (!curScrn)
         curScrn = qGuiApp->screenAt(QCursor::pos());
 
-    QRect rtScrn = curScrn->geometry();  // 取代上面的那个，但有个 bug，光标在底部或者之外，返回 nullptr
+    QRect rtScrn = curScrn->geometry();
     QPoint p1;  // selBar
     QPoint p2;  // paraBar
     if (orien == Qt::Horizontal) {
@@ -1654,13 +1652,15 @@ const QScreen *ScreenShot::currentScreen(const QPoint& pos)
     // screen by moving 1 pixel inside to the current desktop area
     if (!curScrn && (pos.x() > 0 || pos.y() > 0))
         curScrn = qGuiApp->screenAt(QPoint(pos.x() - 1, pos.y() - 1));
+    if (!curScrn && (pos.x() >= m_virGeom.right() || pos.y() >= m_virGeom.bottom()))
+        curScrn = qGuiApp->screenAt(m_virGeom.bottomRight() - QPoint(1, 1));
 #endif
 
     //if (!curScrn)
     //    curScrn = qGuiApp->primaryScreen();
 
     if (!curScrn)
-        qDebug() << "返回的屏幕为空？？";
+        qDebug() << "Gets that the current screen is empty";
 
     return curScrn;
 }
