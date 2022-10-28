@@ -31,6 +31,7 @@ private:
     void initUI();
     QHBoxLayout* creatResetBtn(QString objectName);
     inline bool checkBoxState2Bool(int state);
+    void translateUI();
 
     QWidget* tabGeneral();             // 常规
     QWidget* tabInterface();           // 界面
@@ -73,6 +74,9 @@ protected slots:
     void onWindowShadow(int sta);
     void onOpacity(int val);
     void onMaxSize(int val);
+
+protected:
+    void changeEvent(QEvent *e) override;
 
 private:
     double m_scale;

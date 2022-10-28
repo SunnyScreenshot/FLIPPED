@@ -77,7 +77,7 @@ void Preference::initUI()
     tabPages->addTab(tabAbout(), tr("About"));
 
     vLayout->addWidget(tabPages);
-    setWindowTitle(_PROJECT_NAME);
+//    setWindowTitle(_PROJECT_NAME);
 
 //    qDebug()<<"--->"<<tabPages->palette().window().color();
 //    QPalette pal = this->palette();
@@ -104,6 +104,14 @@ QHBoxLayout* Preference::creatResetBtn(QString objectName)
 bool Preference::checkBoxState2Bool(int state)
 {
     return state == Qt::Checked ? true : false;
+}
+
+void Preference::translateUI()
+{
+//    auto btnReset = findChild<QPushButton *>(thReset);
+//    btnReset->setText(tr("Reset"));
+
+    setWindowTitle(tr("PicShot Preferences"));
 }
 
 QWidget *Preference::tabGeneral()
@@ -164,7 +172,7 @@ QWidget *Preference::tabGeneral()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tgReset), 1);
 
-    QMap<QString, QString> mapLanuage = { {tr("English"), "es_US"},
+    QMap<QString, QString> mapLanuage = { {tr("English"), "en_US"},
                                           {tr("简体中文"), "zh_CN"},
                                           {tr("繁體中文"), "zh_TW"} };
 
@@ -182,6 +190,7 @@ QWidget *Preference::tabGeneral()
     cbAutoCheck->setChecked(insSettings->value(tgAutoCheckUpdate, false).toBool());
     insSettings->endGroup();
 
+//    connect(cbLanuage, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
     connect(cbLanuage, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
     connect(cbSelfStart, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
     connect(cbAsAdmin, &QCheckBox::stateChanged, this, &Preference::onAsAdmin);
@@ -488,20 +497,23 @@ QWidget *Preference::tabAbout()
 
     QString bit;
 #if defined(Q_OS_MAC)
-    if (_BIT_ARCH == 8)
+    if (_BIT_ARCH == 4)
         bit = "x86";
-    else if (_BIT_ARCH == 16)
+    else if (_BIT_ARCH == 8)
         bit = "x64";
 #else
 #endif
 
+    QString time = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
     QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
                                    .arg(_PROJECT_VERSION)
                                    .arg(bit)
-                                   .arg(QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss")));  // hh:mm:ss
+                                   .arg(time.left(time.indexOf(" "))));
     font.setPointSizeF(ponitSize - 4);
     font.setBold(false);
     buildTime->setFont(font);
+    buildTime->setStyleSheet("QLabel{color:rgba(0, 0, 0, 0.6);}");
+    buildTime->setToolTip(time.right(time.count() - time.indexOf(" ") - 1));
     QLabel* detail = new QLabel(tr("PicShot is a cross-platform screenshot tool."));
     detail->setFont(font);
 
@@ -614,9 +626,23 @@ void Preference::onLanuageChange(const QString &language)
     if (!bt)
         return;
 
+    qDebug() << qApp->applicationDirPath() + "/config.ini";
     insSettings->beginGroup(INIT_GENERAL);
     insSettings->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
     insSettings->endGroup();
+
+    auto lang = bt->itemData(bt->currentIndex()).toString();
+
+//    QTranslator trans;
+//    QString qmPath(QCoreApplication::applicationDirPath());
+//    QString(_COMPILER_ID).compare("MSVC") == 0 ? qmPath += "/../../src/" + lang + ".qm" : qmPath = "/Users/winks/Desktop/projects/PicShot/src/i18n/" + lang + ".qm";
+//    qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0);
+//    trans.load(qmPath);
+//    qApp->installTranslator(&trans);
+
+    QTranslator trans;
+    trans.load("/Users/winks/Desktop/projects/PicShot/src/i18n/zh_CN.qm");  // QLocale::system().name()
+    qApp->installTranslator(&trans);
 }
 
 void Preference::onSelfStart(int sta)
@@ -801,4 +827,15 @@ void Preference::onMaxSize(int val)
 {
     XHelper::instance().setPinMaxSize(val);
     WRITE_CONFIG_INI(INIT_PIN, tpMaxSize, val);
+}
+
+void Preference::changeEvent(QEvent *e)
+{
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        translateUI();
+        break;
+    default:
+        QWidget::changeEvent(e);
+    }
 }

@@ -143,7 +143,7 @@
 #define TAV_MARGIN_VER_TOP  21          // QVBoxLayout 的 top 间隔
 #define TAV_MARGIN_VER_BOTTOM  25       // QVBoxLayout 的 bottom 间隔
 #define TAG_SPACING_VER  0             // GridLayout 的 ver spacing
-#define TAG_SPACING_HOR  6              // GridLayout 的 Hor spacing
+#define TAG_SPACING_HOR  12              // GridLayout 的 Hor spacing
 
 
 // PinWidget 

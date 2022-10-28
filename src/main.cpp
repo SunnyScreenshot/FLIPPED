@@ -38,14 +38,6 @@
 #include <QDateTime>
 #include <QGuiApplication>
 
-// test
-#ifdef Q_OS_WIN
-    //#include "./platform/wininfo_win.h"Windows10环境下安装Qt Creator5.9.8作为c++的IDE开发工具，学习和使用qt.md
-#elif  defined(Q_OS_MAC)
-#elif  defined(Q_OS_LINUX)
-    #include "./platform/wininfo_x11.h"
-#endif
-
 int main(int argc, char *argv[])
 {
     // 高分屏四种方案 https://blog.csdn.net/qq_33154343/article/details/108905279
@@ -66,20 +58,32 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
-    //insSettings->beginGroup(INIT_GENERAL);
-    //auto lanuage = insSettings->value("Lanuage", "en_US").toString();
-    //insSettings->endGroup();
+    // I18N
+    insSettings->beginGroup(INIT_GENERAL);
+    auto lanuage = insSettings->value("Lanuage", "en_US").toString(); // QLocale::system().name()
+    insSettings->endGroup();
 
-    //QTranslator* trans = new QTranslator(qApp);
-    //QString qmPath(QCoreApplication::applicationDirPath());
-    //QString(_COMPILER_ID).compare("MSVC") == 0 ? qmPath += "/../../src/" + lanuage + ".qm" : qmPath += "/../src/" + lanuage + ".qm";
-    //qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0);
-    //trans->load(qmPath); 
-    //QCoreApplication::installTranslator(trans);
+    QTranslator trans;
+    QString qmPath(qApp->applicationDirPath());
+
+#if defined(Q_OS_MAC)
+    qmPath += "/../../../../src/translations/" + lanuage + ".qm";
+#elif defined(Q_OS_WIN)
+    if (QString(_COMPILER_ID).compare("MSVC") == 0)
+        qmPath += "/../../src/" + lanuage + ".qm";
+    else
+        qmPath += "/../src/" + lanuage + ".qm";
+#elif defined(Q_OS_LINUX)
+#endif
+
+    trans.load(qmPath);
+    qApp->installTranslator(&trans);
+    qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0);
+
+    qDebug()<<qApp->applicationFilePath();
 
     // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
-
 
     //auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     //if (path.isEmpty()) qFatal("Cannot determine settings storage location");

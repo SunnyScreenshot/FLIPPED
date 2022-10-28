@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME PicShot)
-project(${PROJECT_NAME} VERSION 0.4.6 LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 0.4.7 LANGUAGES CXX)
 
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 file(COPY config/config.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)
@@ -129,17 +129,17 @@ foreach(_qt_module ${QT_MODULES})
     list(APPEND QT_VERSION_MODULES Qt${QT_VERSION_MAJOR}::${_qt_module})
 endforeach()
 
-#set(TS_FILES
-#    zh_CN.ts
-#    zh_TW.ts
-#    es_US.ts)
-file(GLOB TS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/i18n/*.ts)                 # .ts transition .qm
-#qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/i18n ${TS_FILES} OPTIONS -source-language en_US -noobsolete)
+option(GENERATE_TS "Regenerate translation source files" OFF)
+set(TS_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_CN.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_TW.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/en_US.ts)
 
-foreach(_ts_file ${TS_FILES})                                             # Compile-time update of .ts .qm
-    execute_process(COMMAND ${LUPDATE_EXECUTABLE} -recursive ${CMAKE_CURRENT_SOURCE_DIR}/i18n -ts ${_ts_file})
-    execute_process(COMMAND lrelease ${_ts_file})
-endforeach()
+if (GENERATE_TS)
+    qt5_create_translation(QM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/data/translations" ${TS_FILES})
+else ()
+    qt5_add_translation(QM_FILES ${TS_FILES})
+endif ()
 
 message(@1--> ${TS_FILES})
 message(@2--> ${QM_FILES})
@@ -154,7 +154,6 @@ link_directories(${CMAKE_BINARY_DIR}/bin
     ${CMAKE_BINARY_DIR}/3rdparty/QHotkey)
 
 add_executable(${PROJECT_NAME}
-    #${QM_FILES}
     ${SRC_MAIN}
     ${SRC_PLATFORM}
     ${SRC_CORE}
@@ -164,7 +163,9 @@ add_executable(${PROJECT_NAME}
     ${SRC_WINSCREEN}
     ${SRC_EXAMPLE}
     ${SRC_PLUGIN_INTERFACE}
-    ${SRC_RESOURCES})
+    ${SRC_RESOURCES}
+    ${QM_FILES}  # Note: https://www.cnblogs.com/Paoyao/p/15752116.html
+)
 
 #if (APPLE)
 #    set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
@@ -204,7 +205,7 @@ source_group(TREE ${_src_root_path} FILES ${_source_list})                      
 # Define some variables that can be used in *.cpp
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VERSION}")
-target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # x64/x86
+target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # WIN: x64/x86  Mac: 4/8
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
 if(WIN32)
@@ -234,6 +235,18 @@ message("---@3--->" "PROJECT_NAME:"  ${PROJECT_NAME}
     "\n CMAKE_INSTALL_LIBDIR: "  ${CMAKE_INSTALL_LIBDIR}
     "\n CMAKE_INSTALL_INCLUDEDIR: "  ${CMAKE_INSTALL_INCLUDEDIR})
 
+foreach (FILE ${QM_FILES})
+    get_filename_component(F_NAME ${FILE} NAME)
+    add_custom_command(
+            TARGET ${PROJECT_NAME}
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${F_NAME}
+            ${CMAKE_CURRENT_BINARY_DIR}/translations/${F_NAME})
+
+        message(@2a--->  ${CMAKE_CURRENT_BINARY_DIR}/translations/${F_NAME})
+endforeach ()
+
+#=========================================================================================
 # Install settings   CMAKE_NSTALL_PREFIX: "/usr/local" or "c:/Program Files/${PROJECT_NAME}"
 if (WIN32)
     install(TARGETS ${PROJECT_NAME}
@@ -244,6 +257,11 @@ elseif (UNIX)
     if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         set(CMAKE_INSTALL_PREFIX "/bin")
     endif ()
+
+    # Install Translations
+    install(FILES ${QM_FILES} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/data/translations)
+
+    message(@3a--->  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/translations)
 
     install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}   # bin
