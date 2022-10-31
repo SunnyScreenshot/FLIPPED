@@ -129,17 +129,38 @@ foreach(_qt_module ${QT_MODULES})
     list(APPEND QT_VERSION_MODULES Qt${QT_VERSION_MAJOR}::${_qt_module})
 endforeach()
 
-option(GENERATE_TS "Regenerate translation source files" OFF)
-set(TS_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_CN.ts
-    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_TW.ts
-    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/en_US.ts)
+# Translation
+file (GLOB PICSHOT_TS_FILES data/translations/*.ts)
+set (PICSHOT_CPP_FILES_FOR_I18N
+    ${SRC_MAIN}
+    ${SRC_PLATFORM}
+    ${SRC_CORE}
+    ${SRC_WIDGET}
+    ${SRC_TOOL}
+    ${SRC_PERFERENCE}
+    ${SRC_WINSCREEN}
+    ${SRC_EXAMPLE}
+    ${SRC_PLUGIN_INTERFACE}
+    ${SRC_RESOURCES})
 
-if (GENERATE_TS)
-    qt5_create_translation(QM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/data/translations" ${TS_FILES})
-else ()
-    qt5_add_translation(QM_FILES ${TS_FILES})
-endif ()
+qt5_create_translation(PICSHOT_QM_FILES ${PICSHOT_CPP_FILES_FOR_I18N} ${PICSHOT_TS_FILES})
+
+#option(GENERATE_TS "Regenerate translation source files" ON)
+#set(TS_FILES
+#    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_CN.ts
+#    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_TW.ts
+#    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/en_US.ts)
+
+#set(TS_FILES
+#    zh_CN.ts
+#    zh_TW.ts
+#    en_US.ts)
+
+##if (GENERATE_TS)
+#    qt5_create_translation(QM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/data/translations" ${TS_FILES} OPTIONS -source-language en_US -no-obsolete)
+##else ()
+##    qt5_add_translation(QM_FILES ${TS_FILES})
+##endif ()
 
 message(@1--> ${TS_FILES})
 message(@2--> ${QM_FILES})
@@ -164,7 +185,7 @@ add_executable(${PROJECT_NAME}
     ${SRC_EXAMPLE}
     ${SRC_PLUGIN_INTERFACE}
     ${SRC_RESOURCES}
-    ${QM_FILES}  # Note: https://www.cnblogs.com/Paoyao/p/15752116.html
+    ${PICSHOT_QM_FILES}  # Note: https://www.cnblogs.com/Paoyao/p/15752116.html
 )
 
 #if (APPLE)
@@ -205,7 +226,7 @@ source_group(TREE ${_src_root_path} FILES ${_source_list})                      
 # Define some variables that can be used in *.cpp
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VERSION}")
-target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # WIN: x64/x86  Mac: 4/8
+target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # 4/8
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
 if(WIN32)
@@ -235,13 +256,13 @@ message("---@3--->" "PROJECT_NAME:"  ${PROJECT_NAME}
     "\n CMAKE_INSTALL_LIBDIR: "  ${CMAKE_INSTALL_LIBDIR}
     "\n CMAKE_INSTALL_INCLUDEDIR: "  ${CMAKE_INSTALL_INCLUDEDIR})
 
-foreach (FILE ${QM_FILES})
+foreach (FILE ${PICSHOT_QM_FILES})
     get_filename_component(F_NAME ${FILE} NAME)
     add_custom_command(
             TARGET ${PROJECT_NAME}
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${F_NAME}
-            ${CMAKE_CURRENT_BINARY_DIR}/translations/${F_NAME})
+            ${CMAKE_CURRENT_BINARY_DIR}/../bin/translations/${F_NAME})
 
         message(@2a--->  ${CMAKE_CURRENT_BINARY_DIR}/translations/${F_NAME})
 endforeach ()
@@ -259,9 +280,9 @@ elseif (UNIX)
     endif ()
 
     # Install Translations
-    install(FILES ${QM_FILES} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/data/translations)
+    install(FILES ${PICSHOT_QM_FILES} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/data/translations)
 
-    message(@3a--->  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/translations)
+    # message(@3a--->  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/translations)
 
     install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}   # bin

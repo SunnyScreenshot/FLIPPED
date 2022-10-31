@@ -70,9 +70,10 @@ int main(int argc, char *argv[])
     qmPath += "/../../../../src/translations/" + lanuage + ".qm";
 #elif defined(Q_OS_WIN)
     if (QString(_COMPILER_ID).compare("MSVC") == 0)
-        qmPath += "/../../src/" + lanuage + ".qm";
+        qmPath += "/../translations/" + lanuage + ".qm";
     else
-        qmPath += "/../src/" + lanuage + ".qm";
+        qmPath += "/translations/" + lanuage + ".qm";
+     
 #elif defined(Q_OS_LINUX)
 #endif
 

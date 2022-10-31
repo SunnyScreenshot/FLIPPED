@@ -488,22 +488,22 @@ QWidget *Preference::tabAbout()
     logo->setPixmap(QIcon(":/resources/logo.svg").pixmap(QSize(48, 48) * m_scale));
     grid->addWidget(logo, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
 
-    QLabel* project = new QLabel(tr("%1").arg(_PROJECT_NAME));
-    const double ponitSize = 16;
-    QFont font;
-    font.setPointSizeF(ponitSize);
-    font.setBold(true);
-    project->setFont(font);
-
-    QString bit;
 #if defined(Q_OS_MAC)
+    const double ponitSize = 16;
+#else
+    const double ponitSize = 14;
+#endif
+    QString bit;
     if (_BIT_ARCH == 4)
         bit = "x86";
     else if (_BIT_ARCH == 8)
         bit = "x64";
-#else
-#endif
 
+    QLabel* project = new QLabel(tr("%1").arg(_PROJECT_NAME));
+    QFont font;
+    font.setPointSizeF(ponitSize);
+    font.setBold(true);
+    project->setFont(font);
     QString time = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
     QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
                                    .arg(_PROJECT_VERSION)
@@ -527,7 +527,6 @@ QWidget *Preference::tabAbout()
     QLabel* copyrightR = new QLabel(tr("2021-2022 XMuli"));
     copyrightR->setFont(font);
 
-//    grid->addItem(new QSpacerItem(0, 10, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
     grid->addWidget(project, grid->rowCount(), j, 1, 2, Qt::AlignCenter);
     grid->addItem(new QSpacerItem(0, 8, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
     grid->addWidget(buildTime, grid->rowCount(), j, 1, 2, Qt::AlignCenter);

@@ -1510,7 +1510,7 @@ void ScreenShot::getScrnShots()
 
 #ifdef Q_OS_MAC
     showFullScreen();
-#elif
+#else
     show();
 #endif
 
@@ -1611,7 +1611,7 @@ double ScreenShot::getScale(QScreen * screen)
 		return 2;
 	else if (2.25 <= scale && scale < 2.5)
 		return 2.25;
-    else if (2.5 <= scale && scale < 3)get
+    else if (2.5 <= scale && scale < 3)
 		return 2.5;
 	else if (3 <= scale && scale < 3.5)
 		return 3;
