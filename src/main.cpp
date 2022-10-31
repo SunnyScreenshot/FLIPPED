@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     QString qmPath(qApp->applicationDirPath());
 
 #if defined(Q_OS_MAC)
-    qmPath += "/../../../../src/translations/" + lanuage + ".qm";
+    qmPath += "/../../../../bin/translations/" + lanuage + ".qm";
 #elif defined(Q_OS_WIN)
     if (QString(_COMPILER_ID).compare("MSVC") == 0)
         qmPath += "/../translations/" + lanuage + ".qm";
