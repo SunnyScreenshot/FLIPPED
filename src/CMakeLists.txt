@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME PicShot)
-project(${PROJECT_NAME} VERSION 0.4.7 LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 0.4.8 LANGUAGES CXX)
 
 set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
 file(COPY config/config.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)
@@ -130,44 +130,22 @@ foreach(_qt_module ${QT_MODULES})
 endforeach()
 
 # Translation
-file (GLOB PICSHOT_TS_FILES data/translations/*.ts)
-set (PICSHOT_CPP_FILES_FOR_I18N
-    ${SRC_MAIN}
-    ${SRC_PLATFORM}
-    ${SRC_CORE}
-    ${SRC_WIDGET}
-    ${SRC_TOOL}
-    ${SRC_PERFERENCE}
-    ${SRC_WINSCREEN}
-    ${SRC_EXAMPLE}
-    ${SRC_PLUGIN_INTERFACE}
-    ${SRC_RESOURCES})
+option(PICSHOT_GENERATE_TS "Regenerate translation source files" OFF)
+set(PICSHOT_TS_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_CN.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_TW.ts
+    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/en_US.ts)
 
-qt5_create_translation(PICSHOT_QM_FILES ${PICSHOT_CPP_FILES_FOR_I18N} ${PICSHOT_TS_FILES})
+if (PICSHOT_GENERATE_TS)
+    message("PICSHOT_GENERATE_TS is ON")
+    qt5_create_translation(PICSHOT_QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${PICSHOT_TS_FILES} OPTIONS -source-language en_US -no-obsolete)
+else ()
+    message("PICSHOT_GENERATE_TS is OFF")
+    qt5_add_translation(PICSHOT_QM_FILES ${PICSHOT_TS_FILES})   # Avoid deleting *.ts files during project cleanup
+endif ()
 
-#option(GENERATE_TS "Regenerate translation source files" ON)
-#set(TS_FILES
-#    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_CN.ts
-#    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_TW.ts
-#    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/en_US.ts)
-
-#set(TS_FILES
-#    zh_CN.ts
-#    zh_TW.ts
-#    en_US.ts)
-
-##if (GENERATE_TS)
-#    qt5_create_translation(QM_FILES "${CMAKE_CURRENT_SOURCE_DIR}/data/translations" ${TS_FILES} OPTIONS -source-language en_US -no-obsolete)
-##else ()
-##    qt5_add_translation(QM_FILES ${TS_FILES})
-##endif ()
-
-message(@1--> ${TS_FILES})
-message(@2--> ${QM_FILES})
-#1. 自动批量生成 *.ts 文件
-#2. 每次都能够更新 *ts 的增量
-#3. 每次 清理 不会删除 .ts 文件
-#4. 能够自定义导出 .ts 和 .qm 文件
+message(@1--> ${PICSHOT_TS_FILES})
+message(@2--> ${PICSHOT_QM_FILES})
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
     ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey)
@@ -198,13 +176,13 @@ add_executable(${PROJECT_NAME}
 #    # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
 #endif()
 
-IF (WIN32)
+if (WIN32)
     target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey)
-ELSEIF (APPLE)
+elseif (APPLE)
     target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey)
-ELSEIF (UNIX)
+elseif (UNIX)
     target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey X11)
-ENDIF ()
+endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER org.XMuli.PicShot
@@ -227,7 +205,7 @@ source_group(TREE ${_src_root_path} FILES ${_source_list})                      
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VERSION}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # 4/8
-target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown
+target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown  Win: AMD64
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
 if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
@@ -237,43 +215,36 @@ if(WIN32)
         _UNICODE)
 endif()
 
+foreach (FILE ${PICSHOT_QM_FILES})
+    get_filename_component(F_NAME ${FILE} NAME)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${F_NAME}
+        ${CMAKE_CURRENT_BINARY_DIR}/../bin/translations/${F_NAME})
+
+    message("Copy *.qm Path: " ${CMAKE_CURRENT_BINARY_DIR}/../bin/translations/${F_NAME})
+endforeach ()
+
 message("==========BRGIN============")
 message("_PROJECT_NAME:${PROJECT_NAME}")
 message("_PROJECT_VERSION:" ${PROJECT_VERSION})
 message("_BIT_ARCH:" ${CMAKE_SIZEOF_VOID_P})
 message("_COMPILER:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
-message("==========END============")
-
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(PicShot)
-endif()
-
-message("---@3--->" "PROJECT_NAME:"  ${PROJECT_NAME}
+message("CMake Path"
+    "\n PROJECT_NAME:"  ${PROJECT_NAME}
     "\n CMAKE_INSTALL_PREFIX: "  ${CMAKE_INSTALL_PREFIX}
     "\n PROJECT_BINARY_DIR: "  ${PROJECT_BINARY_DIR}
     "\n CMAKE_INSTALL_BINDIR: "  ${CMAKE_INSTALL_BINDIR}
     "\n CMAKE_INSTALL_LIBDIR: "  ${CMAKE_INSTALL_LIBDIR}
     "\n CMAKE_INSTALL_INCLUDEDIR: "  ${CMAKE_INSTALL_INCLUDEDIR})
-
-foreach (FILE ${PICSHOT_QM_FILES})
-    get_filename_component(F_NAME ${FILE} NAME)
-    add_custom_command(
-            TARGET ${PROJECT_NAME}
-            POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${F_NAME}
-            ${CMAKE_CURRENT_BINARY_DIR}/../bin/translations/${F_NAME})
-
-        message(@2a--->  ${CMAKE_CURRENT_BINARY_DIR}/translations/${F_NAME})
-endforeach ()
+message("==========END============")
 
 #=========================================================================================
 # Install settings   CMAKE_NSTALL_PREFIX: "/usr/local" or "c:/Program Files/${PROJECT_NAME}"
 if (WIN32)
     install(TARGETS ${PROJECT_NAME}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
 elseif (APPLE)
-    # ...
 elseif (UNIX)
     if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         set(CMAKE_INSTALL_PREFIX "/bin")
@@ -281,57 +252,48 @@ elseif (UNIX)
 
     # Install Translations
     install(FILES ${PICSHOT_QM_FILES} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/data/translations)
-
-    # message(@3a--->  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/translations)
-
     install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}   # bin
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}   # lib
-    )
+        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}    # bin
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})   # lib
 endif()
 
-message("---@4--->" "CMake_SOURCE_DIR:" ${CMake_SOURCE_DIR}
-    "\n CMAKE_CURRENT_SOURCE_DIR:" ${CMAKE_CURRENT_SOURCE_DIR}
-    "\n CPACK_PACKAGE_INSTALL_DIRECTORY:" ${CPACK_PACKAGE_INSTALL_DIRECTORY})
+## CPACK: General Settings
+#set(CPACK_PACKAGE_NAME "PicShot")
+#set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lightweight, beautiful and cross-platform screenshot tool")
+#set(CPACK_PACKAGE_CONTACT "https://github.com/XMuli/PicShot/issues")
+##set (CPACK_GENERATOR "TBZ2")
+#set(CPACK_SET_DESTDIR ON)                             # ON 安装指定路径，设置下一个; OFF 则使用 CMAKE_INSTALL_PREFIX
+#set(CPACK_INSTALL_PREFIX "C:/Program Files(x86)/PicShot")   # 安装到的目录路径
+#set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})         # 生成的安装的版本号信息
+#set(CPACK_RPM_PACKAGE_GROUP "XMuli")
+#set(CPACK_PACKAGE_VENDOR "XMuli")
+#set(CPACK_RPM_PACKAGE_LICENSE "MIT")
 
+#if (WIN32)
+#    # see: https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html
+#    set(CPACK_GENERATOR NSIS)
+##    set(CPACK_NSIS_MUI_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
+##    set(CPACK_NSIS_MUI_UNIICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
+##    set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\cmake-gui.exe")
+#    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}")
+##    set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeInstall.bmp")
+##    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
 
-# CPACK: General Settings
-set(CPACK_PACKAGE_NAME "PicShot")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lightweight, beautiful and cross-platform screenshot tool")
-set(CPACK_PACKAGE_CONTACT "https://github.com/XMuli/PicShot/issues")
-#set (CPACK_GENERATOR "TBZ2")
-set(CPACK_SET_DESTDIR ON)                             # ON 安装指定路径，设置下一个; OFF 则使用 CMAKE_INSTALL_PREFIX
-set(CPACK_INSTALL_PREFIX "C:/Program Files(x86)/PicShot")   # 安装到的目录路径
-set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})         # 生成的安装的版本号信息
-set(CPACK_RPM_PACKAGE_GROUP "XMuli")
-set(CPACK_PACKAGE_VENDOR "XMuli")
-set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+#    set(CPACK_NSIS_MODIFY_PATH ON)
+#    set(CPACK_CREATE_DESKTOP_LINKS ${PROJECT_NAME})
 
-if (WIN32)
-    # see: https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html
-    set(CPACK_GENERATOR NSIS)
-#    set(CPACK_NSIS_MUI_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
-#    set(CPACK_NSIS_MUI_UNIICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
-#    set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\cmake-gui.exe")
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}")
-#    set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeInstall.bmp")
-#    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
+##    set (CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
+#    set(CPACK_PACKAGE_EXECUTABLES "${PROJECT_NAME}" "${PROJECT_NAME}" )
+#    set(CPACK_NSIS_MENU_LINKS
+#        "doc/${PROJECT_NAME}-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}/${PROJECT_NAME}.html"
+#        "${PROJECT_NAME} Help" "https://github.com/XMuli/PicShot" "${PROJECT_NAME} Web Site")
 
-    set(CPACK_NSIS_MODIFY_PATH ON)
-    set(CPACK_CREATE_DESKTOP_LINKS ${PROJECT_NAME})
+#elseif (APPLE)
+#    # ...
+#elseif (UNIX)
+#    set (CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
+#    set (CPACK_DEBIAN_PACKAGE_SHILIBDEPS ON)
+##    set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "kimageformat-plugins")
+#endif()
 
-#    set (CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
-    set(CPACK_PACKAGE_EXECUTABLES "${PROJECT_NAME}" "${PROJECT_NAME}" )
-    set(CPACK_NSIS_MENU_LINKS
-        "doc/${PROJECT_NAME}-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}/${PROJECT_NAME}.html"
-        "${PROJECT_NAME} Help" "https://github.com/XMuli/PicShot" "${PROJECT_NAME} Web Site")
-
-elseif (APPLE)
-    # ...
-elseif (UNIX)
-    set (CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
-    set (CPACK_DEBIAN_PACKAGE_SHILIBDEPS ON)
-#    set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "kimageformat-plugins")
-endif()
-
-include(CPack)
+#include(CPack)

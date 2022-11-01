@@ -2,8 +2,8 @@ name: LinuxDeb
 on: 
   push:
     paths-ignore:
-      # - '**'
-      - 'README.md'
+      - '**'
+      # - 'README.md'
   pull_request:
     paths-ignore:
       - 'README.md'
@@ -67,7 +67,7 @@ jobs:
         run: |
           sudo apt clean
           sudo apt update
-          sudo apt install wget tar dh-make debmake lintian cmake devscripts qtbase5-dev qt5-default  libqt5*-dev
+          sudo apt install wget tar dh-make debmake lintian cmake devscripts qtbase5-dev qt5-default  libqt5*-dev 
 
       # tag 打包 .deb，无动态库
       - name: DebPackage

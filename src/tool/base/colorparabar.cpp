@@ -163,7 +163,7 @@ bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
 
     if (event->type() == QEvent::MouseButtonRelease) {
         if (lab->objectName().compare(m_labMap.lastKey()) == 0) {
-            m_curCol = QColorDialog::getColor(lab->palette().color(QPalette::Window), this, tr("选择文本颜色"));
+            m_curCol = QColorDialog::getColor(lab->palette().color(QPalette::Window), this, tr("select color"));
         } else {
             const auto& it = m_labMap.find(lab->objectName());
             m_curCol.setNamedColor(it.value());
