@@ -60,12 +60,11 @@ int main(int argc, char *argv[])
 
     // I18N
     insSettings->beginGroup(INIT_GENERAL);
-    auto lanuage = insSettings->value("Lanuage", "en_US").toString(); // QLocale::system().name()
+    auto lanuage = insSettings->value("Lanuage", "en_US").toString();
     insSettings->endGroup();
 
     QTranslator trans;
     QString qmPath(qApp->applicationDirPath());
-
 #if defined(Q_OS_MAC)
     qmPath += "/../../../../bin/translations/" + lanuage + ".qm";
 #elif defined(Q_OS_WIN)
@@ -73,17 +72,12 @@ int main(int argc, char *argv[])
         qmPath += "/../translations/" + lanuage + ".qm";
     else
         qmPath += "/translations/" + lanuage + ".qm";
-     
 #elif defined(Q_OS_LINUX)
 #endif
-
     trans.load(qmPath);
     qApp->installTranslator(&trans);
     qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0);
 
-    qDebug()<<qApp->applicationFilePath();
-
-    // 截图、显示主界面；若点击右上角，则整程序关闭; 如同执行了 close、destroy 一类函数
     Tray::instance();
 
     //auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
@@ -115,16 +109,6 @@ int main(int argc, char *argv[])
 #else
 #endif
 
-//    auto t = new TestBTStyle();
-//    t->setWindowTitle(QString("MacOS 12.6 + Qt 5.15.2 + Style: %1").arg(value));
-//    t->show();
-
-//    WinSetting* set = new WinSetting();
-//    set->show();
-//    auto t0 = new QWidget();
-//    t0->resize(800, 400);
-//    t0->show();
-
 //    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);
 //    t1->setWindowFlags(Qt::FramelessWindowHint);
 ////    t1 ->setBlurBackground(QPixmap("D:/projects/PicShot/src/p1.jpg"), 4);
@@ -153,18 +137,6 @@ int main(int argc, char *argv[])
 
 //    PinWidget* w5 = new PinWidget(QPixmap("C:/Users/xmuli/Desktop/Snipaste_2022-07-16_02-13-39.png"), QRect(100, 100, 400, 400));
 //    w5->show();
-
-//    QMouseEvent* evMouse = dynamic_cast<QMouseEvent*>(ev);
-//    cout << "Posicion: " << evMouse->x() << ", " << evMouse->y() << endl;
-
-//    QDesktopWidget* desktop = qApp->desktop();  // 获取桌面的窗体对象
-
-//    // 获取屏幕类
-//    QScreen *pScreen = QGuiApplication::primaryScreen();
-//    // 获取第一个屏幕的图片
-//    QPixmap mPixmap = pScreen->grabWindow(0, 0, 0, desktop->size().width(), desktop->size().height());
-//    // 设置名称为当前时间
-
 
     return QApplication::exec();
 }

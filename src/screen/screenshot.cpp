@@ -120,14 +120,13 @@ ScreenShot::ScreenShot(QWidget *parent)
     move(geom.topLeft());
 #endif
 
-
     setMouseTracking(true);
     m_rtCalcu.scrnType = ScrnType::Wait;
 
     // new refactor
     m_selSizeTip->setVisible(false);
     m_lineWidthTip->setVisible(false);
-    m_lineWidthTip->setFixedSize(75, 75);
+    m_lineWidthTip->setFixedSize(50, 50);
     m_lineWidthTip->move(15, 15);
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
@@ -166,7 +165,7 @@ ScrnType ScreenShot::updateScrnType(const QPoint pos)
 	} else if (cursArea == CursorArea::Border) {
 		return ScrnType::Stretch;
     } else {
-        return ScrnType::Wait; // 避免警告，不会运行到此
+        return ScrnType::Wait;
     }
 }
 
@@ -335,7 +334,7 @@ void ScreenShot::onPin()
         return;
 
     auto pin = new PinWidget(m_savePixmap, m_savePixmap.rect(), nullptr);   // 使用 nullptr，不会泄露
-    pin->move(m_rtCalcu.getSelRect().topLeft());
+    pin->move(mapToGlobal(m_rtCalcu.getSelRect().topLeft()));
     pin->show();
 
     clearnAndClose();
@@ -357,6 +356,8 @@ void ScreenShot::onSave()
         m_savePixmap.save(fileNmae, nullptr, XHelper::instance().imgQuailty());  // 绘画在 m_savePixmap 中，若在 m_savePixmap 会有 selRect 的左上角的点的偏移
         QTime stopTime = QTime::currentTime();
         int elapsed = startTime.msecsTo(stopTime);
+
+#ifdef QT_DEBUG
         qDebug() << "save m_savePixmap tim =" << elapsed << "ms" << m_savePixmap.size();
         //m_currPixmap->save("a2.png");
 
@@ -365,6 +366,8 @@ void ScreenShot::onSave()
         if (!path.isEmpty()) {
             m_savePixmap.save(path + QDir::separator() + imageName);
         }
+#else
+#endif
     }
 
     clearnAndClose();
@@ -432,7 +435,6 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     } else if (bText) {
     } else if (bSeriNum) {
     } else {
-        //XLOG_INFO
     }
 }
 
@@ -443,8 +445,11 @@ void ScreenShot::onLineWidthChange(int width)
     m_lineWidthTip->setText(QString::number(width));
     m_lineWidthTip->setAlignment(Qt::AlignCenter);
     m_lineWidthTip->setFont(font);
+    m_lineWidthTip->move(mapFromGlobal(currentScreen()->geometry().topLeft()));
+    m_lineWidthTip->raise();
     m_lineWidthTip->setVisible(true);
-    QTimer::singleShot(5000, [&]() { m_lineWidthTip->setVisible(false); });  // TODO 2022.09.14: 怎么有时候不到 5s 便消失覆盖了
+
+    QTimer::singleShot(4000, this, [&]() { m_lineWidthTip->setVisible(false); });
 }
 
 void ScreenShot::onSelColor(QColor col)
@@ -475,7 +480,7 @@ QPixmap* ScreenShot::getVirScrnPixmap()
 #endif
     }
 
-    m_currPixmap->save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/m_currPixmap_123456.png");
+//    m_currPixmap->save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/m_currPixmap_123456.png");
     return m_currPixmap;
 }
 
@@ -685,7 +690,9 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 		if (!m_currPixmap || step.rt.isEmpty())  // 优化，删除就很明显
 			return;
 
-        QPixmap mosaicPixmap = m_currPixmap->copy(QRect(mapFromGlobal(step.rt.topLeft()) * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio()));
+        auto rt = QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio());
+        QPixmap mosaicPixmap = m_currPixmap->copy(rt);
+        mosaicPixmap.save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/mosaicPixmap_123456.png");
         if (step.bStyele == 0) {
             const QPixmap* pix = XHelper::instance().SetMosaicSmooth(&mosaicPixmap, step.mscPx);
             pa.drawPixmap(step.rt, *pix);
@@ -833,19 +840,14 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
 
 const QPoint ScreenShot::drawSelSizeTip(const QRect& rt)
 {
-    //QString str = QString("rtSel(%1, %2, %3 * %4)  m_savePixmap.rect:%5 * %6").arg(rt.left()).arg(rt.top()).arg(rt.width()).arg(rt.height())
-    //    .arg(m_savePixmap.width()).arg(m_savePixmap.height());
-
-    QString str = QString("%1 x %2").arg(rt.width()).arg(rt.height());
+    const QPoint pos = mapToGlobal(rt.topLeft());
+    QString str = QString("[%1, %2, %3 * %4]").arg(pos.x()).arg(pos.y()).arg(rt.width()).arg(rt.height());
     if (str.compare(m_selSizeTip->text()) != 0) {
         emit m_selSizeTip->sigTextChanged(str);
         m_selSizeTip->setText(str);
     }
-
-    QPoint ret;
-    ret.setX(rt.left());
-    ret.setY(rt.top() - m_selSizeTip->height() - SS_SPACE_TO_SELECTRECT);
-    return ret;
+    
+    return QPoint(rt.left(), rt.top() - m_selSizeTip->height() - SS_SPACE_TO_SELECTRECT);
 }
 
 void ScreenShot::selectedShapeMove(QPainter& pa)

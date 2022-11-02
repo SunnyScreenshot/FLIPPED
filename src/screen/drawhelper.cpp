@@ -123,8 +123,7 @@ const QPixmap* XHelper::SetMosaicSmooth(QPixmap* pixmap, int px)
 
     QGraphicsBlurEffect* blur = new QGraphicsBlurEffect;
     blur->setBlurRadius(10);
-    QGraphicsPixmapItem* item =
-        new QGraphicsPixmapItem(*pixmap);
+    QGraphicsPixmapItem* item = new QGraphicsPixmapItem(*pixmap);
     item->setGraphicsEffect(blur);
 
     QGraphicsScene scene;
@@ -135,11 +134,6 @@ const QPixmap* XHelper::SetMosaicSmooth(QPixmap* pixmap, int px)
     blur->setBlurRadius(12);
     // multiple repeat for make blur effect stronger
     scene.render(&painter, pixmap->rect(), QRectF());
-
-    //pixmap->save("hahhaha.png");
-
-    // TODO 2022-01-09:  QGraphicsBlurEffect
-    // key: qt 截图 毛玻璃效果
     return pixmap;
 }
 
@@ -150,7 +144,6 @@ const QImage XHelper::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
 
     const QImage& image = pixmap->toImage();
     QImage* pImage = const_cast<QImage*>(&image);
-
     const int width = image.width();
     const int height = image.height();
 
@@ -164,8 +157,7 @@ const QImage XHelper::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
 
             const QPoint topLeft(i, j);
             const QRect rt(topLeft, size);
-
-            //            qInfo()<<"--------->>i:"<< i << "  j:" << j << "  rt:" << rt;
+            //qDebug()<<"--------->>i:"<< i << "  j:" << j << "  rt:" << rt;
             QColor color = pImage->pixelColor(rt.topLeft());
             for (int x = rt.x(); x <= rt.right(); ++x) {
                 for (int y = rt.y(); y <= rt.bottom(); ++y)
@@ -174,7 +166,7 @@ const QImage XHelper::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
         }
     }
 
-    return image;  // TODO 可优化: 值传递
+    return image;
 }
 
 const int ArrowWidth = 10;

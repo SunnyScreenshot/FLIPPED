@@ -46,13 +46,10 @@ public:
 
 private:
     const QScreen *currentScreen(const QPoint &pos = QCursor::pos());
-
     void getScrnInfo();
     double getDevicePixelRatio(QScreen *screen = nullptr);
-
     void updateGetWindowsInfo();
     void whichShape();
-
     void savePixmap(bool quickSave = true, bool autoSave = true);
 
 signals:
@@ -60,9 +57,7 @@ signals:
     void sigLineWidthChange(int width);
 
 public slots:
-    void onClearScreen();
-
-    // toolBar 的槽函数
+    // The slot function of the toolBar
     void onLineEndsChange(LineEnds ends);
     void onLineDasheChange(Qt::PenStyle dashes);
 
@@ -73,17 +68,14 @@ public slots:
     void onRenewal();
     void onPin();
     void onSave();
-
     void onCancel();
     void onFinish();
     void onInterruptEdit(const QPoint& pos);
     void clearnAndClose();
-
-
     void onParaBtnId(DrawShape shape, QToolButton* tb);
     void onLineWidthChange(int width);
-
     void onSelColor(QColor col);
+    void onClearScreen();
 
 private:
     ScrnType updateScrnType(const QPoint pos);
@@ -128,7 +120,7 @@ private:
     double m_scal;
     QList<QScreen *> m_scrns;              // 所有屏幕
     QScreen* m_priScrn;                    // 主屏幕
-    QScreen* m_curScrn;                   // 截图时光标所在的屏幕
+    QScreen* m_curScrn;                    // 截图时光标所在的屏幕
     QRect m_virGeom;                       // 截图时刻的虚拟桌面的大小
     QPixmap* m_currPixmap;                 // 当前屏幕截图
     QPixmap m_savePixmap;                  // 当前屏幕截图 + 遮罩   无构造初始化

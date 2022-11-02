@@ -233,7 +233,7 @@ public:
     void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
 
     // Mosaics draw
-    const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);      // 毛玻璃马赛克
+    const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);         // 毛玻璃马赛克
     const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
 
     // Arrow Line draw
