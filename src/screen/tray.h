@@ -16,22 +16,32 @@
 #include <QPointer>
 #include "screenshot.h"
 
-QT_BEGIN_NAMESPACE
 class QSystemTrayIcon;
 class QAction;
 class QMenu;
-QT_END_NAMESPACE
-
 class QHotkey;
 class Preference;
+
 
 class Tray : public QObject
 {
     Q_OBJECT
 public:
-	static Tray& instance();
+    enum ScrnShotType {
+        SST_ActionWindow,
+        SST_ScrollingWindow,
+        SST_DelayCapture,
+        SST_FullScreen,
+        SST_FixdSizeRegion,
+        SST_Paste,
+        SST_HideShowAllImages,
+        SST_SwitchCurrentGroup,
+        SST_Unknow
+    };
+    Q_ENUM(ScrnShotType)
 
-    std::vector<std::tuple<QHotkey*, QString, QString>> getVHotKeys() const;
+	static Tray& instance();
+    std::vector<std::tuple<QHotkey*, QString, QString, Tray::ScrnShotType>> getVHotKeys() const;
 
 private:
     explicit Tray(QObject* parent = nullptr);
@@ -57,7 +67,7 @@ private:
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 
-    std::vector<std::tuple<QHotkey*, QString, QString>> m_vHotKeys;
+    std::vector<std::tuple<QHotkey*, QString, QString, Tray::ScrnShotType>> m_vHotKeys;
 };
 
 #endif // TARY_H

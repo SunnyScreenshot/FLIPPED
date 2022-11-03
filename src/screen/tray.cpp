@@ -23,6 +23,7 @@
 #include <QFileInfoList>
 #include <QKeySequence>
 #include <QHotkey>
+#include <QMetaEnum>
 
 #include "QThread"
 //#include "../../pluginsimpl/watemark/pluginwatemark.h"
@@ -39,7 +40,7 @@ Tray& Tray::instance()
     return tray;
 }
 
-std::vector<std::tuple<QHotkey*, QString, QString>> Tray::getVHotKeys() const
+std::vector<std::tuple<QHotkey*, QString, QString, Tray::ScrnShotType>> Tray::getVHotKeys() const
 {
     return m_vHotKeys;
 }
@@ -125,26 +126,26 @@ void Tray::init()
 void Tray::initGlobalHotKeys()
 {
     m_vHotKeys = {
-        std::make_tuple(nullptr, "Ctrl+Shift+Y", tr("Active Window")),        // 截图相关
-        std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window")),
-        std::make_tuple(nullptr, "Ctrl+Shift+L", tr("Delay Capture")),
-        std::make_tuple(nullptr, "Ctrl+Shift+S", tr("Full Screen")),
-        std::make_tuple(nullptr, "Ctrl+Shift+F", tr("Fixd-Size Region")),
-
-        std::make_tuple(nullptr, "Ctrl+Shift+T", tr("Paste")),                // 贴图相关
-        std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images")),
-        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group")) };
+        std::make_tuple(nullptr, "Ctrl+Shift+Y", tr("Active Window"), ScrnShotType::SST_ActionWindow),
+        std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
+        std::make_tuple(nullptr, "Ctrl+Shift+L", tr("Delay Capture"), ScrnShotType::SST_DelayCapture),
+        std::make_tuple(nullptr, "Ctrl+Shift+S", tr("Full Screen"), ScrnShotType::SST_FullScreen),
+        std::make_tuple(nullptr, "Ctrl+Shift+F", tr("Fixd-Size Region"), ScrnShotType::SST_FixdSizeRegion),
+        std::make_tuple(nullptr, "Ctrl+Shift+T", tr("Paste"), ScrnShotType::SST_Paste),
+        std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
+        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)};
 
     insSettings->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
+        const ScrnShotType sst = std::get<3>(it);
 
         hotkey = insSettings->value(describe, hotkey).toString(); // 读取配置文件
-
         pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
-        pHK->setObjectName(describe);
+        QMetaEnum enumSst = QMetaEnum::fromType<Tray::ScrnShotType>();
+        pHK->setObjectName(enumSst.valueToKey(sst));
         connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
         
 //        qDebug() << "pHK" << pHK << "  std::get<0>(it)" << std::get<0>(it);
@@ -165,8 +166,15 @@ void Tray::onSrnShot()
     const auto act = qobject_cast<QAction*>(sender());
     if (!hk && !act)
         return;
-    
-    if (act || hk->objectName() == "Active Window") // TODO 2022.07.17： 替换为枚举
+
+    int sst = Tray::SST_Unknow;
+    if (hk) {
+        bool ok = false;
+        QMetaEnum metaSst = QMetaEnum::fromType<Tray::ScrnShotType>();
+        sst = metaSst.keyToValue(hk->objectName().toStdString().c_str(), &ok);
+    }
+
+    if (act || sst == Tray::SST_ActionWindow)
         m_pSrnShot->getScrnShots();
 }
 

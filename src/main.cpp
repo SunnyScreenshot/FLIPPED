@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
     else
         qmPath += "/translations/" + lanuage + ".qm";
 #elif defined(Q_OS_LINUX)
+    qmPath += "/translations/" + lanuage + ".qm";
 #endif
     trans.load(qmPath);
     qApp->installTranslator(&trans);

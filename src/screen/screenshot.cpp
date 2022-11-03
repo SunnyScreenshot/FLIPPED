@@ -92,7 +92,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
     // 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
-    setWindowFlags(Qt::FramelessWindowHint | windowFlags());  // | Qt::WindowStaysOnTopHint
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | windowFlags());  // | Qt::WindowStaysOnTopHint
     #ifdef _MYDEBUG
         setWindowFlag(Qt::WindowStaysOnTopHint, false); // 删除置顶
         m_virGeom = currentScreen(QCursor::pos())->geometry();
@@ -1492,28 +1492,20 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
 
 void ScreenShot::getScrnShots()
 {
-    XLOG_INFO("---------------@#1----------------");
+    qDebug() << "---------------@#1----------------";
     m_specifyRts.clear();
     m_specifyRts.insert(m_virGeom);
     for (const auto& it : m_scrns)
         m_specifyRts.insert(it->geometry());
 
-#ifdef Q_OS_WIN
-    //WinInfoWin::instance().getAllWinInfoCache();
-    //if (m_rtCalcu.bSmartMonitor)  // 存储所需要全部窗口信息
-        //m_vec = WinInfoWin::instance().m_vWinInfo;
-#elif  defined(Q_OS_MAC)
-#elif  defined(Q_OS_LINUX)
-#endif
-
     getScrnInfo();
-    XLOG_INFO("---------------@#2----------------");
+    qDebug() << "---------------@#2----------------";
     getVirScrnPixmap(); // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
 
-#ifdef Q_OS_MAC
-    showFullScreen();
-#else
+#ifdef Q_OS_WIN
     show();
+#else
+    showFullScreen();  // Linux supports virtual multi-screen, Mac only one screen
 #endif
 
     if (m_bSmartWin)
@@ -1521,7 +1513,7 @@ void ScreenShot::getScrnShots()
 
     // fix: 初次使用全局热键召唤截图窗口，对 Esc 无响应。 考虑跨平台或需参考 https://zhuanlan.zhihu.com/p/161299504
     if (!isActiveWindow()) {
-        XLOG_INFO("---------------@#3----------------");
+        qDebug() << "---------------@#3----------------";
         activateWindow();
     }
 }

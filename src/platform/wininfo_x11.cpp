@@ -8,9 +8,8 @@
  * Date: 2022.05.11
  * Description: Linux 系统下智能窗口识别
  ******************************************************************/
+#include "../core/xlog.h"  // !!! NOTE:Qt headers must be placed in front of X11 headers
 #include "wininfo_x11.h"
-#include "../core/xlog.h"
-
 #include <QString>
 #include <QLabel>
 
