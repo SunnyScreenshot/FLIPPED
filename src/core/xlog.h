@@ -18,6 +18,7 @@
 
 #include <QStandardPaths>
 #include <QApplication>
+#include <QDebug>
 #include <spdlog/spdlog.h>
 #include "spdlog/sinks/rotating_file_sink.h"
 
@@ -34,13 +35,11 @@ public:
 
 private:
     XLog() {
-#ifdef QT_DEBUG
-        std::string prePath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first().toStdString();
-#else
-        std::string prePath = qApp->applicationDirPath().toStdString();
-#endif
-        m_logger = spdlog::rotating_logger_mt("fileLogger", prePath + "/picshot_debug.log", 1024 * 1024 * 20, 10, true);
-        m_logger->set_pattern("%Y-%m-%d %H:%M:%S %t %l [%!] %v");       // https://github.com/gabime/spdlog/wiki/3.-Custom-formatting
+        std::string path = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first().toStdString() + "/picshot_debug.log";
+
+        qDebug()<< "Log Path:" << QString::fromStdString(path);
+        m_logger = spdlog::rotating_logger_mt("fileLogger", path, 1024 * 1024 * 20, 10, true);
+        m_logger->set_pattern("%Y-%m-%d %H:%M:%S %t %l [%!] %v");
 
         setLevel("debug");
         spdlog::level::level_enum logLevel(spdlog::level::n_levels);

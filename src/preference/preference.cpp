@@ -625,7 +625,7 @@ void Preference::onLanuageChange(const QString &language)
     if (!bt)
         return;
 
-    qDebug() << qApp->applicationDirPath() + "/config.ini";
+    qDebug() << qApp->applicationDirPath() + "/config/config.ini";
     insSettings->beginGroup(INIT_GENERAL);
     insSettings->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
     insSettings->endGroup();

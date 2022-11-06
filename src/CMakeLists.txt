@@ -2,8 +2,9 @@
 set(PROJECT_NAME PicShot)
 project(${PROJECT_NAME} VERSION 0.4.8 LANGUAGES CXX)
 
-set(EXECUTABLE_OUTPUT_PATH  ${CMAKE_BINARY_DIR}/bin)
-file(COPY config/config.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)
+
+file(GLOB All_CNGFIG_FILES "data/config/*")
+file(COPY ${All_CNGFIG_FILES} DESTINATION "${CMAKE_BINARY_DIR}/bin/config")
 
 if(MSVC)
     OPTION(USE_MP "use multiple" ON)

@@ -1487,7 +1487,6 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     }
 
     event->accept();
-    update(); // TODO 2022.04.27: For debugging
 }
 
 void ScreenShot::getScrnShots()
@@ -1500,22 +1499,18 @@ void ScreenShot::getScrnShots()
 
     getScrnInfo();
     qDebug() << "---------------@#2----------------";
-    getVirScrnPixmap(); // 因 QWidget 启动后 事件执行顺序，sizeHint() -> showEvent() -> paintEvent()；故全屏 show() 之前先获取桌面截图
+    getVirScrnPixmap();
 
 #ifdef Q_OS_WIN
     show();
 #else
-    showFullScreen();  // Linux supports virtual multi-screen, Mac only one screen
+    showFullScreen();         // Linux supports virtual multi-screen, Mac only one screen
 #endif
 
-    if (m_bSmartWin)
+    if (m_bSmartWin) 
         updateGetWindowsInfo();
-
-    // fix: 初次使用全局热键召唤截图窗口，对 Esc 无响应。 考虑跨平台或需参考 https://zhuanlan.zhihu.com/p/161299504
-    if (!isActiveWindow()) {
-        qDebug() << "---------------@#3----------------";
-        activateWindow();
-    }
+    if (!isActiveWindow())
+        activateWindow();     // fix: Initial use of global hotkeys to summon the screenshot window does not respond to Esc.  https://ifmet.cn/posts/44eabb4d
 }
 
 // 屏幕详细参数
@@ -1524,7 +1519,7 @@ void ScreenShot::getScrnInfo()
     XLOG_INFO("---------------QApplication::desktop() Info BEGIN----------------");
     XLOG_INFO("所有可用区域 m_virtualGeometry({}, {}, {} * {})", m_virGeom.left(), m_virGeom.top(), m_virGeom.width(), m_virGeom.height());
     XLOG_INFO("主屏可用区域 m_priScrn->geometry()({}, {}, {} * {})", m_priScrn->geometry().left(), m_priScrn->geometry().top(), m_priScrn->geometry().width(), m_priScrn->geometry().height());
-    XLOG_INFO("是否开启虚拟桌面 isVirtualDesktop: {}",  m_priScrn->virtualSiblings().size() > 1 ? true : false);  // 等价于废弃的 QApplication::desktop()->isVirtualDesktop();
+    XLOG_INFO("是否开启虚拟桌面 isVirtualDesktop: {}",  m_priScrn->virtualSiblings().size() > 1 ? true : false);
     XLOG_INFO("---------------QApplication::desktop() Info END----------------");
 
     XLOG_INFO("---------------m_screens[] Info BEGIN----------------");
@@ -1566,7 +1561,7 @@ void ScreenShot::getScrnInfo()
 double ScreenShot::getDevicePixelRatio(QScreen * screen)
 {
 #ifdef Q_OS_MAC
-    return screen ? screen->devicePixelRatio() : 2;  // TODO 2022.03.11 无奈之举；使用 CMake MACOSX_BUNDLE 则返回的缩放比不正常,  return 1 ???
+    return screen ? screen->devicePixelRatio() : 2;
 #else
     return screen ? screen->devicePixelRatio() : 1;
 #endif

@@ -282,7 +282,7 @@ private:
 
 // ------------------------
 // 创建全局静态 单例 的对象, 就不浪费生命重新创建了，  路径后面替换为 ConfigLocation
-Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, (qApp->applicationDirPath() + "/config.ini", QSettings::IniFormat));
+Q_GLOBAL_STATIC_WITH_ARGS(QSettings, insSettings, (qApp->applicationDirPath() + "/config/config.ini", QSettings::IniFormat));
 //Q_GLOBAL_STATIC(XHelper, insXHelp);
 
  // perference UI config
