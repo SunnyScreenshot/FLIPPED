@@ -1237,12 +1237,12 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa)
     }
 
     // 绘画边框样式
-    const int styleIdx = XHelper::instance().boardStyle();
-    if (styleIdx == 1) {
+    const QString style = XHelper::instance().boardStyle();
+    if (style == "flipped") {
         drawBorderPS(pa, rt);
-    } else if (styleIdx == 2) {
+    } else if (style == "mac") {
         drawBorderMac(pa, rt);
-    } else if (styleIdx == 3) {
+    } else if (style == "deepin") {
         pa.drawRect(rt);
         drawBorderBlue(pa, rt);
     }

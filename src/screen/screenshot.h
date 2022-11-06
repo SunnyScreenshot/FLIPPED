@@ -97,7 +97,7 @@ private:
     // [paintEvent] refactor
     void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);   // Blue 边框样式
     void drawBorderMac(QPainter& pa, QRect rt, int num = 8, bool isRound = true);    // Mac 边框样式
-    void drawBorderPS(QPainter& pa, QRect rt, bool isRound = false);                 // PicShot 边框样式
+    void drawBorderPS(QPainter& pa, QRect rt, bool isRound = false);                 // Flipped 边框样式
 
     void drawWinInfo(QPainter& pa);                                                  // 绘画 窗口信息 path title 等
     void selectedShapeMove(QPainter& pa);                                            // flameshot 选中图形的效果

@@ -35,7 +35,7 @@ public:
 
 private:
     XLog() {
-        std::string path = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first().toStdString() + "/picshot_debug.log";
+        std::string path = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first().toStdString() + "/flipped_debug.log";
 
         qDebug()<< "Log Path:" << QString::fromStdString(path);
         m_logger = spdlog::rotating_logger_mt("fileLogger", path, 1024 * 1024 * 20, 10, true);

@@ -141,17 +141,19 @@ void Tray::initGlobalHotKeys()
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         const ScrnShotType sst = std::get<3>(it);
+        const QString strHotKey = insSettings->value(describe, hotkey).toString();
+        if (!strHotKey.isEmpty())
+            hotkey = strHotKey;
 
-        hotkey = insSettings->value(describe, hotkey).toString(); // 读取配置文件
         pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
         QMetaEnum enumSst = QMetaEnum::fromType<Tray::ScrnShotType>();
         pHK->setObjectName(enumSst.valueToKey(sst));
         connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
         
-//        qDebug() << "pHK" << pHK << "  std::get<0>(it)" << std::get<0>(it);
-//        qDebug() << "hotkey" << hotkey;
-//        qDebug() << "hk Is Registered(" << describe << "):"  << pHK->isRegistered();
-//        qDebug() << "------------------------";
+        qDebug() << "pHK: " << pHK << Qt::endl
+            << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
+            << "hotkey:" << hotkey << Qt::endl
+            << "hk Is Registered(" << describe << "):" << pHK->isRegistered();
     }
     insSettings->endGroup();
 }

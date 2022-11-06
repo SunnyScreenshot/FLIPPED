@@ -25,7 +25,7 @@ public:
 
 
 QT_BEGIN_NAMESPACE
-#define IPluginInterface_iid "XMuli.PicShot.PluginsInterface"  // 唯一标识符
+#define IPluginInterface_iid "XMuli.Flipped.PluginsInterface"  // 唯一标识符
 Q_DECLARE_INTERFACE(IPluginInterface, IPluginInterface_iid)
 QT_END_NAMESPACE
 

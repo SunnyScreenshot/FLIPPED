@@ -206,8 +206,8 @@ private:
 public:
     double getScale(QScreen* screen = QApplication::primaryScreen());
 
-    void setBoardStyle(const int index) { m_boardStyleIndex = index; }
-    const int boardStyle() { return m_boardStyleIndex; }
+    void setBoardStyle(const QString style) { m_boardStyle = style; }
+    const QString boardStyle() { return m_boardStyle; }
     void setBorderColor(QColor color) { m_borderColor = color; }
     const QColor borderColor() { return m_borderColor; }
     void setBorderWidth(const int width) { m_borderWidth = width; }
@@ -262,7 +262,7 @@ signals:
     void sigChangeMaxSize(int val);
 
 private:
-    int m_boardStyleIndex;
+    QString m_boardStyle;
     QColor m_borderColor;                      // 边框
     int m_borderWidth;
     QColor m_crosshairColor;                   // 边框

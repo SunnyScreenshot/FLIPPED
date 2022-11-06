@@ -40,7 +40,7 @@ const QString tiCrosshairWidth("Crosshair Width");
 const QString tiSmartWindow("Smart window");
 const QString tiCrosshair("Ccrosshair");
 const QString tiShowCursor("Show cursor");
-const QString tiAutoCopyToClipboard("Automatically copy to clipboard");
+const QString tiAutoCopyToClipboard("Auto copy to clipboard");
 const QString tiReset("tiReset");
 
 //tabOutput()     输出

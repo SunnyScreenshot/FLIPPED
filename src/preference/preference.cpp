@@ -77,7 +77,7 @@ void Preference::initUI()
     tabPages->addTab(tabAbout(), tr("About"));
 
     vLayout->addWidget(tabPages);
-//    setWindowTitle(_PROJECT_NAME);
+    setWindowTitle(tr("Flipped Preferences"));
 
 //    qDebug()<<"--->"<<tabPages->palette().window().color();
 //    QPalette pal = this->palette();
@@ -108,10 +108,6 @@ bool Preference::checkBoxState2Bool(int state)
 
 void Preference::translateUI()
 {
-//    auto btnReset = findChild<QPushButton *>(thReset);
-//    btnReset->setText(tr("Reset"));
-
-    setWindowTitle(tr("PicShot Preferences"));
 }
 
 QWidget *Preference::tabGeneral()
@@ -190,11 +186,10 @@ QWidget *Preference::tabGeneral()
     cbAutoCheck->setChecked(insSettings->value(tgAutoCheckUpdate, false).toBool());
     insSettings->endGroup();
 
-//    connect(cbLanuage, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
-    connect(cbLanuage, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
+    connect(cbLanuage, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
     connect(cbSelfStart, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
     connect(cbAsAdmin, &QCheckBox::stateChanged, this, &Preference::onAsAdmin);
-    connect(cbLogLevel, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onLogLevelChange);
+    connect(cbLogLevel, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLogLevelChange);
     connect(cbAutoCheck, &QCheckBox::stateChanged, this, &Preference::onAutoCheck);
     connect(pbUpdate, &QPushButton::released, this, &Preference::onUpdate);
     return page;
@@ -236,17 +231,10 @@ QWidget* Preference::tabInterface()
     spCrosshair->setRange(1, 100);
 
     QStringList styles;
-    styles << tr("1_picshot") << tr("2_mac") << tr("3_deepin");
+    styles << "flipped" << "mac" << "deepin";
 
-    for (const auto &t : styles) {
-        bool ok = false;
-        int idx = t.left(1).toInt(&ok);
-
-        if (!ok)
-            idx;
-
-        cbBorderStyle->addItem(t, idx);
-    }
+    for (const auto &text : styles)
+        cbBorderStyle->addItem(text, text);
 
     int i = 0;
     int j = 0;
@@ -272,7 +260,7 @@ QWidget* Preference::tabInterface()
 
     // #ToBeImproved
     cbEnableShowCursor->setDisabled(true);
-    cbEnableAutoCopy->setDisabled(true);
+    //cbEnableAutoCopy->setDisabled(true);
 
     qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
@@ -280,7 +268,7 @@ QWidget* Preference::tabInterface()
     vLay->addLayout(creatResetBtn(tiReset), 1);
 
     insSettings->beginGroup(INIT_INTERFACE);
-    cbBorderStyle->setCurrentText(insSettings->value(tiBorderStyle, 0).toString());
+    cbBorderStyle->setCurrentText(insSettings->value(tiBorderStyle, "flipped").toString());
     cpbHighLight->setCurColor(QColor(insSettings->value(tiBorderColor, QColor("#db000f")).toString())); // TODO: 2022.07.24: 需要修复外圈读取配置文件时候，显示位置的错误
     spBorder->setValue(insSettings->value(tiBorderWidth, 2).toInt());
     cpbCrosshair->setCurColor(QColor(insSettings->value(tiCrosshairColor, QColor("#db000f")).toString()));
@@ -372,10 +360,10 @@ QWidget* Preference::tabOutput()
     insSettings->beginGroup(INIT_OUTPUT);
     bool ok = false;
     sbImageQuailty->setValue(insSettings->value(toImageQuailty, -1).toInt(&ok));
-    editFileName->setText(insSettings->value(toFileName, "picshot_$yyyyMMdd_hhmmss$.png").toString());
+    editFileName->setText(insSettings->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
     editQuickSavePath->setText(insSettings->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
     editAutoSavePath->setText(insSettings->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
-    editConfigPath->setText(insSettings->value(toConfigPath, QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first()).toString());
+    editConfigPath->setText(insSettings->value(toConfigPath, qApp->applicationDirPath() + "/data/config").toString());
     insSettings->endGroup();
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
@@ -514,7 +502,7 @@ QWidget *Preference::tabAbout()
     buildTime->setFont(font);
     buildTime->setStyleSheet("QLabel{color:rgba(0, 0, 0, 0.6);}");
     buildTime->setToolTip(time.right(time.count() - time.indexOf(" ") - 1));
-    QLabel* detail = new QLabel(tr("PicShot is a cross-platform screenshot tool."));
+    QLabel* detail = new QLabel(tr("Flipped is a cross-platform screenshot tool."));
     detail->setFont(font);
 
     QLabel* authorL = new QLabel(tr("Author:"));
@@ -553,7 +541,7 @@ QWidget *Preference::tabAbout()
     QLabel* ghL =new QLabel("GitHub:");
     font.setPointSizeF(ponitSize - 5);
     ghL->setFont(font);
-    QLabel* ghR = new QLabel(tr("<a style='color: green;' href=https://github.com/XMuli/PicShot>PicShot</a>"));
+    QLabel* ghR = new QLabel(tr("<a style='color: green;' href=https://github.com/XMuli/Flipped>Flipped</a>"));
     ghR->setOpenExternalLinks(true);
     ghR->setFont(font);
     QLabel* blogR = new QLabel(tr("<a style='color: green;' href=https://ifmet.cn>ifmet.cn</a>"));
@@ -634,13 +622,13 @@ void Preference::onLanuageChange(const QString &language)
 
 //    QTranslator trans;
 //    QString qmPath(QCoreApplication::applicationDirPath());
-//    QString(_COMPILER_ID).compare("MSVC") == 0 ? qmPath += "/../../src/" + lang + ".qm" : qmPath = "/Users/winks/Desktop/projects/PicShot/src/i18n/" + lang + ".qm";
+//    QString(_COMPILER_ID).compare("MSVC") == 0 ? qmPath += "/../../src/" + lang + ".qm" : qmPath = "/Users/winks/Desktop/projects/Flipped/src/i18n/" + lang + ".qm";
 //    qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0);
 //    trans.load(qmPath);
 //    qApp->installTranslator(&trans);
 
     QTranslator trans;
-    trans.load("/Users/winks/Desktop/projects/PicShot/src/i18n/zh_CN.qm");  // QLocale::system().name()
+    trans.load("/Users/winks/Desktop/projects/Flipped/src/i18n/zh_CN.qm");  // QLocale::system().name()
     qApp->installTranslator(&trans);
 }
 
@@ -679,11 +667,9 @@ void Preference::onBorderStyle(const QString& style)
     if (!bt)
         return;
 
-    bool ok = false;
-    int idx = bt->itemData(bt->currentIndex()).toInt(&ok);
-    XHelper::instance().setBoardStyle(idx);
-
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderStyle, style);
+    const QString text = bt->itemData(bt->currentIndex()).toString();
+    XHelper::instance().setBoardStyle(text);
+    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderStyle, text);
 }
 
 void Preference::onBorderColor(const QColor& color)
@@ -777,7 +763,6 @@ void Preference::onChoosePath()
     auto btnQuickSavePath = findChild<QPushButton*>(toQuickSavePath);
     auto btnAutoSavePath = findChild<QPushButton*>(toAutoSavePath);
     auto btnConfigPath = findChild<QPushButton*>(toConfigPath);
-
     auto editQuickSavePath = findChild<QLineEdit*>(toQuickSavePath);
     auto editAutoSavePath = findChild<QLineEdit*>(toAutoSavePath);
     auto editConfigPath = findChild<QLineEdit*>(toConfigPath);

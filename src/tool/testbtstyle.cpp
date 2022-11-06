@@ -8,7 +8,7 @@
 TestBTStyle::TestBTStyle(QWidget *parent)
 {
 
-    QString filePath = "/Users/winks/Desktop/projects/PicShot/src/resources/tool";
+    QString filePath = "/Users/winks/Desktop/projects/Flipped/src/resources/tool";
 //    QString filePath = "/Users/winks/Desktop/projects/ShotX/icons/normal";
     QDir *dir=new QDir(filePath);
     QStringList filter;

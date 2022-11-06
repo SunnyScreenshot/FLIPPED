@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.3)
-project(PicShot)
+project(Flipped)
 add_subdirectory(src)
 #add_subdirectory(pluginsimpl/watemark)
 add_subdirectory(3rdparty/QHotkey)

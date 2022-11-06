@@ -29,7 +29,6 @@
 #include <QPixmap>
 
 #include "core/xlog.h"
-#include "example/exwidget.h"
 #include "preference/preference.h"
 #include "tool/base/blurwidget.h"
 #include <QTranslator>
@@ -76,25 +75,6 @@ int main(int argc, char *argv[])
 
     Tray::instance();
 
-    //auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    //if (path.isEmpty()) qFatal("Cannot determine settings storage location");
-    //QDir d{ path };
-    //if (d.mkpath(d.absolutePath()) && QDir::setCurrent(d.absolutePath())) {
-    //    qDebug() << "settings in" << QDir::currentPath();
-    //    QFile f{ "settings.txt" };
-    //    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate))
-    //        f.write("Hello, World");
-    //}
-
-    //XFrameWidget *m_pw1 = new XFrameWidget();
-    ////m_pw1->setPixmap(QPixmap("../../p2.jpg"));
-    //m_pw1->setPixmap(QPixmap("D:/projects/PicShot/src/p2.jpg"));
-    //m_pw1->setFixedSize(400, 400);
-    //m_pw1->show();
-
-    //Preference* pre = new Preference(nullptr);
-    //pre->show();
-
     QStringList listStyle = QStyleFactory::keys();
     foreach(QString val, listStyle)
       qDebug()<<val<<"  ";
@@ -107,12 +87,12 @@ int main(int argc, char *argv[])
 
 //    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);
 //    t1->setWindowFlags(Qt::FramelessWindowHint);
-////    t1 ->setBlurBackground(QPixmap("D:/projects/PicShot/src/p1.jpg"), 4);
+////    t1 ->setBlurBackground(QPixmap("D:/projects/Flipped/src/p1.jpg"), 4);
 //    t1->move(200, 100);
 //    t1->show();
 
 //    ParameterBar* t2 = new ParameterBar(Qt::Horizontal, t0);
-////    t2->setBlurBackground(QPixmap("D:/projects/PicShot/src/p2.jpg"), 5);
+////    t2->setBlurBackground(QPixmap("D:/projects/Flipped/src/p2.jpg"), 5);
 //    t2->move(200, 200);
 //    t2->show();
 

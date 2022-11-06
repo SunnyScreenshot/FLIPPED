@@ -21,8 +21,8 @@ jobs:
         arch: [arm64, amd64]
         os: [ubuntu-20.04] # ubuntu-18.04
     env:
-      targetName: PicShot
-      targetLowerName: picshot
+      targetName: Flipped
+      targetLowerName: flipped
       targetOS: debian
       # ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       

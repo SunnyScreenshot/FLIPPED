@@ -29,8 +29,8 @@ jobs:
             msvc_arch: x64
             qt_arch_install: msvc2019_64
     env:
-      targetName: PicShot
-      targetLowerName: picshot
+      targetName: Flipped
+      targetLowerName: flipped
       targetOS: windows
     # 步骤
     steps:
@@ -127,7 +127,7 @@ jobs:
 
           echo "-------------- debug 1 --------------"
           # ${{ env.GITHUB_PATH }}/windeployqt bin/${{ env.targetName }}.exe # cache 时使用
-          windeployqt bin/${{ env.targetName }}.exe
+          windeployqt bin/${{ env.targetName }}.exe --no-translations
           
           echo "-------------- debug 2 --------------"
           Compress-Archive -Path ${{ github.workspace }}/bin/* -Destination ${{ env.productName }}.zip

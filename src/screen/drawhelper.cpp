@@ -33,7 +33,7 @@ int XDrawStep::totalIdx = 0;
 
 XHelper::XHelper()
     : QObject(nullptr)
-    , m_boardStyleIndex(1)
+    , m_boardStyle("flipped")
     , m_borderColor(READ_CONFIG_INI(INIT_INTERFACE, tiBorderColor, "#1F7AFF").toString())
     , m_borderWidth(READ_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, 1).toInt())
     , m_crosshairColor(READ_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, "#1F7AFF").toString())
