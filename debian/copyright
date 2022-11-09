@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: picshot
-Upstream-Contact: https://github.com/XMuli/PicShot
-Source: https://github.com/XMuli/PicShot
+Upstream-Contact: https://github.com/XMuli/Flipped
+Source: https://github.com/XMuli/Flipped
 
 Files: *
 Copyright: 2022 XMuli <xmulitech@gmail.com>

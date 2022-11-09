@@ -122,7 +122,7 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          Copy-Item -Path build/bin/Release/* -Destination bin/
+          Copy-Item -Path build/bin/* -Destination bin/
           dir bin
 
           echo "-------------- debug 1 --------------"

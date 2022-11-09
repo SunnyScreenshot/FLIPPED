@@ -1,4 +1,4 @@
-Source: picshot
+Source: flipped
 Section: unknown
 Priority: optional
 Maintainer: XMuli <xmulitech@gmail.com>
@@ -10,11 +10,11 @@ Build-Depends:
 # qt5-default (>= 5.12.0~),
 #  qttools5-dev (>= 5.12.0),
 Standards-Version: 4.4.1
-Homepage: https://github.com/XMuli
-#Vcs-Browser: https://salsa.debian.org/debian/picshot
-#Vcs-Git: https://salsa.debian.org/debian/picshot.git
+Homepage: https://github.com/XMuli/Flipped
+#Vcs-Browser: https://salsa.debian.org/debian/flipped
+#Vcs-Git: https://salsa.debian.org/debian/flipped.git
 
-Package: picshot
+Package: flipped
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Open source cross-platform screenshots
