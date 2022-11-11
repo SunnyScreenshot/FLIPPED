@@ -24,10 +24,10 @@ jobs:
             qt_arch: win32_msvc2019
             msvc_arch: x86
             qt_arch_install: msvc2019
-          - qt_ver: 5.15.2           
-            qt_arch: win64_msvc2019_64
-            msvc_arch: x64
-            qt_arch_install: msvc2019_64
+          # - qt_ver: 5.15.2           
+          #   qt_arch: win64_msvc2019_64
+          #   msvc_arch: x64
+          #   qt_arch_install: msvc2019_64
     env:
       targetName: Flipped
       targetLowerName: flipped
@@ -122,7 +122,7 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          Copy-Item -Path build/bin/* -Destination bin/
+          Copy-Item -Path build/bin/* -Destination bin -Recurse
           dir bin
 
           echo "-------------- debug 1 --------------"
