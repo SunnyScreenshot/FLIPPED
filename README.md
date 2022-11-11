@@ -1,46 +1,58 @@
 
 
-# PicShot
+# Flipped
 
-Lightweight screenshot tool
+
+
+<div align=center>
+<img src="snapshot/Flipped.svg"" height="240" width="240" />
+</div>
 
 <br>
 
-![](https://img.shields.io/github/v/release/XMuli/PicShot?style=flat&color=birightgreen)![](https://img.shields.io/badge/powered%20by-XMuli-ff69b4)![](https://img.shields.io/github/stars/XMuli/PicShot?style=social) ![](https://img.shields.io/github/forks/XMuli/PicShot?style=social&label=Fork)
+## Introduction
 
-![](https://img.shields.io/github/workflow/status/XMuli/PicShot/Windows?style=flat&logo=windows) ![](https://img.shields.io/github/workflow/status/XMuli/PicShot/MacOS?style=flat&logo=apple) ![](https://img.shields.io/github/workflow/status/XMuli/PicShot/Linux?style=flat&logo=linux) ![](https://img.shields.io/github/languages/code-size/XMuli/PicShot)  ![](https://img.shields.io/github/downloads/XMuli/PicShot/total)
+<p align="right"><br><a href="README.md">English</a> | <a href="README.zh_CN.md">简体中文</a></p>
+
+![](https://img.shields.io/github/v/release/XMuli/Flipped?style=flat&color=birightgreen)![](https://img.shields.io/badge/powered%20by-XMuli-ff69b4)![](https://img.shields.io/github/stars/XMuli/Flipped?style=social) ![](https://img.shields.io/github/forks/XMuli/Flipped?style=social&label=Fork)
+
+![](https://img.shields.io/github/workflow/status/XMuli/Flipped/Windows?style=flat&logo=windows) ![](https://img.shields.io/github/workflow/status/XMuli/Flipped/MacOS?style=flat&logo=apple) ![](https://img.shields.io/github/workflow/status/XMuli/Flipped/Linux?style=flat&logo=linux) ![](https://img.shields.io/github/languages/code-size/XMuli/Flipped)  ![](https://img.shields.io/github/downloads/XMuli/Flipped/total)
+
+<br>
+
+> A picture is worth a thousand words，A lightweight tool that supports cross-platform screenshots.
 
 <br>
 
 ## Clone
 
 ```bash
-# 方式一
-git clone --recursive https://github.com/xmuli/PicShot.git   // 它会自动初始化并更新每一个子模块
+# Method 1
+git clone --recursive https://github.com/XMuli/Flipped.git
 
-# 方式二
-git clone https://github.com/xmuli/PicShot.git
+# Method 2
+git clone https://github.com/XMuli/Flipped.git
 git submodule init
 git submodule update
 ```
 
+<br>
 
+## Build
 
-## Build (MSVC)
+- **MSVC**
 
 ```bash
-mkdir build
-cd build
+mkdir build & cd build
 
 # 打开 “x64_x86 Cross Tools Command Prompt for VS 2019"
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_PREFIX_PATH=C:\Qt\5.15.2\msvc2019 -G "Visual Studio 16 2019" -A Win32 ..
 
 使用 Visual Studio 2019 打开 .sln 解决方案
 
-#----------------------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------------
 # 本意
 Qt 5.15.2 + MSVC 2019 + Win10 21H1 + CMake 3.21.1 使用命令行生成一个 Qt 程序
-
 
 # 微软
 devenv："C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\devenv.com"  编译项目实例

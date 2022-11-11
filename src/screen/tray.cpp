@@ -106,7 +106,7 @@ void Tray::init()
 	m_trayIconMenu->addSeparator();
 	m_trayIconMenu->addAction(quit);
 
-    m_trayIcon->setIcon(QIcon(":/resources/logo.svg"));
+    m_trayIcon->setIcon(QIcon(":/resources/logo.png"));
     m_trayIcon->setToolTip(tr(_PROJECT_NAME));
 	m_trayIcon->setContextMenu(m_trayIconMenu);
 
@@ -153,7 +153,7 @@ void Tray::initGlobalHotKeys()
         qDebug() << "pHK: " << pHK << Qt::endl
             << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
             << "hotkey:" << hotkey << Qt::endl
-            << "hk Is Registered(" << describe << "):" << pHK->isRegistered();
+            << "hk Is Registered(" << strHotKey << "):" << pHK->isRegistered();
     }
     insSettings->endGroup();
 }

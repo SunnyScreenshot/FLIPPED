@@ -473,7 +473,7 @@ QWidget *Preference::tabAbout()
     grid->setColumnStretch(1, 9);
 
     QLabel* logo = new QLabel();
-    logo->setPixmap(QIcon(":/resources/logo.svg").pixmap(QSize(48, 48) * m_scale));
+    logo->setPixmap(QIcon(":/resources/logo.png").pixmap(QSize(48, 48) * m_scale));
     grid->addWidget(logo, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
 
 #if defined(Q_OS_MAC)

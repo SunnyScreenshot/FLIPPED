@@ -103,207 +103,189 @@
         <translation>关于</translation>
     </message>
     <message>
+        <location filename="../../preference/preference.cpp" line="80"/>
+        <source>Flipped Preferences</source>
+        <translation>Flipped 偏好</translation>
+    </message>
+    <message>
         <location filename="../../preference/preference.cpp" line="95"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="114"/>
-        <source>PicShot Preferences</source>
-        <translation>PicShot 偏好</translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="131"/>
+        <location filename="../../preference/preference.cpp" line="127"/>
         <source>Lanuage:</source>
         <translation>语言：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="132"/>
+        <location filename="../../preference/preference.cpp" line="128"/>
         <source>Launch:</source>
         <translation>启动：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="133"/>
+        <location filename="../../preference/preference.cpp" line="129"/>
         <source>Log Level:</source>
         <translation>日志级别：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="134"/>
+        <location filename="../../preference/preference.cpp" line="130"/>
         <source>Update:</source>
         <translation>更新：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="137"/>
+        <location filename="../../preference/preference.cpp" line="133"/>
         <source>Run on system startup</source>
         <translation>开机自启</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="138"/>
+        <location filename="../../preference/preference.cpp" line="134"/>
         <source>As administrator</source>
         <translation>管理员启动</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="140"/>
+        <location filename="../../preference/preference.cpp" line="136"/>
         <source>Automatic check</source>
         <translation>自动检查更新</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="141"/>
+        <location filename="../../preference/preference.cpp" line="137"/>
         <source>Update</source>
         <translation>更新</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="175"/>
+        <location filename="../../preference/preference.cpp" line="171"/>
         <source>English</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="176"/>
+        <location filename="../../preference/preference.cpp" line="172"/>
         <source>简体中文</source>
         <translation>简体中文</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="177"/>
+        <location filename="../../preference/preference.cpp" line="173"/>
         <source>繁體中文</source>
         <translation>繁體中文</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="182"/>
+        <location filename="../../preference/preference.cpp" line="178"/>
         <source>trace</source>
         <translation>trace</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="182"/>
+        <location filename="../../preference/preference.cpp" line="178"/>
         <source>debug</source>
         <translation>debug</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="182"/>
+        <location filename="../../preference/preference.cpp" line="178"/>
         <source>info</source>
         <translation>info</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="182"/>
+        <location filename="../../preference/preference.cpp" line="178"/>
         <source>warn</source>
         <translation>warn</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="182"/>
+        <location filename="../../preference/preference.cpp" line="178"/>
         <source>error</source>
         <translation>error</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="182"/>
+        <location filename="../../preference/preference.cpp" line="178"/>
         <source>critical</source>
         <translation>critical</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="182"/>
+        <location filename="../../preference/preference.cpp" line="178"/>
         <source>off</source>
         <translation>off</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="217"/>
+        <location filename="../../preference/preference.cpp" line="212"/>
         <source>Border Style:</source>
         <translation>选框样式：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="218"/>
+        <location filename="../../preference/preference.cpp" line="213"/>
         <source>Border Color:</source>
         <translation>选框颜色：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="219"/>
+        <location filename="../../preference/preference.cpp" line="214"/>
         <source>Border Width:</source>
         <translation>选框宽度：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="220"/>
+        <location filename="../../preference/preference.cpp" line="215"/>
         <source>Crosshair Color:</source>
         <translation>十字线颜色：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="221"/>
+        <location filename="../../preference/preference.cpp" line="216"/>
         <source>Crosshair Width:</source>
         <translation>十字线宽度：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="228"/>
+        <location filename="../../preference/preference.cpp" line="223"/>
         <source>Smart window</source>
         <translation>智能窗口</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="229"/>
+        <location filename="../../preference/preference.cpp" line="224"/>
         <source>Crosshair</source>
         <translation>十字线</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="230"/>
+        <location filename="../../preference/preference.cpp" line="225"/>
         <source>Show cursor</source>
         <translation>捕捉光标</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="231"/>
+        <location filename="../../preference/preference.cpp" line="226"/>
         <source>Auto copy to clipboard</source>
         <translation>自动复制到剪切板</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="239"/>
-        <source>1_picshot</source>
-        <translatorcomment>直译</translatorcomment>
-        <translation>1_picshot</translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="239"/>
-        <source>2_mac</source>
-        <translatorcomment>直译</translatorcomment>
-        <translation>2_mac</translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="239"/>
-        <source>3_deepin</source>
-        <translatorcomment>直译</translatorcomment>
-        <translation>3_deepin</translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="322"/>
+        <location filename="../../preference/preference.cpp" line="310"/>
         <source>Image quailty:</source>
         <translation>图片质量：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="323"/>
+        <location filename="../../preference/preference.cpp" line="311"/>
         <source>File Name:</source>
         <translation>文件名：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="324"/>
+        <location filename="../../preference/preference.cpp" line="312"/>
         <source>Quick save path:</source>
         <translation>快捷保存路径：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="325"/>
+        <location filename="../../preference/preference.cpp" line="313"/>
         <source>Auto save path:</source>
         <translation>自动保存路径：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="326"/>
+        <location filename="../../preference/preference.cpp" line="314"/>
         <source>Config path:</source>
         <translation>配置路径：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="335"/>
+        <location filename="../../preference/preference.cpp" line="323"/>
         <source>Hint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="336"/>
-        <location filename="../../preference/preference.cpp" line="337"/>
-        <location filename="../../preference/preference.cpp" line="338"/>
+        <location filename="../../preference/preference.cpp" line="324"/>
+        <location filename="../../preference/preference.cpp" line="325"/>
+        <location filename="../../preference/preference.cpp" line="326"/>
         <source>Change path</source>
         <translation>更改路径</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="365"/>
+        <location filename="../../preference/preference.cpp" line="353"/>
         <source>Range [0,100] or -1.
 Specify 0 to obtain small compressed files, 100 for large uncompressed files.
 and -1 to use the default settings.</source>
@@ -312,79 +294,79 @@ and -1 to use the default settings.</source>
 和-1表示使用默认设置。</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="410"/>
+        <location filename="../../preference/preference.cpp" line="398"/>
         <source>Window Shadow:</source>
         <translation>窗口阴影：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="411"/>
+        <location filename="../../preference/preference.cpp" line="399"/>
         <source>Opacity:</source>
         <translation>不透明度：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="412"/>
+        <location filename="../../preference/preference.cpp" line="400"/>
         <source>Maximum size:</source>
         <translation>最大尺寸：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="414"/>
+        <location filename="../../preference/preference.cpp" line="402"/>
         <source>Enable</source>
         <translation>开启</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="502"/>
+        <location filename="../../preference/preference.cpp" line="490"/>
         <source>%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="508"/>
+        <location filename="../../preference/preference.cpp" line="496"/>
         <source>%1-Beta %2 (%3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="517"/>
-        <source>PicShot is a cross-platform screenshot tool.</source>
-        <translation>PicShot 为跨平台的截图工具。</translation>
+        <location filename="../../preference/preference.cpp" line="505"/>
+        <source>Flipped is a cross-platform screenshot tool.</source>
+        <translation>Flipped 是跨平台的轻巧截图工具。</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="520"/>
+        <location filename="../../preference/preference.cpp" line="508"/>
         <source>Author:</source>
         <translation>作者：</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="522"/>
+        <location filename="../../preference/preference.cpp" line="510"/>
         <source>&lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli&gt; XMuli&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="525"/>
+        <location filename="../../preference/preference.cpp" line="513"/>
         <source>Copyright ©</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="527"/>
+        <location filename="../../preference/preference.cpp" line="515"/>
         <source>2021-2022 XMuli</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="547"/>
+        <location filename="../../preference/preference.cpp" line="535"/>
         <source>Acknowledgements</source>
         <translation>鸣谢</translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="556"/>
-        <source>&lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli/PicShot&gt;PicShot&lt;/a&gt;</source>
+        <location filename="../../preference/preference.cpp" line="544"/>
+        <source>&lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli/Flipped&gt;Flipped&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="559"/>
+        <location filename="../../preference/preference.cpp" line="547"/>
         <source>&lt;a style=&apos;color: green;&apos; href=https://ifmet.cn&gt;ifmet.cn&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="793"/>
-        <location filename="../../preference/preference.cpp" line="799"/>
-        <location filename="../../preference/preference.cpp" line="805"/>
+        <location filename="../../preference/preference.cpp" line="778"/>
+        <location filename="../../preference/preference.cpp" line="784"/>
+        <location filename="../../preference/preference.cpp" line="790"/>
         <source>select a path</source>
         <translation>选择路径</translation>
     </message>
@@ -392,12 +374,12 @@ and -1 to use the default settings.</source>
 <context>
     <name>ScreenShot</name>
     <message>
-        <location filename="../../screen/screenshot.cpp" line="351"/>
+        <location filename="../../screen/screenshot.cpp" line="350"/>
         <source>Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../screen/screenshot.cpp" line="352"/>
+        <location filename="../../screen/screenshot.cpp" line="351"/>
         <source>Save Files</source>
         <translation type="unfinished">保存文件</translation>
     </message>
@@ -473,42 +455,42 @@ and -1 to use the default settings.</source>
 <context>
     <name>Tray</name>
     <message>
-        <location filename="../../screen/tray.cpp" line="99"/>
+        <location filename="../../screen/tray.cpp" line="100"/>
         <source>ScreenShot</source>
         <translation>截图</translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="100"/>
+        <location filename="../../screen/tray.cpp" line="101"/>
         <source>Preference</source>
         <translation>偏好</translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="101"/>
+        <location filename="../../screen/tray.cpp" line="102"/>
         <source>Quit</source>
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="128"/>
+        <location filename="../../screen/tray.cpp" line="129"/>
         <source>Active Window</source>
         <translation>窗口截图</translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="129"/>
+        <location filename="../../screen/tray.cpp" line="130"/>
         <source>Scrolling Window</source>
         <translation>滚动截图</translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="130"/>
+        <location filename="../../screen/tray.cpp" line="131"/>
         <source>Delay Capture</source>
         <translation>延时截图</translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="131"/>
+        <location filename="../../screen/tray.cpp" line="132"/>
         <source>Full Screen</source>
         <translation>全屏截图</translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="132"/>
+        <location filename="../../screen/tray.cpp" line="133"/>
         <source>Fixd-Size Region</source>
         <translation>尺寸截图</translation>
     </message>
