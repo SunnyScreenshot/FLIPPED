@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
     // I18N
-    insSettings->beginGroup(INIT_GENERAL);
-    auto lanuage = insSettings->value("Lanuage", "en_US").toString();
-    insSettings->endGroup();
+    settingIni->beginGroup(INIT_GENERAL);
+    auto lanuage = settingIni->value("Lanuage", "en_US").toString();
+    settingIni->endGroup();
 
     QTranslator trans;
     QString qmPath(qApp->applicationDirPath());

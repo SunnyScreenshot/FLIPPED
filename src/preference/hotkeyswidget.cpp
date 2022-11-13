@@ -19,6 +19,7 @@
 #include <QList>
 #include <QMouseEvent>
 #include <QPushButton>
+#include <map>
 
 HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 {
@@ -37,18 +38,21 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     grid->setColumnStretch(0, 8);
     grid->setColumnStretch(1, 9);
 
+    QStringList list = { "Ctrl+Shift+Y", "Ctrl+Shift+W", "Ctrl+Shift+L", "Ctrl+Shift+S", "Ctrl+Shift+F", "Ctrl+Shift+T", "Ctrl+Shift+H", "Ctrl+Shift+X" };
+    std::map<XKeySequenceEdit*, const QString> vHkEdit;
     for (auto& it : Tray::instance().getVHotKeys()) {
         // TODO 2022.07.17: 虽然是值传递，但 std::get<0>(it) 为空，以后研究下
+        static int idx = 0;
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
+        vHkEdit.insert(std::make_pair(pEdit, list.at(idx++)));
         pEdit->setObjectName(describe);
-        pEdit->setMinimumWidth(110 * m_scale);                // 估的一个数值
-
-        connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
+        pEdit->setMinimumWidth(110 * m_scale);
 
         grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
         grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
+        connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
 
         if (i == 5)
             grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
@@ -66,6 +70,12 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     if (btn) {
         btn->setObjectName(thReset);
         hLay->addWidget(btn, 1, Qt::AlignRight);
+
+        connect(btn, &QPushButton::released, this, [vHkEdit]() {
+            for (auto& it : vHkEdit) {
+                it.first->setKeySequence(it.second);
+                emit it.first->sigKeySeqChanged(it.first->keySequence());
+            }});
     }
     vLay->addLayout(hLay, 1);
 }

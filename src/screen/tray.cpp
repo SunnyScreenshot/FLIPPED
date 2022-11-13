@@ -135,13 +135,13 @@ void Tray::initGlobalHotKeys()
         std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
         std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)};
 
-    insSettings->beginGroup(INIT_HOTKEYS);
+    settingIni->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         const ScrnShotType sst = std::get<3>(it);
-        const QString strHotKey = insSettings->value(describe, hotkey).toString();
+        const QString strHotKey = settingIni->value(describe, hotkey).toString();
         if (!strHotKey.isEmpty())
             hotkey = strHotKey;
 
@@ -155,7 +155,7 @@ void Tray::initGlobalHotKeys()
             << "hotkey:" << hotkey << Qt::endl
             << "hk Is Registered(" << strHotKey << "):" << pHK->isRegistered();
     }
-    insSettings->endGroup();
+    settingIni->endGroup();
 }
 
 void Tray::onSrnShot()
@@ -195,7 +195,7 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
     if (!editor)
         return;
 
-    insSettings->beginGroup(INIT_HOTKEYS);
+    settingIni->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
 //        QString& hotkey = std::get<1>(it);
@@ -215,7 +215,7 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
             qDebug() << "#pHK-------------->" << pHK;
             qDebug() << "#pHK->shortcut()-------------->" << pHK->shortcut();
             if (pHK->isRegistered())
-                insSettings->setValue(describe, keySequence.toString());
+                settingIni->setValue(describe, keySequence.toString());
             else
                 pHK->setShortcut(prev);
 
@@ -225,5 +225,5 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
         }
     }
 
-    insSettings->endGroup();
+    settingIni->endGroup();
 }

@@ -178,13 +178,13 @@ QWidget *Preference::tabGeneral()
     QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
     cbLogLevel->addItems(lLogLevel);
 
-    insSettings->beginGroup(INIT_GENERAL);
-    cbLanuage->setCurrentText(mapLanuage.key(insSettings->value(tgLanuage, mapLanuage.key("English")).toString()));
-    cbSelfStart->setChecked(insSettings->value(tgSelfStarting, false).toBool());
-    cbAsAdmin->setChecked(insSettings->value(tgAsAdmin, false).toBool());
-    cbLogLevel->setCurrentText(insSettings->value(tgLogLevel, "warn").toString());
-    cbAutoCheck->setChecked(insSettings->value(tgAutoCheckUpdate, false).toBool());
-    insSettings->endGroup();
+    settingIni->beginGroup(INIT_GENERAL);
+    cbLanuage->setCurrentText(mapLanuage.key(settingIni->value(tgLanuage, mapLanuage.key("English")).toString()));
+    cbSelfStart->setChecked(settingIni->value(tgSelfStarting, false).toBool());
+    cbAsAdmin->setChecked(settingIni->value(tgAsAdmin, false).toBool());
+    cbLogLevel->setCurrentText(settingIni->value(tgLogLevel, "debug").toString());
+    cbAutoCheck->setChecked(settingIni->value(tgAutoCheckUpdate, false).toBool());
+    settingIni->endGroup();
 
     connect(cbLanuage, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
     connect(cbSelfStart, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
@@ -226,7 +226,7 @@ QWidget* Preference::tabInterface()
     NEW_OBJECT_AND_TEXT(cbEnableAutoCopy, QCheckBox, tiAutoCopyToClipboard, tr("Auto copy to clipboard"));
 
     cpbHighLight->setObjectName(tiBorderColor);
-    cpbHighLight->setObjectName(tiCrosshairColor);
+    cpbCrosshair->setObjectName(tiCrosshairColor);
     spBorder->setRange(1, 100);
     spCrosshair->setRange(1, 100);
 
@@ -267,17 +267,17 @@ QWidget* Preference::tabInterface()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tiReset), 1);
 
-    insSettings->beginGroup(INIT_INTERFACE);
-    cbBorderStyle->setCurrentText(insSettings->value(tiBorderStyle, "flipped").toString());
-    cpbHighLight->setCurColor(QColor(insSettings->value(tiBorderColor, QColor("#db000f")).toString())); // TODO: 2022.07.24: 需要修复外圈读取配置文件时候，显示位置的错误
-    spBorder->setValue(insSettings->value(tiBorderWidth, 2).toInt());
-    cpbCrosshair->setCurColor(QColor(insSettings->value(tiCrosshairColor, QColor("#db000f")).toString()));
-    spCrosshair->setValue(insSettings->value(tiCrosshairWidth, 2).toInt());
-    cbEnableSamrtWindow->setChecked(insSettings->value(tiSmartWindow, true).toBool());
-    cbEnableCrosshair->setChecked(insSettings->value(tiCrosshair, false).toBool());
-    cbEnableShowCursor->setChecked(insSettings->value(tiShowCursor, false).toBool());
-    cbEnableAutoCopy->setChecked(insSettings->value(tiAutoCopyToClipboard, false).toBool());
-    insSettings->endGroup();
+    settingIni->beginGroup(INIT_INTERFACE);
+    cbBorderStyle->setCurrentText(settingIni->value(tiBorderStyle, "flipped").toString());
+    cpbHighLight->setCurColor(QColor(settingIni->value(tiBorderColor, QColor("#0e70ff")).toString())); // TODO: 2022.07.24: 需要修复外圈读取配置文件时候，显示位置的错误
+    spBorder->setValue(settingIni->value(tiBorderWidth, 2).toInt());
+    cpbCrosshair->setCurColor(QColor(settingIni->value(tiCrosshairColor, QColor("#db000f")).toString()));
+    spCrosshair->setValue(settingIni->value(tiCrosshairWidth, 1).toInt());
+    cbEnableSamrtWindow->setChecked(settingIni->value(tiSmartWindow, true).toBool());
+    cbEnableCrosshair->setChecked(settingIni->value(tiCrosshair, false).toBool());
+    cbEnableShowCursor->setChecked(settingIni->value(tiShowCursor, false).toBool());
+    cbEnableAutoCopy->setChecked(settingIni->value(tiAutoCopyToClipboard, true).toBool());
+    settingIni->endGroup();
 
     connect(cbBorderStyle, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onBorderStyle);
     connect(cpbHighLight, &ColorParaBar::sigColorChange, this, &Preference::onBorderColor);
@@ -357,14 +357,14 @@ QWidget* Preference::tabOutput()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(toReset), 1);
 
-    insSettings->beginGroup(INIT_OUTPUT);
+    settingIni->beginGroup(INIT_OUTPUT);
     bool ok = false;
-    sbImageQuailty->setValue(insSettings->value(toImageQuailty, -1).toInt(&ok));
-    editFileName->setText(insSettings->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
-    editQuickSavePath->setText(insSettings->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
-    editAutoSavePath->setText(insSettings->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
-    editConfigPath->setText(insSettings->value(toConfigPath, qApp->applicationDirPath() + "/data/config").toString());
-    insSettings->endGroup();
+    sbImageQuailty->setValue(settingIni->value(toImageQuailty, -1).toInt(&ok));
+    editFileName->setText(settingIni->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
+    editQuickSavePath->setText(settingIni->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
+    editAutoSavePath->setText(settingIni->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
+    editConfigPath->setText(settingIni->value(toConfigPath, qApp->applicationDirPath() + "/config").toString());
+    settingIni->endGroup();
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
     connect(editFileName, &QLineEdit::textChanged, this, &Preference::onFileName);
@@ -429,11 +429,11 @@ QWidget* Preference::tabPin()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tpReset), 1);
 
-    insSettings->beginGroup(INIT_PIN);
-    cbWindowShadow->setChecked(insSettings->value(tpWindowShadow, true).toBool());
-    sbOpacity->setValue(insSettings->value(tpOpacity, sbOpacity->maximum()).toInt());
-    sbMaxSize->setValue(insSettings->value(tpMaxSize, sbMaxSize->maximum()).toInt());
-    insSettings->endGroup();
+    settingIni->beginGroup(INIT_PIN);
+    cbWindowShadow->setChecked(settingIni->value(tpWindowShadow, true).toBool());
+    sbOpacity->setValue(settingIni->value(tpOpacity, sbOpacity->maximum()).toInt());
+    sbMaxSize->setValue(settingIni->value(tpMaxSize, sbMaxSize->maximum()).toInt());
+    settingIni->endGroup();
 
     connect(cbWindowShadow, &QCheckBox::stateChanged, this, &Preference::onWindowShadow);
     connect(sbOpacity, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onOpacity);
@@ -595,15 +595,61 @@ void Preference::onReset()
 
     auto name = btn->objectName();
     if (name == tgReset) {
-        WRITE_CONFIG_INI(INIT_GENERAL, tgReset, tgReset);
+        auto t = findChild<QComboBox *>(tgLanuage);
+        if (t) t->setCurrentText("English");
+        t = findChild<QComboBox *>(tgLogLevel);
+        if (t) t->setCurrentText("Debug");
     } else if (name == tiReset) {
-        WRITE_CONFIG_INI(INIT_INTERFACE, tiReset, tiReset);
+        auto t = findChild<QComboBox *>(tiBorderStyle);
+        if (t) t->setCurrentText("flipped");
+
+        auto selColor = this->findChild<ColorParaBar *>(tiBorderColor);
+        if (selColor) {
+            selColor->setCurColor(QColor("#0e70ff"));
+            selColor->update();
+        }
+        selColor = this->findChild<ColorParaBar *>(tiCrosshairColor);
+        if (selColor) {
+            selColor->setCurColor(QColor("#db000f"));
+            selColor->update();
+        }
+
+        auto width = findChild<QSpinBox *>(tiBorderWidth);
+        if (width) width->setValue(2);
+        width = findChild<QSpinBox *>(tiCrosshairWidth);
+        if (width) width->setValue(1);
+
+        std::map<QString, bool> map;
+        map.emplace(std::make_pair(tiSmartWindow, true));
+        map.emplace(std::make_pair(tiCrosshair, false));
+        map.emplace(std::make_pair(tiShowCursor, false));
+        map.emplace(std::make_pair(tiAutoCopyToClipboard, true));
+        for (const auto& it : map) {
+            auto tCheckBox = findChild<QCheckBox*>(it.first);
+            if (tCheckBox) tCheckBox->setChecked(it.second);
+        }
     } else if (name == toReset) {
-        WRITE_CONFIG_INI(INIT_OUTPUT, toReset, toReset);
+        auto spinBox = findChild<QSpinBox *>(toImageQuailty);
+        if (spinBox) spinBox->setValue(-1);
+
+        std::map<QString, QString> map;
+        map.emplace(std::make_pair(toFileName, "flipped_$yyyyMMdd_hhmmss$.png"));
+        map.emplace(std::make_pair(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()));
+        map.emplace(std::make_pair(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()));
+        map.emplace(std::make_pair(toConfigPath, qApp->applicationDirPath() + "/data/config"));
+        for (const auto& it : map) {
+            auto edit = findChild<QCheckBox*>(it.first);
+            if (edit) edit->setText(it.second);
+        }
     } else if (name == tpReset) {
-        WRITE_CONFIG_INI(INIT_PIN, tpReset, tpReset);
-    } else if (name == thReset) {
-        WRITE_CONFIG_INI(INIT_HOTKEYS, thReset, thReset);
+        auto tCheckBox = findChild<QCheckBox*>(tpWindowShadow);
+        if (tCheckBox) tCheckBox->setChecked(true);
+
+        auto spinbox = findChild<QSpinBox*>(tpOpacity);
+        if (spinbox) spinbox->setValue(100);
+        spinbox = findChild<QSpinBox*>(tpMaxSize);
+        if (spinbox) spinbox->setValue(100000);
+    } else {
     }
 }
 
@@ -614,9 +660,9 @@ void Preference::onLanuageChange(const QString &language)
         return;
 
     qDebug() << qApp->applicationDirPath() + "/config/config.ini";
-    insSettings->beginGroup(INIT_GENERAL);
-    insSettings->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
-    insSettings->endGroup();
+    settingIni->beginGroup(INIT_GENERAL);
+    settingIni->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
+    settingIni->endGroup();
 
     auto lang = bt->itemData(bt->currentIndex()).toString();
 
@@ -644,9 +690,9 @@ void Preference::onAsAdmin(int sta)
 
 void Preference::onLogLevelChange(const QString& language)
 {
-    insSettings->beginGroup(INIT_GENERAL);
-    insSettings->setValue(tgLogLevel, language);
-    insSettings->endGroup();
+    settingIni->beginGroup(INIT_GENERAL);
+    settingIni->setValue(tgLogLevel, language);
+    settingIni->endGroup();
 
     XLog::instance()->setLevel(language.toStdString());
 }

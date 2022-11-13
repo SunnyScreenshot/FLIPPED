@@ -85,21 +85,12 @@ const QString thReset("thReset");
 
 // 写入配置文件 .ini 的内容
 #define WRITE_CONFIG_INI(group, key, value) \
-    insSettings->beginGroup(group); \
-    insSettings->setValue(key, value); \
-    insSettings->endGroup();
+    settingIni->beginGroup(group); \
+    settingIni->setValue(key, value); \
+    settingIni->endGroup();
 
 // 读取配置文件 .ini 的内容
 #define READ_CONFIG_INI(group, key, _value) \
-    insSettings->value("/" + group + "/" + key, _value)
-
-// 所有页面的 Reset Btn 都连接到同一个槽函数，内部统一处理
-#define CONNECT_RESET_BTN(objectName) \
-    auto btn = findChild<QPushButton *>(objectName);\
-    if (btn) \
-        connect(btn, &QPushButton::released, this, &Preference::onReset);
-
-
-
+    settingIni->value("/" + group + "/" + key, _value)
 
 #endif // APPELLATION_H
