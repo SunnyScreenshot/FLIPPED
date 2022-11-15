@@ -40,9 +40,10 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 
     QStringList list = { "Ctrl+Shift+Y", "Ctrl+Shift+W", "Ctrl+Shift+L", "Ctrl+Shift+S", "Ctrl+Shift+F", "Ctrl+Shift+T", "Ctrl+Shift+H", "Ctrl+Shift+X" };
     std::map<XKeySequenceEdit*, const QString> vHkEdit;
+    int idx = 0;
     for (auto& it : Tray::instance().getVHotKeys()) {
         // TODO 2022.07.17: 虽然是值传递，但 std::get<0>(it) 为空，以后研究下
-        static int idx = 0;
+        
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));

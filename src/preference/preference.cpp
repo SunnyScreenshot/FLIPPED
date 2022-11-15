@@ -37,6 +37,7 @@
 #include <QLineEdit>
 #include <QStandardPaths>
 #include <QSizePolicy>
+#include <QFontDialog>
 
 // test
 #include <QCoreApplication>
@@ -125,11 +126,13 @@ QWidget *Preference::tabGeneral()
     grid->setColumnStretch(1, 5);
 
     NEW_OBJECT_AND_TEXT(lanuage, QLabel, tgLanuage, tr("Lanuage:"));
+    NEW_OBJECT_AND_TEXT(font, QLabel, tgFont, tr("Font:"));
     NEW_OBJECT_AND_TEXT(launch, QLabel, tgSelfStarting, tr("Launch:"));
     NEW_OBJECT_AND_TEXT(logLevel, QLabel, tgLogLevel, tr("Log Level:"));
     NEW_OBJECT_AND_TEXT(update, QLabel, tgUpdate, tr("Update:"));
 
     NEW_OBJECT(cbLanuage, QComboBox, tgLanuage);
+    NEW_OBJECT(btnFont, QPushButton, tgFont);
     NEW_OBJECT_AND_TEXT(cbSelfStart, QCheckBox, tgSelfStarting, tr("Run on system startup"));
     NEW_OBJECT_AND_TEXT(cbAsAdmin, QCheckBox, tgAsAdmin, tr("As administrator"));
     NEW_OBJECT(cbLogLevel, QComboBox, tgLogLevel);
@@ -140,6 +143,8 @@ QWidget *Preference::tabGeneral()
     int j = 0;
     grid->addWidget(lanuage, i, j, Qt::AlignRight);
     grid->addWidget(cbLanuage, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(font, i, j, Qt::AlignRight);
+    grid->addWidget(btnFont, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(launch, i, j, Qt::AlignRight);
     grid->addWidget(cbSelfStart, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbAsAdmin, i++, j + 1, Qt::AlignLeft);
@@ -174,12 +179,14 @@ QWidget *Preference::tabGeneral()
 
     for (auto it = mapLanuage.cbegin(); it != mapLanuage.cend(); ++it )
         cbLanuage->addItem(it.key(), it.value());
-
+    btnFont->setStyleSheet("text-align: left;");
     QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
     cbLogLevel->addItems(lLogLevel);
 
     settingIni->beginGroup(INIT_GENERAL);
     cbLanuage->setCurrentText(mapLanuage.key(settingIni->value(tgLanuage, mapLanuage.key("English")).toString()));
+    auto tt = settingIni->value(tgFont, "SimSun2,19").toString();
+    btnFont->setText(settingIni->value(tgFont, "SimSun,9").toString());
     cbSelfStart->setChecked(settingIni->value(tgSelfStarting, false).toBool());
     cbAsAdmin->setChecked(settingIni->value(tgAsAdmin, false).toBool());
     cbLogLevel->setCurrentText(settingIni->value(tgLogLevel, "debug").toString());
@@ -187,6 +194,7 @@ QWidget *Preference::tabGeneral()
     settingIni->endGroup();
 
     connect(cbLanuage, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
+    connect(btnFont, &QPushButton::released, this, &Preference::onFontChange);
     connect(cbSelfStart, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
     connect(cbAsAdmin, &QCheckBox::stateChanged, this, &Preference::onAsAdmin);
     connect(cbLogLevel, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLogLevelChange);
@@ -678,6 +686,26 @@ void Preference::onLanuageChange(const QString &language)
     qApp->installTranslator(&trans);
 }
 
+void Preference::onFontChange()
+{
+    QString t("SimSun");
+    t = READ_CONFIG_INI(INIT_GENERAL, tgFont, t).toString();
+    qDebug() << "t:" << t;
+
+    bool ret = false;
+    QFont font = QFontDialog::getFont(&ret, QFont(t.split(',').at(0)), this, tr("Select Font"));
+    if (!ret)
+        return;
+        
+    qApp->setFont(font);
+    auto btnFont = findChild<QPushButton*>(tgFont);
+    QString text = QString("%1, %2").arg(font.family()).arg(font.pointSize());
+    btnFont->setText(text);
+
+    WRITE_CONFIG_INI(INIT_GENERAL, tgFont, text);
+    qDebug("当前选择的字体是[%s]-是否加粗[%d]-是否倾斜[%d]-字号[%d]", font.family().toUtf8().data(), font.bold(), font.italic(), font.pointSize());
+}
+
 void Preference::onSelfStart(int sta)
 {
     WRITE_CONFIG_INI(INIT_GENERAL, tgSelfStarting, checkBoxState2Bool(sta));
@@ -830,7 +858,7 @@ void Preference::onChoosePath()
         selPath = QFileDialog::getExistingDirectory(this, tr("select a path"), defPath, QFileDialog::ShowDirsOnly);
 
         if (!selPath.isEmpty() && defPath != selPath)
-            editQuickSavePath->setText(selPath);
+            editAutoSavePath->setText(selPath);
     } else if (btn == btnConfigPath) {
         defPath = editConfigPath->text();
         selPath = QFileDialog::getExistingDirectory(this, tr("select a path"), defPath, QFileDialog::ShowDirsOnly);

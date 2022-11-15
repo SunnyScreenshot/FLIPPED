@@ -57,9 +57,10 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
-    // I18N
+    // I18N + font
     settingIni->beginGroup(INIT_GENERAL);
-    auto lanuage = settingIni->value("Lanuage", "en_US").toString();
+    auto lanuage = settingIni->value(tgLanuage, "en_US").toString();
+    auto ftList = settingIni->value(tgFont, "SimSun,9").toString().split(',');
     settingIni->endGroup();
 
     QTranslator trans;
@@ -71,7 +72,9 @@ int main(int argc, char *argv[])
 #endif
     trans.load(qmPath);
     qApp->installTranslator(&trans);
-    qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0);
+    qApp->setFont(QFont(ftList.at(0), ftList.at(1).toInt()));
+    qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0) << Qt::endl
+        << "ftList.at(0):" << ftList.at(0) << "  ftList.at(1).toInt():" << ftList.at(1).toInt();
 
     Tray::instance();
 

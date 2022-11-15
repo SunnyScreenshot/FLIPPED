@@ -23,50 +23,51 @@
 namespace XC {
 
 //tabGeneral      常规
-const QString tgLanuage("Lanuage");
-const QString tgSelfStarting("Run onSystem startup");
-const QString tgAsAdmin("As administrator");
-const QString tgLogLevel("Log level");
-const QString tgAutoCheckUpdate("Auto Check");
-const QString tgUpdate("Update");
-const QString tgReset("tgReset"); // 单独添加 tg, 下同
+const QString tgLanuage("lanuage");
+const QString tgFont("font");
+const QString tgSelfStarting("run_on_ystem_startup");
+const QString tgAsAdmin("as_administrator");
+const QString tgLogLevel("log_level");
+const QString tgAutoCheckUpdate("auto_check");
+const QString tgUpdate("update");
+const QString tgReset("tg_reset"); // 单独添加 tg, 下同
 
 //tabInterface()  界面
-const QString tiBorderStyle("Border Style");
-const QString tiBorderColor("Border Color");
-const QString tiBorderWidth("Border Width");
-const QString tiCrosshairColor("Crosshair Color");
-const QString tiCrosshairWidth("Crosshair Width");
-const QString tiSmartWindow("Smart window");
-const QString tiCrosshair("Ccrosshair");
-const QString tiShowCursor("Show cursor");
-const QString tiAutoCopyToClipboard("Auto copy to clipboard");
-const QString tiReset("tiReset");
+const QString tiBorderStyle("border_style");
+const QString tiBorderColor("border_color");
+const QString tiBorderWidth("border_width");
+const QString tiCrosshairColor("crosshair_color");
+const QString tiCrosshairWidth("crosshair_width");
+const QString tiSmartWindow("smart_window");
+const QString tiCrosshair("crosshair");
+const QString tiShowCursor("show_cursor");
+const QString tiAutoCopyToClipboard("auto_copy_to_clipboard");
+const QString tiReset("ti_reset");
 
 //tabOutput()     输出
-const QString toImageQuailty("Image quailty");
-const QString toFileName("File Name");
-const QString toQuickSavePath("Quick save path");
-const QString toAutoSavePath("Auto save path");
-const QString toConfigPath("Config path");
-const QString toReset("toReset");
+const QString toImageQuailty("image_quailty");
+const QString toFileName("file_name");
+const QString toQuickSavePath("quick_save_path");
+const QString toAutoSavePath("auto_save_path");
+const QString toConfigPath("config_path");
+const QString toReset("to_reset");
 
 //tabPin()        贴图
-const QString tpWindowShadow("Window shadow");
-const QString tpOpacity("Opacity");
-const QString tpMaxSize("Maximum size");
-const QString tpReset("tpReset");
+const QString tpWindowShadow("window_shadow");
+const QString tpOpacity("opacity");
+const QString tpMaxSize("maximum_size");
+const QString tpReset("tp_reset");
 
 //tabHotkeys()    快捷键
-//const QString thActiveWindow("Active Window");
-//const QString thScrollingWindow("Scrolling Window");
-//const QString thDelayCapture("Delay Capture");
-//const QString thFullScreen("Full Screen");
-//const QString thFixdSize_Region("Fixd_Size Region");
-//const QString thPaste("Paste");
-//const QString thHide_ShowAllImages("Hide_Show all images");
-//const QString thSwitchCurGroup("Switch current group");
-const QString thReset("thReset");
+//const QString thActiveWindow("active_window");
+//const QString thScrollingWindow("scrolling_window");
+//const QString thDelayCapture("delay_capture");
+//const QString thFullScreen("full_screen");
+//const QString thFixdSize_Region("fixd_size_region");
+//const QString thPaste("paste");
+//const QString thHide_ShowAllImages("hide_show_all_images");
+//const QString thSwitchCurGroup("switch_current_group");
+const QString thReset("th_reset");
 
 //tabAbout()      关于
 }
@@ -90,7 +91,7 @@ const QString thReset("thReset");
     settingIni->endGroup();
 
 // 读取配置文件 .ini 的内容
-#define READ_CONFIG_INI(group, key, _value) \
-    settingIni->value("/" + group + "/" + key, _value)
+#define READ_CONFIG_INI(group, key, defValue) \
+    settingIni->value("/" + group + "/" + key, defValue)
 
 #endif // APPELLATION_H
