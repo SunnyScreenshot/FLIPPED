@@ -1327,6 +1327,8 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
         }
         
         if (m_step.shape == DrawShape::Text) {
+            if (m_selBar->isVisible() && QRect(m_selBar->mapToGlobal(QPoint(0, 0)), m_selBar->size()).contains(m_step.p1))
+                return;
 
             m_edit->move(m_step.p1);
             const QRect rtEdit(mapFromGlobal(m_edit->mapToGlobal(QPoint(0, 0))), m_edit->size());
