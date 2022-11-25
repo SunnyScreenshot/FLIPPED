@@ -42,14 +42,16 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     std::map<XKeySequenceEdit*, const QString> vHkEdit;
     int idx = 0;
     for (auto& it : Tray::instance().getVHotKeys()) {
-        // TODO 2022.07.17: 虽然是值传递，但 std::get<0>(it) 为空，以后研究下
-        
+        auto& hk = std::get<0>(it);
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
+        qDebug() << "----->t0:" << hk << "    hotkey:" << hotkey << "    describe:" << describe << Qt::endl;
+
         XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
         vHkEdit.insert(std::make_pair(pEdit, list.at(idx++)));
         pEdit->setObjectName(describe);
         pEdit->setMinimumWidth(110 * m_scale);
+        hk->isRegistered() ? pEdit->setStyleSheet("background-color: #98fb98;") : pEdit->setStyleSheet("background-color: #ff7f50;");
 
         grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
         grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);

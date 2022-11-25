@@ -263,12 +263,12 @@ QWidget* Preference::tabInterface()
 
     grid->addWidget(cbEnableSamrtWindow, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbEnableCrosshair, i++, j + 1, Qt::AlignLeft);
-    grid->addWidget(cbEnableShowCursor, i++, j + 1, Qt::AlignLeft);
+    //grid->addWidget(cbEnableShowCursor, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbEnableAutoCopy, i++, j + 1, Qt::AlignLeft);
 
     // #ToBeImproved
     cbEnableShowCursor->setDisabled(true);
-    //cbEnableAutoCopy->setDisabled(true);
+    cbEnableShowCursor->setVisible(false);
 
     qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
@@ -277,7 +277,7 @@ QWidget* Preference::tabInterface()
 
     settingIni->beginGroup(INIT_INTERFACE);
     cbBorderStyle->setCurrentText(settingIni->value(tiBorderStyle, "flipped").toString());
-    cpbHighLight->setCurColor(QColor(settingIni->value(tiBorderColor, QColor("#0e70ff")).toString())); // TODO: 2022.07.24: 需要修复外圈读取配置文件时候，显示位置的错误
+    cpbHighLight->setCurColor(QColor(settingIni->value(tiBorderColor, QColor("#0e70ff")).toString()));
     spBorder->setValue(settingIni->value(tiBorderWidth, 2).toInt());
     cpbCrosshair->setCurColor(QColor(settingIni->value(tiCrosshairColor, QColor("#db000f")).toString()));
     spCrosshair->setValue(settingIni->value(tiCrosshairWidth, 1).toInt());

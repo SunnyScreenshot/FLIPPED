@@ -152,8 +152,7 @@ void Tray::initGlobalHotKeys()
         
         qDebug() << "pHK: " << pHK << Qt::endl
             << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
-            << "hotkey:" << hotkey << Qt::endl
-            << "hk Is Registered(" << strHotKey << "):" << pHK->isRegistered();
+            << "hotkey:" << hotkey << "    hk Is Registered:" << pHK->isRegistered() << Qt::endl;
     }
     settingIni->endGroup();
 }
@@ -191,7 +190,6 @@ void Tray::onPreference(bool checked)
 void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
 {
     XKeySequenceEdit* editor = qobject_cast<XKeySequenceEdit*>(sender());
-
     if (!editor)
         return;
 
@@ -207,19 +205,18 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
             if (prev == keySequence || keySequence.isEmpty())
                 return;
 
-            //pHK->resetShortcut();
             pHK->setShortcut(keySequence, true);
 
-            qDebug() << "#editor->keySequence():" << editor->keySequence();
-            qDebug() << "#keySequence>" << keySequence;
-            qDebug() << "#pHK-------------->" << pHK;
-            qDebug() << "#pHK->shortcut()-------------->" << pHK->shortcut();
-            if (pHK->isRegistered())
-                settingIni->setValue(describe, keySequence.toString());
-            else
-                pHK->setShortcut(prev);
+            qDebug() << "#editor->keySequence():" << editor->keySequence() << "  keySequence:" << keySequence 
+                << "  pHK:" << pHK << "  pHK->shortcut():" << pHK->shortcut();
 
-            qDebug() << "@5-------------->" << pHK->shortcut();
+            if (pHK->isRegistered()) {
+                settingIni->setValue(describe, keySequence.toString());
+                editor->setStyleSheet("background-color: #98fb98;");
+            } else {
+                //pHK->setShortcut(prev);
+                editor->setStyleSheet("background-color: #ff7f50;");
+            }
         } else {
             continue;
         }
