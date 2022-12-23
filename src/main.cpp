@@ -15,6 +15,8 @@
 #include <QtGlobal>
 #include <QObject>
 #include <QStyleFactory>
+#include <QLockFile>
+#include <QMessageBox>
 #include "screen/screenshot.h"
 
 // test
@@ -37,6 +39,7 @@
 #include <QDateTime>
 #include <QGuiApplication>
 
+
 int main(int argc, char *argv[])
 {
     // 高分屏四种方案 https://blog.csdn.net/qq_33154343/article/details/108905279
@@ -56,6 +59,21 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
+
+    QString filePath = QApplication::applicationDirPath() + "/Flipped.temp.lock";
+    QLockFile* lockFile = new QLockFile(filePath);
+    bool isLock = lockFile->isLocked();
+    qDebug() << "filePath:" << filePath << "  isLock:" << isLock;
+
+    if (!lockFile->tryLock(100)) {
+        QMessageBox msgBox(QMessageBox::Warning, QObject::tr("Warning"), QObject::tr("The application is already running.\nAllowed to run only one instance of the application."));
+        msgBox.exec();
+        return 0;
+    }
+
+    //if (lockFile)
+    //    delete lockFile;
+
 
     // I18N + font
     settingIni->beginGroup(INIT_GENERAL);

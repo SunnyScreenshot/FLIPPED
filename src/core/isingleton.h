@@ -20,9 +20,10 @@ public:
         return instance;
     }
 
-    ISingleton(T&&) = delete;
     ISingleton(const T&) = delete;
-    void operator= (const T&) = delete;
+    T& operator=(const T&) = delete;
+    ISingleton(T&&) = delete;
+    T& operator=(T&&) = delete;
 
 protected:
     ISingleton() = default;

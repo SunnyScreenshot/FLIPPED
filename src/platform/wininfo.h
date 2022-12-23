@@ -18,6 +18,7 @@ private:
 
 private:
     WinInfo();
+    virtual ~WinInfo() = default;
 
 private:
     bool m_bGetAllCache;

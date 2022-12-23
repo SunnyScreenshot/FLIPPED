@@ -126,7 +126,7 @@ void Tray::init()
 void Tray::initGlobalHotKeys()
 {
     m_vHotKeys = {
-        std::make_tuple(nullptr, "Ctrl+Shift+Y", tr("Active Window"), ScrnShotType::SST_ActionWindow),
+        std::make_tuple(nullptr, "Ctrl+Shift+A", tr("Active Window"), ScrnShotType::SST_ActionWindow),
         std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
         std::make_tuple(nullptr, "Ctrl+Shift+L", tr("Delay Capture"), ScrnShotType::SST_DelayCapture),
         std::make_tuple(nullptr, "Ctrl+Shift+S", tr("Full Screen"), ScrnShotType::SST_FullScreen),

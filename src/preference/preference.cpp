@@ -79,6 +79,7 @@ void Preference::initUI()
 
     vLayout->addWidget(tabPages);
     setWindowTitle(tr("Flipped Preferences"));
+    this->setMinimumWidth(800);
 
 //    qDebug()<<"--->"<<tabPages->palette().window().color();
 //    QPalette pal = this->palette();
@@ -167,10 +168,17 @@ QWidget *Preference::tabGeneral()
     cbAsAdmin->setDisabled(true);
     cbAutoCheck->setDisabled(true);
     pbUpdate->setDisabled(true);
+    launch->hide();
+    cbSelfStart->hide();
+    cbAsAdmin->hide();
+    update->hide();
+    pbUpdate->hide();
+    cbAutoCheck->hide();
+    pbUpdate->hide();
 
     qDebug() << "tabGeneral:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
-    vLay->addStretch(3);
+    vLay->addStretch(8);
     vLay->addLayout(creatResetBtn(tgReset), 1);
 
     QMap<QString, QString> mapLanuage = { {tr("English"), "en_US"},
@@ -431,6 +439,8 @@ QWidget* Preference::tabPin()
 
     // #ToBeImproved
     cbWindowShadow->setDisabled(true);
+    shade->hide();
+    cbWindowShadow->hide();
 
     qDebug() << "tabPin:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());

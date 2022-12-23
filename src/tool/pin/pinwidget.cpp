@@ -95,7 +95,7 @@ void PinWidget::initUI()
     auto aCopy = m_menu->addAction(tr("Copy"));
     auto aSave = m_menu->addAction(tr("Save"));
     m_menu->addSeparator();
-    auto aShadow = m_menu->addAction(tr("Shadow"));
+    auto aShadow = new QAction(); // m_menu->addAction(tr("Shadow"));
 
     
     auto aOpicaty = new QMenu(tr("Opicaty"), this);
@@ -111,9 +111,9 @@ void PinWidget::initUI()
 
     m_menu->addMenu(aOpicaty);
     m_menu->addSeparator();
-    auto aGrop = m_menu->addAction(tr("Move to grop"));
+    //auto aGrop = m_menu->addAction(tr("Move to grop"));
     m_menu->addSeparator();
-    auto aDel = m_menu->addAction(tr("Delete"), this, &PinWidget::close, QKeySequence(Qt::Key_Delete));   // 但是按键是不生效的，很奇怪
+    //auto aDel = m_menu->addAction(tr("Delete"), this, &PinWidget::close, QKeySequence(Qt::Key_Delete));   // 但是按键是不生效的，很奇怪
     auto aColse = m_menu->addAction(tr("Close"), this, &PinWidget::close, QKeySequence(Qt::CTRL + Qt::Key_W));
 
     aShadow->setCheckable(true);

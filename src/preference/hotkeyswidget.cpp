@@ -38,7 +38,7 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     grid->setColumnStretch(0, 8);
     grid->setColumnStretch(1, 9);
 
-    QStringList list = { "Ctrl+Shift+Y", "Ctrl+Shift+W", "Ctrl+Shift+L", "Ctrl+Shift+S", "Ctrl+Shift+F", "Ctrl+Shift+T", "Ctrl+Shift+H", "Ctrl+Shift+X" };
+    QStringList list = { "Ctrl+Shift+A", "Ctrl+Shift+W", "Ctrl+Shift+L", "Ctrl+Shift+S", "Ctrl+Shift+F", "Ctrl+Shift+T", "Ctrl+Shift+H", "Ctrl+Shift+X" };
     std::map<XKeySequenceEdit*, const QString> vHkEdit;
     int idx = 0;
     for (auto& it : Tray::instance().getVHotKeys()) {
