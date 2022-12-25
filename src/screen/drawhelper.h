@@ -86,7 +86,8 @@ namespace XC {
         Pen,
         Mosaics,
 		Text,
-        SerialNumber
+        SerialNumber,
+        SerialNumberType
 	};
 
     enum class ToolBarOffset {
@@ -131,14 +132,11 @@ struct  XDrawStep
     QPoint p2;                                  // 终点
     QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成
     DrawShape shape = DrawShape::NoDraw;        // 绘画形状
-	int bStyele = 0;                            // refactor 图形的样式, 取代之前  bFill
-    int tbIdx = 0;                              // 某个绘画类型的样式: 为 ParameterBar 的子序号
-    int idxLevel = -1;                          // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
-    static int totalIdx;                        // 所有已绘画类型 的总的序号，越大越上层
-
+	int bStyele = 0;                            // 图形的样式类型：Rectangles、Ellipses、Arrows、Mosaics
+    //int idxLevel = -1;                          // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
     //QPainterPath path;                          // 存储所有绘画类型
 
-	// color, pen width
+	// color, pen width                         // 画笔宽度，也是马赛克模糊块参数
 	QPen pen = QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // 默认红色，画笔宽度为 2px
 	QBrush brush = QBrush(Qt::NoBrush);         // 画刷
 
@@ -152,13 +150,13 @@ struct  XDrawStep
 	QVector<QPoint> custPath;                   // 手绘路径
 
     // Mosaics -----------------------
-	int mscPx = 3;                              // 马赛克默认模糊块
 
     // Text --------------------------
-    QString text;                               // 文字内容
+    QString text;                               // 文字内容； SerialNumber
 	QFont font = QFont("KaiTi", 14);            // 字体
 
     // SerialNumber ------------------
+    static QString serialText;
 
     void clear() {
         p1 = QPoint();
@@ -180,9 +178,8 @@ struct  XDrawStep
         //fontSize = 16;
         //mscPx = 3;
 
-        idxLevel = -1;
+        //idxLevel = -1;
         //g_index = -1;  永不重置
-
     }
 };
 

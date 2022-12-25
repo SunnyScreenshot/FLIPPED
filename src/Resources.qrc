@@ -29,5 +29,9 @@
         <file>resources/tool_para/arrows/arrow_4.svg</file>
         <file>resources/tool/pin.svg</file>
         <file>resources/logo.png</file>
+        <file>resources/tool_para/serialnumber/ellipse_fill.svg</file>
+        <file>resources/tool_para/serialnumber/letters.svg</file>
+        <file>resources/tool_para/serialnumber/numbers.svg</file>
+        <file>resources/tool_para/serialnumber/rectangle_fill.svg</file>
     </qresource>
 </RCC>

@@ -168,7 +168,7 @@ QRect RectCalcu::getRect(QPoint pos1, QPoint pos2)
 	int yMax = qMax<int>(pos1.y(), pos2.y());
 
     if (xMin == xMax && yMin == yMax) // 若是重复点，则会返回 QRect(0, 0, 1, 1);
-        return QRect(0, 0, -1, -1);
+        return QRect(xMin, xMax, 0, 0);
     else
         return QRect(QPoint(xMin, yMin), QPoint(xMax, yMax));
 

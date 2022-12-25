@@ -218,6 +218,8 @@ void ScreenShot::onClearScreen()
 #elif  defined(Q_OS_LINUX)
 #endif
 
+    XDrawStep::serialText = "0_0_0_0";
+
     m_bFirstPress = false;
     m_specifyRts.clear();
 
@@ -300,6 +302,7 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
         m_step.bStyele = property(std::to_string((int)shape).c_str()).value<int>();
     } else if (bText) {
     } else if (bSeriNum) {
+
     } else {
         //XLOG_INFO
     }
@@ -403,22 +406,23 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
         return;
 
     const int idx = tb->objectName().right(1).toInt();
+    auto t = tb->objectName();
     const bool bRect = shape == DrawShape::Rectangles;
     const bool bEllipses = shape == DrawShape::Ellipses;
     const bool bMosaics = shape == DrawShape::Mosaics;
-    const bool bLine = shape == DrawShape::LineWidth;
     const bool bPen = shape == DrawShape::Pen;
     const bool bArrows = shape == DrawShape::Arrows;
     const bool bText = shape == DrawShape::Text;
     const bool bSeriNum = shape == DrawShape::SerialNumber;
 
-    if (bRect || bEllipses || bMosaics) {
+    const bool bLine = shape == DrawShape::LineWidth;
+    const bool bSeriNumType = shape == DrawShape::SerialNumberType;
+
+    if (bRect || bEllipses || bArrows || bMosaics) {
         setProperty(std::to_string((int)shape).c_str(), idx);
         m_step.bStyele = idx;
-
     } else if (bLine) {
         int penWidth = 0;
-
         if (idx == 0)
             penWidth = 1;
         else if (idx == 1)
@@ -429,11 +433,17 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
         m_step.pen.setWidth(penWidth);
         emit sigLineWidthChange(penWidth);
     } else if (bPen) {
-    } else if (bArrows) {
-        setProperty(std::to_string((int)shape).c_str(), idx);
-        m_step.bStyele = idx;
     } else if (bText) {
-    } else if (bSeriNum) {
+    } else if (bSeriNum || bSeriNumType) {
+        // SerialNumber: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
+        auto& list = XDrawStep::serialText.split('_');
+        if (bSeriNum) {
+            m_step.bStyele = idx;
+        } else if (bSeriNumType) {
+            list[0] = QString(QString::number(idx));
+            m_step.serialText = list.join("_");
+        }
+        
     } else {
     }
 }
@@ -510,7 +520,7 @@ bool ScreenShot::getDrawedShapeRect()
     return false;
 }
 
-void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
+void ScreenShot::drawBorderMac(QPainter & pa, const QRect& rt, int num, bool isRound)
 {
 	if (num == 0)
 		return;
@@ -564,7 +574,7 @@ void ScreenShot::drawBorderMac(QPainter & pa, QRect rt, int num, bool isRound)
     pa.restore();
 }
 
-void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
+void ScreenShot::drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound)
 {
     pa.save();
     pa.setRenderHint(QPainter::Antialiasing, true);
@@ -581,27 +591,30 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
 
     const int penWidth = pen.width();
     const int penAssWidth = SELECT_ASSIST_RECT_WIDTH * m_scal;
+    const int penAssWidthDouble = 2 * penAssWidth;
 
-    // hor 且补齐交叉角落的空缺的那一块
-    QLine l1(QPoint(x1 - penWidth / 2, y1), QPoint(x1 + penAssWidth, y1));
-    QLine l2(QPoint(x1 - penWidth / 2, y2), QPoint(x1 + penAssWidth, y2));
-    QLine l3(QPoint(x2 + penWidth / 2, y1), QPoint(x2 - penAssWidth, y1));
-    QLine l4(QPoint(x2 + penWidth / 2, y2), QPoint(x2 - penAssWidth, y2));
+    if (rt.width() >= penAssWidthDouble && rt.height() >= penAssWidthDouble) {
+        // hor 且补齐交叉角落的空缺的那一块
+        QLine l1(QPoint(x1 - penWidth / 2, y1), QPoint(x1 + penAssWidth, y1));
+        QLine l2(QPoint(x1 - penWidth / 2, y2), QPoint(x1 + penAssWidth, y2));
+        QLine l3(QPoint(x2 + penWidth / 2, y1), QPoint(x2 - penAssWidth, y1));
+        QLine l4(QPoint(x2 + penWidth / 2, y2), QPoint(x2 - penAssWidth, y2));
 
-    // ver
-    QLine l5(QPoint(x1, y1), QPoint(x1, y1 + penAssWidth));
-    QLine l6(QPoint(x1, y2), QPoint(x1, y2 - penAssWidth));
-    QLine l7(QPoint(x2, y1), QPoint(x2, y1 + penAssWidth));
-    QLine l8(QPoint(x2, y2), QPoint(x2, y2 - penAssWidth));
+        // ver
+        QLine l5(QPoint(x1, y1), QPoint(x1, y1 + penAssWidth));
+        QLine l6(QPoint(x1, y2), QPoint(x1, y2 - penAssWidth));
+        QLine l7(QPoint(x2, y1), QPoint(x2, y1 + penAssWidth));
+        QLine l8(QPoint(x2, y2), QPoint(x2, y2 - penAssWidth));
 
-    pa.drawLine(l1.translated(QPoint(0, -penWidth / 2)));
-    pa.drawLine(l2.translated(QPoint(0, penWidth / 2)));
-    pa.drawLine(l3.translated(QPoint(0, -penWidth / 2)));
-    pa.drawLine(l4.translated(QPoint(0, penWidth / 2)));
-    pa.drawLine(l5.translated(QPoint(-penWidth / 2, 0)));
-    pa.drawLine(l6.translated(QPoint(-penWidth / 2, 0)));
-    pa.drawLine(l7.translated(QPoint(penWidth / 2, 0)));
-    pa.drawLine(l8.translated(QPoint(penWidth / 2, 0)));
+        pa.drawLine(l1.translated(QPoint(0, -penWidth / 2)));
+        pa.drawLine(l2.translated(QPoint(0, penWidth / 2)));
+        pa.drawLine(l3.translated(QPoint(0, -penWidth / 2)));
+        pa.drawLine(l4.translated(QPoint(0, penWidth / 2)));
+        pa.drawLine(l5.translated(QPoint(-penWidth / 2, 0)));
+        pa.drawLine(l6.translated(QPoint(-penWidth / 2, 0)));
+        pa.drawLine(l7.translated(QPoint(penWidth / 2, 0)));
+        pa.drawLine(l8.translated(QPoint(penWidth / 2, 0)));
+    }
 
     pen.setWidth(XHelper::instance().borderWidth() * m_scal);
     pa.setPen(pen);
@@ -610,6 +623,7 @@ void ScreenShot::drawBorderPS(QPainter& pa, QRect rt, bool isRound)
 }
 
 // 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；true 使用上一个环境的
+// 此函数内禁止使用 m_step，极其容易导致错误
 void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 {
     if (DrawShape::NoDraw == step.shape
@@ -668,6 +682,25 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
 	}
+    case DrawShape::Mosaics: {
+		if (!m_currPixmap || step.rt.isEmpty())  // 优化，删除就很明显
+			return;
+
+        auto rt = QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio());
+        QPixmap mosaicPixmap = m_currPixmap->copy(rt);
+        mosaicPixmap.save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/mosaicPixmap_123456.png");
+
+        const int mscPx = step.pen.width();
+        if (step.bStyele == 0) {
+            const QPixmap* pix = XHelper::instance().SetMosaicSmooth(&mosaicPixmap, mscPx);
+            pa.drawPixmap(step.rt, *pix);
+		} else if (step.bStyele == 1) {
+            const QImage img = XHelper::instance().SetMosaicPixlelated(&mosaicPixmap, mscPx);
+            pa.drawImage(step.rt, img);
+		}
+
+        break;
+    }
     case DrawShape::Text: {
         // Ref: http://qtdebug.com/qtbook-paint-text
         //      https://doc.qt.io/qt-5/qpainter.html#drawText-5
@@ -686,20 +719,35 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         }
         break;
     }
-    case DrawShape::Mosaics: {
-		if (!m_currPixmap || step.rt.isEmpty())  // 优化，删除就很明显
-			return;
+    case DrawShape::SerialNumber:
+    case DrawShape::SerialNumberType: {
+        if (step.text.isEmpty())
+            return;
 
-        auto rt = QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio());
-        QPixmap mosaicPixmap = m_currPixmap->copy(rt);
-        mosaicPixmap.save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/mosaicPixmap_123456.png");
-        if (step.bStyele == 0) {
-            const QPixmap* pix = XHelper::instance().SetMosaicSmooth(&mosaicPixmap, step.mscPx);
-            pa.drawPixmap(step.rt, *pix);
-		} else if (step.bStyele == 1) {
-            const QImage img = XHelper::instance().SetMosaicPixlelated(&mosaicPixmap, step.mscPx);
-            pa.drawImage(step.rt, img);
-		}
+        // SerialNumber: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
+        const int width = qMax<int>(32, step.pen.width());
+        const QSize size(width, width);
+        const int halfSize(size.width() / 2);
+        const QRect rt(step.p1 - QPoint(halfSize, halfSize), size);
+        
+        pa.save();
+        pa.setBrush(step.pen.color());
+        QColor pen(Qt::white);
+        pa.setPen(pen);
+        step.bStyele == 0 ? pa.drawRoundedRect(rt, 8, 8) : pa.drawEllipse(rt);
+        if (pa.brush().color() == Qt::white)
+            pen = Qt::black;
+
+        pa.setBrush(Qt::NoBrush);
+        pa.setPen(pen);
+        const auto& list = step.text.split('_');
+        if (list[0].toInt() == 0) {
+            pa.drawText(rt, Qt::AlignCenter, list[2]);
+        } else {
+            pa.drawText(rt, Qt::AlignCenter, QString('A' + list[3].toInt() - 1));
+        }
+
+        pa.restore();
 
         break;
     }
@@ -712,23 +760,12 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
 
 bool ScreenShot::isDrawShape(XDrawStep& step)
 {
+    bool bSerial = m_step.shape == DrawShape::SerialNumber || m_step.shape == DrawShape::SerialNumberType;
+    if (bSerial && !step.text.isEmpty())
+        return true;
+
     if (step.p1 == step.p2)
         return false;
-
-    //if (step.shape == DrawShape::Rectangles) {
-    //} else if (step.shape == DrawShape::Ellipses) {
-
-    //} else if (step.shape == DrawShape::Pen) {
-
-    //} else if (step.shape == DrawShape::Arrows) {
-
-    //} else if (step.shape == DrawShape::Mosaics) {
-
-    //} else if (step.shape == DrawShape::Text || step.shape == DrawShape::NoDraw) {
-    //    return false; // 特殊处理，或者不处理
-    //} else {
-    //    return true; // 避免警告
-    //}
 
     return true;
 }
@@ -957,7 +994,7 @@ void ScreenShot::savePixmap(bool quickSave /*= true*/, bool autoSave /*= true*/)
 }
 
 // 样式一: 浅蓝色
-void ScreenShot::drawBorderBlue(QPainter& pa, QRect rt, int num, bool isRound)
+void ScreenShot::drawBorderDeepin(QPainter& pa, const QRect& rt, int num, bool isRound)
 {
     if (num == 0)
         return;
@@ -1074,7 +1111,9 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setWidth(penWidth / 2);
 	pen.setColor(Qt::green);
 	pa.setPen(pen);
-	drawStep(pa, m_step, false);
+    bool bDrawSerial = m_step.shape == DrawShape::SerialNumber || m_step.shape == DrawShape::SerialNumberType;
+    if (!bDrawSerial)
+        drawStep(pa, m_step, false);
 
     // drawWinInfo(pa);
     selectedShapeMove(pa);
@@ -1150,6 +1189,7 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
         .arg(barMaxTop).arg(barMaxBottom).arg(m_virGeom.left()).arg(m_virGeom.top()).arg(m_virGeom.right()).arg(m_virGeom.bottom()));
     pa.drawText(tPosText - QPoint(0, space * 12), QString("rtScrn 左上右下(%1, %2, %3 * %4) topLimit:%5  bottomLimit:%6")
         .arg(rtScrn.left()).arg(rtScrn.top()).arg(rtScrn.right()).arg(rtScrn.bottom()).arg(topLimit).arg(bottomLimit));
+    pa.drawText(tPosText - QPoint(0, space * 13), QString("XDrawStep::serialText:%1").arg(XDrawStep::serialText));
 #endif
 
 #if 0
@@ -1239,12 +1279,12 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa)
     // 绘画边框样式
     const QString style = XHelper::instance().boardStyle();
     if (style == "flipped") {
-        drawBorderPS(pa, rt);
+        drawBorderFlipped(pa, rt);
     } else if (style == "mac") {
         drawBorderMac(pa, rt);
     } else if (style == "deepin") {
         pa.drawRect(rt);
-        drawBorderBlue(pa, rt);
+        drawBorderDeepin(pa, rt);
     }
 
     pa.restore();
@@ -1340,7 +1380,6 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
                     
                 } else {       // 显示中
                     m_step.text = m_edit->toPlainText();
-                    m_step.idxLevel = m_step.totalIdx++;
                     m_step.rt.setTopLeft(m_step.p2);
                     m_vDrawed.push_back(m_step);  // 暂时特例：绘画文字为单独处理
                     m_edit->clear();
@@ -1350,6 +1389,20 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
             }
 
             m_step.p2 = m_step.p1;
+        } else if (m_step.shape == DrawShape::SerialNumber || m_step.shape == DrawShape::SerialNumberType) {
+            if (m_step.serialText.isEmpty())
+                return;
+            // SerialNumber: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
+            auto& list = m_step.serialText.split('_');
+
+            if (list[0].toInt() == 0) {
+                list[2] = QString::number(list[2].toInt() + 1);
+            } else if (list[0].toInt() == 1) {
+                list[3] = QString::number(list[3].toInt() + 1);
+            }
+
+            m_step.serialText = list.join("_");
+            m_step.text = m_step.serialText;
         }
 
 	} else {  // 则可能为移动、拉伸、等待状态
@@ -1439,7 +1492,6 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         if (m_step.shape != DrawShape::Text && m_step.shape != DrawShape::NoDraw) {
             if (isDrawShape(m_step)) {
                 m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
-                m_step.idxLevel = m_step.totalIdx++;
                 m_step.clear();
             }
         }

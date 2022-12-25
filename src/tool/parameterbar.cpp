@@ -35,12 +35,13 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_orien(orien)
     , m_layout(nullptr)
     , m_colorBar(new ColorParaBar())
-    , m_serialBar(new XComboBox(this))
     , m_rectBar(nullptr)
     , m_ellipseBar(nullptr)
     , m_mosaicBar(nullptr)
     , m_arrowBar(nullptr)
     , m_lienWidthBar(nullptr)
+    , m_serialnumberShape(nullptr)
+    , m_serialnumberType(nullptr)
 {
     initUI();
 
@@ -160,6 +161,16 @@ void ParameterBar::initLineWidthBar()
     creatorParaBar(m_lienWidthBar, path, list);
 }
 
+void ParameterBar::initSerialnumberBar()
+{
+    QString path(":/resources/tool_para/serialnumber/");
+    QStringList list = { "rectangle_fill", "ellipse_fill" };
+    creatorParaBar(m_serialnumberShape, path, list);
+
+    QStringList listType = { "numbers", "letters" };
+    creatorParaBar(m_serialnumberType, path, listType);
+}
+
 void ParameterBar::removeAllBar()
 {
     if (!m_layout)
@@ -237,7 +248,8 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         ADDWIDGET_AND_SHOE(m_ellipseBar, true);  // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
         ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::SerialNumber) {
-        ADDWIDGET_AND_SHOE(m_ellipseBar, true);  // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
+        ADDWIDGET_AND_SHOE(m_serialnumberShape, true);
+        ADDWIDGET_AND_SHOE(m_serialnumberType, true);
         ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else {
         XLOG_ERROR("[shape] is not any enumeration.");
@@ -337,7 +349,10 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
                 //} else {
                 //}
             } else if (parent == m_lienWidthBar) {
-                shap = DrawShape::LineWidth;   // 或者 Pen
+                shap = DrawShape::LineWidth;   // or Pen
+            } else if (parent == m_serialnumberShape || parent == m_serialnumberType) {
+                if (parent == m_serialnumberShape) shap = DrawShape::SerialNumber;
+                if (parent == m_serialnumberType) shap = DrawShape::SerialNumberType;
             } else {
             }
 
@@ -361,6 +376,7 @@ void ParameterBar::initUI()
     initMosaicBar();
     initArrowBar();
     initLineWidthBar();
+    initSerialnumberBar();
 
     if (m_colorBar)
         m_colorBar->setVisible(false);
@@ -377,12 +393,6 @@ void ParameterBar::initUI()
 
     setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(PB_ITEM_SPACE);
-    
-    m_serialBar->setFixedSize(COMBOBOX_WIDTH * m_scal, COMBOBOX_HEIGHT * m_scal);
-    QStringList items;
-    items << "①" << "a";
-    m_serialBar->addItems(items);
-    m_layout->addWidget(m_serialBar);
 
     m_layout->addWidget(m_rectBar);
     addSpacer();
@@ -394,8 +404,11 @@ void ParameterBar::initUI()
     addSpacer();
     m_layout->addWidget(m_lienWidthBar);
     addSpacer();
+    m_layout->addWidget(m_serialnumberShape);
+    addSpacer();
+    m_layout->addWidget(m_serialnumberType);
+    addSpacer();
     m_layout->addWidget(m_colorBar);
-
 
 //    adjustSize();  // 布局后重新计算一下大小尺寸
 //    resize(size().width() + bbMarginHor * 2, size().height() + bbMarginVer * 2);

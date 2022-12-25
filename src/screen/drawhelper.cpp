@@ -29,7 +29,7 @@
 #include <QDateTime>
 #include <QStandardPaths>
 
-int XDrawStep::totalIdx = 0;
+QString XDrawStep::serialText = "0_0_0_0";
 
 XHelper::XHelper()
     : QObject(nullptr)

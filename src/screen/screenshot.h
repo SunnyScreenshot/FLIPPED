@@ -95,9 +95,9 @@ private:
     void showAllDrawedShape(QPainter& pa);
 
     // [paintEvent] refactor
-    void drawBorderBlue(QPainter& pa, QRect rt, int num = 8, bool isRound = true);   // Blue 边框样式
-    void drawBorderMac(QPainter& pa, QRect rt, int num = 8, bool isRound = true);    // Mac 边框样式
-    void drawBorderPS(QPainter& pa, QRect rt, bool isRound = false);                 // Flipped 边框样式
+    void drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound = false);
+    void drawBorderMac(QPainter& pa, const QRect& rt, int num = 8, bool isRound = true);
+    void drawBorderDeepin(QPainter& pa, const QRect& rt, int num = 8, bool isRound = true);
 
     void drawWinInfo(QPainter& pa);                                                  // 绘画 窗口信息 path title 等
     void selectedShapeMove(QPainter& pa);                                            // flameshot 选中图形的效果
