@@ -38,6 +38,7 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_rectBar(nullptr)
     , m_ellipseBar(nullptr)
     , m_mosaicBar(nullptr)
+    , m_textBar(nullptr)
     , m_arrowBar(nullptr)
     , m_lienWidthBar(nullptr)
     , m_serialnumberShape(nullptr)
@@ -86,7 +87,7 @@ void ParameterBar::addSpacer()
         m_layout->addWidget(new XHorizontalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
 }
 
-void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items)
+void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive)
 {
     if (!manageBar)
         manageBar = new ManageBar(m_orien, this);
@@ -97,7 +98,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
     }
 
     QButtonGroup* group = new QButtonGroup(this);
-    group->setExclusive(true); // toolBtn 互斥
+    group->setExclusive(exclusive); // toolBtn 互斥
 
     auto it = map.begin();
     for (int i = 0; i < items.size(); ++i) {
@@ -110,8 +111,9 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, QString& path,
         tb->setAutoRaise(true);   // 自动浮动模式
         tb->setCheckable(true);
         tb->setChecked(false);
+
         if (i == 0) {  // 第一个为默认选中
-            tb->setChecked(true);
+            tb->setChecked(exclusive);
             tb->setIcon(XHelper::instance().ChangeSVGColor(it.value(), "rect", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
         }
 
@@ -145,6 +147,13 @@ void ParameterBar::initMosaicBar()
     QString path(":/resources/tool_para/mosaics/");
     QStringList list = { "smooth", "pixelated" };
     creatorParaBar(m_mosaicBar, path, list);
+}
+
+void ParameterBar::initTextBar()
+{
+    QString path(":/resources/tool_para/text/");
+    QStringList list = { "bold", "italic", "outline" };
+    creatorParaBar(m_textBar, path, list, false);
 }
 
 void ParameterBar::initArrowBar()
@@ -245,7 +254,8 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         ADDWIDGET_AND_SHOE(m_mosaicBar, true);
         ADDWIDGET_AND_SHOE(m_lienWidthBar, false);
     } else if (shape == DrawShape::Text) {
-        ADDWIDGET_AND_SHOE(m_ellipseBar, true);  // TODO 2022.06.27： 需要替换为 font size 大小的 combobox
+        ADDWIDGET_AND_SHOE(m_textBar, true);
+        ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
         ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::SerialNumber) {
         ADDWIDGET_AND_SHOE(m_serialnumberShape, true);
@@ -339,15 +349,12 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
                 shap = DrawShape::Rectangles;
             } else if (parent == m_ellipseBar) {
                 shap = DrawShape::Ellipses;
-            } else if (parent == m_mosaicBar) {
-                shap = DrawShape::Mosaics;
             } else if (parent == m_arrowBar) {
                 shap = DrawShape::Arrows;
-                //if (name == cTb1) {
-                //} else if (name == cTb2) {
-                //} else if (name == cTb3) {
-                //} else {
-                //}
+            } else if (parent == m_mosaicBar) {
+                shap = DrawShape::Mosaics;
+            } else if (parent == m_textBar) {
+                shap = DrawShape::Text;
             } else if (parent == m_lienWidthBar) {
                 shap = DrawShape::LineWidth;   // or Pen
             } else if (parent == m_serialnumberShape || parent == m_serialnumberType) {
@@ -374,6 +381,7 @@ void ParameterBar::initUI()
     initRectBar();
     initEllipseBar();
     initMosaicBar();
+    initTextBar();
     initArrowBar();
     initLineWidthBar();
     initSerialnumberBar();
@@ -382,34 +390,16 @@ void ParameterBar::initUI()
         m_colorBar->setVisible(false);
 
     m_layout->setMargin(0);
-    //const int bbMarginHor = BAR_MARGIN_HOR;
-    //int bbMarginVer = BAR_MARGIN_VER;
-    //if (m_colorBar->isVisible()) {
-    //    bbMarginVer = BAR_MARGIN_VER_HAS_COLOR_PARA;
-    //    m_layout->setContentsMargins(bbMarginHor, 0, 0, 0);
-    //} else {
-    //    m_layout->setContentsMargins(bbMarginHor, bbMarginVer, bbMarginHor, bbMarginVer);
-    //}
-
-    setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(PB_ITEM_SPACE);
+    setContentsMargins(0, 0, 0, 0);
 
     m_layout->addWidget(m_rectBar);
-    addSpacer();
     m_layout->addWidget(m_ellipseBar);
-    addSpacer();
-    m_layout->addWidget(m_mosaicBar);
-    addSpacer();
     m_layout->addWidget(m_arrowBar);
-    addSpacer();
     m_layout->addWidget(m_lienWidthBar);
-    addSpacer();
+    m_layout->addWidget(m_mosaicBar);
+    m_layout->addWidget(m_textBar);
     m_layout->addWidget(m_serialnumberShape);
-    addSpacer();
     m_layout->addWidget(m_serialnumberType);
-    addSpacer();
     m_layout->addWidget(m_colorBar);
-
-//    adjustSize();  // 布局后重新计算一下大小尺寸
-//    resize(size().width() + bbMarginHor * 2, size().height() + bbMarginVer * 2);
 }

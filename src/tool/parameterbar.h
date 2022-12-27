@@ -35,10 +35,11 @@ private:
     void addWidget(QWidget *w);
     void addSpacer();
 
-    void creatorParaBar(QPointer<ManageBar>& manageBar, QString& path, QStringList items);                    // 比如矩形等
+    void creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive = true);
     void initRectBar();
     void initEllipseBar();
     void initMosaicBar();
+    void initTextBar();
     void initArrowBar();
     void initLineWidthBar();
     void initSerialnumberBar();
@@ -67,12 +68,13 @@ private:
     QBoxLayout* m_layout;
 
     QPointer<ColorParaBar> m_colorBar;                     // 取色板
+    QPointer<ManageBar>    m_lienWidthBar;                 // 线宽
                                                            
     QPointer<ManageBar>    m_rectBar;                      // 矩形     TODO 2022.05.26 此几个变量也可以省略掉， 通过slot 里面的 传入 btn 的 partent来控制即可
     QPointer<ManageBar>    m_ellipseBar;                   // 圆形
-    QPointer<ManageBar>    m_mosaicBar;                    // 马赛克
     QPointer<ManageBar>    m_arrowBar;                     // 箭头
-    QPointer<ManageBar>    m_lienWidthBar;                 // 线宽
+    QPointer<ManageBar>    m_mosaicBar;                    // 马赛克
+    QPointer<ManageBar>    m_textBar;                      // 文本
     QPointer<ManageBar>    m_serialnumberShape;            // 序号图形
     QPointer<ManageBar>    m_serialnumberType;             // 序号类型
 };

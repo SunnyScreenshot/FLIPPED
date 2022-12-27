@@ -32,41 +32,6 @@ class QPoint;
 class QDomElement;
 
 namespace XC {
-	//enum ScrnStatus {
-	//	// 基础的几种状态
-	//	SS_WaitBase,                                // 基础的等待状态（未有，和已有矩形局域）
-	//	SS_SelectBase,                              // 基础的选中状态
-	//	SS_MoveBase,                                // 基础的移动状态
-	//	SS_DrawBase,                                // 基础的绘画状态
-	//	SS_StretchBase,                             // 基础的拉伸状态
-	//};
-
-	//enum ScreenStatus {                                  // ------------（矩形区域）------------
-	//	Auto,     // 自动检测
-	//	Custom,   // 手动拖曳
-
-	//	Left,
-	//	Right,
-	//	Top,
-	//	Bottom,
-	//	TopLeft,
-	//	TopRight,
-	//	BottomLeft,
-	//	BottomRight,
-
-	//	Width = Left | Right,                    // 左、右
-	//	Height = Top | Bottom,                   // 上、下
-	//	Edge = Width | Height,                   // 任意一边（左、右、上、下）
-	//	TLAndBR = TopLeft | BottomRight,         // 斜对角（左上、右下）
-	//	TRAndBL = TopRight | BottomLeft,         // 斜对角（右上、左下）
-	//	Corner = TLAndBR | TRAndBL,              // 斜任意一斜角（左上、右下、右上、左下）
-	//	Frame = Edge | Corner,                   // 矩形任意一边或一斜角（左、右、上、下；左上、右下、右上、左下）
-
-	//	UnknowCursorType                         // 未知
-	//};
-	//Q_DECLARE_FLAGS(CursorTypes, ScreenStatus)     // 枚举 ScrnType 生成宏 CursorTypes
-	//	Q_DECLARE_OPERATORS_FOR_FLAGS(CursorTypes)   // 重载宏 ScrnType 的 |() 函数
-
 	// C++11 新增带作用域的枚举，用 enum class  或enum struct（两者等价）声明。
 	// https://blog.csdn.net/luckysym/article/details/1666114
 	enum class DrawState {
@@ -111,6 +76,21 @@ namespace XC {
 		RecesedArrowToRecesedArrow,
 		ArrowToArrow
 	};
+
+    enum class ShapePara {  // 某种具体图形，互斥的参数的第一个
+        SP_0,
+        SP_1,
+        SP_2,
+        SP_3
+    };
+
+    enum class TextPara {
+        TP_Bold = 0x01,
+        TP_Italic = 0x02,
+        TP_Outline = 0x04
+    };
+    Q_DECLARE_FLAGS(TextParas, TextPara)       // 枚举 TextPara 生成宏 TextParas
+	Q_DECLARE_OPERATORS_FOR_FLAGS(TextParas)   // 重载宏 TextParas 的 |() 函数
 }
 
 using namespace XC;
@@ -132,13 +112,13 @@ struct  XDrawStep
     QPoint p2;                                  // 终点
     QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成
     DrawShape shape = DrawShape::NoDraw;        // 绘画形状
-	int bStyele = 0;                            // 图形的样式类型：Rectangles、Ellipses、Arrows、Mosaics
-    //int idxLevel = -1;                          // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
-    //QPainterPath path;                          // 存储所有绘画类型
+    ShapePara shapePara = ShapePara::SP_0;      // 图形的样式类型：Rectangles、Ellipses、Arrows、Mosaics
+    //int idxLevel = -1;                        // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
+    //QPainterPath path;                        // 存储所有绘画类型
 
 	// color, pen width                         // 画笔宽度，也是马赛克模糊块参数
 	QPen pen = QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // 默认红色，画笔宽度为 2px
-	QBrush brush = QBrush(Qt::NoBrush);         // 画刷
+	QBrush brush = QBrush(Qt::red, Qt::SolidPattern);
 
 	// Rectangles --------------------
 	// Ellipses ----------------------
@@ -154,6 +134,7 @@ struct  XDrawStep
     // Text --------------------------
     QString text;                               // 文字内容； SerialNumber
 	QFont font = QFont("KaiTi", 14);            // 字体
+    TextParas textParas;
 
     // SerialNumber ------------------
     static QString serialText;
@@ -173,13 +154,6 @@ struct  XDrawStep
         //lineEnd = LineEnds::EmptyToEmpty;
         //lineDashe = LineDashes::SolidLine;
         custPath.clear();
-        //text = "==Test Text==";
-        //font = QFont();
-        //fontSize = 16;
-        //mscPx = 3;
-
-        //idxLevel = -1;
-        //g_index = -1;  永不重置
     }
 };
 

@@ -22,7 +22,7 @@ XTextWidget::XTextWidget(QWidget *parent)
 {
     XLOG_DEBUG("rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
     
-    setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
+    //setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
     connect(this, &XTextWidget::textChanged, this, &XTextWidget::adjustSize);
     connect(this, &XTextWidget::textChanged, this, &XTextWidget::emitTextUpdated);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -101,11 +101,6 @@ void XTextWidget::setTextColor(const QColor & c)
 {
     QString s(QStringLiteral("XTextWidget { background: transparent; color: %1; }"));
     setStyleSheet(s.arg(c.name()));
-
-    //// 字体描边
-    //QTextCharFormat format;
-    //format.setTextOutline(QPen(Qt::white, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    //mergeCurrentCharFormat(format);
 }
 
 void XTextWidget::setAlignment(Qt::AlignmentFlag alignment)

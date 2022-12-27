@@ -278,16 +278,16 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
     m_step.shape = shape;
     const bool bRect = shape == DrawShape::Rectangles;
     const bool bEllipses = shape == DrawShape::Ellipses;
-    const bool bMosaics = shape == DrawShape::Mosaics;
-    const bool bLine = shape == DrawShape::LineWidth;
+    const bool bLineWidth = shape == DrawShape::LineWidth;
     const bool bPen = shape == DrawShape::Pen;
     const bool bArrows = shape == DrawShape::Arrows;
+    const bool bMosaics = shape == DrawShape::Mosaics;
     const bool bText = shape == DrawShape::Text;
     const bool bSeriNum = shape == DrawShape::SerialNumber;
 
-    if (bRect || bEllipses || bMosaics) {
-        m_step.bStyele = property(std::to_string((int)shape).c_str()).value<int>();
-    } else if (bLine) {
+    if (bRect || bEllipses || bArrows || bPen || bMosaics || bText || bSeriNum) {
+        m_step.shapePara = static_cast<ShapePara>((int)(property(std::to_string((int)shape).c_str()).value<int>()));
+    } else if (bLineWidth) {
         //int idx = property(std::to_string((int)shape).c_str()).value<int>();
         //int penWidth = 0;
 
@@ -297,12 +297,6 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
         //    penWidth = 2;
         //else if (idx == 2)
         //    penWidth = 4;
-    } else if (bPen) {
-    } else if (bArrows) {
-        m_step.bStyele = property(std::to_string((int)shape).c_str()).value<int>();
-    } else if (bText) {
-    } else if (bSeriNum) {
-
     } else {
         //XLOG_INFO
     }
@@ -415,30 +409,33 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     const bool bText = shape == DrawShape::Text;
     const bool bSeriNum = shape == DrawShape::SerialNumber;
 
-    const bool bLine = shape == DrawShape::LineWidth;
+    const bool bLineWidth = shape == DrawShape::LineWidth;
     const bool bSeriNumType = shape == DrawShape::SerialNumberType;
 
     if (bRect || bEllipses || bArrows || bMosaics) {
         setProperty(std::to_string((int)shape).c_str(), idx);
-        m_step.bStyele = idx;
-    } else if (bLine) {
-        int penWidth = 0;
-        if (idx == 0)
-            penWidth = 1;
-        else if (idx == 1)
-            penWidth = 4;
-        else if (idx == 2)
-            penWidth = 10;
-
-        m_step.pen.setWidth(penWidth);
-        emit sigLineWidthChange(penWidth);
+        m_step.shapePara = static_cast<ShapePara>(idx);
+    } else if (bLineWidth) {
+        int lineWidth[3] = { 1, 4, 10 };
+        m_step.pen.setWidth(lineWidth[idx]);
+        emit sigLineWidthChange(lineWidth[idx]);
     } else if (bPen) {
     } else if (bText) {
+        const bool& checked = tb->isChecked();
+        if (idx == 0) m_step.textParas.setFlag(TextPara::TP_Bold, checked);
+        else if (idx == 1) m_step.textParas.setFlag(TextPara::TP_Italic, checked);
+        else if (idx == 2) m_step.textParas.setFlag(TextPara::TP_Outline, checked);
+
+        QFont tfont(m_step.font);
+        tfont.setBold(m_step.textParas & TextPara::TP_Bold);
+        tfont.setItalic(m_step.textParas & TextPara::TP_Italic);
+        tfont.setStrikeOut(m_step.textParas & TextPara::TP_Outline);
+        m_edit->setFont(tfont);
     } else if (bSeriNum || bSeriNumType) {
         // SerialNumber: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
         auto& list = XDrawStep::serialText.split('_');
         if (bSeriNum) {
-            m_step.bStyele = idx;
+            m_step.shapePara = static_cast<ShapePara>(idx);
         } else if (bSeriNumType) {
             list[0] = QString(QString::number(idx));
             m_step.serialText = list.join("_");
@@ -465,10 +462,12 @@ void ScreenShot::onLineWidthChange(int width)
 void ScreenShot::onSelColor(QColor col)
 {
     m_step.pen.setColor(col);
+    m_step.brush.setColor(col);
+    //m_step.pen.setStyle(Qt::SolidLine);
+    //m_step.brush.setStyle(Qt::SolidPattern);
 
-    if (m_step.shape == DrawShape::Text) {
+    if (m_step.shape == DrawShape::Text)
         m_edit->setTextColor(col);
-    }
 }
 
 // 获取虚拟屏幕截图
@@ -622,56 +621,42 @@ void ScreenShot::drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound)
     pa.restore();
 }
 
-// 绘画当前类型的一个图案形状; isUseOwn 为 true 使用自带的画笔等；true 使用上一个环境的
 // 此函数内禁止使用 m_step，极其容易导致错误
-void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
+void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
 {
-    if (DrawShape::NoDraw == step.shape
-        || (m_pCurrShape == &step && m_rtCalcu.scrnType == ScrnType::Move)) // 选中图形的处于移动状态，跳过这不绘画
-        return;
+    if (DrawShape::NoDraw == step.shape) return;
+    if (m_rtCalcu.scrnType == ScrnType::Move && m_pCurrShape == &step) return;  // 选中图形的处于移动状态，跳过这不绘画
 
     //pa.save();
     //pa.setRenderHint(QPainter::SmoothPixmapTransform, true);
     //pa.setRenderHint(QPainter::HighQualityAntialiasing, true);
     pa.setRenderHint(QPainter::Antialiasing, true);
+    pa.setPen(step.pen);
+    pa.setBrush(step.brush);
+    pa.setFont(step.font);
 
-    if (!isUseEnvContext) {
-        if (step.bStyele == 0){
-            //step.brush.setColor(Qt::NoBrush);
-            step.brush.setStyle(Qt::NoBrush);
-        } else if (step.bStyele == 1) {
-            step.brush.setColor(step.pen.color());
-            step.brush.setStyle(Qt::SolidPattern);
-        }
+    if (step.shapePara == ShapePara::SP_0) pa.setBrush(Qt::NoBrush);
 
-        pa.setPen(step.pen);
-        pa.setBrush(step.brush);
-        pa.setFont(step.font);
-    }
+    //qDebug() << "pen:" << step.pen.color().name() << "  " << step.pen.style();
+    //qDebug() << "brush:" << step.brush.color().name() << "  " << step.brush.style();
 
     switch (step.shape) {
     case DrawShape::Rectangles: {
-		if (step.rt.isEmpty())
-			break;
+		if (!step.rt.isEmpty())
+            pa.drawRect(step.rt);
 
-        pa.drawRect(step.rt);
         break;
     }
     case DrawShape::Ellipses: {
-		if (step.rt.isEmpty())
-			break;
+		if (!step.rt.isEmpty())
+            pa.drawEllipse(step.rt.center(), step.rt.width() / 2, step.rt.height() / 2);
 
-        pa.drawEllipse(step.rt.center(), step.rt.width() / 2, step.rt.height() / 2);
         break;
     }
     case DrawShape::Arrows: {
-		step.brush.setColor(step.pen.color());   // TODO 2022.01.16: 可以优化到上面去的 if 判断
-		step.brush.setStyle(Qt::SolidPattern);
-		pa.setBrush(step.brush);
-
-        if (step.bStyele == 0) {
+        if (step.shapePara == ShapePara::SP_0) {
             pa.drawLine(step.p1, step.p2);
-        } else if (step.bStyele == 1 || step.bStyele == 2) {
+        } else if (step.shapePara == ShapePara::SP_1 || step.shapePara == ShapePara::SP_2 || step.shapePara == ShapePara::SP_3) {
             pa.drawLine(XHelper::instance().GetShorterLine(step.p1, step.p2));  // 0, 1, 2
             QPainterPath arrowPath = XHelper::instance().GetArrowHead(step.p1, step.p2);
             pa.fillPath(arrowPath, step.brush);
@@ -691,10 +676,10 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         mosaicPixmap.save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/mosaicPixmap_123456.png");
 
         const int mscPx = step.pen.width();
-        if (step.bStyele == 0) {
+        if (step.shapePara == ShapePara::SP_0) {
             const QPixmap* pix = XHelper::instance().SetMosaicSmooth(&mosaicPixmap, mscPx);
             pa.drawPixmap(step.rt, *pix);
-		} else if (step.bStyele == 1) {
+		} else if (step.shapePara == ShapePara::SP_1) {
             const QImage img = XHelper::instance().SetMosaicPixlelated(&mosaicPixmap, mscPx);
             pa.drawImage(step.rt, img);
 		}
@@ -702,20 +687,19 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         break;
     }
     case DrawShape::Text: {
-        // Ref: http://qtdebug.com/qtbook-paint-text
-        //      https://doc.qt.io/qt-5/qpainter.html#drawText-5
+        // Ref: http://qtdebug.com/qtbook-paint-text  https://doc.qt.io/qt-5/qpainter.html#drawText-5
         if (!step.text.isEmpty() && m_edit) {
-            const QFontMetrics fm(step.font);
+            auto tFont(step.font);
+            tFont.setBold(step.textParas & TextPara::TP_Bold);
+            tFont.setItalic(step.textParas & TextPara::TP_Italic);
+            tFont.setStrikeOut(step.textParas & TextPara::TP_Outline);
+
+            const QFontMetrics fm(tFont);
             const int val = 5;
             int flags = Qt::TextWordWrap;
             QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
-
-            pa.setFont(step.font);
+            pa.setFont(tFont);
             pa.drawText(QRect(step.rt.topLeft() + QPoint(val, val), textBoundingRect.size()), flags, step.text);
-
-            //const QMargins& margins = m_edit->contentsMargins();
-            //QPoint pos(step.rt.topLeft() + QPoint(margins.left() + val, margins.top() + val + fm.ascent()));    // Offset to get the visual "right"
-            //pa.drawText(pos, step.text);
         }
         break;
     }
@@ -734,7 +718,7 @@ void ScreenShot::drawStep(QPainter& pa, XDrawStep& step, bool isUseEnvContext)
         pa.setBrush(step.pen.color());
         QColor pen(Qt::white);
         pa.setPen(pen);
-        step.bStyele == 0 ? pa.drawRoundedRect(rt, 8, 8) : pa.drawEllipse(rt);
+        step.shapePara == ShapePara::SP_0 ? pa.drawRoundedRect(rt, 8, 8) : pa.drawEllipse(rt);
         if (pa.brush().color() == Qt::white)
             pen = Qt::black;
 
@@ -965,12 +949,12 @@ void ScreenShot::whichShape()
         path.setFillRule(Qt::OddEvenFill);
         if (it->shape == DrawShape::Rectangles) {
             path.addEllipse(rtOut);
-            if (it->bStyele == 0)
+            if (it->shapePara == ShapePara::SP_0)
                 path.addEllipse(rtIn);
         } else if (it->shape == DrawShape::Ellipses) {
 
             path.addEllipse(rtOut.center(), rtOut.width() / 2, rtOut.height() / 2);
-            if (it->bStyele == 0)
+            if (it->shapePara == ShapePara::SP_0)
                 path.addEllipse(rtIn.center(), rtIn.width() / 2, rtIn.height() / 2);
         } else if (it->shape == DrawShape::Arrows) {
             // TODO 2022.07.12: 倾斜的矩形 + 三角形； 旋转坐标轴后绘画？
@@ -1113,7 +1097,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 	pa.setPen(pen);
     bool bDrawSerial = m_step.shape == DrawShape::SerialNumber || m_step.shape == DrawShape::SerialNumberType;
     if (!bDrawSerial)
-        drawStep(pa, m_step, false);
+        drawStep(pa, m_step);
 
     // drawWinInfo(pa);
     selectedShapeMove(pa);
@@ -1370,6 +1354,14 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
             if (m_selBar->isVisible() && QRect(m_selBar->mapToGlobal(QPoint(0, 0)), m_selBar->size()).contains(m_step.p1))
                 return;
 
+            //if (m_step.bStyele == 0) {
+            //    m_step.font.setBold(true);
+            //} else if (m_step.bStyele == 1) {
+            //    m_step.font.setItalic(true);
+            //} else if (m_step.bStyele == 2) {
+            //    m_step.font.setOverline(true);
+            //}
+
             m_edit->move(m_step.p1);
             const QRect rtEdit(mapFromGlobal(m_edit->mapToGlobal(QPoint(0, 0))), m_edit->size());
             if (!rtEdit.contains(m_step.p1, true)) {  // 编辑完成 || 初次编辑
@@ -1530,12 +1522,13 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     if (m_step.shape == DrawShape::Text) {
         m_step.font.setPointSize(m_step.font.pointSize() + numSteps.y());
         m_edit->setFont(m_step.font);
+        emit sigLineWidthChange(m_step.font.pointSize());
     } else {
         m_step.pen.setWidth(m_step.pen.width() + numSteps.y());
-        if (m_step.pen.width() <= 0)
-            m_step.pen.setWidth(1);
-        if (m_step.pen.width() >= 100)
-            m_step.pen.setWidth(100);
+        const int mix = 1;
+        const int max = 100;
+        if (m_step.pen.width() <= mix) m_step.pen.setWidth(mix);
+        if (m_step.pen.width() >= max) m_step.pen.setWidth(max);
 
         emit sigLineWidthChange(m_step.pen.width());
     }

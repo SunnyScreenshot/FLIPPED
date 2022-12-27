@@ -33,5 +33,8 @@
         <file>resources/tool_para/serialnumber/letters.svg</file>
         <file>resources/tool_para/serialnumber/numbers.svg</file>
         <file>resources/tool_para/serialnumber/rectangle_fill.svg</file>
+        <file>resources/tool_para/text/bold.svg</file>
+        <file>resources/tool_para/text/italic.svg</file>
+        <file>resources/tool_para/text/outline.svg</file>
     </qresource>
 </RCC>

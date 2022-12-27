@@ -85,7 +85,7 @@ private:
     bool drawToCurrPixmap();
     bool getDrawedShapeRect();
 
-    void drawStep(QPainter& pa, XDrawStep &step, bool isUseEnvContext = false);     // 辅助（绘画）函数， TODO 可以迁移到 XDrawHelper 中？
+    void drawStep(QPainter& pa, const XDrawStep& step);
     bool isDrawShape(XDrawStep& step);
 
     const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
