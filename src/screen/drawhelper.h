@@ -123,7 +123,6 @@ struct  XDrawStep
 	// Rectangles --------------------
 	// Ellipses ----------------------
 	// Line / Arrows -----------------
-	LineEnds lineEnds = LineEnds::EmptyToEmpty;
 
 	// Arrows ------------------------
     // Pen ---------------------------

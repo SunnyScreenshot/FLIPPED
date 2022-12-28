@@ -51,6 +51,7 @@ private:
     void updateGetWindowsInfo();
     void whichShape();
     void savePixmap(bool quickSave = true, bool autoSave = true);
+    //inline const QPen& ScreenShot::setWhitePen(const double outlineWith = 1.5);
 
 signals:
     void sigClearScreen();
