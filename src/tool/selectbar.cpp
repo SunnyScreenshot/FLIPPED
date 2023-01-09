@@ -9,48 +9,45 @@
  * Description: 工具栏框架类，负责选择画各种图形的 ToolBar
  ******************************************************************/
 #include "selectbar.h"
-#include "../xglobal.h"
-#include "../widget/xhorizontalline.h"
-#include "../widget/xverticalline.h"
-#include "QtGui/qpainter.h"
+#include <vector>
+#include <QString>
 #include <QToolButton>
 #include <QStringList>
 #include <QBoxLayout>
 #include <QIcon>
 #include <QButtonGroup>
 #include <QDebug>
+#include "../xglobal.h"
+#include "../widget/xhorizontalline.h"
+#include "../widget/xverticalline.h"
 
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
     , m_scal(XHelper::instance().getScale())
-    , m_blur(nullptr)
     , m_orien(orien)
     , m_layout(nullptr)
-    //, m_group(new QButtonGroup(this))
-    , m_vItem()
+    , m_blur(std::make_unique<BlurWidget>(this))
 {
-    initUI();
-
-#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
-    m_blur = new BlurWidget(this);
-#else
+#if defined(Q_OS_MAC)
+    m_blur.release();
 #endif
 
+    initUI();
     QStringList tbName1 = { "rectangle", "ellipse", "arrow", "pen", "mosaic", "text", "serialnumber"};
     QStringList tbName2 = { "pin", "revocation", "renewal", "save", "cancel", "finish" };
     QStringList tbName = tbName1 + tbName2;
-    QStringList barTip = { tr("rectangle"), tr("ellipse"), tr("arrow"), tr("pen"), tr("mosaic"), tr("text"), tr("serialnumber")
-                     , tr("pin"), tr("revocation"), tr("renewal"), tr("save"), tr("cancel"), tr("finish") };
+    QStringList barTip = { tr("Rectangle"), tr("Ellipse"), tr("Arrow"), tr("Pen"), tr("Mosaic"), tr("Text"), tr("serialnumber")
+                     , tr("Pin"), tr("Revocation"), tr("Renewal"), tr("Save"), tr("Cancel"), tr("Finish") };
 
+    std::vector<std::pair<QString, bool>> names;    // tbName checkable
     for (const auto& it : tbName1)
-        m_vTbName.push_back(std::make_pair(it, true));
+        names.push_back(std::make_pair(it, true));
     for (const auto& it : tbName2)
-        m_vTbName.push_back(std::make_pair(it, false));
+        names.push_back(std::make_pair(it, false));
 
-    //m_group->setExclusive(true);
-    m_vItem.fill(nullptr, tbName.count());
     int i = 0;
-    for (const auto it : m_vTbName){
+    std::vector<QToolButton *> items(tbName.count(), nullptr);
+    for (const auto& it : names){
         auto tb = new QToolButton();
         tb->setObjectName(it.first);
         tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -62,19 +59,13 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
         tb->setToolTip(barTip[i++]);
         tb->setChecked(false);
         tb->setCheckable(it.second);
-        m_vItem.push_back(tb);
+        items.push_back(tb);
         addWidget(tb);
 
-        if (it.first == "pin" || it.first == "renewal")
+        if (it.first == tbName2[0] || it.first == tbName2[2])
             addSpacer();
-        //if (it.second)
-        //    m_group->addButton(tb);
-
         connect(tb, &QToolButton::released, this, &SelectBar::onToolBtn);
     }
-
-    //void (QButtonGroup:: * sigFun)(QAbstractButton*) = &QButtonGroup::buttonClicked;
-    //connect(m_group, sigFun, this, &SelectBar::onTBReleased);
 }
 
 void SelectBar::setBlurBackground(const QPixmap &pix, double blurRadius)
@@ -181,7 +172,7 @@ void SelectBar::onToolBtn()
     } else if (tb->objectName() == "text") {
         emit sigSelShape(XC::DrawShape::Text, isChecked);
     } else if (tb->objectName() == "serialnumber") {
-        emit sigSelShape(XC::DrawShape::SerialNumber, isChecked);
+        emit sigSelShape(XC::DrawShape::SerialNumberShape, isChecked);
     } else if (tb->objectName() == "pin") {
         emit sigPin();
     } else if (tb->objectName() == "revocation") {
@@ -214,11 +205,8 @@ void SelectBar::resizeEvent(QResizeEvent *event)
 
 void SelectBar::paintEvent(QPaintEvent *event)
 {
-#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
-    QWidget::paintEvent(event);
-#else
+#if defined(Q_OS_MAC)
     Q_UNUSED(event)
-
 //    updateToolBtnIcon();
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
@@ -227,5 +215,7 @@ void SelectBar::paintEvent(QPaintEvent *event)
 
     const int round = 4;
     pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), round, round);
+#else
+    QWidget::paintEvent(event);
 #endif
 }

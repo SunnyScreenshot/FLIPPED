@@ -11,26 +11,26 @@
 #ifndef BLURWIDGET_H
 #define BLURWIDGET_H
 
+#include <memory>
 #include <QWidget>
+#include <QGraphicsBlurEffect>
+
 
 class QPixmap;
-class QGraphicsBlurEffect;
-
 class BlurWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit BlurWidget(QWidget *parent = nullptr);
     virtual ~BlurWidget() = default;
-
-    virtual void setPixmap(const QPixmap& pix, double blurRadius);
+    void setPixmap(const QPixmap& pix, double blurRadius);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
     QPixmap m_pix;
-    QGraphicsBlurEffect* m_pBlurEffect;
+    std::unique_ptr<QGraphicsBlurEffect> m_pBlurEffect;
 };
 
 #endif // BLURWIDGET_H

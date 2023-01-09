@@ -12,11 +12,11 @@
 #define PARAMETERBAR_H
 
 #include "../screen/drawhelper.h"
+#include <memory>
+#include <QPointer>
 #include "base/colorparabar.h"
 #include "base/managebar.h"
-#include <QPointer>
 
-class XComboBox;
 class BlurWidget;
 class QBoxLayout;
 class QAbstractButton;
@@ -27,7 +27,7 @@ class ParameterBar : public QWidget
     Q_OBJECT
 public:
     explicit ParameterBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
-    virtual ~ParameterBar() = default;
+    virtual ~ParameterBar();
     void setBlurBackground(const QPixmap& pix, double blurRadius);
 
 private:
@@ -38,14 +38,12 @@ private:
     void creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive = true);
     void initRectBar();
     void initEllipseBar();
+    void initArrowBar();
     void initMosaicBar();
     void initTextBar();
-    void initArrowBar();
-    void initLineWidthBar();
     void initSerialnumberBar();
-
-
-    void removeAllBar();                                   // 移除所有的参数 Bar
+    void initLineWidthBar();
+    void removeAllBar();
 
 signals:
     void sigParaBtnId(DrawShape shap, QToolButton* tb);    // ToolButton 发射的信号
@@ -63,20 +61,19 @@ protected:
 
 private:
     double m_scal;
-    BlurWidget* m_blur;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
+    std::unique_ptr<BlurWidget> m_blur;
 
-    QPointer<ColorParaBar> m_colorBar;                     // 取色板
-    QPointer<ManageBar>    m_lienWidthBar;                 // 线宽
-                                                           
-    QPointer<ManageBar>    m_rectBar;                      // 矩形     TODO 2022.05.26 此几个变量也可以省略掉， 通过slot 里面的 传入 btn 的 partent来控制即可
+    QPointer<ManageBar>    m_rectBar;                      // 矩形
     QPointer<ManageBar>    m_ellipseBar;                   // 圆形
     QPointer<ManageBar>    m_arrowBar;                     // 箭头
     QPointer<ManageBar>    m_mosaicBar;                    // 马赛克
     QPointer<ManageBar>    m_textBar;                      // 文本
     QPointer<ManageBar>    m_serialnumberShape;            // 序号图形
     QPointer<ManageBar>    m_serialnumberType;             // 序号类型
+    QPointer<ManageBar>    m_lienWidthBar;                 // 线宽
+    QPointer<ColorParaBar> m_colorBar;                     // 取色板
 };
 
 #endif // PARAMETERBAR_H

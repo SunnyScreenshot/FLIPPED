@@ -9,9 +9,6 @@
  * Description:
  ******************************************************************/
 #include "screenshot.h"
-#include "../core/xlog.h"
-#include "../platform/wininfo.h"
-#include "../tool/pin/pinwidget.h"
 #include <QScreen>
 #include <QPixmap>
 #include <QApplication>
@@ -20,7 +17,6 @@
 #include <QKeyEvent>
 #include <QIcon>
 #include <QTime>
-#include <QDebug>
 #include <QClipboard>
 #include <QFileDialog>
 #include <QImage>
@@ -38,6 +34,9 @@
 #include <QTextCharFormat>
 #include <QFont>
 #include <QDebug>
+#include "../core/xlog.h"
+#include "../platform/wininfo.h"
+#include "../tool/pin/pinwidget.h"
 
 namespace Util {
     bool getRectFromCurrentPoint(WinID winId, QRect &outRect)
@@ -65,13 +64,13 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_bFirstSel(false)
     , m_bFirstPress(false)
     , m_pCurrShape(nullptr)
-	, m_edit(new XTextWidget(this))
     , m_rtSmartWindow(0, 0, 0, 0)
-    , m_barOrien(Qt::Horizontal)  // Horizontal | Vertical
-    , m_selSizeTip(new SelectSize("", this))
-    , m_lineWidthTip(new SelectSize("", this))
-    , m_selBar(new SelectBar(m_barOrien, this))
-    , m_paraBar(new ParameterBar(m_barOrien, this))
+    , m_barOrien(Qt::Horizontal)
+    , m_selBar(std::make_unique<SelectBar>(m_barOrien, this))
+    , m_paraBar(std::make_unique<ParameterBar>(m_barOrien, this))
+    , m_selSizeTip(std::make_unique<SelectSize>("", this))
+    , m_lineWidthTip(std::make_unique<SelectSize>("", this))
+    , m_edit(std::make_unique<XTextWidget>(this))
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
     XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
@@ -132,21 +131,21 @@ ScreenShot::ScreenShot(QWidget *parent)
     m_lineWidthTip->move(15, 15);
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
-    connect(m_selBar, &SelectBar::sigEnableDraw, this, &ScreenShot::onEnableDraw);
-    connect(m_selBar, &SelectBar::sigSelShape, this, &ScreenShot::onSelShape);
-    connect(m_selBar, &SelectBar::sigRevocation, this, &ScreenShot::onRevocation);
-    connect(m_selBar, &SelectBar::sigRenewal, this, &ScreenShot::onRenewal);
-    connect(m_selBar, &SelectBar::sigPin, this, &ScreenShot::onPin);
-    connect(m_selBar, &SelectBar::sigSave, this, &ScreenShot::onSave);
-    connect(m_selBar, &SelectBar::sigCancel, this, &ScreenShot::onCancel);
-    connect(m_selBar, &SelectBar::sigFinish, this, &ScreenShot::onFinish);
-    connect(m_selBar, &SelectBar::sigInterruptEdit, this, &ScreenShot::onInterruptEdit);
+    connect(m_selBar.get(), &SelectBar::sigEnableDraw, this, &ScreenShot::onEnableDraw);
+    connect(m_selBar.get(), &SelectBar::sigSelShape, this, &ScreenShot::onSelShape);
+    connect(m_selBar.get(), &SelectBar::sigRevocation, this, &ScreenShot::onRevocation);
+    connect(m_selBar.get(), &SelectBar::sigRenewal, this, &ScreenShot::onRenewal);
+    connect(m_selBar.get(), &SelectBar::sigPin, this, &ScreenShot::onPin);
+    connect(m_selBar.get(), &SelectBar::sigSave, this, &ScreenShot::onSave);
+    connect(m_selBar.get(), &SelectBar::sigCancel, this, &ScreenShot::onCancel);
+    connect(m_selBar.get(), &SelectBar::sigFinish, this, &ScreenShot::onFinish);
+    connect(m_selBar.get(), &SelectBar::sigInterruptEdit, this, &ScreenShot::onInterruptEdit);
 
-    connect(m_paraBar, &ParameterBar::sigParaBtnId, this, &ScreenShot::onParaBtnId);
-    connect(m_paraBar, &ParameterBar::sigSelColor, this, &ScreenShot::onSelColor);
+    connect(m_paraBar.get(), &ParameterBar::sigParaBtnId, this, &ScreenShot::onParaBtnId);
+    connect(m_paraBar.get(), &ParameterBar::sigSelColor, this, &ScreenShot::onSelColor);
 
-    connect(m_selBar, &SelectBar::sigEnableDraw, m_paraBar, &ParameterBar::onEnableDraw);
-    connect(m_selBar, &SelectBar::sigSelShape, m_paraBar, &ParameterBar::onSelShape);
+    connect(m_selBar.get(), &SelectBar::sigEnableDraw, m_paraBar.get(), &ParameterBar::onEnableDraw);
+    connect(m_selBar.get(), &SelectBar::sigSelShape, m_paraBar.get(), &ParameterBar::onSelShape);
     connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
     connect(this, &ScreenShot::sigLineWidthChange, this, &ScreenShot::onLineWidthChange);
 }
@@ -227,7 +226,7 @@ void ScreenShot::onClearScreen()
 
 	//m_screens、m_primaryScreen 还保留
 	delete m_currPixmap;
-	m_currPixmap = nullptr;
+    m_currPixmap = nullptr;
     m_pCurrShape = nullptr;
 
 	m_vDrawed.clear();
@@ -285,7 +284,7 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
     const bool bArrows = shape == DrawShape::Arrows;
     const bool bMosaics = shape == DrawShape::Mosaics;
     const bool bText = shape == DrawShape::Text;
-    const bool bSeriNum = shape == DrawShape::SerialNumber;
+    const bool bSeriNum = shape == DrawShape::SerialNumberShape;
 
     if (bRect || bEllipses || bArrows || bPen || bMosaics || bText || bSeriNum) {
         m_step.shapePara = static_cast<ShapePara>((int)(property(std::to_string((int)shape).c_str()).value<int>()));
@@ -314,23 +313,23 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
 
 void ScreenShot::onRevocation()
 {
-    if (m_vDrawed.count() <= 0)
+    if (m_vDrawed.empty())
         return;
 
     m_vDrawUndo.push_back(*(m_vDrawed.end() - 1));
     m_vDrawed.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.size() << "    m_vDraw:" << m_vDrawed.size();
     update();
 }
 
 void ScreenShot::onRenewal()
 {
-    if (m_vDrawUndo.count() <= 0)
+    if (m_vDrawUndo.empty())
         return;
 
     m_vDrawed.push_back(*(m_vDrawUndo.end() - 1));
     m_vDrawUndo.pop_back();
-    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.count() << "    m_vDraw:" << m_vDrawed.count();
+    qDebug() << "---->m_vDrawRevoke:" << m_vDrawUndo.size() << "    m_vDraw:" << m_vDrawed.size();
     update();
 }
 
@@ -408,12 +407,12 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     if (!tb)
         return;
 
-    const auto& setWhitePen = [&](const double outlineWith = 1.5) {
-        QPen tPen(m_step.pen);
-        tPen.setColor(m_step.brush.color() == Qt::white ? Qt::black : Qt::white);
-        tPen.setWidthF(outlineWith);
-        return tPen;
-    };
+//    auto setWhitePen = [&](const double outlineWith = 1.5) -> const QPen {
+//        QPen tPen(m_step.pen);
+//        tPen.setColor(m_step.brush.color() == Qt::white ? Qt::black : Qt::white);
+//        tPen.setWidthF(outlineWith);
+//        return tPen;
+//    };
 
     const int idx = tb->objectName().right(1).toInt();
     auto t = tb->objectName();
@@ -423,7 +422,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     const bool bPen = shape == DrawShape::Pen;
     const bool bArrows = shape == DrawShape::Arrows;
     const bool bText = shape == DrawShape::Text;
-    const bool bSeriNum = shape == DrawShape::SerialNumber;
+    const bool bSeriNum = shape == DrawShape::SerialNumberShape;
 
     const bool bLineWidth = shape == DrawShape::LineWidth;
     const bool bSeriNumType = shape == DrawShape::SerialNumberType;
@@ -458,10 +457,10 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
         } else if (idx == 2) {
             
             m_step.textParas.setFlag(TextPara::TP_Outline, checked);
-            auto& t = checked ? setWhitePen() : Qt::NoPen;
+            auto& t = checked ? autoWhitePen() : Qt::NoPen;
             
             fmt.setTextOutline(t);
-            m_step.pen = setWhitePen();
+            m_step.pen = autoWhitePen();
         }
 
         qDebug() << "#2-----m_step.pen:" << m_step.pen.color().name() << "  " << m_step.pen.widthF() << "  " << m_step.pen.style();
@@ -470,8 +469,8 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
         m_edit->mergeCurrentCharFormat(fmt);
         m_step.font = tfont;
     } else if (bSeriNum || bSeriNumType) {
-        // SerialNumber: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
-        auto& list = XDrawStep::serialText.split('_');
+        // SerialNumberShape: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
+        auto list = XDrawStep::serialText.split('_');
         if (bSeriNum) {
             m_step.shapePara = static_cast<ShapePara>(idx);
         } else if (bSeriNumType) {
@@ -479,7 +478,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
             m_step.serialText = list.join("_");
         }
 
-        m_step.pen = setWhitePen();
+        m_step.pen = autoWhitePen();
     } else {
     }
 }
@@ -760,12 +759,12 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         }
         break;
     }
-    case DrawShape::SerialNumber:
+    case DrawShape::SerialNumberShape:
     case DrawShape::SerialNumberType: {
         if (step.text.isEmpty())
             return;
 
-        // SerialNumber: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
+        // SerialNumberShape: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
         const int width = qMax<int>(32, step.pen.width());
         const QSize size(width, width);
         const int halfSize(size.width() / 2);
@@ -790,7 +789,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
 
 bool ScreenShot::isDrawShape(XDrawStep& step)
 {
-    bool bSerial = m_step.shape == DrawShape::SerialNumber || m_step.shape == DrawShape::SerialNumberType;
+    bool bSerial = m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType;
     if (bSerial && !step.text.isEmpty())
         return true;
 
@@ -1060,7 +1059,7 @@ void ScreenShot::showAllDrawedShape(QPainter& pa)
 //    QRect m_rtCalcu_selRect(m_rtCalcu.getSelRect());
 
     int i = 0;
-    pa.drawText(posText + QPoint(0, space * i), QString("m_vDrawed:%0").arg(m_vDrawed.count()));
+    pa.drawText(posText + QPoint(0, space * i), QString("m_vDrawed:%0").arg(m_vDrawed.size()));
 
     //for (const auto& it : m_vDrawed){
     //    pa.drawText(posText + QPoint(0, space * i), QString("m_vDrawed[%0]:[%1]")
@@ -1138,7 +1137,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setWidth(penWidth / 2);
 	pen.setColor(Qt::green);
 	pa.setPen(pen);
-    bool bDrawSerial = m_step.shape == DrawShape::SerialNumber || m_step.shape == DrawShape::SerialNumberType;
+    bool bDrawSerial = m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType;
     if (!bDrawSerial)
         drawStep(pa, m_step);
 
@@ -1187,7 +1186,7 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
         .arg(m_rtSmartWindow.x()).arg(m_rtSmartWindow.y()).arg(m_rtSmartWindow.width()).arg(m_rtSmartWindow.height()));
     pa.drawText(tPosText - QPoint(0, space * 7), QString("XHelper::instance().smartWindow(): %1")
         .arg(XHelper::instance().smartWindow()));
-    pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.count()));
+    pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.size()));
     if (m_pCurrShape) {
         QRect rtCurMove = m_pCurrShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
         pa.drawText(tPosText - QPoint(0, space * 9), QString("rtMoveTest(%1, %2, %3 * %4)").arg(rtCurMove.x()).arg(rtCurMove.y())
@@ -1424,11 +1423,11 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
             }
 
             m_step.p2 = m_step.p1;
-        } else if (m_step.shape == DrawShape::SerialNumber || m_step.shape == DrawShape::SerialNumberType) {
+        } else if (m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType) {
             if (m_step.serialText.isEmpty())
                 return;
-            // SerialNumber: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
-            auto& list = m_step.serialText.split('_');
+            // SerialNumberShape: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
+            auto list = m_step.serialText.split('_');
 
             if (list[0].toInt() == 0) {
                 list[2] = QString::number(list[2].toInt() + 1);
@@ -1438,6 +1437,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 
             m_step.serialText = list.join("_");
             m_step.text = m_step.serialText;
+            m_step.pen = autoWhitePen();
         }
 
 	} else {  // 则可能为移动、拉伸、等待状态
@@ -1455,6 +1455,14 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 	}
 
     update();
+}
+
+const QPen ScreenShot::autoWhitePen(const double outlineWith) const
+{
+    QPen tPen(m_step.pen);
+    tPen.setColor(m_step.brush.color() == Qt::white ? Qt::black : Qt::white);
+    tPen.setWidthF(outlineWith);
+    return tPen;
 }
 
 void ScreenShot::mouseMoveEvent(QMouseEvent *event)

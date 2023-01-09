@@ -51,7 +51,7 @@ namespace XC {
         Pen,
         Mosaics,
 		Text,
-        SerialNumber,
+        SerialNumberShape,
         SerialNumberType
 	};
 
@@ -102,7 +102,7 @@ using namespace XC;
 // Pen,
 // Mosaics,
 // Text,
-// SerialNumber
+// SerialNumberShape
 
 struct  XDrawStep
 {
@@ -131,11 +131,11 @@ struct  XDrawStep
     // Mosaics -----------------------
 
     // Text --------------------------
-    QString text;                               // 文字内容； SerialNumber
+    QString text;                               // 文字内容； SerialNumberShape
 	QFont font = QFont("KaiTi", 14);            // 字体
     TextParas textParas;
 
-    // SerialNumber ------------------
+    // SerialNumberShape ------------------
     static QString serialText;
 
     void clear() {

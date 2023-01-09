@@ -59,9 +59,7 @@ set(SRC_WIDGET
     widget/xlabel.h
     widget/xlabel.cpp
     widget/xframewidget.h
-    widget/xframewidget.cpp
-    widget/xcombobox.h
-    widget/xcombobox.cpp)
+    widget/xframewidget.cpp)
 
 set(SRC_TOOL
     tool/base/colorparabar.h

@@ -12,10 +12,8 @@
 #define SELECTBAR_H
 
 #include "../screen/drawhelper.h"
+#include <memory>
 #include "base/blurwidget.h"
-#include <QVector>
-#include <QMap>
-#include <QString>
 
 class BlurWidget;
 class QToolButton;
@@ -28,9 +26,9 @@ class QButtonGroup;
 // ellipse
 // arrow
 // pen
-// mosaic  、 smooth
+// mosaic、smooth
 // text
-// serialnumber
+// serialnumber、
 // pin
 // gif 暂不添加
 // revocation
@@ -70,16 +68,11 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;   // 仅单独适配 MAC 效果
 
-
 private:
     double m_scal;
-    BlurWidget* m_blur;
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
-
-    //QButtonGroup* m_group;
-    std::vector<std::pair<QString, bool>> m_vTbName;    // tbName checkable
-    QVector<QToolButton *> m_vItem;
+    std::unique_ptr<BlurWidget> m_blur;
 };
 
 #endif // SELECTBAR_H

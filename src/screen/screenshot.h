@@ -12,18 +12,18 @@
 #define PICSHOT_WINFULLSCREEN_H
 
 #include "rectcalcu.h"
+#include <memory>
+#include <set>    // QSet 是哈希表, std::set 是红黑树变种
+#include <vector>
+#include <QWidget>
+#include <QList>
+#include <QColor>
+#include <QScreen>
 #include "drawhelper.h"
 #include "../widget/xtextwidget.h"
 #include "../tool/selectbar.h"
 #include "../tool/parameterbar.h"
 #include "../tool/selectsize/selectsize.h"
-#include <QWidget>
-#include <QList>
-#include <QColor>
-#include <QVector>
-#include <QPointer>
-#include <QScreen>
-#include <set>  // QSet 是哈希表, std::set 是红黑树变种
 
 struct comp {
     bool operator()(const QRect& rt1, const QRect& rt2) const { return rt1.width() < rt2.width(); }
@@ -35,7 +35,7 @@ class ScreenShot : public  QWidget
     Q_OBJECT
 public:
     ScreenShot(QWidget* parent = nullptr);
-    ~ScreenShot() override;
+    virtual ~ScreenShot();
 
     void getScrnShots();
     static double getScale(QScreen *screen = QApplication::primaryScreen());
@@ -51,7 +51,6 @@ private:
     void updateGetWindowsInfo();
     void whichShape();
     void savePixmap(bool quickSave = true, bool autoSave = true);
-    //inline const QPen& ScreenShot::setWhitePen(const double outlineWith = 1.5);
 
 signals:
     void sigClearScreen();
@@ -110,10 +109,11 @@ private:
     void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
 
 protected:
+    const QPen autoWhitePen(const double outlineWith = 1.5) const;
     void paintEvent(QPaintEvent *event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
     void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent* event) override;
 
@@ -132,19 +132,19 @@ private:
 
     XDrawStep m_step;                      // 当前绘画一步骤
 
-    QVector<XDrawStep> m_vDrawed;          // 已绘步骤
-    QVector<XDrawStep> m_vDrawUndo;        // 撤销步骤
+    std::vector<XDrawStep> m_vDrawed;          // 已绘步骤
+    std::vector<XDrawStep> m_vDrawUndo;        // 撤销步骤
     std::set<QRect, comp> m_specifyRts;    // 特殊窗口的矩形，绘画时需略调整
     XDrawStep* m_pCurrShape;               // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
 
     // new refactor
     QRect m_rtSmartWindow;                 // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
-    QPointer<SelectSize> m_selSizeTip;     // 选中矩形的尺寸提示
-    QPointer<SelectSize> m_lineWidthTip;    // 画笔宽度临时预览
-    QPointer<SelectBar> m_selBar;
-    QPointer<ParameterBar> m_paraBar;
-    QPointer<XTextWidget> m_edit;
+    std::unique_ptr<SelectBar> m_selBar;
+    std::unique_ptr<ParameterBar> m_paraBar;
+    std::unique_ptr<SelectSize> m_selSizeTip;     // 选中矩形的尺寸提示
+    std::unique_ptr<SelectSize> m_lineWidthTip;   // 画笔宽度临时预览
+    std::unique_ptr<XTextWidget> m_edit;
 };
 
 #endif //PICSHOT_WINFULLSCREEN_H
