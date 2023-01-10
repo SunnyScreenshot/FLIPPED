@@ -61,7 +61,6 @@ ParameterBar::~ParameterBar()
     m_serialnumberType->deleteLater();
     m_lienWidthBar->deleteLater();
     m_colorBar->deleteLater();
-    m_rectBar->deleteLater();
 }
 
 void ParameterBar::setBlurBackground(const QPixmap &pix, double blurRadius)

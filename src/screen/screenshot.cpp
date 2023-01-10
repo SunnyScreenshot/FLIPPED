@@ -214,11 +214,6 @@ void ScreenShot::updateBorderCursorShape(const CursorArea & cursArea)
 // 清空截图内容（当关闭 Esc、或完成截图时）
 void ScreenShot::onClearScreen()
 {
-#ifdef Q_OS_WIN
-#elif  defined(Q_OS_MAC)
-#elif  defined(Q_OS_LINUX)
-#endif
-
     XDrawStep::serialText = "0_0_0_0";
 
     m_bFirstPress = false;
@@ -247,16 +242,6 @@ void ScreenShot::onClearScreen()
     if (m_rtCalcu.scrnType == ScrnType::Wait) // 状态重置
         setMouseTracking(true);
 };
-
-void ScreenShot::onLineEndsChange(LineEnds ends)
-{
-	//m_step.lineEnds = ends;
-}
-
-void ScreenShot::onLineDasheChange(Qt::PenStyle dashes)
-{
-    m_step.pen.setStyle(dashes);
-}
 
 void ScreenShot::onEnableDraw(bool enable)
 {
@@ -304,7 +289,7 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
     }
     //qDebug() << "--------@onDrawShape:" << int(m_step.shape);
 
-    if (!bText) {  // Fix: 文字之后，需要恢复原样
+    if (!(bText/* || bSeriNum*/)) {  // Fix: 文字之后，需要恢复原样
         m_step.pen.setColor(m_step.brush.color());
         m_step.pen.setWidthF(2);
     }
@@ -457,10 +442,8 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
         } else if (idx == 2) {
             
             m_step.textParas.setFlag(TextPara::TP_Outline, checked);
-            auto& t = checked ? autoWhitePen() : Qt::NoPen;
-            
-            fmt.setTextOutline(t);
-            m_step.pen = autoWhitePen();
+            m_step.pen = easyRecognizeColorPen(m_step.brush.color());
+            fmt.setTextOutline(checked ? easyRecognizeColorPen(m_step.brush.color()) : Qt::NoPen);
         }
 
         qDebug() << "#2-----m_step.pen:" << m_step.pen.color().name() << "  " << m_step.pen.widthF() << "  " << m_step.pen.style();
@@ -477,8 +460,6 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
             list[0] = QString(QString::number(idx));
             m_step.serialText = list.join("_");
         }
-
-        m_step.pen = autoWhitePen();
     } else {
     }
 }
@@ -671,7 +652,6 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
     if (DrawShape::NoDraw == step.shape) return;
     if (m_rtCalcu.scrnType == ScrnType::Move && m_pCurrShape == &step) return;  // 选中图形的处于移动状态，跳过这不绘画
     
-    
     pa.save();
     //pa.setRenderHint(QPainter::SmoothPixmapTransform, true);
     //pa.setRenderHint(QPainter::HighQualityAntialiasing, true);
@@ -764,13 +744,17 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         if (step.text.isEmpty())
             return;
 
-        // SerialNumberShape: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割
-        const int width = qMax<int>(32, step.pen.width());
+        // SerialNumberShape: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割        
+        const int width = qMax<int>(30, step.pen.width());
         const QSize size(width, width);
         const int halfSize(size.width() / 2);
         const QRect rt(step.p1 - QPoint(halfSize, halfSize), size);
-        
+        qDebug() << step.pen.color() << "  " << step.brush.color();
+
+        pa.setPen(QPen(easyRecognizeColorPen(step.pen.color()).color(), qBound<double>(1.5, step.pen.widthF() / 10, 5)));
         step.shapePara == ShapePara::SP_0 ? pa.drawRoundedRect(rt, 8, 8) : pa.drawEllipse(rt);
+
+        pa.setPen(QPen(easyRecognizeColorPen(step.brush.color()).color(), step.pen.widthF()));
         pa.setBrush(Qt::NoBrush);
         const auto& list = step.text.split('_');
         if (list[0].toInt() == 0) {
@@ -1437,7 +1421,6 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 
             m_step.serialText = list.join("_");
             m_step.text = m_step.serialText;
-            m_step.pen = autoWhitePen();
         }
 
 	} else {  // 则可能为移动、拉伸、等待状态
@@ -1457,11 +1440,13 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
     update();
 }
 
-const QPen ScreenShot::autoWhitePen(const double outlineWith) const
+const QPen ScreenShot::easyRecognizeColorPen(const QColor& color) const
 {
+    //调色盘的都并非是真的纯黑色或者纯白色，调试半小时。氪
     QPen tPen(m_step.pen);
-    tPen.setColor(m_step.brush.color() == Qt::white ? Qt::black : Qt::white);
-    tPen.setWidthF(outlineWith);
+    const QColor white("#FBFBFB");
+    const QColor black("#323232");
+    tPen.setColor((color != Qt::white && color == white) ? black : white);
     return tPen;
 }
 
@@ -1532,10 +1517,24 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 
         // DrawShape::Text  在按下时候单独处理 m_vDrawed.push_back
-        if (m_step.shape != DrawShape::Text && m_step.shape != DrawShape::NoDraw) {
+        if (m_step.shape != DrawShape::Text
+                && m_step.shape != DrawShape::NoDraw) {
             if (isDrawShape(m_step)) {
                 m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
-                m_step.clear();
+                bool bSerial = m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType;
+                if (!bSerial)
+                    m_step.clear();
+
+                //{
+                //    int i = 0;
+                //    for (auto& it : m_vDrawed) {
+                //        qDebug() << "----------->i:" << i++;
+                //        it.showDebug();
+                //    }
+
+                //    qDebug() << "----------->m_step:";
+                //    m_step.showDebug();
+                //}
             }
         }
 
@@ -1570,20 +1569,27 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     if (numDegrees.isNull())
         return;
 
+    double tLineWidth = 0;
     if (m_step.shape == DrawShape::Text) {
         m_step.font.setPointSize(m_step.font.pointSize() + numSteps.y());
         m_edit->setFont(m_step.font);
-        emit sigLineWidthChange(m_step.font.pointSize());
+        tLineWidth = m_step.font.pointSize();
     } else {
-        m_step.pen.setWidth(m_step.pen.width() + numSteps.y());
-        const int mix = 1;
+        int mix = 1;
         const int max = 100;
-        if (m_step.pen.width() <= mix) m_step.pen.setWidth(mix);
-        if (m_step.pen.width() >= max) m_step.pen.setWidth(max);
+        tLineWidth = m_step.pen.widthF();
+        if (m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType) {
+            tLineWidth += (numSteps.y() > 0 ? 10 : -10);
+            mix = 30;
+        } else {
+            tLineWidth += numSteps.y();
+        }
 
-        emit sigLineWidthChange(m_step.pen.width());
+        tLineWidth = qBound<int>(mix, tLineWidth, max);
+        m_step.pen.setWidthF(tLineWidth);
     }
 
+    emit sigLineWidthChange(tLineWidth);
     event->accept();
 }
 

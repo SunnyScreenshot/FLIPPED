@@ -17,28 +17,24 @@
 #include <QStyleFactory>
 #include <QLockFile>
 #include <QMessageBox>
-#include "screen/screenshot.h"
 
 // test
-//#include <QHotkey>
+#include <iostream>
+#include <QPixmap>
+#include <QTranslator>
+#include <QStandardPaths>
+#include <QDir>
+#include <QDateTime>
+#include <QGuiApplication>
 #include "./screen/tray.h"
 #include "tool/pin/pinwidget.h"
 #include "tool/testbtstyle.h"
 #include "widget/xroundwidget.h"
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"
-#include <iostream>
-#include <QPixmap>
-
 #include "core/xlog.h"
 #include "preference/preference.h"
 #include "tool/base/blurwidget.h"
-#include <QTranslator>
-#include <QStandardPaths>
-#include <QDir>
-#include <QDateTime>
-#include <QGuiApplication>
-
 
 int main(int argc, char *argv[])
 {

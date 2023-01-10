@@ -57,11 +57,6 @@ signals:
     void sigLineWidthChange(int width);
 
 public slots:
-    // The slot function of the toolBar
-    void onLineEndsChange(LineEnds ends);
-    void onLineDasheChange(Qt::PenStyle dashes);
-
-    // new refactor
     void onEnableDraw(bool enable);
     void onSelShape(DrawShape shape, bool checked);
     void onRevocation();
@@ -109,7 +104,7 @@ private:
     void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
 
 protected:
-    const QPen autoWhitePen(const double outlineWith = 1.5) const;
+    const QPen easyRecognizeColorPen(const QColor& color) const;
     void paintEvent(QPaintEvent *event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
     void mousePressEvent(QMouseEvent *event) override;

@@ -25,6 +25,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QString>
+#include <QDebug>
 //#include <Format>
 
 class QLine;
@@ -113,7 +114,6 @@ struct  XDrawStep
     QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成
     DrawShape shape = DrawShape::NoDraw;        // 绘画形状
     ShapePara shapePara = ShapePara::SP_0;      // 图形的样式类型：Rectangles、Ellipses、Arrows、Mosaics
-    //int idxLevel = -1;                        // 所处的序号等级，亦 z 轴，越大越顶层;  此项待重构
     //QPainterPath path;                        // 存储所有绘画类型
 
 	// color, pen width                         // 画笔宽度，也是马赛克模糊块参数
@@ -123,13 +123,11 @@ struct  XDrawStep
 	// Rectangles --------------------
 	// Ellipses ----------------------
 	// Line / Arrows -----------------
-
 	// Arrows ------------------------
     // Pen ---------------------------
-	QVector<QPoint> custPath;                   // 手绘路径
+    QVector<QPoint> custPath;                   // 手绘路径
 
     // Mosaics -----------------------
-
     // Text --------------------------
     QString text;                               // 文字内容； SerialNumberShape
 	QFont font = QFont("KaiTi", 14);            // 字体
@@ -138,20 +136,17 @@ struct  XDrawStep
     // SerialNumberShape ------------------
     static QString serialText;
 
+    void showDebug() {
+        qDebug() << this;
+        qDebug() << "p1:" << p1 << "   p2:" << p2 << "   rt:" << rt << "   shape:" << int(shape) << "   shapePara:" << int(shapePara);
+        qDebug() << "pen:" << pen << "   " << pen.color().name() << "   " << pen.widthF() << "   " << pen.style();
+        qDebug() << "brush:" << brush << "   " << brush.color().name() << "   " << brush.style();
+        qDebug() << "text:" << text << "   font:" << font << "   textParas:" << textParas << "   serialText:" << serialText << Qt::endl;
+    }
     void clear() {
         p1 = QPoint();
         p2 = QPoint();
         rt = QRect();
-        //shape = DrawShape::NoDraw; // 若为鼠标松开执行，则会无法继续绘画抽象图形
-        //pen = QPen(Qt::red);
-        //penWidth = 2;
-        //brush = QBrush(Qt::NoBrush);
-        //brushWidth = 1;
-        //transparency = 1;
-        //rX = 8;
-        //rY = 8;
-        //lineEnd = LineEnds::EmptyToEmpty;
-        //lineDashe = LineDashes::SolidLine;
         custPath.clear();
     }
 };

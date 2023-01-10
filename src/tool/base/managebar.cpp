@@ -9,11 +9,11 @@
  * Description: 参数工具栏的一部分，作为管理类：矩形、椭圆、箭头、马赛克等
  ******************************************************************/
 #include "managebar.h"
+#include <QBoxLayout>
 #include "../../xglobal.h"
 #include "../../widget/xhorizontalline.h"
 #include "../../widget/xverticalline.h"
 #include "../../screen/drawhelper.h"
-#include <QBoxLayout>
 
 ManageBar::ManageBar(Qt::Orientations orien /*= Qt::Horizontal*/, QWidget* parent /*= nullptr*/)
     : QWidget(parent)
@@ -21,17 +21,10 @@ ManageBar::ManageBar(Qt::Orientations orien /*= Qt::Horizontal*/, QWidget* paren
     , m_orien(orien)
     , m_layout(nullptr)
 {
-    initUI();
-}
-
-void ManageBar::initUI()
-{
-    if (!m_layout) {
-        if (m_orien == Qt::Horizontal)
-            m_layout = new QHBoxLayout(this);
-        else
-            m_layout = new QVBoxLayout(this);
-    }
+    if (m_orien == Qt::Horizontal)
+        m_layout = new QHBoxLayout(this);
+    else
+        m_layout = new QVBoxLayout(this);
 
     setContentsMargins(MB_MARGIN_HOR, MB_MARGIN_VER, MB_MARGIN_HOR, MB_MARGIN_VER);
     setLayout(m_layout);

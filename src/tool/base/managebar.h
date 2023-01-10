@@ -20,14 +20,8 @@ class ManageBar : public QWidget
 public:
     explicit ManageBar(Qt::Orientations orien = Qt::Horizontal, QWidget* parent = nullptr);
     virtual ~ManageBar() = default;
-
     void addWidget(QWidget* w);
     void addSpacer();
-
-private:
-    void initUI();
-
-signals:
 
 private:
     double m_scal;
