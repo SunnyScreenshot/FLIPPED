@@ -23,13 +23,12 @@ QT_END_NAMESPACE
 
 namespace XC {
 
-	enum class ScrnType {
-		// 基础的几种状态
-		Wait,                                // 基础的等待状态（未有，和已有矩形局域）
-		Select,                              // 基础的选中状态
-		Move,                                // 基础的移动状态
-		Draw,                                // 基础的绘画状态    
-		Stretch,                             // 基础的拉伸状态
+	enum class ScrnOperate {
+		SO_Wait,                                // 基础的等待状态（未有，和已有矩形局域）
+		SO_Select,                              // 基础的选中状态
+		SO_Move,                                // 基础的移动状态
+		SO_Draw,                                // 基础的绘画状态    
+		SO_Stretch,                             // 基础的拉伸状态
 	};
 
 	enum class CursorArea {
@@ -53,9 +52,7 @@ namespace XC {
 	   External = 0x00000100,                // 外部
 	   Internal = 0x00000200,                // 内部
 	   Unknow
-	};
-	//Q_DECLARE_FLAGS(CursorAreas, CursorArea)
-	//Q_DECLARE_OPERATORS_FOR_FLAGS(CursorAreas)
+    };
 }
 
 // ** 方便使用枚举 **
@@ -94,7 +91,7 @@ public:
 public:
 	QPoint pos1;
 	QPoint pos2;
-	ScrnType scrnType;          // 程序状态（对应此时鼠标的操作类型）
+	ScrnOperate scrnType;          // 程序状态（对应此时鼠标的操作类型）
 
 private:
 	QRect  rtSel;               // 由 pos1, pos2 所得

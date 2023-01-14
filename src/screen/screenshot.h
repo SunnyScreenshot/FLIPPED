@@ -15,6 +15,7 @@
 #include <memory>
 #include <set>    // QSet 是哈希表, std::set 是红黑树变种
 #include <vector>
+#include <map>
 #include <QWidget>
 #include <QList>
 #include <QColor>
@@ -73,7 +74,7 @@ public slots:
     void onClearScreen();
 
 private:
-    ScrnType updateScrnType(const QPoint pos);
+    ScrnOperate updateScrnType(const QPoint pos);
     void updateCursorShape(const QPoint pos);
     void updateBorderCursorShape(const CursorArea& cursArea);
     QPixmap* getVirScrnPixmap();
@@ -101,8 +102,10 @@ private:
     void drawCrosshair(QPainter& pa);                                                // 绘画十字线
     void drawToolBar();                                                              // 绘画工具栏
 
-    void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
+    void showDebugInfo(QPainter& pa, QRect& rtSel);                                // 显示实时的预览调试信息
 
+    const QScreen* priScrn() const;
+    const QScreen* curScrn() const;
 protected:
     const QPen easyRecognizeColorPen(const QColor& color) const;
     void paintEvent(QPaintEvent *event) override;
@@ -114,9 +117,6 @@ protected:
 
 private:
     double m_scal;
-    QList<QScreen *> m_scrns;              // 所有屏幕
-    QScreen* m_priScrn;                    // 主屏幕
-    QScreen* m_curScrn;                    // 截图时光标所在的屏幕
     QRect m_virGeom;                       // 截图时刻的虚拟桌面的大小
     QPixmap* m_currPixmap;                 // 当前屏幕截图
     QPixmap m_savePixmap;                  // 当前屏幕截图 + 遮罩   无构造初始化
@@ -133,6 +133,7 @@ private:
     XDrawStep* m_pCurrShape;               // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
 
     // new refactor
+    std::map<QScreen*, ScrnTypes> m_scrns;
     QRect m_rtSmartWindow;                 // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
     std::unique_ptr<SelectBar> m_selBar;

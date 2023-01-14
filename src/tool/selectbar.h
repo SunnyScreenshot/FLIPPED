@@ -11,8 +11,8 @@
 #ifndef SELECTBAR_H
 #define SELECTBAR_H
 
-#include "../screen/drawhelper.h"
 #include <memory>
+#include "../screen/drawhelper.h"
 #include "base/blurwidget.h"
 
 class BlurWidget;

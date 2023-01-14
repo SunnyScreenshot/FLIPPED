@@ -18,7 +18,7 @@
 const QRect RectCalcu::getStretchRect()
 {
 	QRect rt;
-	if (scrnType != ScrnType::Stretch)
+	if (scrnType != ScrnOperate::SO_Stretch)
 		return rt;
 
 	rt = rtSel;
@@ -177,7 +177,7 @@ QRect RectCalcu::getRect(QPoint pos1, QPoint pos2)
 RectCalcu::RectCalcu(ScreenShot* pSrnShot)
 	: pos1(0, 0)
 	, pos2(0, 0)
-	, scrnType(ScrnType::Wait)
+	, scrnType(ScrnOperate::SO_Wait)
 	, rtSel(0, 0, -1, -1)
 	, m_bClear(false)
 	, cursArea(CursorArea::Unknow)
@@ -192,15 +192,15 @@ RectCalcu::~RectCalcu()
 // 此时并不修改其 resel 数值
 const QRect RectCalcu::getSelRect()
 {
-	if (scrnType == ScrnType::Select) {
+	if (scrnType == ScrnOperate::SO_Select) {
 		return getRect(pos1, pos2);
-	} else if (scrnType == ScrnType::Move) {
+	} else if (scrnType == ScrnOperate::SO_Move) {
 		// TODO 2022.06.14: 单例改写了为 new 形式，故此处有一个 移动图形的 bug，且略感觉此获取方式有点不优雅
 		if (m_pSrnShot && m_pSrnShot->isSelBorder()) // 选中绘画的矩形
 			return rtSel.translated(pos2 - pos1);
 
 		return rtSel;
-	} else if (scrnType == ScrnType::Stretch) {
+	} else if (scrnType == ScrnOperate::SO_Stretch) {
 		return getStretchRect(); // 返回副本
 
 	} else {
@@ -229,7 +229,7 @@ void RectCalcu::clear()
 	pos1 = QPoint();
 	pos2 = QPoint();
 	rtSel = QRect();
-	scrnType = ScrnType::Wait;
+	scrnType = ScrnOperate::SO_Wait;
 	m_bClear = true;
 }
 

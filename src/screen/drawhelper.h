@@ -92,6 +92,15 @@ namespace XC {
     };
     Q_DECLARE_FLAGS(TextParas, TextPara)       // 枚举 TextPara 生成宏 TextParas
 	Q_DECLARE_OPERATORS_FOR_FLAGS(TextParas)   // 重载宏 TextParas 的 |() 函数
+
+    enum class ScrnType {
+        ST_Primary =    1 << 0,     // 显示器主屏幕: qGuiApp->primaryScreen()
+        ST_Current =    1 << 1,     // 截图时光标所在的屏幕
+        ST_Associated = 1 << 2,     // 关联的屏幕: qGuiApp->screens()
+        ST_FullScreen = 1 << 3      // 全屏窗口
+    };
+    Q_DECLARE_FLAGS(ScrnTypes, ScrnType)
+    Q_DECLARE_OPERATORS_FOR_FLAGS(ScrnTypes)
 }
 
 using namespace XC;

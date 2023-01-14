@@ -9,11 +9,11 @@
  * Description: 基础底部 widget
  ******************************************************************/
 #include "xframewidget.h"
-#include "../xglobal.h"
 #include <QColor>
 #include <QPainter>
 #include <QGraphicsEffect>
 #include <QPen>
+#include "../xglobal.h"
 
 XFrameWidget::XFrameWidget(QWidget *parent)
     : QWidget(parent)
