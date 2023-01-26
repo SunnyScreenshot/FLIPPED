@@ -449,9 +449,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
             fmt.setFontItalic(checked);
             tfont.setItalic(checked);
         } else if (idx == 2) {
-            
             m_step.textParas.setFlag(TextPara::TP_Outline, checked);
-            m_step.pen = easyRecognizeColorPen(m_step.brush.color());
             fmt.setTextOutline(checked ? easyRecognizeColorPen(m_step.brush.color()) : Qt::NoPen);
         }
 
@@ -472,14 +470,6 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     } else {
     }
 }
-
-//const QPen& ScreenShot::setWhitePen(const double outlineWith)
-//{
-//    QPen tPen(m_step.pen);
-//    tPen.setColor(m_step.brush.color() == Qt::white ? Qt::black : Qt::white);
-//    tPen.setWidthF(outlineWith);
-//    return tPen;
-//}
 
 void ScreenShot::onLineWidthChange(int width)
 {
@@ -729,22 +719,27 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
     }
     case DrawShape::Text: {
         // Ref: http://qtdebug.com/qtbook-paint-text  https://doc.qt.io/qt-5/qpainter.html#drawText-5
+        // pa.drawPath: 遇到 \n 不会换行，自行分割解决; 可以实现描边效果 -> QPen 是描边颜色， Brush 是字体颜色；【采用此方案】
+        // pa.drawText: 遇到 \n  会换行;  无描边效果 -> QPen 是字体颜色；
         if (!step.text.isEmpty() && m_edit) {
-            const QFontMetrics fm(step.font);
-            const int val = 5;
-            int flags = Qt::TextWordWrap;
-            QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
             pa.setFont(step.font);
+            const QFontMetrics fm(pa.fontMetrics());
+            auto l = step.text.split(QChar('\n'));
+            int flags = Qt::TextWrapAnywhere;
+            QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
+            textBoundingRect.moveTopLeft(step.rt.topLeft());
+            const int val = 5;
+            auto topLeft = textBoundingRect.topLeft() + QPoint(val, fm.ascent() + val);
 
+
+            pa.setPen(easyRecognizeColorPen(m_step.brush.color()));
             QPainterPath path;
-            path.addText(step.rt.topLeft() + QPoint(val, val), step.font, step.text);
+            for (const auto &it : l) {
+                path.addText(topLeft, pa.font(), it);
+                topLeft += QPoint(0, fm.ascent() + fm.leading());
+            }
             pa.drawPath(path);
-            //pa.drawText(QRect(step.rt.topLeft() + QPoint(val, val), textBoundingRect.size()), flags, step.text);
-
-            //qDebug() << "#text-----m_step.pen:" << m_step.pen.color().name() << "  " << m_step.pen.widthF() << "  " << m_step.pen.style();
-            //qDebug() << "#text-----m_step.brush:" << m_step.brush.color().name() << "  " << m_step.brush.style();
-            //qDebug() << "#text-----step.pen:" << step.pen.color().name() << "  " << step.pen.widthF() << "  " << step.pen.style();
-            //qDebug() << "#text-----step.brush:" << step.brush.color().name() << "  " << step.brush.style() << Qt::endl;
+//            pa.drawText(QRect(step.rt.topLeft() + QPoint(val, val), textBoundingRect.size()), flags, step.text); // Abandoned use
         }
         break;
     }
@@ -760,7 +755,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         const QRect rt(step.p1 - QPoint(halfSize, halfSize), size);
         qDebug() << step.pen.color() << "  " << step.brush.color();
 
-        pa.setPen(QPen(easyRecognizeColorPen(step.pen.color()).color(), qBound<double>(1.5, step.pen.widthF() / 10, 5)));
+        pa.setPen(QPen(easyRecognizeColorPen(step.pen.color()).color(), qBound<double>(1, step.pen.widthF() / 10.0, 5)));
         step.shapePara == ShapePara::SP_0 ? pa.drawRoundedRect(rt, 8, 8) : pa.drawEllipse(rt);
 
         pa.setPen(QPen(easyRecognizeColorPen(step.brush.color()).color(), step.pen.widthF()));
@@ -1410,14 +1405,6 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
             if (m_selBar->isVisible() && QRect(m_selBar->mapToGlobal(QPoint(0, 0)), m_selBar->size()).contains(m_step.p1))
                 return;
 
-            //if (m_step.bStyele == 0) {
-            //    m_step.font.setBold(true);
-            //} else if (m_step.bStyele == 1) {
-            //    m_step.font.setItalic(true);
-            //} else if (m_step.bStyele == 2) {
-            //    m_step.font.setOverline(true);
-            //}
-
             m_edit->move(m_step.p1);
             const QRect rtEdit(mapFromGlobal(m_edit->mapToGlobal(QPoint(0, 0))), m_edit->size());
             if (!rtEdit.contains(m_step.p1, true)) {  // 编辑完成 || 初次编辑
@@ -1476,7 +1463,7 @@ const QPen ScreenShot::easyRecognizeColorPen(const QColor& color) const
     QPen tPen(m_step.pen);
     const QColor white("#FBFBFB");
     const QColor black("#323232");
-    tPen.setColor((color != Qt::white && color == white) ? black : white);
+    tPen.setColor((color == Qt::black || color == black) ? black : white);
     return tPen;
 }
 

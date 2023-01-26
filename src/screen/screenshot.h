@@ -102,7 +102,7 @@ private:
     void drawCrosshair(QPainter& pa);                                                // 绘画十字线
     void drawToolBar();                                                              // 绘画工具栏
 
-    void showDebugInfo(QPainter& pa, QRect& rtSel);                                // 显示实时的预览调试信息
+    void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
 
     const QScreen* priScrn() const;
     const QScreen* curScrn() const;
