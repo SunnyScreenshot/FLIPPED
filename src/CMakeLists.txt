@@ -26,7 +26,9 @@ set(SRC_MAIN
 
 set(SRC_CORE
     core/isingleton.h
-    core/xlog.h)
+    core/xlog.h
+    core/arrowline.h
+    core/arrowline.cpp)
 
 set(SRC_PLATFORM
     platform/iwininfo.h

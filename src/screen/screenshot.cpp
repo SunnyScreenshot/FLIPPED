@@ -35,6 +35,7 @@
 #include <QFont>
 #include <QDebug>
 #include "../core/xlog.h"
+#include "../core/arrowline.h"
 #include "../platform/wininfo.h"
 #include "../tool/pin/pinwidget.h"
 
@@ -508,7 +509,7 @@ QPixmap* ScreenShot::getVirScrnPixmap()
         m_currPixmap = new QPixmap(const_cast<QScreen *>(priScrn())->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
     #else
         // 多屏的矩形取并集
-        m_currPixmap = new QPixmap(priScrn()->grabWindow(qApp->desktop()->winId(), m_virGeom.x(), m_virGeom.y(), m_virGeom.width(), m_virGeom.height()));
+        m_currPixmap = new QPixmap(const_cast<QScreen *>(priScrn())->grabWindow(qApp->desktop()->winId(), m_virGeom.x(), m_virGeom.y(), m_virGeom.width(), m_virGeom.height()));
     #endif
 #endif
     }
@@ -689,9 +690,10 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         if (step.shapePara == ShapePara::SP_0) {
             pa.drawLine(step.p1, step.p2);
         } else if (step.shapePara == ShapePara::SP_1 || step.shapePara == ShapePara::SP_2 || step.shapePara == ShapePara::SP_3) {
-            pa.drawLine(XHelper::instance().GetShorterLine(step.p1, step.p2));  // 0, 1, 2
-            QPainterPath arrowPath = XHelper::instance().GetArrowHead(step.p1, step.p2);
-            pa.fillPath(arrowPath, step.brush);
+            ArrowLine arrowLine(step.pen.widthF(), step.p1, step.p2);
+            QPainterPath arrowPath = arrowLine.arrowLine();
+            pa.drawPath(arrowPath);
+//            pa.fillPath(arrowPath, step.brush);
         }
         break;
     }

@@ -16,6 +16,7 @@
 #include <QBoxLayout>
 #include <QIcon>
 #include <QButtonGroup>
+#include <QPainter>
 #include <QDebug>
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"

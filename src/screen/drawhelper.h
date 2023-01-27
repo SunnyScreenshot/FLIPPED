@@ -210,9 +210,7 @@ public:
     const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);         // 毛玻璃马赛克
     const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
 
-    // Arrow Line draw
-    QPainterPath GetArrowHead(QPoint p1, QPoint p2, const int thickness = 10);
-    QLine GetShorterLine(QPoint p1, QPoint p2, const int thickness = 10);
+
 
     // tabGeneral
     // tabInterface
