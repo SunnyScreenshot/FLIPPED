@@ -30,52 +30,37 @@ const QPainterPath ArrowLine::arrowLine() const
     return path;
 }
 
-
-const QLine ArrowLine::shorterLine(const int thickness) const
+const QPainterPath ArrowLine::arrowLineOpen() const
 {
-    const QPointF& p1 = m_p1;
-    const QPointF& p2 = m_p2;
-    QLineF l(p1, p2);
-    int val = ArrowHeight + thickness * 4;
-    if (l.length() < val)
-        val = static_cast<int>(l.length() + thickness * 2);
-
-    l.setLength(l.length() + thickness * 2 - val);
-    return l.toLine();
-}
-
-const QPainterPath ArrowLine::arrowHead(const int thickness) const
-{
-    const QPointF& p1 = m_p1;
-    const QPointF& p2 = m_p2;
-
-    QLineF base(p1, p2);
-    // Create the vector for the position of the base  of the arrowhead
-    QLineF temp(QPoint(0, 0), p2 - p1);
-    int val = ArrowHeight + thickness * 4;
-    if (base.length() < val) {
-        val = static_cast<int>(base.length() + thickness * 2);
-    }
-    temp.setLength(base.length() + thickness * 2 - val);
-    // Move across the line up to the head
-    QPointF bottomTranslation(temp.p2());
-
-    // Rotate base of the arrowhead
-    base.setLength(ArrowWidth + thickness * 2);
-    base.setAngle(base.angle() + 90);
-    // Move to the correct point
-    QPointF temp2 = p1 - base.p2();
-    // Center it
-    QPointF centerTranslation((temp2.x() / 2), (temp2.y() / 2));
-
-    base.translate(bottomTranslation);
-    base.translate(centerTranslation);
+    QPointF p1;
+    QPointF p2;
+    calcVertexes(p1, p2);
 
     QPainterPath path;
-    path.moveTo(p2);
-    path.lineTo(base.p1());
-    path.lineTo(base.p2());
+    path.moveTo(m_p1);
+    path.lineTo(m_p2);
+    path.lineTo(p1);
+    path.moveTo(m_p2);
     path.lineTo(p2);
+    return path;
+}
+const QPainterPath ArrowLine::circleLine() const
+{
+    QPainterPath path;
+    path.moveTo(m_p1);
+    path.lineTo(m_p2);
+    const double mix = 4;
+    const double max = 100;
+    const double r = qBound<double>(mix, m_lineWidth * 1.2, max);
+    path.addEllipse(m_p2, r, r);
+    return path;
+}
+
+const QPainterPath ArrowLine::line() const
+{
+    QPainterPath path;
+    path.moveTo(m_p1);
+    path.lineTo(m_p2);
     return path;
 }
 

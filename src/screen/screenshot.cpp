@@ -687,14 +687,21 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         break;
     }
     case DrawShape::Arrows: {
+        QPainterPath path;
+        ArrowLine arrowLine(step.pen.widthF(), step.p1, step.p2);
         if (step.shapePara == ShapePara::SP_0) {
-            pa.drawLine(step.p1, step.p2);
-        } else if (step.shapePara == ShapePara::SP_1 || step.shapePara == ShapePara::SP_2 || step.shapePara == ShapePara::SP_3) {
-            ArrowLine arrowLine(step.pen.widthF(), step.p1, step.p2);
-            QPainterPath arrowPath = arrowLine.arrowLine();
-            pa.drawPath(arrowPath);
-//            pa.fillPath(arrowPath, step.brush);
+            path = arrowLine.arrowLine();
+            pa.setBrush(step.pen.color());
+        } else if (step.shapePara == ShapePara::SP_1) {
+            path = arrowLine.arrowLineOpen();
+            pa.setBrush(Qt::NoBrush);
+        } else if (step.shapePara == ShapePara::SP_2) {
+            path = arrowLine.circleLine();
+        } else if (step.shapePara == ShapePara::SP_3) {
+            path = arrowLine.line();
         }
+
+        pa.drawPath(path);
         break;
     }
     case DrawShape::Pen: {
