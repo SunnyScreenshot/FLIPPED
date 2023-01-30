@@ -107,7 +107,7 @@ private:
     const QScreen* priScrn() const;
     const QScreen* curScrn() const;
 protected:
-    const QPen easyRecognizeColorPen(const QColor& color) const;
+    QPen easyRecognizeColorPen(const QColor& color) const;
     void paintEvent(QPaintEvent *event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
     void mousePressEvent(QMouseEvent *event) override;

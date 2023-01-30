@@ -33,6 +33,7 @@
 #include <QStringList>
 #include <QTextCharFormat>
 #include <QFont>
+#include <QFontInfo>
 #include <QDebug>
 #include "../core/xlog.h"
 #include "../core/arrowline.h"
@@ -123,10 +124,10 @@ ScreenShot::ScreenShot(QWidget *parent)
     #else
 //        showFullScreen();  // 并不是当前的屏幕大小
         setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
-        const auto curScrn = curScrn();
-        const QRect geom;
-        if (curScrn)
-            geom = curScrn->geometry();
+        auto cur = curScrn();
+        QRect geom;
+        if (cur)
+            geom = cur->geometry();
         setFixedSize(geom.size());   // resize() cannot get the desired effect
     #endif
 
@@ -431,9 +432,6 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
         emit sigLineWidthChange(lineWidth[idx]);
     } else if (bPen) {
     } else if (bText) {
-
-        qDebug() << "#1-----m_step.pen:" << m_step.pen.color().name() << "  " << m_step.pen.widthF() << "  " << m_step.pen.style();
-        qDebug() << "#1-----m_step.brush:" << m_step.brush.color().name() << "  " << m_step.brush.style();
         QPen tPen(m_step.pen);
         QBrush tBrush(m_step.brush);
         QFont tfont(m_step.font);
@@ -453,9 +451,6 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
             m_step.textParas.setFlag(TextPara::TP_Outline, checked);
             fmt.setTextOutline(checked ? easyRecognizeColorPen(m_step.brush.color()) : Qt::NoPen);
         }
-
-        qDebug() << "#2-----m_step.pen:" << m_step.pen.color().name() << "  " << m_step.pen.widthF() << "  " << m_step.pen.style();
-        qDebug() << "#2-----m_step.brush:" << m_step.brush.color().name() << "  " << m_step.brush.style();
 
         m_edit->mergeCurrentCharFormat(fmt);
         m_step.font = tfont;
@@ -669,12 +664,6 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
             pa.setBrush(Qt::NoBrush);
     }
 
-    //qDebug() << "#3-----m_step.pen:" << m_step.pen.color().name() << "  " << m_step.pen.widthF() << "  " << m_step.pen.style();
-    //qDebug() << "#3-----m_step.brush:" << m_step.brush.color().name() << "  " << m_step.brush.style();
-    //qDebug() << "#3-----step.pen:" << step.pen.color().name() << "  " << step.pen.widthF() << "  " << step.pen.style();
-    //qDebug() << "#3-----step.brush:" << step.brush.color().name() << "  " << step.brush.style() << Qt::endl;
-
-
     switch (step.shape) {
     case DrawShape::Rectangles: {
         if (!step.rt.isEmpty())
@@ -729,8 +718,12 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
     case DrawShape::Text: {
         // Ref: http://qtdebug.com/qtbook-paint-text  https://doc.qt.io/qt-5/qpainter.html#drawText-5
         // pa.drawPath: 遇到 \n 不会换行，自行分割解决; 可以实现描边效果 -> QPen 是描边颜色， Brush 是字体颜色；【采用此方案】
-        // pa.drawText: 遇到 \n  会换行;  无描边效果 -> QPen 是字体颜色；
+        // pa.drawText: 遇到 \n  会换行;  无描边效果 -> QPen 是字体颜色；其字体大小由 pa.font.pointSize 控制,而非 pa.pen.width
         if (!step.text.isEmpty() && m_edit) {
+            QPen tPen(step.pen);
+            tPen.setWidthF(2.0);
+            pa.setPen(tPen);
+
             pa.setFont(step.font);
             const QFontMetrics fm(pa.fontMetrics());
             auto l = step.text.split(QChar('\n'));
@@ -740,15 +733,15 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
             const int val = 5;
             auto topLeft = textBoundingRect.topLeft() + QPoint(val, fm.ascent() + val);
 
-
-            pa.setPen(easyRecognizeColorPen(m_step.brush.color()));
+            QPen outlinePen(easyRecognizeColorPen(step.brush.color()));
+            outlinePen.setWidthF(1.2); // 轮廓描边
+            pa.setPen((step.textParas & TextPara::TP_Outline) ? outlinePen : Qt::NoPen);
             QPainterPath path;
             for (const auto &it : l) {
                 path.addText(topLeft, pa.font(), it);
                 topLeft += QPoint(0, fm.ascent() + fm.leading());
             }
             pa.drawPath(path);
-//            pa.drawText(QRect(step.rt.topLeft() + QPoint(val, val), textBoundingRect.size()), flags, step.text); // Abandoned use
         }
         break;
     }
@@ -756,25 +749,30 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
     case DrawShape::SerialNumberType: {
         if (step.text.isEmpty())
             break;
-
         // SerialNumberShape: "serialType(0数字/1字母)_bool重置标志(0继续/1重置)_数字序号_字母序号"； 使用 _ 分割        
-        const int width = qMax<int>(30, step.pen.width());
-        const QSize size(width, width);
-        const int halfSize(size.width() / 2);
-        const QRect rt(step.p1 - QPoint(halfSize, halfSize), size);
-        qDebug() << step.pen.color() << "  " << step.brush.color();
+        QString str;
+        const auto& list = step.text.split('_');
+        str = (list[0].toInt() == 0) ? list[2] : QString('A' + list[3].toInt() - 1);
 
-        pa.setPen(QPen(easyRecognizeColorPen(step.pen.color()).color(), qBound<double>(1, step.pen.widthF() / 10.0, 5)));
-        step.shapePara == ShapePara::SP_0 ? pa.drawRoundedRect(rt, 8, 8) : pa.drawEllipse(rt);
+        const QFontMetrics fm(pa.fontMetrics());
+        QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), Qt::TextWrapAnywhere, str);
+        const int width = qMax<int>(textBoundingRect.width(), textBoundingRect.height());
+        textBoundingRect.setSize(QSize(width, width));
+        textBoundingRect.moveCenter(step.p1);
+        const int margin = qMax<int>(width / 8, step.pen.width());
+        const QRect adjustRt = textBoundingRect.adjusted(-margin, -margin, margin, margin);
 
+        pa.setPen(QPen(easyRecognizeColorPen(step.pen.color()).color(), qBound<double>(1.2, step.pen.widthF() / 10.0, 5)));
+        step.shapePara == ShapePara::SP_0 ? pa.drawRoundedRect(adjustRt, 8, 8) : pa.drawEllipse(adjustRt);
         pa.setPen(QPen(easyRecognizeColorPen(step.brush.color()).color(), step.pen.widthF()));
         pa.setBrush(Qt::NoBrush);
-        const auto& list = step.text.split('_');
-        if (list[0].toInt() == 0) {
-            pa.drawText(rt, Qt::AlignCenter, list[2]);
-        } else {
-            pa.drawText(rt, Qt::AlignCenter, QString('A' + list[3].toInt() - 1));
-        }
+
+        QFont font(pa.font());
+        font.setPointSizeF(qMax<double>(12, step.pen.widthF()));
+        pa.setFont(font);
+
+//        qDebug() << "@@===>" << step.pen.widthF() << font.pointSizeF() << "  " << font.pixelSize();
+        pa.drawText(adjustRt, Qt::AlignCenter, str);
         break;
     }
     default:
@@ -1127,8 +1125,10 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pa.setBrush(Qt::transparent);
 
 	// 绘画图案
-    for (XDrawStep& it : m_vDrawed)
+    for (XDrawStep& it : m_vDrawed) {
+        it.showDebug();
         drawStep(pa, it);
+    }
 
     // 绘画当前步
     pen.setWidth(penWidth / 2);
@@ -1147,7 +1147,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::white);
     pa.setPen(pen);
 
-    showDebugInfo(pa, rtSel);
+//    showDebugInfo(pa, rtSel);
 }
 
 void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
@@ -1425,7 +1425,9 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
                 } else {       // 显示中
                     m_step.text = m_edit->toPlainText();
                     m_step.rt.setTopLeft(m_step.p2);
-                    m_vDrawed.push_back(m_step);  // 暂时特例：绘画文字为单独处理
+
+                    if (!m_step.text.isEmpty())
+                        m_vDrawed.push_back(m_step);  // 暂时特例：绘画文字为单独处理
                     m_edit->clear();
                     m_step.text.clear();
                     m_edit->setVisible(false);
@@ -1466,7 +1468,7 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
     update();
 }
 
-const QPen ScreenShot::easyRecognizeColorPen(const QColor& color) const
+QPen ScreenShot::easyRecognizeColorPen(const QColor& color) const
 {
     //调色盘的都并非是真的纯黑色或者纯白色，调试半小时。氪
     QPen tPen(m_step.pen);
@@ -1592,6 +1594,8 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     QPoint numDegrees = event->angleDelta() / 8;
     QPoint numSteps = numDegrees / 15;
 
+    qDebug() << numSteps.y() << " ##  " << numSteps.x();
+
     if (numDegrees.isNull())
         return;
 
@@ -1601,17 +1605,16 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
         m_edit->setFont(m_step.font);
         tLineWidth = m_step.font.pointSize();
     } else {
-        int mix = 1;
+        const int min = 1;
         const int max = 100;
         tLineWidth = m_step.pen.widthF();
         if (m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType) {
             tLineWidth += (numSteps.y() > 0 ? 10 : -10);
-            mix = 30;
         } else {
             tLineWidth += numSteps.y();
         }
 
-        tLineWidth = qBound<int>(mix, tLineWidth, max);
+        tLineWidth = qBound<int>(min, tLineWidth, max);
         m_step.pen.setWidthF(tLineWidth);
     }
 

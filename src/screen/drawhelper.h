@@ -123,7 +123,6 @@ struct  XDrawStep
     QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成
     DrawShape shape = DrawShape::NoDraw;        // 绘画形状
     ShapePara shapePara = ShapePara::SP_0;      // 图形的样式类型：Rectangles、Ellipses、Arrows、Mosaics
-    //QPainterPath path;                        // 存储所有绘画类型
 
 	// color, pen width                         // 画笔宽度，也是马赛克模糊块参数
 	QPen pen = QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // 默认红色，画笔宽度为 2px
@@ -146,11 +145,11 @@ struct  XDrawStep
     static QString serialText;
 
     void showDebug() {
-        qDebug() << this;
+        qDebug() << this ;
         qDebug() << "p1:" << p1 << "   p2:" << p2 << "   rt:" << rt << "   shape:" << int(shape) << "   shapePara:" << int(shapePara);
-        qDebug() << "pen:" << pen << "   " << pen.color().name() << "   " << pen.widthF() << "   " << pen.style();
-        qDebug() << "brush:" << brush << "   " << brush.color().name() << "   " << brush.style();
-        qDebug() << "text:" << text << "   font:" << font << "   textParas:" << textParas << "   serialText:" << serialText << Qt::endl;
+        qDebug() << &pen << "  " << pen << "   " << pen.color().name() << "   " << pen.widthF() ;
+        qDebug() << &brush << "  " << brush << "   " << brush.color().name() ;
+        qDebug() << &text << "  " << text << "   font:" << font << "   textParas:" << textParas << "   serialText:" << serialText << Qt::endl;
     }
     void clear() {
         p1 = QPoint();
