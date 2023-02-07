@@ -23,25 +23,13 @@ class QHotkey;
 class Preference;
 
 
+
 class Tray : public QObject
 {
     Q_OBJECT
 public:
-    enum ScrnShotType {
-        SST_ActionWindow,
-        SST_ScrollingWindow,
-        SST_DelayCapture,
-        SST_FullScreen,
-        SST_FixdSizeRegion,
-        SST_Paste,
-        SST_HideShowAllImages,
-        SST_SwitchCurrentGroup,
-        SST_Unknow
-    };
-    Q_ENUM(ScrnShotType)
-
 	static Tray& instance();
-    std::vector<std::tuple<QHotkey*, QString, QString, Tray::ScrnShotType>> getVHotKeys() const;
+    std::vector<std::tuple<QHotkey*, QString, QString, CaptureHelper::CaptureType>> getVHotKeys() const;
 
 private:
     explicit Tray(QObject* parent = nullptr);
@@ -67,7 +55,7 @@ private:
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 
-    std::vector<std::tuple<QHotkey*, QString, QString, Tray::ScrnShotType>> m_vHotKeys;
+    std::vector<std::tuple<QHotkey*, QString, QString, CaptureHelper::CaptureType>> m_vHotKeys;
 };
 
 #endif // TARY_H

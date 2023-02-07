@@ -9,17 +9,17 @@
  * Description: 偏好设置界面的 hotkeys UI；为了规避掉 编辑框 鼠标点击外面却仍有焦点
  ******************************************************************/
 #include "hotkeyswidget.h"
+#include <map>
+#include <QBoxLayout>
+#include <QList>
+#include <QMouseEvent>
+#include <QPushButton>
 #include "../xglobal.h"
 #include "../screen/tray.h"
 #include "../widget/xhorizontalline.h"
 #include "../widget/xkeysequenceedit.h"
 #include "../screen/drawhelper.h"
 #include "appellation.h"
-#include <QBoxLayout>
-#include <QList>
-#include <QMouseEvent>
-#include <QPushButton>
-#include <map>
 
 HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 {
@@ -38,7 +38,7 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     grid->setColumnStretch(0, 8);
     grid->setColumnStretch(1, 9);
 
-    QStringList list = { "Ctrl+Shift+A", "Ctrl+Shift+W", "Ctrl+Shift+L", "Ctrl+Shift+S", "Ctrl+Shift+F", "Ctrl+Shift+T", "Ctrl+Shift+H", "Ctrl+Shift+X" };
+    QStringList list = { "Ctrl+Shift+A", /*"Ctrl+Shift+W",*/ "Ctrl+Shift+L", "Ctrl+Shift+S", /*"Ctrl+Shift+F", "Ctrl+Shift+T", "Ctrl+Shift+H", "Ctrl+Shift+X"*/ };
     std::map<XKeySequenceEdit*, const QString> vHkEdit;
     int idx = 0;
     for (auto& it : Tray::instance().getVHotKeys()) {
@@ -57,8 +57,8 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
         grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
         connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
 
-        if (i == 5)
-            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
+//        if (std::get<3>(it) == Tray::ScrnShotType::SST_FullScreen)
+//            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     }
 
     qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();

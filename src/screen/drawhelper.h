@@ -104,6 +104,25 @@ namespace XC {
 }
 
 using namespace XC;
+
+class CaptureHelper : public QObject
+{
+    Q_OBJECT
+public:
+    enum CaptureType {
+        SST_ActionWindow,
+        SST_ScrollingWindow,
+        SST_DelayCapture,
+        SST_FullScreen,
+        SST_FixdSizeRegion,
+        SST_Paste,
+        SST_HideShowAllImages,
+        SST_SwitchCurrentGroup,
+        SST_Unknow
+    };
+    Q_ENUM(CaptureType)
+};
+
 // NoDraw,
 // Rectangles,
 // Ellipses,
@@ -113,6 +132,7 @@ using namespace XC;
 // Mosaics,
 // Text,
 // SerialNumberShape
+
 
 struct  XDrawStep
 {

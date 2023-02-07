@@ -40,7 +40,7 @@ Tray& Tray::instance()
     return tray;
 }
 
-std::vector<std::tuple<QHotkey*, QString, QString, Tray::ScrnShotType>> Tray::getVHotKeys() const
+std::vector<std::tuple<QHotkey*, QString, QString, CaptureHelper::CaptureType>> Tray::getVHotKeys() const
 {
     return m_vHotKeys;
 }
@@ -126,27 +126,28 @@ void Tray::init()
 void Tray::initGlobalHotKeys()
 {
     m_vHotKeys = {
-        std::make_tuple(nullptr, "Ctrl+Shift+A", tr("Active Window"), ScrnShotType::SST_ActionWindow),
-        std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
-        std::make_tuple(nullptr, "Ctrl+Shift+L", tr("Delay Capture"), ScrnShotType::SST_DelayCapture),
-        std::make_tuple(nullptr, "Ctrl+Shift+S", tr("Full Screen"), ScrnShotType::SST_FullScreen),
-        std::make_tuple(nullptr, "Ctrl+Shift+F", tr("Fixd-Size Region"), ScrnShotType::SST_FixdSizeRegion),
-        std::make_tuple(nullptr, "Ctrl+Shift+T", tr("Paste"), ScrnShotType::SST_Paste),
-        std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
-        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)};
+        std::make_tuple(nullptr, "Ctrl+Shift+A", tr("Active Window"), CaptureHelper::SST_ActionWindow),
+        //std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
+        std::make_tuple(nullptr, "Ctrl+Shift+L", tr("Delay Capture"), CaptureHelper::SST_DelayCapture),
+        std::make_tuple(nullptr, "Ctrl+Shift+S", tr("Full Screen"), CaptureHelper::SST_FullScreen),
+//        std::make_tuple(nullptr, "Ctrl+Shift+F", tr("Fixd-Size Region"), ScrnShotType::SST_FixdSizeRegion),
+//        std::make_tuple(nullptr, "Ctrl+Shift+T", tr("Paste"), ScrnShotType::SST_Paste),
+//        std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
+//        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)
+    };
 
     settingIni->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
-        const ScrnShotType sst = std::get<3>(it);
+        const CaptureHelper::CaptureType sst = std::get<3>(it);
         const QString strHotKey = settingIni->value(describe, hotkey).toString();
         if (!strHotKey.isEmpty())
             hotkey = strHotKey;
 
         pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
-        QMetaEnum enumSst = QMetaEnum::fromType<Tray::ScrnShotType>();
+        QMetaEnum enumSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
         pHK->setObjectName(enumSst.valueToKey(sst));
         connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
         
@@ -168,15 +169,17 @@ void Tray::onSrnShot()
     if (!hk && !act)
         return;
 
-    int sst = Tray::SST_Unknow;
+    int sst = CaptureHelper::SST_Unknow;
     if (hk) {
         bool ok = false;
-        QMetaEnum metaSst = QMetaEnum::fromType<Tray::ScrnShotType>();
+        QMetaEnum metaSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
         sst = metaSst.keyToValue(hk->objectName().toStdString().c_str(), &ok);
     }
 
-    if (act || sst == Tray::SST_ActionWindow)
-        m_pSrnShot->getScrnShots();
+    if (act || sst == CaptureHelper::SST_ActionWindow
+        || sst == CaptureHelper::SST_DelayCapture
+        || sst == CaptureHelper::SST_FullScreen)
+        m_pSrnShot->launchCapture(static_cast<CaptureHelper::CaptureType>(sst));
 }
 
 void Tray::onPreference(bool checked)

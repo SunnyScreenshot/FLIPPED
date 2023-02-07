@@ -17,6 +17,7 @@
 #include <QKeyEvent>
 #include <QIcon>
 #include <QTime>
+#include <QTimer>
 #include <QClipboard>
 #include <QFileDialog>
 #include <QImage>
@@ -165,6 +166,24 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 ScreenShot::~ScreenShot()
 {
+}
+
+void ScreenShot::launchCapture(CaptureHelper::CaptureType type)
+{
+    if (type == CaptureHelper::SST_ActionWindow) {
+        windowCapture();
+    } else if (type == CaptureHelper::SST_DelayCapture) {
+        delayCapture();
+    } else if (type == CaptureHelper::SST_FullScreen) {
+        fullScrnCapture();
+    } else {
+    }
+
+    if (m_bSmartWin)
+        updateGetWindowsInfo();
+    if (!isActiveWindow())
+        activateWindow();     // fix: Initial use of global hotkeys to summon the screenshot window does not respond to Esc.  https://ifmet.cn/posts/44eabb4d
+
 }
 
 ScrnOperate ScreenShot::updateScrnType(const QPoint pos)
@@ -1622,7 +1641,7 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     event->accept();
 }
 
-void ScreenShot::getScrnShots()
+void ScreenShot::scrnsCapture()
 {
     qDebug() << "---------------@#1----------------";
     m_specifyRts.clear();
@@ -1639,11 +1658,6 @@ void ScreenShot::getScrnShots()
 #else
     showFullScreen();         // Linux supports virtual multi-screen, Mac only one screen
 #endif
-
-    if (m_bSmartWin) 
-        updateGetWindowsInfo();
-    if (!isActiveWindow())
-        activateWindow();     // fix: Initial use of global hotkeys to summon the screenshot window does not respond to Esc.  https://ifmet.cn/posts/44eabb4d
 }
 
 // 屏幕详细参数
@@ -1763,6 +1777,26 @@ const Qt::Orientation ScreenShot::getBarOrien() const
 void ScreenShot::setBarOrien(Qt::Orientation val)
 {
     m_barOrien = val;
+}
+
+void ScreenShot::windowCapture()
+{
+    scrnsCapture();
+    m_bSmartWin = true;
+}
+
+void ScreenShot::delayCapture(int ms)
+{
+    QTimer::singleShot(ms, this, [this](){scrnsCapture();});
+}
+
+void ScreenShot::fullScrnCapture()
+{
+    scrnsCapture();
+    m_bSmartWin = false;
+    const auto rt = currentScreen()->geometry();
+    m_rtCalcu.setRtSel(rt);
+    qDebug() << "---->" << rt;
 }
 
 const QScreen *ScreenShot::currentScreen(const QPoint& pos)

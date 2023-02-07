@@ -394,6 +394,12 @@ QWidget* Preference::tabOutput()
     const QString tooltip = XHelper::instance().formatToName(editFileName->text());
     editFileName->setToolTip(tooltip);
 
+    // 临时屏蔽功能
+    quickSavePath->hide();
+    editQuickSavePath->hide();
+    changeQuickSavePath->hide();
+
+
     return page;
 }
 

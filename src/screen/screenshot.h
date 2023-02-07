@@ -38,7 +38,7 @@ public:
     ScreenShot(QWidget* parent = nullptr);
     virtual ~ScreenShot();
 
-    void getScrnShots();
+    void launchCapture(CaptureHelper::CaptureType type = CaptureHelper::SST_ActionWindow);
     static double getScale(QScreen *screen = QApplication::primaryScreen());
     bool isSelBorder();
 
@@ -46,6 +46,11 @@ public:
     void setBarOrien(Qt::Orientation val);
 
 private:
+    void scrnsCapture();
+    void windowCapture();
+    void delayCapture(int ms = 5000);
+    void fullScrnCapture();
+
     const QScreen *currentScreen(const QPoint &pos = QCursor::pos());
     void getScrnInfo();
     double getDevicePixelRatio(QScreen *screen = nullptr);
