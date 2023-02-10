@@ -53,7 +53,6 @@ void CustomOutputMessage(QtMsgType type, const QMessageLogContext& context, cons
             break;
     }
 
-
     QString logMsg = QString("[%1] [%2] [%3] Function: %4  File: %5  Line: %6\n").arg(curTime).arg(msgType).arg(msg).arg(context.function).arg(context.file).arg(context.line);
     if (logMsg.isEmpty())
         return;

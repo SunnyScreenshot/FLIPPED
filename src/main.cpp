@@ -39,10 +39,8 @@
 
 int main(int argc, char *argv[])
 {
-//#ifndef QT_DEBUG
-    qInstallMessageHandler(CustomOutputMessage);
-    //qInstallMessageHandler(nullptr);
-//#endif
+    //qInstallMessageHandler(CustomOutputMessage);
+    qInstallMessageHandler(nullptr);
 
     // 高分屏四种方案 https://blog.csdn.net/qq_33154343/article/details/108905279
 

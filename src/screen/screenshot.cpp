@@ -1643,14 +1643,12 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
 
 void ScreenShot::scrnsCapture()
 {
-    qDebug() << "--------------ScreenShot::scrnsCapture() BEGIN-----------------";
     m_scrnRts.clear();
     m_scrnRts.insert(m_virGeom);
     for (const auto& it : m_scrns)
         m_scrnRts.insert(it.first->geometry());
 
     getScrnInfo();
-    qDebug() << "--------------ScreenShot::scrnsCapture() END-----------------";
     getVirScrnPixmap();
 
 #ifdef Q_OS_WIN
@@ -1663,16 +1661,16 @@ void ScreenShot::scrnsCapture()
 // 屏幕详细参数
 void ScreenShot::getScrnInfo()
 {
-    XLOG_INFO("---------------QApplication::desktop() Info BEGIN----------------");
-    XLOG_INFO("所有可用区域 m_virtualGeometry({}, {}, {} * {})", m_virGeom.left(), m_virGeom.top(), m_virGeom.width(), m_virGeom.height());
-    XLOG_INFO("主屏可用区域 priScrn()->geometry()({}, {}, {} * {})", priScrn()->geometry().left(), priScrn()->geometry().top(), priScrn()->geometry().width(), priScrn()->geometry().height());
-    XLOG_INFO("是否开启虚拟桌面 isVirtualDesktop: {}",  priScrn()->virtualSiblings().size() > 1 ? true : false);
-    XLOG_INFO("---------------QApplication::desktop() Info END----------------");
+    qInfo() << "---------------QApplication::desktop() Info BEGIN----------------";
+    qInfo() << "所有可用区域 m_virtualGeometry:" << m_virGeom << Qt::endl
+        << "主屏可用区域 priScrn()->geometry():" << priScrn()->geometry() << Qt::endl
+        << "是否开启虚拟桌面 isVirtualDesktop:" << (priScrn()->virtualSiblings().size() > 1 ? true : false) << Qt::endl;
+    qInfo() << "---------------QApplication::desktop() Info END----------------";
 
-    XLOG_INFO("---------------m_screens[] Info BEGIN----------------");
+    qInfo() << "---------------m_screens[] Info BEGIN----------------";
     for (const auto& scrn : m_scrns) {
         const auto it = scrn.first;
-        qDebug() << "it:" << it
+        qInfo() << "it:" << it
                  << "\n可用几何 availableGeometry:" << it->availableGeometry()
                  << "\n可用虚拟几何 availableVirtualSize:" << it->availableVirtualSize()
                  << "\n虚拟几何 virtualGeometry:" << it->virtualGeometry()
@@ -1686,24 +1684,11 @@ void ScreenShot::getScrnInfo()
                  << "\n逻辑DPI logicalDotsPerInch:" << int(it->logicalDotsPerInch()) << " DPIX:" << int(it->logicalDotsPerInchX()) << " DPIY:" << int(it->logicalDotsPerInchY())
                  << "\n物理DPI physicalDotsPerInch:" << int(it->physicalDotsPerInch()) << " DPIX:" << int(it->physicalDotsPerInchX()) << " DPIY:" << int(it->physicalDotsPerInchY())
                  << "\n手算缩放比 getScale:" << getScale(it)
-                 << "\n虚拟尺寸 m_virGeom:" << m_virGeom << "\n\n";
-
-        XLOG_DEBUG("屏幕详细信息：it[{}]", fmt::ptr(it));
-        XLOG_DEBUG("size({}, {})", it->size().width(), it->size().height());
-        XLOG_DEBUG("geometry({}, {}, {} * {})", it->geometry().left(), it->geometry().top(), it->geometry().width(), it->geometry().height());
-        XLOG_DEBUG("availableGeometry({}, {}, {} * {})", it->availableGeometry().left(), it->availableGeometry().top(), it->availableGeometry().width(), it->availableGeometry().height());
-        XLOG_DEBUG("scrn->virtualGeometry({}, {}, {} * {})", it->virtualGeometry().left(), it->virtualGeometry().top(), it->virtualGeometry().width(), it->virtualGeometry().height());
-
-        XLOG_INFO("设备像素比 devicePixelRatio[{}]  制造商 manufacturer[{}]  名称 name[{}]", it->devicePixelRatio(), it->manufacturer().toUtf8().data(), it->name().toUtf8().data());
-        XLOG_INFO("序号 serialNumber[{}]  刷新率 refreshRate[{}]  模式 model[{}]", it->serialNumber().toUtf8().data(), it->refreshRate(), it->model().toUtf8().data());
-        XLOG_INFO("虚拟几何 virtualGeometry:({}, {}, {} * {})  缩放比 getScale[{}]", it->availableGeometry().left(), it->availableGeometry().top(), it->availableGeometry().width(), it->availableGeometry().height(), getScale(it));
-        XLOG_INFO("物理几何 physicalSize:({} * {})  大小 size({} * {})", it->physicalSize().width(), it->physicalSize().height(), it->physicalSize().width(), it->physicalSize().height());
-        XLOG_INFO("物理 DPI physicalDotsPerInch: {}  DPIX: {}  DPIY: {} ", int(it->physicalDotsPerInch()), int(it->physicalDotsPerInchX()), int(it->physicalDotsPerInchY()));
-        XLOG_INFO("逻辑 DPI logicalDotsPerInch: {}  DPIX: {}  DPIY: {}\n", int(it->logicalDotsPerInch()), int(it->logicalDotsPerInchX()), int(it->logicalDotsPerInchX()));
+                 << "\n虚拟尺寸 m_virGeom:" << m_virGeom << "\n";
     }
 
-    XLOG_INFO("m_virtualGeometry({}, {}, {} * {})\n", m_virGeom.left(), m_virGeom.top(), m_virGeom.width(), m_virGeom.height());
-    XLOG_INFO("---------------m_screens[] Info END----------------");
+    qInfo() << "m_virtualGeometry:" << m_virGeom;
+    qInfo() << "---------------m_screens[] Info END----------------";
 }
 
 double ScreenShot::getDevicePixelRatio(QScreen * screen)
@@ -1823,3 +1808,4 @@ const QScreen *ScreenShot::currentScreen(const QPoint& pos)
 
     return curScrn;
 }
+

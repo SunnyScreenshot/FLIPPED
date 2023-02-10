@@ -20,7 +20,7 @@ XTextWidget::XTextWidget(QWidget *parent)
     , m_baseSize()
     , m_minSize()
 {
-    XLOG_DEBUG("rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
+    //qDebug() << "XTextWidget::XTextWidget()" << Qt::endl << "--a1--rect:" << rect() << "  size:" << size();
     
     //setStyleSheet(QStringLiteral("XTextWidget { background: transparent; }"));
     connect(this, &XTextWidget::textChanged, this, &XTextWidget::adjustSize);
@@ -32,16 +32,15 @@ XTextWidget::XTextWidget(QWidget *parent)
 
 XTextWidget::~XTextWidget()
 {
-    XLOG_DEBUG("rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
+    //qDebug() << "XTextWidget::~XTextWidget()" << Qt::endl << "rect:" << rect() << "  size:" << size();
 }
 
 // https://blog.csdn.net/kenfan1647/article/details/115171891
 void XTextWidget::adjustSize()
 {
-    XLOG_DEBUG("--a1--rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
+    //qDebug() << "XTextWidget::adjustSize()" << Qt::endl << "--a1--rect:" << rect();
 
     QString&& text = this->toPlainText();
-
     QFontMetrics fm(font());
     QRect bounds = fm.boundingRect(QRect(), Qt::AlignLeft, text);  // 需要再研究下
     int pixelsWide = bounds.width() + fm.lineSpacing();
@@ -53,17 +52,18 @@ void XTextWidget::adjustSize()
         pixelsHigh = m_minSize.height();
     }
 
-    XLOG_DEBUG("--a2--rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
+    //qDebug() << "--a2--rect:" << rect();
     this->setFixedSize(pixelsWide, pixelsHigh);
-
-    XLOG_DEBUG("--a3--rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
-    XLOG_DEBUG("bounds({}, {}, {} * {})  fm.lineSpacing[{}]  pixelsWide[{}]  pixelsHigh[{}]  m_minSize({}, {})", bounds.left(), bounds.top(), bounds.width(), bounds.height()
-        , fm.lineSpacing(), pixelsWide, pixelsHigh , m_minSize.width(), m_minSize.height());
+    //qDebug() << "--a3--rect:" << rect();
+    //qDebug() << "bounds:" << bounds << "  fm.lineSpacing:" << fm.lineSpacing()
+    //    << "  pixelsWide:" << pixelsWide
+    //    << "  pixelsHigh:" << pixelsHigh
+    //    << "  m_minSize:" << m_minSize;
 }
 
 void XTextWidget::setFont(const QFont & font)
 {
-    XLOG_DEBUG("rect({}, {}, {} * {})", rect().left(), rect().top(), rect().width(), rect().height());
+    //qDebug() << "XTextWidget::setFont()" << Qt::endl << "rect:" << rect();
     QTextEdit::setFont(font);
     adjustSize();
 }
@@ -73,8 +73,7 @@ void XTextWidget::showEvent(QShowEvent *e)
     QFont font;
     QFontMetrics fm(font);  // 赋值一个初始的宽高
 
-    XLOG_DEBUG("--a1--rect({}, {}, {} * {})  size({}，{})   fm.lineSpacing[{}]", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height(), fm.lineSpacing());
-
+    //qDebug() << "XTextWidget::showEvent()" << Qt::endl << "--a1--rect:" << rect() << "  fm.lineSpacing:" << fm.lineSpacing() << "  size:" << size();
     setFixedWidth(fm.lineSpacing() * 6);
     setFixedHeight(fm.lineSpacing() * 2.5);
     m_baseSize = size();
@@ -83,18 +82,18 @@ void XTextWidget::showEvent(QShowEvent *e)
     QTextEdit::showEvent(e);
     adjustSize();
 
-    XLOG_DEBUG("--a2--rect({}, {}, {} * {})  size({}，{})   fm.lineSpacing[{}]", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height(), fm.lineSpacing());
+    //qDebug() << "--a2--rect:" << rect() << "  fm.lineSpacing:" << fm.lineSpacing() << "  size:" << size();
 }
 
 // 当 widget 大小被重新设置的时候就会被调用
 void XTextWidget::resizeEvent(QResizeEvent *e)
 {
-    XLOG_DEBUG("--a1--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
+    //qDebug() << "XTextWidget::showEvent()" << Qt::endl << "--a1--rect:" << rect()  << "  size:" << size();
     m_minSize.setHeight(qMin(m_baseSize.height(), height()));
     m_minSize.setWidth(qMin(m_baseSize.width(), width()));
     QTextEdit::resizeEvent(e);
 
-    XLOG_DEBUG("--a2--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
+    //qDebug() << "--a2--rect:" << rect() << "  size:" << size();
 }
 
 void XTextWidget::setTextColor(const QColor & c)
@@ -111,8 +110,8 @@ void XTextWidget::setAlignment(Qt::AlignmentFlag alignment)
 
 void XTextWidget::emitTextUpdated()
 {
-    XLOG_DEBUG("--a1--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
+    //qDebug() << "XTextWidget::showEvent()" << Qt::endl << "--a1--rect:" << rect() << "  size:" << size();
     emit textUpdated(this->toPlainText());
 
-    XLOG_DEBUG("--a2--rect({}, {}, {} * {})  size({}，{})", rect().left(), rect().top(), rect().width(), rect().height(), size().width(), size().height());
+    //qDebug() << "--a2--rect:" << rect() << "  size:" << size();
 }
