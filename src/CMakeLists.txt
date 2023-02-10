@@ -27,6 +27,8 @@ set(SRC_MAIN
 set(SRC_CORE
     core/isingleton.h
     core/xlog.h
+    core/xqtlog.h
+    core/xqtlog.cpp
     core/arrowline.h
     core/arrowline.cpp)
 
@@ -217,6 +219,9 @@ if(WIN32)
         UNICODE
         _UNICODE)
 endif()
+
+set(QT_MESSAGELOGCONTEXT TRUE)                                                               # qInstallMessageHandler(): The file and line numbers can be printed in release mode
+add_definitions(-DQT_MESSAGELOGCONTEXT)                                                      # Add QtMessage macro definition, off by default
 
 foreach (FILE ${FLIPPED_QM_FILES})
     get_filename_component(F_NAME ${FILE} NAME)

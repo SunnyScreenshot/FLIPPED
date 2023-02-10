@@ -65,7 +65,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_bFirstPress(false)
     , m_pCurrShape(nullptr)
     , m_scrns()
-    , m_rtSmartWindow(0, 0, 0, 0)
+    , m_autoDetectRt(0, 0, 0, 0)
     , m_barOrien(Qt::Horizontal)
     , m_selBar(std::make_unique<SelectBar>(m_barOrien, this))
     , m_paraBar(std::make_unique<ParameterBar>(m_barOrien, this))
@@ -218,7 +218,7 @@ void ScreenShot::updateCursorShape(const QPoint pos)
 
         if (cursArea == CursorArea::External) {
 
-            (m_rtSmartWindow.contains(pos, false) && !m_bFirstSel) || m_rtCalcu.getSelRect().contains(pos, true) ?
+            (m_autoDetectRt.contains(pos, false) && !m_bFirstSel) || m_rtCalcu.getSelRect().contains(pos, true) ?
                 setCursor(Qt::ArrowCursor) : setCursor(Qt::ForbiddenCursor);
         } else if (cursArea == CursorArea::Internal){
             setCursor(Qt::SizeAllCursor);
@@ -249,7 +249,7 @@ void ScreenShot::onClearScreen()
     XDrawStep::serialText = "0_0_0_0";
 
     m_bFirstPress = false;
-    m_specifyRts.clear();
+    m_scrnRts.clear();
 
 	//m_screens、m_primaryScreen 还保留
 	delete m_currPixmap;
@@ -268,7 +268,7 @@ void ScreenShot::onClearScreen()
     m_paraBar->setVisible(false);
     m_step.clear();
 
-    m_rtSmartWindow = QRect();
+    m_autoDetectRt = QRect();
     if (m_rtCalcu.scrnType == ScrnOperate::SO_Wait) // 状态重置
         setMouseTracking(true);
 };
@@ -1113,7 +1113,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     // 选中矩形图片
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
     if (m_bSmartWin)
-        rtSel = m_rtSmartWindow;
+        rtSel = m_autoDetectRt;
     QRect shotGeom(mapFromGlobal(m_virGeom.topLeft()), m_virGeom.size()); // 修复为相对窗口的
     #ifdef Q_OS_MAC
         shotGeom = QRect(mapFromGlobal(curScrn()->geometry().topLeft()), curScrn()->geometry().size());
@@ -1199,7 +1199,7 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
     pa.drawText(tPosText - QPoint(0, space * 5), QString("pos(): (%1, %2)")
         .arg(pos().x()).arg(pos().y()));
     pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2, %3 * %4)")
-        .arg(m_rtSmartWindow.x()).arg(m_rtSmartWindow.y()).arg(m_rtSmartWindow.width()).arg(m_rtSmartWindow.height()));
+        .arg(m_autoDetectRt.x()).arg(m_autoDetectRt.y()).arg(m_autoDetectRt.width()).arg(m_autoDetectRt.height()));
     pa.drawText(tPosText - QPoint(0, space * 7), QString("XHelper::instance().smartWindow(): %1")
         .arg(XHelper::instance().smartWindow()));
     pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.size()));
@@ -1331,7 +1331,7 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa)
     m_selSizeTip->move(drawSelSizeTip(rtSel));
 
     QRect rt(rtSel);
-    for (auto it = m_specifyRts.cbegin(); it != m_specifyRts.cend(); ++it) {
+    for (auto it = m_scrnRts.cbegin(); it != m_scrnRts.cend(); ++it) {
         if (*it == rtSel) {
             const int offset = pen.width();
             rt.adjust(offset, offset, -offset, -offset);
@@ -1542,7 +1542,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 		m_rtCalcu.pos2 = event->pos();
 
         if (m_rtCalcu.pos1 == m_rtCalcu.pos2) {  // 点击到一个点，视作智能检测窗口； 否则就是手动选择走下面逻辑
-            m_rtCalcu.setRtSel(m_rtSmartWindow);
+            m_rtCalcu.setRtSel(m_autoDetectRt);
         }
 
         m_bSmartWin = false; // 自动选择也结束
@@ -1643,14 +1643,14 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
 
 void ScreenShot::scrnsCapture()
 {
-    qDebug() << "---------------@#1----------------";
-    m_specifyRts.clear();
-    m_specifyRts.insert(m_virGeom);
+    qDebug() << "--------------ScreenShot::scrnsCapture() BEGIN-----------------";
+    m_scrnRts.clear();
+    m_scrnRts.insert(m_virGeom);
     for (const auto& it : m_scrns)
-        m_specifyRts.insert(it.first->geometry());
+        m_scrnRts.insert(it.first->geometry());
 
     getScrnInfo();
-    qDebug() << "---------------@#2----------------";
+    qDebug() << "--------------ScreenShot::scrnsCapture() END-----------------";
     getVirScrnPixmap();
 
 #ifdef Q_OS_WIN
@@ -1728,8 +1728,8 @@ void ScreenShot::updateGetWindowsInfo()
     winId._xWindow = (unsigned long)0;
 #endif
 
-    Util::getRectFromCurrentPoint(winId, m_rtSmartWindow);
-    m_rtSmartWindow = QRect(mapFromGlobal(m_rtSmartWindow.topLeft()), m_rtSmartWindow.size());
+    Util::getRectFromCurrentPoint(winId, m_autoDetectRt);
+    m_autoDetectRt = QRect(mapFromGlobal(m_autoDetectRt.topLeft()), m_autoDetectRt.size());
 }
 
 double ScreenShot::getScale(QScreen * screen)

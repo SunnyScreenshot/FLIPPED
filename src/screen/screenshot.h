@@ -134,12 +134,12 @@ private:
 
     std::vector<XDrawStep> m_vDrawed;          // 已绘步骤
     std::vector<XDrawStep> m_vDrawUndo;        // 撤销步骤
-    std::set<QRect, comp> m_specifyRts;    // 特殊窗口的矩形，绘画时需略调整
+    std::set<QRect, comp> m_scrnRts;       // 特殊窗口的矩形，绘画时需略调整
     XDrawStep* m_pCurrShape;               // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
 
     // new refactor
     std::map<QScreen*, ScrnTypes> m_scrns;
-    QRect m_rtSmartWindow;                 // 自动检测窗口矩形大小；用以给其它赋值
+    QRect m_autoDetectRt;                 // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
     std::unique_ptr<SelectBar> m_selBar;
     std::unique_ptr<ParameterBar> m_paraBar;
