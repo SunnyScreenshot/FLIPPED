@@ -117,21 +117,16 @@ ScreenShot::ScreenShot(QWidget *parent)
     move(m_virGeom.topLeft());
 #else // Q_OS_MAC
 //    setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
+    QRect geom = currentScreen(QCursor::pos())->geometry();
     #ifdef _MYDEBUG
-        m_virGeom = currentScreen(QCursor::pos())->geometry();
         if (m_scrns.size() == 1)
-            m_virGeom.setWidth(m_virGeom.width() / 2);
-        setFixedSize(m_virGeom.size());
+            geom.setWidth(geom.width() / 2);
     #else
 //        showFullScreen();  // 并不是当前的屏幕大小
         setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
-        auto cur = curScrn();
-        QRect geom;
-        if (cur)
-            geom = cur->geometry();
-        setFixedSize(geom.size());   // resize() cannot get the desired effect
     #endif
 
+    setFixedSize(geom.size());   // resize() cannot get the desired effect
     move(geom.topLeft());
 #endif
 
@@ -295,13 +290,13 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
     const bool bRect = shape == DrawShape::Rectangles;
     const bool bEllipses = shape == DrawShape::Ellipses;
     const bool bLineWidth = shape == DrawShape::LineWidth;
-    const bool bPen = shape == DrawShape::Pen;
+    const bool bCustomPath = shape == DrawShape::CustomPath;
     const bool bArrows = shape == DrawShape::Arrows;
     const bool bMosaics = shape == DrawShape::Mosaics;
     const bool bText = shape == DrawShape::Text;
     const bool bSeriNum = shape == DrawShape::SerialNumberShape;
 
-    if (bRect || bEllipses || bArrows || bPen || bMosaics || bText || bSeriNum) {
+    if (bRect || bEllipses || bArrows || bCustomPath || bMosaics || bText || bSeriNum) {
         m_step.shapePara = static_cast<ShapePara>((int)(property(std::to_string((int)shape).c_str()).value<int>()));
 
     } else if (bLineWidth) {
@@ -318,12 +313,6 @@ void ScreenShot::onSelShape(DrawShape shape, bool checked)
         //XLOG_INFO
     }
     //qDebug() << "--------@onDrawShape:" << int(m_step.shape);
-
-    if (!(bText/* || bSeriNum*/)) {  // Fix: 文字之后，需要恢复原样
-        m_step.pen.setColor(m_step.brush.color());
-        m_step.pen.setWidthF(2);
-    }
-
 }
 
 void ScreenShot::onRevocation()
@@ -434,7 +423,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
     const bool bRect = shape == DrawShape::Rectangles;
     const bool bEllipses = shape == DrawShape::Ellipses;
     const bool bMosaics = shape == DrawShape::Mosaics;
-    const bool bPen = shape == DrawShape::Pen;
+    const bool bCustomPath = shape == DrawShape::CustomPath;
     const bool bArrows = shape == DrawShape::Arrows;
     const bool bText = shape == DrawShape::Text;
     const bool bSeriNum = shape == DrawShape::SerialNumberShape;
@@ -449,7 +438,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
         int lineWidth[3] = { 1, 4, 10 };
         m_step.pen.setWidth(lineWidth[idx]);
         emit sigLineWidthChange(lineWidth[idx]);
-    } else if (bPen) {
+    } else if (bCustomPath) {
     } else if (bText) {
         QPen tPen(m_step.pen);
         QBrush tBrush(m_step.brush);
@@ -468,7 +457,7 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
             tfont.setItalic(checked);
         } else if (idx == 2) {
             m_step.textParas.setFlag(TextPara::TP_Outline, checked);
-            fmt.setTextOutline(checked ? easyRecognizeColorPen(m_step.brush.color()) : Qt::NoPen);
+            fmt.setTextOutline(checked ? easyRecognizeColorPen(m_step.brush.color(), true) : Qt::NoPen);
         }
 
         m_edit->mergeCurrentCharFormat(fmt);
@@ -677,7 +666,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
     if (step.shape == DrawShape::Rectangles
         || step.shape == DrawShape::Ellipses
         || step.shape == DrawShape::Arrows
-        || step.shape == DrawShape::Pen
+        || step.shape == DrawShape::CustomPath
         || step.shape == DrawShape::Mosaics) {
         if (step.shapePara == ShapePara::SP_0)
             pa.setBrush(Qt::NoBrush);
@@ -712,7 +701,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         pa.drawPath(path);
         break;
     }
-    case DrawShape::Pen: {
+    case DrawShape::CustomPath: {
 		pa.drawPolyline(step.custPath.data(), step.custPath.size());
 		break;
 	}
@@ -725,10 +714,10 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
 
         const int mscPx = step.pen.width();
         if (step.shapePara == ShapePara::SP_0) {
-            const QPixmap* pix = XHelper::instance().SetMosaicSmooth(&mosaicPixmap, mscPx);
+            const QPixmap* pix = XHelper::instance().smoothMosaic(&mosaicPixmap, mscPx);
             pa.drawPixmap(step.rt, *pix);
 		} else if (step.shapePara == ShapePara::SP_1) {
-            const QImage img = XHelper::instance().SetMosaicPixlelated(&mosaicPixmap, mscPx);
+            const QImage img = XHelper::instance().pixlelatedMosaic(&mosaicPixmap, mscPx);
             pa.drawImage(step.rt, img);
 		}
 
@@ -755,6 +744,8 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
             QPen outlinePen(easyRecognizeColorPen(step.brush.color()));
             outlinePen.setWidthF(1.2); // 轮廓描边
             pa.setPen((step.textParas & TextPara::TP_Outline) ? outlinePen : Qt::NoPen);
+            
+            step.showDebug();
             QPainterPath path;
             for (const auto &it : l) {
                 path.addText(topLeft, pa.font(), it);
@@ -790,7 +781,6 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         font.setPointSizeF(qMax<double>(12, step.pen.widthF()));
         pa.setFont(font);
 
-//        qDebug() << "@@===>" << step.pen.widthF() << font.pointSizeF() << "  " << font.pixelSize();
         pa.drawText(adjustRt, Qt::AlignCenter, str);
         break;
     }
@@ -1145,7 +1135,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
 
 	// 绘画图案
     for (XDrawStep& it : m_vDrawed) {
-        it.showDebug();
+        //it.showDebug();
         drawStep(pa, it);
     }
 
@@ -1487,13 +1477,17 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
     update();
 }
 
-QPen ScreenShot::easyRecognizeColorPen(const QColor& color) const
+QPen ScreenShot::easyRecognizeColorPen(const QColor& color, const bool bDefaultPenWidth) const
 {
     //调色盘的都并非是真的纯黑色或者纯白色，调试半小时。氪
     QPen tPen(m_step.pen);
     const QColor white("#FBFBFB");
     const QColor black("#323232");
-    tPen.setColor((color == Qt::black || color == black) ? black : white);
+    const bool isWhite = (color == Qt::white || color == white);
+    const bool isBlack = (color == Qt::black || color == black);
+    tPen.setColor(isWhite ? black : white);
+
+    if (bDefaultPenWidth) tPen.setWidthF(1.2);
     return tPen;
 }
 
@@ -1516,7 +1510,7 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Draw) {
         m_step.p2 = event->pos();
 
-        if (m_step.shape == DrawShape::Pen) {
+        if (m_step.shape == DrawShape::CustomPath) {
             m_step.custPath.append(event->pos());
         } else if (m_step.shape == DrawShape::Text) {
             m_step.p1 = m_step.p2;
@@ -1558,7 +1552,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Draw) {
         
         m_step.p2 = event->pos();
-        if (m_step.shape == DrawShape::Pen)
+        if (m_step.shape == DrawShape::CustomPath)
             m_step.custPath.append(event->pos());
 
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
@@ -1613,7 +1607,7 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     QPoint numDegrees = event->angleDelta() / 8;
     QPoint numSteps = numDegrees / 15;
 
-    qDebug() << numSteps.y() << " ##  " << numSteps.x();
+    qDebug() << "ScreenShot::wheelEvent:" << numSteps.y() << " #############  " << numSteps.x();
 
     if (numDegrees.isNull())
         return;
@@ -1637,6 +1631,7 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
         m_step.pen.setWidthF(tLineWidth);
     }
 
+    qDebug() << "ScreenShot::wheelEvent:" << m_step.font.pointSizeF() << "   tLineWidth:" << tLineWidth << "  m_step.pen.widthF():" << m_step.pen.widthF() << "  " << m_edit->font().pointSizeF();
     emit sigLineWidthChange(tLineWidth);
     event->accept();
 }

@@ -25,7 +25,7 @@ class QButtonGroup;
 // rectangle
 // ellipse
 // arrow
-// pen
+// custompath
 // mosaic、smooth
 // text
 // serialnumber、
@@ -73,6 +73,7 @@ private:
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
     std::unique_ptr<BlurWidget> m_blur;
+    std::vector<std::tuple<QString, QString, bool, bool>> m_vBtns;   // btnName, tr(), bCheckable, bAddSpacer
 };
 
 #endif // SELECTBAR_H

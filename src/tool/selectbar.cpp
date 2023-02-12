@@ -10,6 +10,7 @@
  ******************************************************************/
 #include "selectbar.h"
 #include <vector>
+#include <tuple>
 #include <QString>
 #include <QToolButton>
 #include <QStringList>
@@ -34,37 +35,43 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
 #endif
 
     initUI();
-    QStringList tbName1 = { "rectangle", "ellipse", "arrow", "pen", "mosaic", "text", "serialnumber"};
-    QStringList tbName2 = { "pin", "revocation", "renewal", "save", "cancel", "finish" };
-    QStringList tbName = tbName1 + tbName2;
-    QStringList barTip = { tr("Rectangle"), tr("Ellipse"), tr("Arrow"), tr("Pen"), tr("Mosaic"), tr("Text"), tr("serialnumber")
-                     , tr("Pin"), tr("Revocation"), tr("Renewal"), tr("Save"), tr("Cancel"), tr("Finish") };
+    m_vBtns = {
+        std::make_tuple("rectangle", tr("Rectangle"), true, false),
+        std::make_tuple("ellipse", tr("Ellipse"), true, false),
+        std::make_tuple("arrow", tr("Arrow"), true, false),
+        std::make_tuple("custompath", tr("CustomPath"), true, false),
+        std::make_tuple("mosaic", tr("Mosaic"), true, false),
+        std::make_tuple("text", tr("Text"), true, false),
+        std::make_tuple("serialnumber", tr("SerialNumber"), true, false),
 
-    std::vector<std::pair<QString, bool>> names;    // tbName checkable
-    for (const auto& it : tbName1)
-        names.push_back(std::make_pair(it, true));
-    for (const auto& it : tbName2)
-        names.push_back(std::make_pair(it, false));
+        std::make_tuple("pin", tr("Pin"), false, true),
+        std::make_tuple("revocation", tr("ReRevocationctangle"), false, false),
+        std::make_tuple("renewal", tr("Renewal"), false, true),
+        std::make_tuple("save", tr("Save"), false, false),
+        std::make_tuple("cancel", tr("Cancel"), false, false),
+        std::make_tuple("finish", tr("Finish"), false, false)
+    };
 
-    int i = 0;
-    std::vector<QToolButton *> items(tbName.count(), nullptr);
-    for (const auto& it : names){
+    for (const auto& it : m_vBtns){
+        const QString& btnName = std::get<0>(it);
+        const QString& btnTip = std::get<1>(it);
+        const bool& bCheckable = std::get<2>(it);
+        const bool& bAddSpacer = std::get<3>(it);
+
         auto tb = new QToolButton();
-        tb->setObjectName(it.first);
+        tb->setObjectName(btnName);
         tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
         tb->setAutoRaise(true);
-        tb->setIcon(QIcon(":/resources/tool/" + it.first + ".svg"));
+        tb->setIcon(QIcon(":/resources/tool/" + btnName + ".svg"));
         tb->setIconSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
         tb->setContentsMargins(0, 0, 0, 0);
         tb->setFixedSize(QSize(ICON_WIDTH, ICON_HEIGHT) * m_scal);
-        tb->setToolTip(barTip[i++]);
+        tb->setToolTip(btnTip);
         tb->setChecked(false);
-        tb->setCheckable(it.second);
-        items.push_back(tb);
+        tb->setCheckable(bCheckable);
         addWidget(tb);
 
-        if (it.first == tbName2[0] || it.first == tbName2[2])
-            addSpacer();
+        if (bAddSpacer) addSpacer();
         connect(tb, &QToolButton::released, this, &SelectBar::onToolBtn);
     }
 }
@@ -166,8 +173,8 @@ void SelectBar::onToolBtn()
         emit sigSelShape(XC::DrawShape::LineWidth, isChecked);
     } else if (tb->objectName() == "arrow") {
         emit sigSelShape(XC::DrawShape::Arrows, isChecked);
-    } else if (tb->objectName() == "pen") {
-        emit sigSelShape(XC::DrawShape::Pen, isChecked);
+    } else if (tb->objectName() == "custompath") {
+        emit sigSelShape(XC::DrawShape::CustomPath, isChecked);
     } else if (tb->objectName() == "mosaic") {
         emit sigSelShape(XC::DrawShape::Mosaics, isChecked);
     } else if (tb->objectName() == "text") {

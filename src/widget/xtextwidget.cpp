@@ -42,23 +42,13 @@ void XTextWidget::adjustSize()
 
     QString&& text = this->toPlainText();
     QFontMetrics fm(font());
-    QRect bounds = fm.boundingRect(QRect(), Qt::AlignLeft, text);  // 需要再研究下
-    int pixelsWide = bounds.width() + fm.lineSpacing();
-    int pixelsHigh = bounds.height() * 1.15 + fm.lineSpacing();
-    if (pixelsWide < m_minSize.width()) {
-        pixelsWide = m_minSize.width();
-    }
-    if (pixelsHigh < m_minSize.height()) {
-        pixelsHigh = m_minSize.height();
-    }
-
-    //qDebug() << "--a2--rect:" << rect();
-    this->setFixedSize(pixelsWide, pixelsHigh);
+    QRect bound = fm.boundingRect(QRect(), Qt::AlignLeft, text);  // 需要再研究下
+    int pixelsWidth = qMax<double>(bound.width() + fm.lineSpacing(), m_minSize.width()) ;
+    int pixelsHigh = qMax<double>(bound.height() * 1.15 + fm.lineSpacing(), m_minSize.height());
+    this->setFixedSize(pixelsWidth, pixelsHigh);
     //qDebug() << "--a3--rect:" << rect();
     //qDebug() << "bounds:" << bounds << "  fm.lineSpacing:" << fm.lineSpacing()
-    //    << "  pixelsWide:" << pixelsWide
-    //    << "  pixelsHigh:" << pixelsHigh
-    //    << "  m_minSize:" << m_minSize;
+    //    << "  pixelsWide:" << pixelsWide << "  pixelsHigh:" << pixelsHigh << "  m_minSize:" << m_minSize;
 }
 
 void XTextWidget::setFont(const QFont & font)

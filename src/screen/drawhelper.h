@@ -45,11 +45,11 @@ namespace XC {
 
 	enum class DrawShape {
 		NoDraw,
+        LineWidth,
 		Rectangles,
 		Ellipses,
-        LineWidth,   // 特殊、线宽度
         Arrows,
-        Pen,
+        CustomPath,
         Mosaics,
 		Text,
         SerialNumberShape,
@@ -144,15 +144,17 @@ struct  XDrawStep
     DrawShape shape = DrawShape::NoDraw;        // 绘画形状
     ShapePara shapePara = ShapePara::SP_0;      // 图形的样式类型：Rectangles、Ellipses、Arrows、Mosaics
 
-	// color, pen width                         // 画笔宽度，也是马赛克模糊块参数
-	QPen pen = QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); // 默认红色，画笔宽度为 2px
+    /*『pen.width』rect/ellipses/line/arrows/pen/SerialNumber/custPath 的绘画宽度，单位px；   | Mosaics 模糊参数，单位px 
+    * 『pen.color』rect/ellipses/line/arrows/pen/SerialNumber/custPath 的实际[轮廓]颜色
+    * 『brush.width』rect/ellipses/line/arrows/pen/SerialNumber 的绘画宽度，单位px;
+    * 『brush.color』rect/ellipses/line/arrows/pen/SerialNumber 的[填充]颜色
+    *
+    * 『Text』pa.drawPath: 遇到 \n 不会换行，自行分割解决; 可以实现描边效果 -> QPen 是描边颜色， Brush 是字体颜色；【采用此方案】
+    *         其 Tip 显示是 font.pointSize
+    * 『SerialNumber』pa.drawText: 遇到 \n  会换行;  无描边效果 -> QPen 是字体颜色；其字体大小由 pa.font.pointSize 控制,而非 pa.pen.width
+    */
+	QPen pen = QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin); 
 	QBrush brush = QBrush(Qt::red, Qt::SolidPattern);
-
-	// Rectangles --------------------
-	// Ellipses ----------------------
-	// Line / Arrows -----------------
-	// Arrows ------------------------
-    // Pen ---------------------------
     QVector<QPoint> custPath;                   // 手绘路径
 
     // Mosaics -----------------------
@@ -164,10 +166,11 @@ struct  XDrawStep
     // SerialNumberShape ------------------
     static QString serialText;
 
-    void showDebug() {
-        qDebug() << this ;
+    void showDebug() const {
+        const auto& t = pen.widthF();
+        qDebug() << "showDebug(): this:" << this;
         qDebug() << "p1:" << p1 << "   p2:" << p2 << "   rt:" << rt << "   shape:" << int(shape) << "   shapePara:" << int(shapePara);
-        qDebug() << &pen << "  " << pen << "   " << pen.color().name() << "   " << pen.widthF() ;
+        qDebug() << &pen << "  " << pen << "   " << pen.color().name() << "   " << pen.widthF() << "  t:" << &t << "  " << t;
         qDebug() << &brush << "  " << brush << "   " << brush.color().name() ;
         qDebug() << &text << "  " << text << "   font:" << font << "   textParas:" << textParas << "   serialText:" << serialText << Qt::endl;
     }
@@ -226,10 +229,8 @@ public:
     void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
 
     // Mosaics draw
-    const QPixmap* SetMosaicSmooth(QPixmap* pixmap, int px);         // 毛玻璃马赛克
-    const QImage SetMosaicPixlelated(QPixmap* pixmap, int px = 20);  // 像素级马赛克
-
-
+    const QPixmap* smoothMosaic(QPixmap* pixmap, int px);         // 毛玻璃马赛克
+    const QImage pixlelatedMosaic(QPixmap* pixmap, int px = 20);  // 像素级马赛克
 
     // tabGeneral
     // tabInterface

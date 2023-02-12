@@ -22,8 +22,6 @@ class QMenu;
 class QHotkey;
 class Preference;
 
-
-
 class Tray : public QObject
 {
     Q_OBJECT

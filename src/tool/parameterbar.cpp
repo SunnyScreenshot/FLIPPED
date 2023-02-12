@@ -227,7 +227,7 @@ void ParameterBar::onSelShape(DrawShape shape, bool checked)
         ADDWIDGET_AND_SHOE(m_arrowBar, true);
         ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
         ADDWIDGET_AND_SHOE(m_colorBar, false);
-    } else if (shape == DrawShape::Pen) {
+    } else if (shape == DrawShape::CustomPath) {
         ADDWIDGET_AND_SHOE(m_lienWidthBar, true);
         ADDWIDGET_AND_SHOE(m_colorBar, false);
     } else if (shape == DrawShape::Mosaics) {

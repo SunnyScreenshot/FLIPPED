@@ -116,8 +116,9 @@ void XHelper::SetAttrRecur(QDomElement &elem, QString strtagname, QString stratt
     }
 }
 
-const QPixmap* XHelper::SetMosaicSmooth(QPixmap* pixmap, int px)
+const QPixmap* XHelper::smoothMosaic(QPixmap* pixmap, int px)
 {
+    Q_UNUSED(px);
     if (!pixmap)
         return nullptr;
 
@@ -137,7 +138,7 @@ const QPixmap* XHelper::SetMosaicSmooth(QPixmap* pixmap, int px)
     return pixmap;
 }
 
-const QImage XHelper::SetMosaicPixlelated(QPixmap* pixmap, int px /*= 20*/)
+const QImage XHelper::pixlelatedMosaic(QPixmap* pixmap, int px /*= 20*/)
 {
     if (!pixmap)
         return QImage();

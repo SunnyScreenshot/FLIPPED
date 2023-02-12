@@ -6,7 +6,6 @@
         <file>resources/tool/finish.svg</file>
         <file>resources/tool/gif.svg</file>
         <file>resources/tool/mosaic.svg</file>
-        <file>resources/tool/pen.svg</file>
         <file>resources/tool/rectangle.svg</file>
         <file>resources/tool/renewal.svg</file>
         <file>resources/tool/revocation.svg</file>
@@ -36,5 +35,6 @@
         <file>resources/tool_para/text/bold.svg</file>
         <file>resources/tool_para/text/italic.svg</file>
         <file>resources/tool_para/text/outline.svg</file>
+        <file>resources/tool/custompath.svg</file>
     </qresource>
 </RCC>
