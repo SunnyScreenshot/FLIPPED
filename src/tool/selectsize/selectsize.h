@@ -31,6 +31,7 @@ private:
     void initUI();
 
 protected:
+//    void showEvent(QShowEvent *e) override;
     void paintEvent(QPaintEvent* e) override;
 };
 

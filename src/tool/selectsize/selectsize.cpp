@@ -27,9 +27,12 @@ SelectSize::SelectSize(const QString& text, QWidget* parent /*= nullptr*/, Qt::W
 
 void SelectSize::onTextChanged(QString text)
 {
-    QFontMetrics fm(this->font());
+    text = this->text();
+    QFontMetrics fm(font());
     QRect bound = fm.boundingRect(QRect(), Qt::AlignCenter, text);
-    adjustSize();
+    qDebug() << "SelectSize::onTextChanged()" << text << "  " <<bound << "  " << rect();
+    setFixedSize(bound.size());
+    qDebug() <<bound << "  " << rect();
 }
 
 void SelectSize::initUI()
@@ -37,6 +40,14 @@ void SelectSize::initUI()
     setContentsMargins(SS_MARGIN_LEFT, SS_MARGIN_TOP, SS_MARGIN_RIGHT, SS_MARGIN_BOTTOM);
     connect(this, &SelectSize::sigTextChanged, this, &SelectSize::onTextChanged);
 }
+
+//void SelectSize::showEvent(QShowEvent *e)
+//{
+//    QWidget::showEvent(e);
+//    onTextChanged("");
+
+//    qDebug() << " rect:" << rect() << "   " << this->text();
+//}
 
 void SelectSize::paintEvent(QPaintEvent* e)
 {
@@ -52,3 +63,4 @@ void SelectSize::paintEvent(QPaintEvent* e)
     pa.setBrush(Qt::NoBrush);
     pa.drawText(contentsRect(), Qt::AlignCenter, text());
 }
+

@@ -149,3 +149,8 @@
 // PinWidget 
 #define PW_MARGIN 7                    // pinwidgt 对应的 shadow 宽度
 #endif // XGLOBAL_H
+
+
+// SerialNumber pen.widthF()
+#define SN_Min 12
+#define SN_Max 100

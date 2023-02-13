@@ -54,6 +54,9 @@ namespace Util {
     }
 }
 
+
+XDrawStep ScreenShot::m_step = XDrawStep();
+
 ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
     , m_scal(XHelper::instance().getScale())
@@ -70,7 +73,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_selBar(std::make_unique<SelectBar>(m_barOrien, this))
     , m_paraBar(std::make_unique<ParameterBar>(m_barOrien, this))
     , m_selSizeTip(std::make_unique<SelectSize>("", this))
-    , m_lineWidthTip(std::make_unique<SelectSize>("", this))
+    , m_widthTip(std::make_unique<SelectSize>("", this))
     , m_edit(std::make_unique<XTextWidget>(this))
 {
     XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
@@ -135,9 +138,9 @@ ScreenShot::ScreenShot(QWidget *parent)
 
     // new refactor
     m_selSizeTip->setVisible(false);
-    m_lineWidthTip->setVisible(false);
-    m_lineWidthTip->setFixedSize(50, 50);
-    m_lineWidthTip->move(15, 15);
+    m_widthTip->setVisible(false);
+    m_widthTip->setFixedSize(50, 50);
+    m_widthTip->move(0, 0);
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
     connect(m_selBar.get(), &SelectBar::sigEnableDraw, this, &ScreenShot::onEnableDraw);
@@ -257,11 +260,11 @@ void ScreenShot::onClearScreen()
 
     m_bFirstSel = false;
     m_selSizeTip->setVisible(false);
-    m_lineWidthTip->setVisible(false);
+    m_widthTip->setVisible(false);
 
     m_selBar->setVisible(false);
     m_paraBar->setVisible(false);
-    m_step.clear();
+    m_step.destroyClear();
 
     m_autoDetectRt = QRect();
     if (m_rtCalcu.scrnType == ScrnOperate::SO_Wait) // 状态重置
@@ -479,14 +482,23 @@ void ScreenShot::onLineWidthChange(int width)
 {
     static QFont font(m_step.font);
     font.setPointSize(14);
-    m_lineWidthTip->setText(QString::number(width));
-    m_lineWidthTip->setAlignment(Qt::AlignCenter);
-    m_lineWidthTip->setFont(font);
-    m_lineWidthTip->move(mapFromGlobal(currentScreen()->geometry().topLeft()));
-    m_lineWidthTip->raise();
-    m_lineWidthTip->setVisible(true);
+    m_widthTip->setFont(font);
+    m_widthTip->setText(QString::number(width));
+    m_widthTip->setAlignment(Qt::AlignCenter);
+    m_widthTip->move(mapFromGlobal(currentScreen()->geometry().topLeft()));
+    m_widthTip->raise();
+    m_widthTip->setVisible(true);
 
-    QTimer::singleShot(4000, this, [&]() { m_lineWidthTip->setVisible(false); });
+    static QTimer* timer = nullptr;
+    if (!timer) {
+        timer = new QTimer();
+        connect(timer, &QTimer::timeout, this, [&]() { m_widthTip->setVisible(false); });
+        timer->setSingleShot(true);
+        timer->setInterval(4000);
+    }
+
+    timer->stop();
+    timer->start();
 }
 
 void ScreenShot::onSelColor(QColor col)
@@ -778,7 +790,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         pa.setBrush(Qt::NoBrush);
 
         QFont font(pa.font());
-        font.setPointSizeF(qMax<double>(12, step.pen.widthF()));
+        font.setPointSizeF(qMax<double>(SN_Min, step.pen.widthF()));
         pa.setFont(font);
 
         pa.drawText(adjustRt, Qt::AlignCenter, str);
@@ -1564,7 +1576,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
                 m_vDrawed.push_back(m_step); // TODO 2022.01.16 优化:  不必每次(无效得)点击，也都记录一次
                 bool bSerial = m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType;
                 if (!bSerial)
-                    m_step.clear();
+                    m_step.partClear();
 
                 //{
                 //    int i = 0;
@@ -1607,32 +1619,35 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
     QPoint numDegrees = event->angleDelta() / 8;
     QPoint numSteps = numDegrees / 15;
 
-    qDebug() << "ScreenShot::wheelEvent:" << numSteps.y() << " #############  " << numSteps.x();
+//    qDebug() << "ScreenShot::wheelEvent:" << numSteps.y() << " #############  " << numSteps.x();
 
     if (numDegrees.isNull())
         return;
 
-    double tLineWidth = 0;
+    int penWidth = 0;
     if (m_step.shape == DrawShape::Text) {
         m_step.font.setPointSize(m_step.font.pointSize() + numSteps.y());
         m_edit->setFont(m_step.font);
-        tLineWidth = m_step.font.pointSize();
+        penWidth = m_step.font.pointSize();
     } else {
         const int min = 1;
         const int max = 100;
-        tLineWidth = m_step.pen.widthF();
-        if (m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType) {
-            tLineWidth += (numSteps.y() > 0 ? 10 : -10);
+        penWidth = m_step.pen.widthF();
+
+        const bool bSerialNumber = m_step.shape == DrawShape::SerialNumberShape || m_step.shape == DrawShape::SerialNumberType;
+        if (bSerialNumber) {
+            penWidth -= penWidth % 5;
+            penWidth += (numSteps.y() > 0 ? 5 : -5);
         } else {
-            tLineWidth += numSteps.y();
+            penWidth += numSteps.y();
         }
 
-        tLineWidth = qBound<int>(min, tLineWidth, max);
-        m_step.pen.setWidthF(tLineWidth);
+        penWidth = qBound<int>(min, penWidth, max);
+        m_step.pen.setWidthF(penWidth);
     }
 
-    qDebug() << "ScreenShot::wheelEvent:" << m_step.font.pointSizeF() << "   tLineWidth:" << tLineWidth << "  m_step.pen.widthF():" << m_step.pen.widthF() << "  " << m_edit->font().pointSizeF();
-    emit sigLineWidthChange(tLineWidth);
+//    qDebug() << "ScreenShot::wheelEvent:" << m_step.font.pointSizeF() << "   tLineWidth:" << penWidth << "  m_step.pen.widthF():" << m_step.pen.widthF() << "  " << m_edit->font().pointSizeF();
+    emit sigLineWidthChange(penWidth);
     event->accept();
 }
 

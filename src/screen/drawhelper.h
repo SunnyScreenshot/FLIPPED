@@ -174,11 +174,23 @@ struct  XDrawStep
         qDebug() << &brush << "  " << brush << "   " << brush.color().name() ;
         qDebug() << &text << "  " << text << "   font:" << font << "   textParas:" << textParas << "   serialText:" << serialText << Qt::endl;
     }
-    void clear() {
+    void partClear() {
         p1 = QPoint();
         p2 = QPoint();
         rt = QRect();
         custPath.clear();
+    }
+
+    void destroyClear()
+    {
+        p1 = QPoint();
+        p2 = QPoint();
+        rt = QRect();
+        shape = DrawShape::NoDraw;
+        shapePara = ShapePara::SP_0;
+        custPath.clear();
+        text.clear();
+        textParas = TextPara(0);
     }
 };
 

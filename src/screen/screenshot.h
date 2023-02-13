@@ -130,21 +130,20 @@ private:
     bool m_bFirstSel;                      // 初次选中 截图矩形 完成
     bool m_bFirstPress;                    // 初次 左键按下 完成(十字线)
 
-    XDrawStep m_step;                      // 当前绘画一步骤
-
-    std::vector<XDrawStep> m_vDrawed;          // 已绘步骤
-    std::vector<XDrawStep> m_vDrawUndo;        // 撤销步骤
-    std::set<QRect, comp> m_scrnRts;       // 特殊窗口的矩形，绘画时需略调整
-    XDrawStep* m_pCurrShape;               // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
+    std::vector<XDrawStep> m_vDrawed;             // 已绘步骤
+    std::vector<XDrawStep> m_vDrawUndo;           // 撤销步骤
+    std::set<QRect, comp> m_scrnRts;              // 特殊窗口的矩形，绘画时需略调整
+    XDrawStep* m_pCurrShape;                      // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
+    static XDrawStep m_step;                      // 当前绘画一步骤
 
     // new refactor
     std::map<QScreen*, ScrnTypes> m_scrns;
-    QRect m_autoDetectRt;                 // 自动检测窗口矩形大小；用以给其它赋值
+    QRect m_autoDetectRt;                         // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
     std::unique_ptr<SelectBar> m_selBar;
     std::unique_ptr<ParameterBar> m_paraBar;
     std::unique_ptr<SelectSize> m_selSizeTip;     // 选中矩形的尺寸提示
-    std::unique_ptr<SelectSize> m_lineWidthTip;   // 画笔宽度临时预览
+    std::unique_ptr<SelectSize> m_widthTip;       // 画笔宽度临时预览
     std::unique_ptr<XTextWidget> m_edit;
 };
 
