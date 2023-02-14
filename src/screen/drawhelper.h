@@ -144,10 +144,10 @@ struct  XDrawStep
     DrawShape shape = DrawShape::NoDraw;        // 绘画形状
     ShapePara shapePara = ShapePara::SP_0;      // 图形的样式类型：Rectangles、Ellipses、Arrows、Mosaics
 
-    /*『pen.width』rect/ellipses/line/arrows/pen/SerialNumber/custPath 的绘画宽度，单位px；   | Mosaics 模糊参数，单位px 
-    * 『pen.color』rect/ellipses/line/arrows/pen/SerialNumber/custPath 的实际[轮廓]颜色
-    * 『brush.width』rect/ellipses/line/arrows/pen/SerialNumber 的绘画宽度，单位px;
-    * 『brush.color』rect/ellipses/line/arrows/pen/SerialNumber 的[填充]颜色
+    /*『pen.width』rect/ellipses/line/arrows/custPath/SerialNumber 的绘画宽度，单位px；   | Mosaics 模糊参数，单位px
+    * 『pen.color』rect/ellipses/line/arrows/custPath/SerialNumber 的实际[轮廓]颜色
+    * 『brush.width』rect/ellipses/line/arrows/custPath/SerialNumber 的绘画宽度，单位px;
+    * 『brush.color』rect/ellipses/line/arrows/custPath/SerialNumber 的[填充]颜色
     *
     * 『Text』pa.drawPath: 遇到 \n 不会换行，自行分割解决; 可以实现描边效果 -> QPen 是描边颜色， Brush 是字体颜色；【采用此方案】
     *         其 Tip 显示是 font.pointSize

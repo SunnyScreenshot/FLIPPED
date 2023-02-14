@@ -511,7 +511,8 @@ QWidget *Preference::tabAbout()
     else if (_BIT_ARCH == 8)
         bit = "x64";
 
-    QLabel* project = new QLabel(tr("%1").arg(_PROJECT_NAME));
+    QLabel* project = new QLabel(tr("<a style='color: black;' href=https://github.com/XMuli/Flipped> %1</a>").arg(_PROJECT_NAME));
+    project->setOpenExternalLinks(true);
     QFont font;
     font.setPointSizeF(ponitSize);
     font.setBold(true);
@@ -536,7 +537,8 @@ QWidget *Preference::tabAbout()
     authorR->setFont(font);
     QLabel* copyrightL = new QLabel(tr("Copyright ©"));
     copyrightL->setFont(font);
-    QLabel* copyrightR = new QLabel(tr("2021-2022 XMuli"));
+    QLabel* copyrightR = new QLabel(tr("2021-2023 ") + tr("<a style='color: green;' href=https://github.com/XMuli> XMuli</a>"));
+    copyrightR->setOpenExternalLinks(true);
     copyrightR->setFont(font);
 
     grid->addWidget(project, grid->rowCount(), j, 1, 2, Qt::AlignCenter);
@@ -585,26 +587,37 @@ QWidget *Preference::tabAbout()
     QLabel* tsR = new QLabel("Tom Jerry");
     tsR->setFont(font);
 
+    // 临时屏蔽
+    authorL->hide();
+    authorR->hide();
+    ctL->hide();
+    ctR->hide();
+    tsL->hide();
+    tsR->hide();
+    ghL->hide();
+    ghR->hide();
+    blogR->hide();
+
     grid->addWidget(ackmtR, grid->rowCount(), j + 1, 1, 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
-    grid->addWidget(ghL, grid->rowCount(), j, 1, 1, Qt::AlignRight);
-    grid->addWidget(ghR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 1, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
-    grid->addWidget(new QLabel(" "), grid->rowCount(), j, 1, 1, Qt::AlignRight);
-    grid->addWidget(blogR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+//    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+//    grid->addWidget(ghL, grid->rowCount(), j, 1, 1, Qt::AlignRight);
+//    grid->addWidget(ghR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+//    grid->addItem(new QSpacerItem(0, 1, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+//    grid->addWidget(new QLabel(" "), grid->rowCount(), j, 1, 1, Qt::AlignRight);
+//    grid->addWidget(blogR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
     grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
     grid->addWidget(UIL, grid->rowCount(), j, Qt::AlignRight);
     grid->addWidget(UIR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
-    grid->addWidget(ctL, grid->rowCount(), j, Qt::AlignRight);
-    grid->addWidget(ctR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
-    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
-    grid->addWidget(tsL, grid->rowCount(), j, Qt::AlignRight);
-    grid->addWidget(tsR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+//    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+//    grid->addWidget(ctL, grid->rowCount(), j, Qt::AlignRight);
+//    grid->addWidget(ctR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+//    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+//    grid->addWidget(tsL, grid->rowCount(), j, Qt::AlignRight);
+//    grid->addWidget(tsR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
 
     qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();  // 创建一个空 grid 时，便默认有一个 1 item，添加第一个后，依旧计数 1 个；
     vLay->addLayout(grid, grid->rowCount());
-//    vLay->addStretch(3);
+    vLay->addStretch(3);
     vLay->addSpacing(TAV_MARGIN_VER_BOTTOM);
 
     return page;
