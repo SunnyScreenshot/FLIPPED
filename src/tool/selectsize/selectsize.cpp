@@ -1,13 +1,8 @@
-﻿/*******************************************************************
- * Copyright (c) 2021-2022 偕臧  All rights reserved.
- *
- * Author: XMuli <xmulitech@gmail.com>
- * GitHub: https://github.com/XMuli
- * Blog:   https://xmuli.tech
- *
- * Date:   2022.07.02
- * Description: 选中矩形区域的尺寸大小，显示在左上角
- ******************************************************************/
+﻿// SPDX-License-Identifier:
+// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
+//
+// Source: https://github.com/XMuli/Flipped
+
 #include "selectsize.h"
 #include "../../xglobal.h"
 #include "../../screen/drawhelper.h"

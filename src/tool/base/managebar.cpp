@@ -1,13 +1,8 @@
-﻿/*******************************************************************
- * Copyright (c) 2021-2022 偕臧  All rights reserved.
- *
- * Author: XMuli <xmulitech@gmail.com>
- * GitHub: https://github.com/XMuli
- * Blog:   https://xmuli.tech
- *
- * Date:   2022.06.26
- * Description: 参数工具栏的一部分，作为管理类：矩形、椭圆、箭头、马赛克等
- ******************************************************************/
+﻿// SPDX-License-Identifier:
+// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
+//
+// Source: https://github.com/XMuli/Flipped
+
 #include "managebar.h"
 #include <QBoxLayout>
 #include "../../xglobal.h"

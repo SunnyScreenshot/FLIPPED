@@ -1,18 +1,12 @@
-﻿/*******************************************************************
- * Copyright (c) 2021-2022 偕臧  All rights reserved.
- *
- * Author: XMuli <xmulitech@gmail.com>
- * GitHub: https://github.com/XMuli
- * Blog:   https://xmuli.tech
- *
- * Date: 2021.11.09
- * Description: 基本定义的宏
- ******************************************************************/
+﻿// SPDX-License-Identifier:
+// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
+//
+// Source: https://github.com/XMuli/Flipped
 
 #ifndef XGLOBAL_H
 #define XGLOBAL_H
 
-#define _MYDEBUG // 调试
+//#define _MYDEBUG // 调试
 
 // 1. HAIF_INTERVAL 为一半间隔，边框宽度一半高; 2 * HAIF_INTERVAL 为边框的宽度，为 getOuterRect - getRect  == getRect - getInnerRect == HAIF_INTERVAL
 // 2. HAIF_INTERVAL 为边框一般的灵敏度，光标移动到上面便会变化形态

@@ -1,13 +1,8 @@
-﻿/*******************************************************************
- * Copyright (c) 2021-2022 偕臧  All rights reserved.
- *
- * Author: XMuli <xmulitech@gmail.com>
- * GitHub: https://github.com/XMuli
- * Blog:   https://xmuli.tech
- *
- * Date:   2022.07.16
- * Description: 模拟 亚克力/透明磨砂 效果（此处取巧）
- ******************************************************************/
+﻿// SPDX-License-Identifier:
+// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
+//
+// Source: https://github.com/XMuli/Flipped
+
 #include "blurwidget.h"
 #include "../../xglobal.h"
 #include <QColor>

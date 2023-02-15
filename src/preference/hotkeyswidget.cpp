@@ -1,13 +1,8 @@
-﻿/*******************************************************************
- * Copyright (c) 2021-2022 偕臧  All rights reserved.
- *
- * Author: XMuli <xmulitech@gmail.com>
- * GitHub: https://github.com/XMuli
- * Blog:   https://xmuli.tech
- *
- * Date:   2022.07.17
- * Description: 偏好设置界面的 hotkeys UI；为了规避掉 编辑框 鼠标点击外面却仍有焦点
- ******************************************************************/
+﻿// SPDX-License-Identifier:
+// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
+//
+// Source: https://github.com/XMuli/Flipped
+
 #include "hotkeyswidget.h"
 #include <map>
 #include <QBoxLayout>

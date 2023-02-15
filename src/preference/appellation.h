@@ -1,18 +1,14 @@
-﻿/*******************************************************************
- * Copyright (c) 2021-2022 偕臧  All rights reserved.
- *
- * Author: XMuli <xmulitech@gmail.com>
- * GitHub: https://github.com/XMuli
- * Blog:   https://xmuli.tech
- *
- * Date:   2022.07.23
- * Description: 统一存放 class Preference 中新建的对象的 objectName
- ******************************************************************/
+﻿// SPDX-License-Identifier:
+// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
+//
+// Source: https://github.com/XMuli/Flipped
+
 #ifndef APPELLATION_H
 #define APPELLATION_H
 
 #include <QString>
 
+// Description: 统一存放 class Preference 中新建的对象的 objectName
  // perference UI config
 //const QString INIT_GENERAL("General");                   // 初始化 常规
 //const QString INIT_INTERFACE("Interface");               // 初始化 界面

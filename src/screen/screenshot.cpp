@@ -1,13 +1,8 @@
-﻿/*******************************************************************
- * Copyright (c) 2021-2022 偕臧  All rights reserved.
- *
- * Author: XMuli <xmulitech@gmail.com>
- * GitHub: https://github.com/XMuli
- * Blog:   https://xmuli.tech
- *
- * Date:   2021.09.29
- * Description:
- ******************************************************************/
+﻿// SPDX-License-Identifier:
+// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
+//
+// Source: https://github.com/XMuli/Flipped
+
 #include "screenshot.h"
 #include <QScreen>
 #include <QPixmap>
@@ -518,7 +513,7 @@ QPixmap* ScreenShot::getVirScrnPixmap()
         const QRect geom = curScrn->geometry();
 
 #if defined(Q_OS_MAC)
-        m_currPixmap = new QPixmap(priScrn()->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
+        m_currPixmap = new QPixmap(const_cast<QScreen *>(priScrn())->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
 #else
     #ifdef _MYDEBUG
         m_currPixmap = new QPixmap(const_cast<QScreen *>(priScrn())->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
