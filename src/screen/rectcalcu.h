@@ -17,7 +17,6 @@ class QPoint;
 QT_END_NAMESPACE
 
 namespace XC {
-
 	enum class ScrnOperate {
 		SO_Wait,                                // 基础的等待状态（未有，和已有矩形局域）
 		SO_Select,                              // 基础的选中状态

@@ -522,7 +522,7 @@ QWidget *Preference::tabAbout()
     buildTime->setFont(font);
     buildTime->setStyleSheet("QLabel{color:rgba(0, 0, 0, 0.6);}");
     buildTime->setToolTip(time.right(time.count() - time.indexOf(" ") - 1));
-    QLabel* detail = new QLabel(tr("Flipped is a cross-platform screenshot tool."));
+    QLabel* detail = new QLabel(tr("simple and beautiful cross-platform screenshot software."));
     detail->setFont(font);
 
     QLabel* authorL = new QLabel(tr("Author:"));

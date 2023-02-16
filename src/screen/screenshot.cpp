@@ -35,6 +35,7 @@
 #include "../core/arrowline.h"
 #include "../platform/wininfo.h"
 #include "../tool/pin/pinwidget.h"
+#include "rectcalcu.h"
 
 namespace Util {
     bool getRectFromCurrentPoint(WinID winId, QRect &outRect)
@@ -1094,9 +1095,9 @@ void ScreenShot::showAllDrawedShape(QPainter& pa)
 }
 
 // 效果：绘画的顺序重要
-void ScreenShot::paintEvent(QPaintEvent *event)
+void ScreenShot::paintEvent(QPaintEvent *e)
 {
-	Q_UNUSED(event);
+	Q_UNUSED(e);
     if (m_rtCalcu.scrnType == ScrnOperate::SO_Draw)
         setCursor(Qt::CrossCursor);
 
@@ -1163,7 +1164,7 @@ void ScreenShot::paintEvent(QPaintEvent *event)
     pen.setColor(Qt::white);
     pa.setPen(pen);
 
-//    showDebugInfo(pa, rtSel);
+    showDebugInfo(pa, rtSel);
 }
 
 void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
@@ -1286,6 +1287,57 @@ const QScreen* ScreenShot::curScrn() const
     return curScrn;
 }
 
+void ScreenShot::adjustSelectedRect(QKeyEvent *e)
+{
+    const int pos = 1;
+    int totalPos = pos;
+    const int rate = 10;
+    const bool shift = e->modifiers() == Qt::ShiftModifier;   // speed up 
+    const bool ctrl = e->modifiers() == Qt::ControlModifier;  // expansion
+    const bool alt = e->modifiers() == Qt::AltModifier;       // shrink
+    const bool shiftAndCtrl(e->modifiers() == (Qt::ShiftModifier | Qt::ControlModifier));
+    const bool shiftAndAlt(e->modifiers() == (Qt::ShiftModifier | Qt::AltModifier));
+    const bool left(e->key() == Qt::Key_A | e->key() == Qt::Key_Left);
+    const bool top(e->key() == Qt::Key_W | e->key() == Qt::Key_Up);
+    const bool right(e->key() == Qt::Key_D | e->key() == Qt::Key_Right);
+    const bool down(e->key() == Qt::Key_S | e->key() == Qt::Key_Down);
+
+    QRect rt = m_rtCalcu.getSelRect();
+    if (shift | shiftAndCtrl | shiftAndAlt) totalPos = pos * rate;
+    if (rt.isValid() && m_rtCalcu.scrnType == ScrnOperate::SO_Wait) {
+        if (ctrl | alt | shiftAndCtrl | shiftAndAlt)
+            m_rtCalcu.scrnType = ScrnOperate::SO_Stretch;
+        else if (left | top | right | down)
+            m_rtCalcu.scrnType = ScrnOperate::SO_Move;
+    }
+
+    if (m_rtCalcu.scrnType == ScrnOperate::SO_Move) {
+        if (left) rt.moveLeft(rt.left() - totalPos);
+        if (top) rt.moveTop(rt.top() - totalPos);
+        if (right) rt.moveRight(rt.right() + totalPos);
+        if (down) rt.moveBottom(rt.bottom() + totalPos);
+        
+    } else if (m_rtCalcu.scrnType == ScrnOperate::SO_Stretch) {
+        if (ctrl | shiftAndCtrl) {
+            if (left) rt.setLeft(rt.left() - totalPos);
+            if (top) rt.setTop(rt.top() - totalPos);
+            if (right) rt.setRight(rt.right() + totalPos);
+            if (down) rt.setBottom(rt.bottom() + totalPos);
+        }
+
+        if (alt | shiftAndAlt) {
+            if (left) rt.setLeft(rt.left() + totalPos);
+            if (top) rt.setTop(rt.top() + totalPos);
+            if (right) rt.setRight(rt.right() - totalPos);
+            if (down) rt.setBottom(rt.bottom() - totalPos);
+        }
+    }
+
+    m_rtCalcu.setRtSel(rt);
+    m_rtCalcu.scrnType = ScrnOperate::SO_Wait;
+    update();
+}
+
 void ScreenShot::drawWinInfo(QPainter& pa)
 {
     int i = 0;
@@ -1389,9 +1441,9 @@ void ScreenShot::drawToolBar()
     }
 }
 
-void ScreenShot::keyReleaseEvent(QKeyEvent *event)
+void ScreenShot::keyReleaseEvent(QKeyEvent *e)
 {
-	if (event->key() == Qt::Key_Escape) {
+    if (e->key() == Qt::Key_Escape) {
 		qDebug() << "Key_Escape";
 		emit sigClearScreen();
         // hide() 和 close() 区别: https://stackoverflow.com/questions/39407564
@@ -1399,14 +1451,16 @@ void ScreenShot::keyReleaseEvent(QKeyEvent *event)
         close();   // // 销毁再不会有问题,由单例改写为 new 形式了。排查：1. tray 有关，改用 qpushbutton 和 close即可； 2.单例有关，该市建议修改为 new 指针的比较合适
         //deleteLater();
     }
+
+    adjustSelectedRect(e);
 }
 
 // 注意: 1. 按下、松开时候会切换状态；点击绘画按钮也会切换状态
 //      2. 开启鼠标跟踪时机；点击绘画按钮也会相应开启/关闭
 //      3. mousePressEvent、mouseMoveEvent、mouseReleaseEvent 合成整体来看；以及不忘记绘画按钮的槽函数
-void ScreenShot::mousePressEvent(QMouseEvent *event)
+void ScreenShot::mousePressEvent(QMouseEvent *e)
 {
-	if (event->button() != Qt::LeftButton)
+	if (e->button() != Qt::LeftButton)
 		return;
 
     m_bFirstPress = true;
@@ -1415,15 +1469,15 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
 		//m_rtCalcu.clear();
 
 		m_rtCalcu.scrnType = ScrnOperate::SO_Select;
-        m_rtCalcu.pos1 = event->pos();
+        m_rtCalcu.pos1 = e->pos();
         m_rtCalcu.pos2 = m_rtCalcu.pos1;
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Draw) {
 
         if (m_step.shape == DrawShape::Text) {
             m_step.p2 = m_step.p1;   // p2 as perviousPos
-            m_step.p1 = event->pos();
+            m_step.p1 = e->pos();
         } else {
-            m_step.p2 = m_step.p1 = event->pos();
+            m_step.p2 = m_step.p1 = e->pos();
         }
         
         if (m_step.shape == DrawShape::Text) {
@@ -1468,16 +1522,16 @@ void ScreenShot::mousePressEvent(QMouseEvent *event)
         }
 
 	} else {  // 则可能为移动、拉伸、等待状态
-		m_rtCalcu.scrnType = updateScrnType(event->pos());
+		m_rtCalcu.scrnType = updateScrnType(e->pos());
     }
 
 	if (m_rtCalcu.scrnType == ScrnOperate::SO_Move) {
-		m_rtCalcu.pos1 = event->pos();
+		m_rtCalcu.pos1 = e->pos();
         m_rtCalcu.pos2 = m_rtCalcu.pos1;
 
         whichShape(); // 判定移动选中的已绘图形
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Stretch) {
-		m_rtCalcu.pos1 = event->pos();
+		m_rtCalcu.pos1 = e->pos();
         m_rtCalcu.pos2 = m_rtCalcu.pos1;
 	}
 
@@ -1498,7 +1552,7 @@ QPen ScreenShot::easyRecognizeColorPen(const QColor& color, const bool bDefaultP
     return tPen;
 }
 
-void ScreenShot::mouseMoveEvent(QMouseEvent *event)
+void ScreenShot::mouseMoveEvent(QMouseEvent *e)
 {
 //    if (event->button() != Qt::LeftButton)
 //        return;
@@ -1508,17 +1562,17 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
         if (m_bSmartWin)
             updateGetWindowsInfo();
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Select) {
-        m_rtCalcu.pos2 = event->pos();
+        m_rtCalcu.pos2 = e->pos();
         m_bSmartWin = false;
         //if (m_rtCalcu.pos1 != m_rtCalcu.pos2)
         //  不显示 TODO: 2022.02.10 再添加一个变量即可
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Move) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = e->pos();
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Draw) {
-        m_step.p2 = event->pos();
+        m_step.p2 = e->pos();
 
         if (m_step.shape == DrawShape::CustomPath) {
-            m_step.custPath.append(event->pos());
+            m_step.custPath.append(e->pos());
         } else if (m_step.shape == DrawShape::Text) {
             m_step.p1 = m_step.p2;
             m_edit->move(m_step.p1);
@@ -1526,21 +1580,21 @@ void ScreenShot::mouseMoveEvent(QMouseEvent *event)
 
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Stretch) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = e->pos();
 	}
 
-    updateCursorShape(event->pos());
+    updateCursorShape(e->pos());
     update();
 }
 
-void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
+void ScreenShot::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (event->button() != Qt::LeftButton)
+    if (e->button() != Qt::LeftButton)
         return;
 
     if (m_rtCalcu.scrnType == ScrnOperate::SO_Wait) {
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Select) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = e->pos();
 
         if (m_rtCalcu.pos1 == m_rtCalcu.pos2) {  // 点击到一个点，视作智能检测窗口； 否则就是手动选择走下面逻辑
             m_rtCalcu.setRtSel(m_autoDetectRt);
@@ -1549,7 +1603,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         m_bSmartWin = false; // 自动选择也结束
 
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Move) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = e->pos();
 
         // 移动选中的图形
         if (m_pCurrShape) {
@@ -1558,9 +1612,9 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
 
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Draw) {
         
-        m_step.p2 = event->pos();
+        m_step.p2 = e->pos();
         if (m_step.shape == DrawShape::CustomPath)
-            m_step.custPath.append(event->pos());
+            m_step.custPath.append(e->pos());
 
         m_step.rt = RectCalcu::getRect(m_step.p1, m_step.p2);
 
@@ -1587,7 +1641,7 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
         }
 
 	} else if (m_rtCalcu.scrnType == ScrnOperate::SO_Stretch) {
-		m_rtCalcu.pos2 = event->pos();
+		m_rtCalcu.pos2 = e->pos();
 	}
 
     if (!m_rtCalcu.calcurRsultOnce().isEmpty()) {  // 计算一次结果
@@ -1607,11 +1661,11 @@ void ScreenShot::mouseReleaseEvent(QMouseEvent *event)
     update();
 }
 
-void ScreenShot::wheelEvent(QWheelEvent* event)
+void ScreenShot::wheelEvent(QWheelEvent* e)
 {
     // Note: On X11 this value is driver specific and unreliable, use angleDelta() instead
     // QPoint numPixels = event->pixelDelta();
-    QPoint numDegrees = event->angleDelta() / 8;
+    QPoint numDegrees = e->angleDelta() / 8;
     QPoint numSteps = numDegrees / 15;
 
 //    qDebug() << "ScreenShot::wheelEvent:" << numSteps.y() << " #############  " << numSteps.x();
@@ -1643,7 +1697,7 @@ void ScreenShot::wheelEvent(QWheelEvent* event)
 
 //    qDebug() << "ScreenShot::wheelEvent:" << m_step.font.pointSizeF() << "   tLineWidth:" << penWidth << "  m_step.pen.widthF():" << m_step.pen.widthF() << "  " << m_edit->font().pointSizeF();
     emit sigLineWidthChange(penWidth);
-    event->accept();
+    e->accept();
 }
 
 void ScreenShot::scrnsCapture()

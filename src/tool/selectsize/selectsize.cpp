@@ -25,9 +25,9 @@ void SelectSize::onTextChanged(QString text)
     text = this->text();
     QFontMetrics fm(font());
     QRect bound = fm.boundingRect(QRect(), Qt::AlignCenter, text);
-    qDebug() << "SelectSize::onTextChanged()" << text << "  " <<bound << "  " << rect();
+//    qDebug() << "SelectSize::onTextChanged()" << text << "  " <<bound << "  " << rect();
     setFixedSize(bound.size());
-    qDebug() <<bound << "  " << rect();
+//    qDebug() <<bound << "  " << rect();
 }
 
 void SelectSize::initUI()

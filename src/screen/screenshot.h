@@ -106,14 +106,15 @@ private:
 
     const QScreen* priScrn() const;
     const QScreen* curScrn() const;
+    void adjustSelectedRect(QKeyEvent* e); // Move or Stretch
 protected:
     QPen easyRecognizeColorPen(const QColor& color, const bool bDefaultPenWidth = false) const;
-    void paintEvent(QPaintEvent *event) override;
-    void keyReleaseEvent(QKeyEvent* event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void wheelEvent(QWheelEvent* event) override;
+    void paintEvent(QPaintEvent *e) override;
+    void keyReleaseEvent(QKeyEvent* e) override;
+    void mousePressEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent* e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
+    void wheelEvent(QWheelEvent* e) override;
 
 private:
     double m_scal;
