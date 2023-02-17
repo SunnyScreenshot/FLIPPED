@@ -242,7 +242,7 @@ QWidget* Preference::tabInterface()
     spCrosshair->setRange(1, 100);
 
     QStringList styles;
-    styles << "flipped" << "mac" << "deepin";
+    styles << "flipped" << "black_white" << "light_blue";
 
     for (const auto &text : styles)
         cbBorderStyle->addItem(text, text);

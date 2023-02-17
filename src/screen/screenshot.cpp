@@ -555,7 +555,7 @@ bool ScreenShot::getDrawedShapeRect()
     return false;
 }
 
-void ScreenShot::drawBorderMac(QPainter & pa, const QRect& rt, int num, bool isRound)
+void ScreenShot::drawBorderBlackWhite (QPainter & pa, const QRect& rt, int num, bool isRound)
 {
 	if (num == 0)
 		return;
@@ -1032,7 +1032,7 @@ void ScreenShot::savePixmap(bool quickSave /*= true*/, bool autoSave /*= true*/)
 }
 
 // 样式一: 浅蓝色
-void ScreenShot::drawBorderDeepin(QPainter& pa, const QRect& rt, int num, bool isRound)
+void ScreenShot::drawBorderLightBlue(QPainter& pa, const QRect& rt, int num, bool isRound)
 {
     if (num == 0)
         return;
@@ -1040,7 +1040,7 @@ void ScreenShot::drawBorderDeepin(QPainter& pa, const QRect& rt, int num, bool i
     pa.setPen(Qt::NoPen);
     pa.setBrush(Qt::NoBrush);
 
-    QIcon icon(":/resources/icons/boardPoint_8px.svg");
+    QIcon icon(":/resources/border_style/light_blue/boardPoint.svg");
     QPixmap pixmap = icon.pixmap(QSize(HAIF_R_BORDER_MARK, HAIF_R_BORDER_MARK) * 4 * ScreenShot::getScale());
     pixmap.setDevicePixelRatio(getDevicePixelRatio());
 
@@ -1388,15 +1388,14 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa)
         }
     }
 
-    // 绘画边框样式
     const QString style = XHelper::instance().boardStyle();
     if (style == "flipped") {
         drawBorderFlipped(pa, rt);
-    } else if (style == "mac") {
-        drawBorderMac(pa, rt);
-    } else if (style == "deepin") {
+    } else if (style == "black_white") {
+        drawBorderBlackWhite (pa, rt);
+    } else if (style == "light_blue") {
         pa.drawRect(rt);
-        drawBorderDeepin(pa, rt);
+        drawBorderLightBlue(pa, rt);
     }
 
     pa.restore();

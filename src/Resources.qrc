@@ -36,5 +36,6 @@
         <file>resources/tool_para/text/italic.svg</file>
         <file>resources/tool_para/text/outline.svg</file>
         <file>resources/tool/custompath.svg</file>
+        <file>resources/border_style/light_blue/boardPoint.svg</file>
     </qresource>
 </RCC>
