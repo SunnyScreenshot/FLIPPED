@@ -118,13 +118,13 @@ protected:
 
 private:
     double m_scal;
-    QRect m_virGeom;                       // 截图时刻的虚拟桌面的大小
-    QPixmap* m_currPixmap;                 // 当前屏幕截图
-    QPixmap m_savePixmap;                  // 当前屏幕截图 + 遮罩   无构造初始化
-    RectCalcu m_rtCalcu;                   // 选中矩形区域
-    bool m_bSmartWin;                      // 是否开启智能窗口
-    bool m_bFirstSel;                      // 初次选中 截图矩形 完成
-    bool m_bFirstPress;                    // 初次 左键按下 完成(十字线)
+    QRect m_virGeom;                              // 截图时刻的虚拟桌面的大小
+    QPixmap* m_currPixmap;                        // 当前屏幕截图
+    QPixmap m_savePixmap;                         // 当前屏幕截图 + 遮罩   无构造初始化
+    RectCalcu m_rtCalcu;                          // 选中矩形区域
+    bool m_bSmartWin;                             // 是否开启智能窗口
+    bool m_bFirstSel;                             // 初次选中 截图矩形 完成
+    bool m_bFirstPress;                           // 初次 左键按下 完成(十字线)
 
     std::vector<XDrawStep> m_vDrawed;             // 已绘步骤
     std::vector<XDrawStep> m_vDrawUndo;           // 撤销步骤

@@ -30,30 +30,33 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
 #endif
 
     initUI();
+    // pTb, btnName, tr(), bCheckable, bAddSpacer
     m_vBtns = {
-        std::make_tuple("rectangle", tr("Rectangle"), true, false),
-        std::make_tuple("ellipse", tr("Ellipse"), true, false),
-        std::make_tuple("arrow", tr("Arrow"), true, false),
-        std::make_tuple("custompath", tr("CustomPath"), true, false),
-        std::make_tuple("mosaic", tr("Mosaic"), true, false),
-        std::make_tuple("text", tr("Text"), true, false),
-        std::make_tuple("serialnumber", tr("SerialNumber"), true, false),
+        std::make_tuple(nullptr, "rectangle", tr("Rectangle"), true, false),
+        std::make_tuple(nullptr, "ellipse", tr("Ellipse"), true, false),
+        std::make_tuple(nullptr, "arrow", tr("Arrow"), true, false),
+        std::make_tuple(nullptr, "custompath", tr("CustomPath"), true, false),
+        std::make_tuple(nullptr, "mosaic", tr("Mosaic"), true, false),
+        std::make_tuple(nullptr, "text", tr("Text"), true, false),
+        std::make_tuple(nullptr, "serialnumber", tr("SerialNumber"), true, false),
 
-        std::make_tuple("pin", tr("Pin"), false, true),
-        std::make_tuple("revocation", tr("ReRevocationctangle"), false, false),
-        std::make_tuple("renewal", tr("Renewal"), false, true),
-        std::make_tuple("save", tr("Save"), false, false),
-        std::make_tuple("cancel", tr("Cancel"), false, false),
-        std::make_tuple("finish", tr("Finish"), false, false)
+        std::make_tuple(nullptr, "pin", tr("Pin"), false, true),
+        std::make_tuple(nullptr, "revocation", tr("Revocation"), false, false),
+        std::make_tuple(nullptr, "renewal", tr("Renewal"), false, true),
+        std::make_tuple(nullptr, "save", tr("Save"), false, false),
+        std::make_tuple(nullptr, "cancel", tr("Cancel"), false, false),
+        std::make_tuple(nullptr, "finish", tr("Finish"), false, false)
     };
 
-    for (const auto& it : m_vBtns){
-        const QString& btnName = std::get<0>(it);
-        const QString& btnTip = std::get<1>(it);
-        const bool& bCheckable = std::get<2>(it);
-        const bool& bAddSpacer = std::get<3>(it);
+    for (auto& it : m_vBtns){
+        auto& tb = std::get<0>(it);
+        const QString& btnName = std::get<1>(it);
+        const QString& btnTip = std::get<2>(it);
+        const bool& bCheckable = std::get<3>(it);
+        const bool& bAddSpacer = std::get<4>(it);
 
-        auto tb = new QToolButton();
+        tb = new QToolButton();
+        tb->setStyleSheet("border-style:none");
         tb->setObjectName(btnName);
         tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
         tb->setAutoRaise(true);
@@ -69,6 +72,8 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
         if (bAddSpacer) addSpacer();
         connect(tb, &QToolButton::released, this, &SelectBar::onToolBtn);
     }
+
+    //btnExclusiveManage();
 }
 
 void SelectBar::setBlurBackground(const QPixmap &pix, double blurRadius)
@@ -112,52 +117,50 @@ void SelectBar::addSpacer()
         m_layout->addWidget(new XHorizontalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
 }
 
+
 void SelectBar::onToolBtn()
 {
     QToolButton* tb = nullptr;
     QObject* obj = sender();
     tb = qobject_cast<QToolButton*>(obj);
-    if (!obj)
+    if (!obj) 
         return;
 
-    bool enableDraw = false;  // true: btn is pressed, in drawing state
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
-
-    //for (QToolButton* it : listBtn)
-    //    qDebug() << "it:" << it << "   it->isCheckable():" << it->isCheckable() << "  it->isChecked():" << it->isChecked();
-    //qDebug() << "\n";
-
     for (QToolButton* it : listBtn) {
         QString path = ":/resources/tool/" + it->objectName() + ".svg";
         it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
+        const bool bDrawTb = tb->isCheckable() == true;   // 绘画按钮
+        const bool bRevoOrReneTb = tb->objectName() == "revocation" || tb->objectName() == "renewal";
+        const bool bOtherTb = (!tb->isCheckable() && tb->objectName() != "revocation" && tb->objectName() != "renewal");
 
         if (it == tb) {
-            if (!it->isCheckable())
-                continue;
-
-            QIcon icon(path);
-            if (it->isChecked()) {
-                enableDraw = true;
-//                icon = XHelper::instance().ChangeSVGColor(path, "path", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
-            }
-
-            it->setIcon(icon);
+            if (bDrawTb) {
+                QIcon icon(path);
+                if (it->isChecked())
+                    icon = XHelper::instance().ChangeSVGColor(path, "path", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
+                it->setIcon(icon);
+            } /*else if (bRevoOrReneTb) {
+            } else if (bOtherTb) {
+            }*/
         } else {
             if (it->objectName() == "text" && it->isChecked())  // fix: textedit edits half of the selected other drawing controls
                 emit sigInterruptEdit(QCursor::pos());
 
-            if (it->isCheckable()) {
+            if (bDrawTb) {
                 it->setChecked(false);
                 it->setIcon(QIcon(path));  // 频繁切换 icon 应该不会有泄露，后面确认下
-            }
+            } /*else if (bRevoOrReneTb) {
+            } else if (bOtherTb) {
+            }*/
         }
     }
 
-    //for (QToolButton* it : listBtn)
-    //    qDebug() << "it:" << it  << "   it->isCheckable():" << it->isCheckable() << "  it->isChecked():" << it->isChecked();
-    //qDebug() << "---------------------------------------------\n";
+    for (QToolButton* it : listBtn)
+        qDebug() << "it:" << it << "   it->isCheckable():" << it->isCheckable() << "  it->isChecked():" << it->isChecked();
+    qDebug() << "---------------------------------------------\n";
     
-    emit sigEnableDraw(enableDraw);
+    emit sigEnableDraw(isEnableDraw());  // true: btn is pressed, in drawing state
     bool isChecked = tb->isChecked();
     
     if (tb->objectName() == "rectangle") {
@@ -190,6 +193,18 @@ void SelectBar::onToolBtn()
         emit sigFinish();
     } else{
     }
+}
+
+inline bool SelectBar::isEnableDraw()
+{
+    bool ret = false;
+    for (auto& it : m_vBtns) {
+        auto& tb = std::get<0>(it);
+        if (tb->isCheckable() && tb->isChecked())
+            ret = true;;
+    }
+
+    return ret;
 }
 
 void SelectBar::enterEvent(QEvent* event)

@@ -133,7 +133,7 @@ void Tray::initGlobalHotKeys()
 
     settingIni->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
-        auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
+        auto& pHK = std::get<0>(it);    // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         const CaptureHelper::CaptureType sst = std::get<3>(it);

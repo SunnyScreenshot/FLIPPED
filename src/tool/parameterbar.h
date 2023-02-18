@@ -29,8 +29,9 @@ private:
     void initUI();
     void addWidget(QWidget *w);
     void addSpacer();
+    QString amendSvgShow(QString path);
 
-    void creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive = true);
+    void creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive = true, const int defaultCheck = 0);
     void initRectBar();
     void initEllipseBar();
     void initArrowBar();

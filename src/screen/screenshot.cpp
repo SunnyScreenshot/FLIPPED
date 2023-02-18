@@ -718,7 +718,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
 
         auto rt = QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio());
         QPixmap mosaicPixmap = m_currPixmap->copy(rt);
-        mosaicPixmap.save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/mosaicPixmap_123456.png");
+//        mosaicPixmap.save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/mosaicPixmap_123456.png");
 
         const int mscPx = step.pen.width();
         if (step.shapePara == ShapePara::SP_0) {

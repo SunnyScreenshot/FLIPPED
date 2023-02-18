@@ -43,6 +43,7 @@ private:
     void initUI();
     void addWidget(QWidget *w);
     void addSpacer();
+    inline bool isEnableDraw();
 
 public slots:
     void onToolBtn();
@@ -68,7 +69,7 @@ private:
     Qt::Orientations m_orien;
     QBoxLayout* m_layout;
     std::unique_ptr<BlurWidget> m_blur;
-    std::vector<std::tuple<QString, QString, bool, bool>> m_vBtns;   // btnName, tr(), bCheckable, bAddSpacer
+    std::vector<std::tuple<QToolButton*, QString, QString, bool, bool>> m_vBtns;   // pTb, btnName, tr(), bCheckable, bAddSpacer
 };
 
 #endif // SELECTBAR_H

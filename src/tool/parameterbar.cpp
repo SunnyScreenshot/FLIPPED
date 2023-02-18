@@ -84,7 +84,20 @@ void ParameterBar::addSpacer()
         m_layout->addWidget(new XHorizontalLine(B_SPACER_LINE_HEIGHT * m_scal, this));
 }
 
-void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive)
+// 由于部分图片不规范，所以用此函数修正一下
+QString ParameterBar::amendSvgShow(QString path)
+{
+    static std::map<QString, QString> map = { {"rectangle_fill.svg", "rect"},
+                                              {"ellipse_fill.svg", "rect"},
+                                              {"line_width_1.svg", "circle"},
+                                              {"line_width_2.svg", "circle"},
+                                              {"line_width_3.svg", "circle"}};
+
+    auto itor = map.find(path.split('/').last());
+    return (itor != map.cend()) ? itor->second : "path";  // shape
+}
+
+void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive, const int defaultCheck)
 {
     if (!manageBar)
         manageBar = new ManageBar(m_orien, this);
@@ -98,17 +111,18 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString&
     auto it = map.begin();
     for (int i = 0; i < items.size(); ++i) {
         QToolButton* tb = new QToolButton();
+        tb->setStyleSheet("border-style:none");
         tb->setIconSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
         tb->setFixedSize(QSize(ICON_WIDTH * m_scal, ICON_WIDTH * m_scal));
         tb->setObjectName(it.key());
         tb->setIcon(QIcon(it.value()));
         tb->setToolButtonStyle(Qt::ToolButtonIconOnly);
-        tb->setAutoRaise(true);   // 自动浮动模式
+        tb->setAutoRaise(true);
         tb->setCheckable(true);
         tb->setChecked(false);
-        if (i == 0) {  // 第一个为默认选中
+        if (i == defaultCheck) {
             tb->setChecked(exclusive);
-            tb->setIcon(XHelper::instance().ChangeSVGColor(it.value(), "rect", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
+            tb->setIcon(XHelper::instance().ChangeSVGColor(it.value(), amendSvgShow(it.value()), XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
         }
 
         tb->setProperty("path", it.value());
@@ -145,7 +159,7 @@ void ParameterBar::initTextBar()
 {
     const QString path(":/resources/tool_para/text/");
     const QStringList list = { "bold", "italic", "outline" };
-    creatorParaBar(m_textBar, path, list, false);
+    creatorParaBar(m_textBar, path, list, false, -1);
 }
 
 void ParameterBar::initArrowBar()
@@ -159,7 +173,7 @@ void ParameterBar::initLineWidthBar()
 {
     const QString path(":/resources/tool_para/line_width/");
     const QStringList list = { "line_width_1", "line_width_2", "line_width_3" };
-    creatorParaBar(m_lienWidthBar, path, list);
+    creatorParaBar(m_lienWidthBar, path, list, true, 1);
 }
 
 void ParameterBar::initSerialnumberBar()
@@ -284,10 +298,9 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
     for (auto& it : parent->findChildren<QToolButton *>()) {
         QString path = it->property("path").value<QString>();
         it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
-
         auto ptr = qobject_cast<QToolButton*>(btn);
         if (it == ptr) {
-            it->setIcon(XHelper::instance().ChangeSVGColor(path, "rect", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
+            it->setIcon(XHelper::instance().ChangeSVGColor(path, amendSvgShow(path), XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
 
             //enum class DrawShape {
             //    NoDraw,
@@ -331,7 +344,7 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
             } else if (parent == m_textBar) {
                 shap = DrawShape::Text;
             } else if (parent == m_lienWidthBar) {
-                shap = DrawShape::LineWidth;   // or Pen
+                shap = DrawShape::LineWidth;
             } else if (parent == m_serialnumberShape || parent == m_serialnumberType) {
                 if (parent == m_serialnumberShape) shap = DrawShape::SerialNumberShape;
                 if (parent == m_serialnumberType) shap = DrawShape::SerialNumberType;
@@ -341,7 +354,8 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
             emit sigParaBtnId(shap, ptr);
 
         } else {
-            it->setIcon(QIcon(path));
+            if (!it->isChecked())
+                it->setIcon(QIcon(path));
         }
     }
 }
