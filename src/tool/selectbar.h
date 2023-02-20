@@ -37,7 +37,7 @@ class SelectBar : public QWidget
 public:
     SelectBar(Qt::Orientations orien = Qt::Horizontal, QWidget *parent = nullptr);
     virtual ~SelectBar() = default;
-    void setBlurBackground(const QPixmap& pix, double blurRadius);
+    void setBlurBackground(const QPixmap& pix, int blurRadius);
 
 private:
     void initUI();
@@ -62,7 +62,6 @@ signals:
 protected: 
     void enterEvent(QEvent* event) override;
     void resizeEvent(QResizeEvent *event) override;
-    void paintEvent(QPaintEvent *event) override;   // 仅单独适配 MAC 效果
 
 private:
     double m_scal;

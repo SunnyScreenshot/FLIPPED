@@ -36,10 +36,6 @@ ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     , m_lienWidthBar(nullptr)
     , m_colorBar(new ColorParaBar(ColorParaBarMode::CPB_ParaBar, orien))
 {
-#if defined(Q_OS_MAC)
-    m_blur.release();
-#endif
-
     initUI();
     m_colorBar->setVisible(false);
     connect(m_colorBar, &ColorParaBar::sigColorChange, this, &ParameterBar::sigSelColor);
@@ -270,23 +266,6 @@ void ParameterBar::resizeEvent(QResizeEvent *event)
         m_blur->setGeometry(0, 0, width(), height());
 
     return QWidget::resizeEvent(event);
-}
-
-void ParameterBar::paintEvent(QPaintEvent *event)
-{
-#if defined(Q_OS_MAC)
-    Q_UNUSED(event)
-//    updateToolBtnIcon();
-    QPainter pa(this);
-    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    pa.setPen(Qt::NoPen);
-    pa.setBrush(QColor(255, 255, 255, 0.7 * 255));
-
-    const int round = 4;
-    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), round, round);
-#else
-    QWidget::paintEvent(event);
-#endif
 }
 
 void ParameterBar::onTBReleased(QAbstractButton* btn)

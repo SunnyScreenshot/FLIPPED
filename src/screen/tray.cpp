@@ -159,12 +159,13 @@ void Tray::onSrnShot()
     if (!m_pSrnShot)
         m_pSrnShot = new ScreenShot();
 
+    auto t = sender();
     QHotkey* hk = qobject_cast<QHotkey*>(sender());
     const auto act = qobject_cast<QAction*>(sender());
     if (!hk && !act)
         return;
 
-    int sst = CaptureHelper::SST_Unknow;
+    int sst = CaptureHelper::SST_ActionWindow;
     if (hk) {
         bool ok = false;
         QMetaEnum metaSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();

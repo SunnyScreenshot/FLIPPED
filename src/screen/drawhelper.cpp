@@ -212,9 +212,6 @@ void XHelper::setWinShadow(bool enable)
 
 double XHelper::getScale(QScreen *screen)
 {
-#ifdef _MYDEBUG
-    return 2;
-#else
     // or defined(Q_WS_WIN) || defined(Q_WS_X11)
     #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
         double scale = screen->logicalDotsPerInch() / 96.0;
@@ -242,5 +239,4 @@ double XHelper::getScale(QScreen *screen)
         double scale = screen->logicalDotsPerInch() / 72.0;
         return scale;
     #endif
-#endif
 }

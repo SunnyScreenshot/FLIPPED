@@ -104,7 +104,7 @@ private:
 
     void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
 
-    const QScreen* priScrn() const;
+    QScreen *priScrn() const;
     const QScreen* curScrn() const;
     void adjustSelectedRect(QKeyEvent* e); // Move or Stretch
 protected:

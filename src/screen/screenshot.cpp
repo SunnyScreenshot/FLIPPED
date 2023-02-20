@@ -514,13 +514,13 @@ QPixmap* ScreenShot::getVirScrnPixmap()
         const QRect geom = curScrn->geometry();
 
 #if defined(Q_OS_MAC)
-        m_currPixmap = new QPixmap(const_cast<QScreen *>(priScrn())->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
+        m_currPixmap = new QPixmap(priScrn()->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
 #else
     #ifdef _MYDEBUG
-        m_currPixmap = new QPixmap(const_cast<QScreen *>(priScrn())->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
+        m_currPixmap = new QPixmap(priScrn()->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
     #else
         // 多屏的矩形取并集
-        m_currPixmap = new QPixmap(const_cast<QScreen *>(priScrn())->grabWindow(qApp->desktop()->winId(), m_virGeom.x(), m_virGeom.y(), m_virGeom.width(), m_virGeom.height()));
+        m_currPixmap = new QPixmap(priScrn()->grabWindow(qApp->desktop()->winId(), m_virGeom.x(), m_virGeom.y(), m_virGeom.width(), m_virGeom.height()));
     #endif
 #endif
     }
@@ -1268,7 +1268,7 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
 #endif // 1
 }
 
-const QScreen* ScreenShot::priScrn() const
+QScreen* ScreenShot::priScrn() const
 {
     static QScreen* priScrn  = qGuiApp->primaryScreen();
     auto it = m_scrns.find(priScrn);
@@ -1427,15 +1427,14 @@ void ScreenShot::drawToolBar()
             m_paraBar->move(v.at(1));
         }
 
-#if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
         // 添加磨砂透明效果
-        const double blurRadius = 7;
-        auto t1 = m_currPixmap->copy(QRect(v[0] * getDevicePixelRatio(), m_selBar->rect().size() * getDevicePixelRatio()));
+        const int blurRadius = 10;
+        const double dpr = getDevicePixelRatio();
+        auto t1 = m_currPixmap->copy(QRect(v[0] * dpr, m_selBar->rect().size() * dpr));
         m_selBar->setBlurBackground(t1, blurRadius);
-        auto t2 = m_currPixmap->copy(QRect(v[1] * getDevicePixelRatio(), m_paraBar->rect().size() * getDevicePixelRatio()));
+        auto t2 = m_currPixmap->copy(QRect(v[1] * dpr, m_paraBar->rect().size() * dpr));
         m_paraBar->setBlurBackground(t2, blurRadius);
-#else
-#endif
+
 
     }
 }

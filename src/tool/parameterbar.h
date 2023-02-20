@@ -53,7 +53,6 @@ public slots:
 protected:
     void enterEvent(QEvent* event) override;
     void resizeEvent(QResizeEvent *event) override;
-    void paintEvent(QPaintEvent *event) override;
 
 private:
     double m_scal;

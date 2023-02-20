@@ -10,6 +10,8 @@
 #include <QPainterPath>
 #include <QPen>
 #include <QPixmap>
+#include <QApplication>
+#include <QScreen>
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -27,17 +29,16 @@ BlurWidget::BlurWidget(QWidget *parent)
 //    setWindowFlags(Qt::FramelessWindowHint);
 }
 
-void BlurWidget::setPixmap(const QPixmap &pix, double blurRadius)
+void BlurWidget::setPixmap(const QPixmap &pix, int blurRadius)
 {
     if (!pix.isNull()) {
 //        m_pix = std::move(pix);
         QImage img = pix.toImage();
-
         QPixmap tPix(pix.size());
+        tPix.setDevicePixelRatio(qApp->primaryScreen()->devicePixelRatio());  // fix: macos dpi is 2
         QPainter painter(&tPix);
-        qt_blurImage(&painter, img, 10, true, false);//blur radius: 60px
+        qt_blurImage(&painter, img, blurRadius, true, false);
         m_pix = std::move(tPix);
-        qDebug() << "---b:" << tPix.size() << "  " << m_pix.size() << "  " << m_pix.save("C:/Users/XMuli/Desktop/aa.png");;
     }
 
 
@@ -55,6 +56,8 @@ void BlurWidget::paintEvent(QPaintEvent *event)
         QPainterPath clipPath;
         clipPath.addRoundedRect(contentsRect(), B_RADIRS, B_RADIRS);
         pa.setClipPath(clipPath);
+
+        qDebug() << "ppp" << rect();
         pa.drawPixmap(rect(), m_pix);
     }
 

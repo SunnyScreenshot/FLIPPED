@@ -25,10 +25,6 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     , m_layout(nullptr)
     , m_blur(std::make_unique<BlurWidget>(this))
 {
-#if defined(Q_OS_MAC)
-    m_blur.release();
-#endif
-
     initUI();
     // pTb, btnName, tr(), bCheckable, bAddSpacer
     m_vBtns = {
@@ -76,7 +72,7 @@ SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     //btnExclusiveManage();
 }
 
-void SelectBar::setBlurBackground(const QPixmap &pix, double blurRadius)
+void SelectBar::setBlurBackground(const QPixmap &pix, int blurRadius)
 {
     if (!m_blur)
         return;
@@ -219,21 +215,4 @@ void SelectBar::resizeEvent(QResizeEvent *event)
 
     m_blur->setGeometry(0, 0, width(), height());
     return QWidget::resizeEvent(event);
-}
-
-void SelectBar::paintEvent(QPaintEvent *event)
-{
-#if defined(Q_OS_MAC)
-    Q_UNUSED(event)
-//    updateToolBtnIcon();
-    QPainter pa(this);
-    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    pa.setPen(Qt::NoPen);
-    pa.setBrush(QColor(255, 255, 255, 0.7 * 255));
-
-    const int round = 4;
-    pa.drawRoundedRect(contentsRect().adjusted(1, 1, -1, -1), round, round);
-#else
-    QWidget::paintEvent(event);
-#endif
 }

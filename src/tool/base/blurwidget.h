@@ -18,7 +18,7 @@ class BlurWidget : public QWidget
 public:
     explicit BlurWidget(QWidget *parent = nullptr);
     virtual ~BlurWidget() = default;
-    void setPixmap(const QPixmap& pix, double blurRadius);
+    void setPixmap(const QPixmap& pix, int blurRadius);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
