@@ -25,7 +25,7 @@ protected:
 
 private:
     QPixmap m_pix;
-    std::unique_ptr<QGraphicsBlurEffect> m_pBlurEffect;
+//    std::unique_ptr<QGraphicsBlurEffect> m_pBlurEffect;
 };
 
 #endif // BLURWIDGET_H
