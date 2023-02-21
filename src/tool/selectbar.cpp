@@ -152,9 +152,9 @@ void SelectBar::onToolBtn()
         }
     }
 
-    for (QToolButton* it : listBtn)
-        qDebug() << "it:" << it << "   it->isCheckable():" << it->isCheckable() << "  it->isChecked():" << it->isChecked();
-    qDebug() << "---------------------------------------------\n";
+//    for (QToolButton* it : listBtn)
+//        qDebug() << "it:" << it << "   it->isCheckable():" << it->isCheckable() << "  it->isChecked():" << it->isChecked();
+//    qDebug() << "---------------------------------------------\n";
     
     emit sigEnableDraw(isEnableDraw());  // true: btn is pressed, in drawing state
     bool isChecked = tb->isChecked();

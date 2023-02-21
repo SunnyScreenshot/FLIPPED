@@ -46,34 +46,13 @@ private:
     void delayCapture(int ms = 5000);
     void fullScrnCapture();
 
-    const QScreen *currentScreen(const QPoint &pos = QCursor::pos());
+
     void getScrnInfo();
     double getDevicePixelRatio(QScreen *screen = nullptr);
     void updateGetWindowsInfo();
     void whichShape();
     void savePixmap(bool quickSave = true, bool autoSave = true);
 
-signals:
-    void sigClearScreen();
-    void sigLineWidthChange(int width);
-
-public slots:
-    void onEnableDraw(bool enable);
-    void onSelShape(DrawShape shape, bool checked);
-    void onRevocation();
-    void onRenewal();
-    void onPin();
-    void onSave();
-    void onCancel();
-    void onFinish();
-    void onInterruptEdit(const QPoint& pos);
-    void clearnAndClose();
-    void onParaBtnId(DrawShape shape, QToolButton* tb);
-    void onLineWidthChange(int width);
-    void onSelColor(QColor col);
-    void onClearScreen();
-
-private:
     ScrnOperate updateScrnType(const QPoint pos);
     void updateCursorShape(const QPoint pos);
     void updateBorderCursorShape(const CursorArea& cursArea);
@@ -105,8 +84,29 @@ private:
     void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
 
     QScreen *priScrn() const;
-    const QScreen* curScrn() const;
+    QScreen* curScrn() const;
+    const QScreen *currentScreen(const QPoint &pos = QCursor::pos());
     void adjustSelectedRect(QKeyEvent* e); // Move or Stretch
+signals:
+    void sigClearScreen();
+    void sigLineWidthChange(int width);
+
+public slots:
+    void onEnableDraw(bool enable);
+    void onSelShape(DrawShape shape, bool checked);
+    void onRevocation();
+    void onRenewal();
+    void onPin();
+    void onSave();
+    void onCancel();
+    void onFinish();
+    void onInterruptEdit(const QPoint& pos);
+    void clearnAndClose();
+    void onParaBtnId(DrawShape shape, QToolButton* tb);
+    void onLineWidthChange(int width);
+    void onSelColor(QColor col);
+    void onClearScreen();
+
 protected:
     QPen easyRecognizeColorPen(const QColor& color, const bool bDefaultPenWidth = false) const;
     void paintEvent(QPaintEvent *e) override;

@@ -56,8 +56,6 @@ void BlurWidget::paintEvent(QPaintEvent *event)
         QPainterPath clipPath;
         clipPath.addRoundedRect(contentsRect(), B_RADIRS, B_RADIRS);
         pa.setClipPath(clipPath);
-
-        qDebug() << "ppp" << rect();
         pa.drawPixmap(rect(), m_pix);
     }
 

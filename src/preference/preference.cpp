@@ -171,7 +171,7 @@ QWidget *Preference::tabGeneral()
     cbAutoCheck->hide();
     pbUpdate->hide();
 
-    qDebug() << "tabGeneral:grid->rowCount():" << grid->rowCount();
+//    qDebug() << "tabGeneral:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(8);
     vLay->addLayout(creatResetBtn(tgReset), 1);
@@ -273,7 +273,7 @@ QWidget* Preference::tabInterface()
     cbEnableShowCursor->setDisabled(true);
     cbEnableShowCursor->setVisible(false);
 
-    qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
+//    qDebug() << "tabInterface:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tiReset), 1);
@@ -363,7 +363,7 @@ QWidget* Preference::tabOutput()
     creatPathEdit(configurePath, editConfigPath, changeConfigPath);
     sbImageQuailty->setToolTip(tr("Range [0,100] or -1.\nSpecify 0 to obtain small compressed files, 100 for large uncompressed files.\nand -1 to use the default settings."));
 
-    qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
+//    qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(toReset), 1);
@@ -443,7 +443,7 @@ QWidget* Preference::tabPin()
     shade->hide();
     cbWindowShadow->hide();
 
-    qDebug() << "tabPin:grid->rowCount():" << grid->rowCount();
+//    qDebug() << "tabPin:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tpReset), 1);
@@ -496,7 +496,7 @@ QWidget *Preference::tabAbout()
     grid->addWidget(logo, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
 
 #if defined(Q_OS_MAC)
-    const double ponitSize = 16;
+    const double ponitSize = 14;
 #else
     const double ponitSize = 14;
 #endif
@@ -610,7 +610,7 @@ QWidget *Preference::tabAbout()
 //    grid->addWidget(tsL, grid->rowCount(), j, Qt::AlignRight);
 //    grid->addWidget(tsR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
 
-    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();  // 创建一个空 grid 时，便默认有一个 1 item，添加第一个后，依旧计数 1 个；
+//    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();  // 创建一个空 grid 时，便默认有一个 1 item，添加第一个后，依旧计数 1 个；
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addSpacing(TAV_MARGIN_VER_BOTTOM);

@@ -72,21 +72,21 @@ ScreenShot::ScreenShot(QWidget *parent)
     , m_widthTip(std::make_unique<SelectSize>("", this))
     , m_edit(std::make_unique<XTextWidget>(this))
 {
-    XLOG_INFO("bootUniqueId[{}]", QSysInfo::bootUniqueId().data());
-    XLOG_INFO("buildAbi[{}]", QSysInfo::buildAbi().toUtf8().data());
-    XLOG_INFO("buildCpuArchitecture[{}]", QSysInfo::buildCpuArchitecture().toUtf8().data());
-    XLOG_INFO("currentCpuArchitecture[{}]", QSysInfo::currentCpuArchitecture().toUtf8().data());
-    XLOG_INFO("kernelType[{}]", QSysInfo::kernelType().toUtf8().data());
-    XLOG_INFO("kernelVersion[{}]", QSysInfo::kernelVersion().toUtf8().data());
-    XLOG_INFO("machineHostName[{}]", QSysInfo::machineHostName().toUtf8().data());
-    XLOG_INFO("machineUniqueId[{}]", QSysInfo::machineUniqueId().data());
-    XLOG_INFO("prettyProductName[{}]", QSysInfo::prettyProductName().toUtf8().data());
-    XLOG_INFO("productType[{}]", QSysInfo::productType().toUtf8().data());
-    XLOG_INFO("productVersion[{}]", QSysInfo::productVersion().toUtf8().data());
+    qInfo() << QString("bootUniqueId[%1]\n").arg(QSysInfo::bootUniqueId().data())
+            << QString("buildAbi[%1]\n").arg(QSysInfo::buildAbi().toUtf8().data())
+            << QString("buildCpuArchitecture[%1]\n").arg(QSysInfo::buildCpuArchitecture().toUtf8().data())
+            << QString("currentCpuArchitecture[%1]\n").arg(QSysInfo::currentCpuArchitecture().toUtf8().data())
+            << QString("kernelType[%1]\n").arg(QSysInfo::kernelType().toUtf8().data())
+            << QString("kernelVersion[%1]\n").arg(QSysInfo::kernelVersion().toUtf8().data())
+            << QString("machineHostName[%1]\n").arg(QSysInfo::machineHostName().toUtf8().data())
+            << QString("machineUniqueId[%1]\n").arg(QSysInfo::machineUniqueId().data())
+            << QString("prettyProductName[%1]\n").arg(QSysInfo::prettyProductName().toUtf8().data())
+            << QString("productType[%1]\n").arg(QSysInfo::productType().toUtf8().data())
+            << QString("productVersion[%1]\n").arg(QSysInfo::productVersion().toUtf8().data());
+
 
     setAttribute(Qt::WA_DeleteOnClose, true);
     //setAttribute(Qt::WA_QuitOnClose, false);
-
     m_edit->setTextColor(Qt::red);
     m_edit->setFont(m_step.font);
     m_edit->setVisible(false);
@@ -115,18 +115,20 @@ ScreenShot::ScreenShot(QWidget *parent)
     setFixedSize(m_virGeom.size());
     move(m_virGeom.topLeft());
 #else // Q_OS_MAC
-//    setWindowFlags(Qt::Window);  // 不设置则 mac 下 devicePixelRatio: 1
     QRect geom = currentScreen(QCursor::pos())->geometry();
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
     #ifdef _MYDEBUG
         if (m_scrns.size() == 1)
             geom.setWidth(geom.width() / 2);
     #else
 //        showFullScreen();  // 并不是当前的屏幕大小
-        setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
     #endif
+
 
     setFixedSize(geom.size());   // resize() cannot get the desired effect
     move(geom.topLeft());
+    qDebug() << "#2-->" << geom << "   " << this->rect();
+
 #endif
 
     setMouseTracking(true);
@@ -510,8 +512,10 @@ void ScreenShot::onSelColor(QColor col)
 QPixmap* ScreenShot::getVirScrnPixmap()
 {
     if (!m_currPixmap) {
+
         const QScreen* curScrn = currentScreen(QCursor::pos());
         const QRect geom = curScrn->geometry();
+        qDebug() << "@@2" << QCursor::pos() << "  " << curScrn << "  " << geom;
 
 #if defined(Q_OS_MAC)
         m_currPixmap = new QPixmap(priScrn()->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
@@ -1112,11 +1116,16 @@ void ScreenShot::paintEvent(QPaintEvent *e)
     QRect rtSel(m_rtCalcu.getSelRect());   // 移动选中矩形
     if (m_bSmartWin)
         rtSel = m_autoDetectRt;
-    QRect shotGeom(mapFromGlobal(m_virGeom.topLeft()), m_virGeom.size()); // 修复为相对窗口的
+
+    QRect maxRt;
     #ifdef Q_OS_MAC
-        shotGeom = QRect(mapFromGlobal(curScrn()->geometry().topLeft()), curScrn()->geometry().size());
+        maxRt = curScrn()->geometry();
+    #else
+        maxRt = m_virGeom;
     #endif
-     m_rtCalcu.limitBound(rtSel, shotGeom); // 修复边界时图片被拉伸
+
+    QRect shotGeom = QRect(mapFromGlobal(maxRt.topLeft()), maxRt.size()); // 修复为相对窗口的
+    m_rtCalcu.limitBound(rtSel, shotGeom); // 修复边界时图片被拉伸
     if (rtSel.width() > 0 && rtSel.height() > 0) {
         double devPixRatio = getDevicePixelRatio(nullptr); // TODO 2022.01.14: QScreen* curScrn() 截图时光标所在的屏幕
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * devPixRatio, rtSel.size() * devPixRatio));  // NOTE: devicePixelRatio（macox = 2）
@@ -1270,20 +1279,19 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
 
 QScreen* ScreenShot::priScrn() const
 {
-    static QScreen* priScrn  = qGuiApp->primaryScreen();
+    QScreen* priScrn  = qGuiApp->primaryScreen();
     auto it = m_scrns.find(priScrn);
     if (it == m_scrns.end()) 
         priScrn = nullptr;  // TODO: else 添加 m_scrn 为 primScrn 标志
     return priScrn;
 }
 
-const QScreen* ScreenShot::curScrn() const
+QScreen *ScreenShot::curScrn() const
 {
-    static QScreen* curScrn = qApp->screenAt(QCursor::pos());
-
+    QScreen* curScrn = qApp->screenAt(QCursor::pos());
     auto it = m_scrns.find(curScrn);
     if (it == m_scrns.end())
-        curScrn = nullptr;  // TODO: else 添加 m_scrn 为 primScrn 标志
+        curScrn = nullptr;
     return curScrn;
 }
 
@@ -1750,11 +1758,14 @@ void ScreenShot::getScrnInfo()
 
 double ScreenShot::getDevicePixelRatio(QScreen * screen)
 {
+    int DPI = 0;
 #ifdef Q_OS_MAC
-    return screen ? screen->devicePixelRatio() : 2;
+    DPI = 2;
 #else
-    return screen ? screen->devicePixelRatio() : 1;
+    DPI = 1;
 #endif
+
+    return screen ? screen->devicePixelRatio() : DPI;
 }
 
 // 随着光标移动，更新获取桌面所有窗口信息
@@ -1843,7 +1854,7 @@ void ScreenShot::fullScrnCapture()
 
 const QScreen *ScreenShot::currentScreen(const QPoint& pos)
 {
-    const QScreen* curScrn = qGuiApp->screenAt(pos);
+    const QScreen* scrn = qGuiApp->screenAt(pos);
 
 #if defined(Q_OS_MACOS)
     // On the MacOS if mouse position is at the edge of bottom or right sides
@@ -1851,18 +1862,16 @@ const QScreen *ScreenShot::currentScreen(const QPoint& pos)
     // screen by moving 1 pixel inside to the current desktop area
 //    if (!curScrn && (pos.x() > 0 || pos.y() > 0))
 //        curScrn = qGuiApp->screenAt(QPoint(pos.x() - 1, pos.y() - 1));
-    if (!curScrn && (pos.x() >= m_virGeom.right() || pos.y() >= m_virGeom.bottom()))
-        curScrn = qGuiApp->screenAt(m_virGeom.bottomRight() - QPoint(1, 1));
+    if (!scrn && (pos.x() >= m_virGeom.right() || pos.y() >= m_virGeom.bottom()))
+        scrn = qGuiApp->screenAt(m_virGeom.bottomRight() - QPoint(1, 1));
 #endif
 
     //if (!curScrn)
     //    curScrn = qGuiApp->primaryScreen();
 
-    const bool bMove = m_rtCalcu.scrnType != ScrnOperate::SO_Move;
-    const bool bSelect = m_rtCalcu.scrnType != ScrnOperate::SO_Select;
-    if (!curScrn && !(bMove || bSelect))
+    if (!scrn)
         qDebug() << "Gets that the current screen is empty";
 
-    return curScrn;
+    return scrn;
 }
 

@@ -40,7 +40,7 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
         auto& hk = std::get<0>(it);
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
-        qDebug() << "----->t0:" << hk << "    hotkey:" << hotkey << "    describe:" << describe << Qt::endl;
+        qDebug() << "----->t0:" << hk << "    hotkey:" << hotkey << "    describe:" << describe;
 
         XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
         vHkEdit.insert(std::make_pair(pEdit, list.at(idx++)));
