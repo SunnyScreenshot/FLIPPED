@@ -8,7 +8,7 @@
 
 #include "rectcalcu.h"
 #include <memory>
-#include <set>    // QSet 是哈希表, std::set 是红黑树变种
+#include <set>
 #include <vector>
 #include <map>
 #include <QWidget>
@@ -33,24 +33,25 @@ public:
     ScreenShot(QWidget* parent = nullptr);
     virtual ~ScreenShot();
 
-    void launchCapture(CaptureHelper::CaptureType type = CaptureHelper::SST_ActionWindow);
-    static double getScale(QScreen *screen = QApplication::primaryScreen());
     bool isSelBorder();
-
     const Qt::Orientation getBarOrien() const;
     void setBarOrien(Qt::Orientation val);
+    void launchCapture(CaptureHelper::CaptureType type = CaptureHelper::SST_ActionWindow);
+    static double getScale(QScreen *screen = QApplication::primaryScreen());
+    static double getDevicePixelRatio(QScreen *screen = nullptr);
 
 private:
     void scrnsCapture();
     void windowCapture();
     void delayCapture(int ms = 5000);
     void fullScrnCapture();
-
+    QScreen *priScrn() const;
+    QScreen *curScrn(const QPoint &pos = QCursor::pos()) const;
+    void adjustSelectedRect(QKeyEvent* e); // Move or Stretch
 
     void getScrnInfo();
-    double getDevicePixelRatio(QScreen *screen = nullptr);
-    void updateGetWindowsInfo();
     void whichShape();
+    void updateGetWindowsInfo();
     void savePixmap(bool quickSave = true, bool autoSave = true);
 
     ScrnOperate updateScrnType(const QPoint pos);
@@ -66,9 +67,6 @@ private:
     const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
     const QPoint drawSelSizeTip(const QRect& rt);
 
-    // Test
-    void showAllDrawedShape(QPainter& pa);
-
     // [paintEvent] refactor
     void drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound = false);
     void drawBorderBlackWhite (QPainter& pa, const QRect& rt, int num = 8, bool isRound = true);
@@ -81,12 +79,10 @@ private:
     void drawCrosshair(QPainter& pa);                                                // 绘画十字线
     void drawToolBar();                                                              // 绘画工具栏
 
+    // Test
+    void showAllDrawedShape(QPainter& pa);
     void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
 
-    QScreen *priScrn() const;
-    QScreen* curScrn() const;
-    const QScreen *currentScreen(const QPoint &pos = QCursor::pos());
-    void adjustSelectedRect(QKeyEvent* e); // Move or Stretch
 signals:
     void sigClearScreen();
     void sigLineWidthChange(int width);
@@ -118,7 +114,7 @@ protected:
 
 private:
     double m_scal;
-    QRect m_virGeom;                              // 截图时刻的虚拟桌面的大小
+    QRect m_captureScrnRt;                        // 截图时的桌面矩形：Mac 当前屏幕（非 virtualScerrn）；Windows 为多屏总和的 virtualScerrn
     QPixmap* m_currPixmap;                        // 当前屏幕截图
     QPixmap m_savePixmap;                         // 当前屏幕截图 + 遮罩   无构造初始化
     RectCalcu m_rtCalcu;                          // 选中矩形区域

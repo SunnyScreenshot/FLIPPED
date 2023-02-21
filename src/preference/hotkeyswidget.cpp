@@ -56,7 +56,7 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 //            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     }
 
-    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
+//    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
 

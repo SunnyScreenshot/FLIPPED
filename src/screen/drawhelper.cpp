@@ -4,8 +4,6 @@
 // Source: https://github.com/XMuli/Flipped
 
 #include "drawhelper.h"
-#include "../xglobal.h"
-#include "../preference/appellation.h"
 #include <QScreen>
 #include <QFile>
 #include <QByteArray>
@@ -23,6 +21,9 @@
 #include <QLine>
 #include <QDateTime>
 #include <QStandardPaths>
+#include "../xglobal.h"
+#include "../preference/appellation.h"
+#include "screenshot.h"
 
 QString XDrawStep::serialText = "0_0_0_0";
 
@@ -111,25 +112,30 @@ void XHelper::SetAttrRecur(QDomElement &elem, QString strtagname, QString stratt
     }
 }
 
-const QPixmap* XHelper::smoothMosaic(QPixmap* pixmap, int px)
+const QPixmap* XHelper::smoothMosaic(QPixmap* pixmap, int radius)
 {
-    Q_UNUSED(px);
     if (!pixmap)
         return nullptr;
 
+    radius = qMax<int>(10, radius);
     QGraphicsBlurEffect* blur = new QGraphicsBlurEffect;
-    blur->setBlurRadius(10);
+    blur->setBlurRadius(radius);
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(*pixmap);
     item->setGraphicsEffect(blur);
+
 
     QGraphicsScene scene;
     scene.addItem(item);
 
     QPainter painter(pixmap);
-    scene.render(&painter, pixmap->rect(), QRectF());
-    blur->setBlurRadius(12);
+    const double DPI = ScreenShot::getDevicePixelRatio();
+    const QRect tRt(pixmap->rect().topLeft() / DPI, pixmap->rect().size() / DPI);
+    scene.render(&painter, tRt, QRectF());
+
+    blur->setBlurRadius(radius + 2);
     // multiple repeat for make blur effect stronger
-    scene.render(&painter, pixmap->rect(), QRectF());
+    scene.render(&painter, tRt, QRectF());
+
     return pixmap;
 }
 

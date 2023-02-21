@@ -236,8 +236,8 @@ public:
     void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
 
     // Mosaics draw
-    const QPixmap* smoothMosaic(QPixmap* pixmap, int px);         // 毛玻璃马赛克
-    const QImage pixlelatedMosaic(QPixmap* pixmap, int px = 20);  // 像素级马赛克
+    const QPixmap* smoothMosaic(QPixmap* pixmap, int radius = 10);
+    const QImage pixlelatedMosaic(QPixmap* pixmap, int px = 20);
 
     // tabGeneral
     // tabInterface

@@ -56,7 +56,7 @@ XDrawStep ScreenShot::m_step = XDrawStep();
 ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
     , m_scal(XHelper::instance().getScale())
-    , m_virGeom()
+    , m_captureScrnRt()
     , m_currPixmap(nullptr)
     , m_rtCalcu(this)
     , m_bSmartWin(XHelper::instance().smartWindow())
@@ -100,7 +100,7 @@ ScreenShot::ScreenShot(QWidget *parent)
 
     const auto tScrn = priScrn();
     if (tScrn)
-        m_virGeom = tScrn->virtualGeometry();
+        m_captureScrnRt = tScrn->virtualGeometry();
 
     // 注意显示器摆放的位置不相同~；最大化的可能异常修复
 #if defined(Q_OS_WIN) ||  defined(Q_OS_LINUX)
@@ -115,7 +115,8 @@ ScreenShot::ScreenShot(QWidget *parent)
     setFixedSize(m_virGeom.size());
     move(m_virGeom.topLeft());
 #else // Q_OS_MAC
-    QRect geom = currentScreen(QCursor::pos())->geometry();
+    QRect geom = curScrn(QCursor::pos())->geometry();
+    m_captureScrnRt = geom;
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);   // 窗口置顶 + 隐藏标题栏
     #ifdef _MYDEBUG
         if (m_scrns.size() == 1)
@@ -483,7 +484,7 @@ void ScreenShot::onLineWidthChange(int width)
     m_widthTip->setFont(font);
     m_widthTip->setText(QString::number(width));
     m_widthTip->setAlignment(Qt::AlignCenter);
-    m_widthTip->move(mapFromGlobal(currentScreen()->geometry().topLeft()));
+    m_widthTip->move(mapFromGlobal(curScrn()->geometry().topLeft()));
     m_widthTip->raise();
     m_widthTip->setVisible(true);
 
@@ -513,9 +514,9 @@ QPixmap* ScreenShot::getVirScrnPixmap()
 {
     if (!m_currPixmap) {
 
-        const QScreen* curScrn = currentScreen(QCursor::pos());
-        const QRect geom = curScrn->geometry();
-        qDebug() << "@@2" << QCursor::pos() << "  " << curScrn << "  " << geom;
+        const QScreen* scrn = curScrn();
+        const QRect geom = scrn->geometry();
+        qDebug() << "@@2" << QCursor::pos() << "  " << scrn << "  " << geom;
 
 #if defined(Q_OS_MAC)
         m_currPixmap = new QPixmap(priScrn()->grabWindow(qApp->desktop()->winId(), geom.x(), geom.y(), geom.width(), geom.height()));
@@ -545,7 +546,7 @@ bool ScreenShot::drawToCurrPixmap()
     pa.end();
 
     QRect rtSel(m_rtCalcu.getSelRect());
-    const QRect rtAppVirDesktop(QPoint(0, 0), m_virGeom.size());
+    const QRect rtAppVirDesktop(QPoint(0, 0), m_captureScrnRt.size());
     m_rtCalcu.limitBound(rtSel, rtAppVirDesktop);
     if (rtSel.width() > 0 && rtSel.height() > 0)
         m_savePixmap = m_currPixmap->copy(QRect(rtSel.topLeft() * getDevicePixelRatio(), rtSel.size() * getDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
@@ -720,10 +721,8 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
     case DrawShape::Mosaics: {
 		if (!m_currPixmap || step.rt.isEmpty()) break;  // 优化，删除就很明显
 
-        auto rt = QRect(step.rt.topLeft() * getDevicePixelRatio(), step.rt.size() * getDevicePixelRatio());
-        QPixmap mosaicPixmap = m_currPixmap->copy(rt);
-//        mosaicPixmap.save(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() + "/mosaicPixmap_123456.png");
-
+        const double DPI = getDevicePixelRatio();
+        QPixmap mosaicPixmap = m_currPixmap->copy(QRect(step.rt.topLeft() * DPI, step.rt.size() * DPI));
         const int mscPx = step.pen.width();
         if (step.shapePara == ShapePara::SP_0) {
             const QPixmap* pix = XHelper::instance().smoothMosaic(&mosaicPixmap, mscPx);
@@ -731,7 +730,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
 		} else if (step.shapePara == ShapePara::SP_1) {
             const QImage img = XHelper::instance().pixlelatedMosaic(&mosaicPixmap, mscPx);
             pa.drawImage(step.rt, img);
-		}
+        }
 
         break;
     }
@@ -748,7 +747,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
             const QFontMetrics fm(pa.fontMetrics());
             auto l = step.text.split(QChar('\n'));
             int flags = Qt::TextWrapAnywhere;
-            QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), flags, step.text);
+            QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_captureScrnRt.width(), 0), flags, step.text);
             textBoundingRect.moveTopLeft(step.rt.topLeft());
             const int val = 5;
             auto topLeft = textBoundingRect.topLeft() + QPoint(val, fm.ascent() + val);
@@ -777,7 +776,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         str = (list[0].toInt() == 0) ? list[2] : QString('A' + list[3].toInt() - 1);
 
         const QFontMetrics fm(pa.fontMetrics());
-        QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_virGeom.width(), 0), Qt::TextWrapAnywhere, str);
+        QRect textBoundingRect = fm.boundingRect(QRect(0, 0, m_captureScrnRt.width(), 0), Qt::TextWrapAnywhere, str);
         const int width = qMax<int>(textBoundingRect.width(), textBoundingRect.height());
         textBoundingRect.setSize(QSize(width, width));
         textBoundingRect.moveCenter(step.p1);
@@ -838,10 +837,10 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
     const int barMaxLeft = rtSel.left() - sBarHeight;
     const int barMaxRight = rtSel.right() + sBarHeight;
 
-    const QScreen* curScrn = currentScreen(rtSel.bottomRight());
-    if (!curScrn) curScrn = qGuiApp->screenAt(rtSel.topRight());
-    if (!curScrn) curScrn = qGuiApp->screenAt(QCursor::pos());
-    QRect rtScrn = curScrn->geometry();
+    const QScreen* scrn = curScrn(rtSel.bottomRight());
+    if (!scrn) scrn = qGuiApp->screenAt(rtSel.topRight());
+    if (!scrn) scrn = qGuiApp->screenAt(QCursor::pos());
+    QRect rtScrn = scrn->geometry();
     QPoint p1;  // selBar
     QPoint p2;  // paraBar
     if (orien == Qt::Horizontal) {
@@ -853,8 +852,8 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
         else if (offset == ToolBarOffset::TBO_Right)
             p1.setX(rtSel.right() - m_selBar->width());
 
-        int topLimit = qMax(m_virGeom.top(), rtScrn.top());
-        int bottomLimit = qMin(m_virGeom.bottom(), rtScrn.bottom());
+        int topLimit = qMax(m_captureScrnRt.top(), rtScrn.top());
+        int bottomLimit = qMin(m_captureScrnRt.bottom(), rtScrn.bottom());
 
         if (barMaxTop > topLimit) { // 选中框，上未触顶
             if (barMaxBottom > bottomLimit) { // 底部触顶
@@ -894,8 +893,8 @@ const QVector<QPoint> ScreenShot::drawBarPosition(Qt::Orientation orien /*= Qt::
         else if (offset == ToolBarOffset::TBO_Bottom)
             p1.setY(rtSel.bottom() - m_selBar->height());
 
-        int leftLimit = qMax(m_virGeom.left(), rtScrn.left());
-        int rightLimit = qMin(m_virGeom.right(), rtScrn.right());
+        int leftLimit = qMax(m_captureScrnRt.left(), rtScrn.left());
+        int rightLimit = qMin(m_captureScrnRt.right(), rtScrn.right());
 
         if (barMaxLeft > leftLimit) { // 选中框左边未触顶
             //if (barMaxRight > rightLimit) // 右侧触顶
@@ -1117,14 +1116,7 @@ void ScreenShot::paintEvent(QPaintEvent *e)
     if (m_bSmartWin)
         rtSel = m_autoDetectRt;
 
-    QRect maxRt;
-    #ifdef Q_OS_MAC
-        maxRt = curScrn()->geometry();
-    #else
-        maxRt = m_virGeom;
-    #endif
-
-    QRect shotGeom = QRect(mapFromGlobal(maxRt.topLeft()), maxRt.size()); // 修复为相对窗口的
+    const QRect shotGeom = QRect(mapFromGlobal(m_captureScrnRt.topLeft()), m_captureScrnRt.size()); // 修复为相对窗口的
     m_rtCalcu.limitBound(rtSel, shotGeom); // 修复边界时图片被拉伸
     if (rtSel.width() > 0 && rtSel.height() > 0) {
         double devPixRatio = getDevicePixelRatio(nullptr); // TODO 2022.01.14: QScreen* curScrn() 截图时光标所在的屏幕
@@ -1230,14 +1222,14 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
 //    QDesktopWidget* desktop = QApplication::desktop();  // 获取桌面的窗体对象
 //    QRect rtScrn = desktop->screen(desktop->screenNumber(rtSel.bottomRight()))->geometry();  // geometry 则左上角坐标非 0，0
 //    QRect rtScrn = currentScreen(rtSel.bottomRight())->geometry(); // 使用此替换有个 bug， 不在时候返回空
-    const auto selScrn = currentScreen(rtSel.bottomRight());
+    const auto selScrn = curScrn(rtSel.bottomRight());
     QRect rtScrn;
     if (selScrn) rtScrn = selScrn->geometry();
-    int topLimit = qMax(m_virGeom.top(), rtScrn.top());
-    int bottomLimit = qMin(m_virGeom.bottom(), rtScrn.bottom());
+    int topLimit = qMax(m_captureScrnRt.top(), rtScrn.top());
+    int bottomLimit = qMin(m_captureScrnRt.bottom(), rtScrn.bottom());
 
     pa.drawText(tPosText - QPoint(0, space * 11), QString("barMaxTop:%1   barMaxBottom:%2  m_rtVirDesktop 左上右下(%3, %4, %5 * %6)")
-        .arg(barMaxTop).arg(barMaxBottom).arg(m_virGeom.left()).arg(m_virGeom.top()).arg(m_virGeom.right()).arg(m_virGeom.bottom()));
+        .arg(barMaxTop).arg(barMaxBottom).arg(m_captureScrnRt.left()).arg(m_captureScrnRt.top()).arg(m_captureScrnRt.right()).arg(m_captureScrnRt.bottom()));
     pa.drawText(tPosText - QPoint(0, space * 12), QString("rtScrn 左上右下(%1, %2, %3 * %4) topLimit:%5  bottomLimit:%6")
         .arg(rtScrn.left()).arg(rtScrn.top()).arg(rtScrn.right()).arg(rtScrn.bottom()).arg(topLimit).arg(bottomLimit));
     pa.drawText(tPosText - QPoint(0, space * 13), QString("XDrawStep::serialText:%1").arg(XDrawStep::serialText));
@@ -1284,15 +1276,6 @@ QScreen* ScreenShot::priScrn() const
     if (it == m_scrns.end()) 
         priScrn = nullptr;  // TODO: else 添加 m_scrn 为 primScrn 标志
     return priScrn;
-}
-
-QScreen *ScreenShot::curScrn() const
-{
-    QScreen* curScrn = qApp->screenAt(QCursor::pos());
-    auto it = m_scrns.find(curScrn);
-    if (it == m_scrns.end())
-        curScrn = nullptr;
-    return curScrn;
 }
 
 void ScreenShot::adjustSelectedRect(QKeyEvent *e)
@@ -1417,8 +1400,8 @@ void ScreenShot::drawCrosshair(QPainter& pa)
         pa.setBrush(Qt::NoBrush);
 
         QPoint p(QCursor::pos());
-        QLine l1(QPoint(m_virGeom.left(), p.y()), QPoint(m_virGeom.right(), p.y()));
-        QLine l2(QPoint(p.x(), m_virGeom.top()), QPoint(p.x(), m_virGeom.bottom()));
+        QLine l1(QPoint(m_captureScrnRt.left(), p.y()), QPoint(m_captureScrnRt.right(), p.y()));
+        QLine l2(QPoint(p.x(), m_captureScrnRt.top()), QPoint(p.x(), m_captureScrnRt.bottom()));
         pa.drawLine(l1);
         pa.drawLine(l2);
         pa.restore();
@@ -1709,7 +1692,7 @@ void ScreenShot::wheelEvent(QWheelEvent* e)
 void ScreenShot::scrnsCapture()
 {
     m_scrnRts.clear();
-    m_scrnRts.insert(m_virGeom);
+    m_scrnRts.insert(m_captureScrnRt);
     for (const auto& it : m_scrns)
         m_scrnRts.insert(it.first->geometry());
 
@@ -1727,7 +1710,7 @@ void ScreenShot::scrnsCapture()
 void ScreenShot::getScrnInfo()
 {
     qInfo() << "---------------QApplication::desktop() Info BEGIN----------------";
-    qInfo() << "所有可用区域 m_virtualGeometry:" << m_virGeom << Qt::endl
+    qInfo() << "所有可用区域 m_virtualGeometry:" << m_captureScrnRt << Qt::endl
         << "主屏可用区域 priScrn()->geometry():" << priScrn()->geometry() << Qt::endl
         << "是否开启虚拟桌面 isVirtualDesktop:" << (priScrn()->virtualSiblings().size() > 1 ? true : false) << Qt::endl;
     qInfo() << "---------------QApplication::desktop() Info END----------------";
@@ -1749,20 +1732,18 @@ void ScreenShot::getScrnInfo()
                  << "\n逻辑DPI logicalDotsPerInch:" << int(it->logicalDotsPerInch()) << " DPIX:" << int(it->logicalDotsPerInchX()) << " DPIY:" << int(it->logicalDotsPerInchY())
                  << "\n物理DPI physicalDotsPerInch:" << int(it->physicalDotsPerInch()) << " DPIX:" << int(it->physicalDotsPerInchX()) << " DPIY:" << int(it->physicalDotsPerInchY())
                  << "\n手算缩放比 getScale:" << getScale(it)
-                 << "\n虚拟尺寸 m_virGeom:" << m_virGeom << "\n";
+                 << "\n虚拟尺寸 m_virGeom:" << m_captureScrnRt << "\n";
     }
 
-    qInfo() << "m_virtualGeometry:" << m_virGeom;
+    qInfo() << "m_virtualGeometry:" << m_captureScrnRt;
     qInfo() << "---------------m_screens[] Info END----------------";
 }
 
 double ScreenShot::getDevicePixelRatio(QScreen * screen)
 {
-    int DPI = 0;
+    double DPI = 1;
 #ifdef Q_OS_MAC
     DPI = 2;
-#else
-    DPI = 1;
 #endif
 
     return screen ? screen->devicePixelRatio() : DPI;
@@ -1847,26 +1828,21 @@ void ScreenShot::fullScrnCapture()
 {
     scrnsCapture();
     m_bSmartWin = false;
-    const auto rt = currentScreen()->geometry();
+    const auto rt = curScrn()->geometry();
     m_rtCalcu.setRtSel(rt);
-    qDebug() << "---->" << rt;
 }
 
-const QScreen *ScreenShot::currentScreen(const QPoint& pos)
+QScreen *ScreenShot::curScrn(const QPoint& pos) const
 {
-    const QScreen* scrn = qGuiApp->screenAt(pos);
+    QScreen* scrn = qGuiApp->screenAt(pos);
 
 #if defined(Q_OS_MACOS)
-    // On the MacOS if mouse position is at the edge of bottom or right sides
-    // qGuiApp->screenAt will return nullptr, so we need to try to find current
-    // screen by moving 1 pixel inside to the current desktop area
-//    if (!curScrn && (pos.x() > 0 || pos.y() > 0))
-//        curScrn = qGuiApp->screenAt(QPoint(pos.x() - 1, pos.y() - 1));
-    if (!scrn && (pos.x() >= m_virGeom.right() || pos.y() >= m_virGeom.bottom()))
-        scrn = qGuiApp->screenAt(m_virGeom.bottomRight() - QPoint(1, 1));
+    // In macos, mouse position at the bottom or right edge of the screen will crash
+    if (!scrn && (pos.x() >= m_captureScrnRt.right() || pos.y() >= m_captureScrnRt.bottom()))
+        scrn = qGuiApp->screenAt(m_captureScrnRt.bottomRight() - QPoint(1, 1));
 #endif
 
-    //if (!curScrn)
+    //if (!scrn)
     //    curScrn = qGuiApp->primaryScreen();
 
     if (!scrn)
