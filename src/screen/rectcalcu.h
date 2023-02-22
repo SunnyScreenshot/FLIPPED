@@ -62,25 +62,24 @@ public:
 	~RectCalcu();
 
     static QRect getRect(QPoint pos1, QPoint pos2);
-	const QRect getSelRect();
+	const QRect getSelRect() const;
 
 	void clear();
 	void setClear(bool clear);
 	bool isClear();
-    const CursorArea getCursorArea(const QPoint pos, bool details = false);
+    const CursorArea getCursorArea(const QPoint pos, bool details = false) const;
 
-	QRect& limitBound(QRect& rt, QRect rtDesktop);
+	QRect& limitBound(QRect& rt, QRect maxRt);
 
 	const QRect calcurRsultOnce();
     void setRtSel(const QRect rt);
 
 private:
-	//const QRect& setSelRect();
-	const QRect getStretchRect(); // 仅拉伸时使用
+	const QRect getStretchRect() const; // 仅拉伸时使用
 
 public:
-	QRect getExteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取外部矩形
-	QRect getInteRect(QRect& rect, int interval = HAIF_INTERVAL); // 获取内部矩形
+	QRect getExteRect(QRect& rect, int interval = HAIF_INTERVAL) const; // 获取外部矩形
+	QRect getInteRect(QRect& rect, int interval = HAIF_INTERVAL) const; // 获取内部矩形
 	
 public:
 	QPoint pos1;

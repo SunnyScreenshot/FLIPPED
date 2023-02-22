@@ -31,14 +31,13 @@ class ScreenShot : public  QWidget
     Q_OBJECT
 public:
     ScreenShot(QWidget* parent = nullptr);
-    virtual ~ScreenShot();
-
+    virtual ~ScreenShot() = default;
     bool isSelBorder();
     const Qt::Orientation getBarOrien() const;
     void setBarOrien(Qt::Orientation val);
     void launchCapture(CaptureHelper::CaptureType type = CaptureHelper::SST_ActionWindow);
-    static double getScale(QScreen *screen = QApplication::primaryScreen());
-    static double getDevicePixelRatio(QScreen *screen = nullptr);
+    static double GetScale(const QScreen* scrn = QApplication::primaryScreen());
+    static double GetDevicePixelRatio(const QScreen* scrn = QApplication::primaryScreen());
 
 private:
     void scrnsCapture();
@@ -47,41 +46,37 @@ private:
     void fullScrnCapture();
     QScreen *priScrn() const;
     QScreen *curScrn(const QPoint &pos = QCursor::pos()) const;
-    void adjustSelectedRect(QKeyEvent* e); // Move or Stretch
 
-    void getScrnInfo();
-    void whichShape();
-    void updateGetWindowsInfo();
-    void savePixmap(bool quickSave = true, bool autoSave = true);
-
-    ScrnOperate updateScrnType(const QPoint pos);
+    void updateAutoDetectRt();
+    ScrnOperate updateScrnType(const QPoint pos) const;
     void updateCursorShape(const QPoint pos);
     void updateBorderCursorShape(const CursorArea& cursArea);
-    QPixmap* getVirScrnPixmap();
-    bool drawToCurrPixmap();
-    bool getDrawedShapeRect();
 
+    QPixmap* virtualScrnPixmap();
+    bool drawToCurPixmap();
     void drawStep(QPainter& pa, const XDrawStep& step);
-    bool isDrawShape(XDrawStep& step);
+    void setSavePixmap(bool quickSave = true, bool autoSave = true);
 
-    const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle);
-    const QPoint drawSelSizeTip(const QRect& rt);
+    void whichShape();
+    bool isDrawShape(XDrawStep& step) const;
+    void selectedShapeMove(QPainter& pa) const;                                      // Effect of selected graphics
 
-    // [paintEvent] refactor
-    void drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound = false);
-    void drawBorderBlackWhite (QPainter& pa, const QRect& rt, int num = 8, bool isRound = true);
-    void drawBorderLightBlue(QPainter& pa, const QRect& rt, int num = 8, bool isRound = true);
+    void drawToolBar() const;
+    void drawCrosshair(QPainter& pa) const;
+    void drawMaskLayer(const QRect& virGeom, const QRect& rtSel, QPainter& pa) const;
+    void drawBorder(QRect& rtSel, QPainter& pa) const;
+    void drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound = false) const;
+    void drawBorderBlackWhite (QPainter& pa, const QRect& rt, int num = 8, bool isRound = true) const;
+    void drawBorderLightBlue(QPainter& pa, const QRect& rt, int num = 8, bool isRound = true) const;
+    const QVector<QPoint> drawBarPosition(Qt::Orientation orien = Qt::Horizontal, ToolBarOffset offset = ToolBarOffset::TBO_Middle) const;
+    const QPoint drawSelSizeTip(const QRect& rt) const;
 
-    void drawWinInfo(QPainter& pa);                                                  // 绘画 窗口信息 path title 等
-    void selectedShapeMove(QPainter& pa);                                            // flameshot 选中图形的效果
-    void drawMaskLayer(const QRect& virGeom, const QRect& rtSel, QPainter& pa);      // 屏幕遮罩
-    void drawBorder(QRect& rtSel, QPainter& pa);                                     // 绘画边框
-    void drawCrosshair(QPainter& pa);                                                // 绘画十字线
-    void drawToolBar();                                                              // 绘画工具栏
+    void drawWinInfo(QPainter& pa) const;                                            // Drawing Window information path title etc.
+    void adjustSelectedRect(QKeyEvent* e);                                           // Move or Stretch
 
-    // Test
-    void showAllDrawedShape(QPainter& pa);
-    void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // 显示实时的预览调试信息
+    void scrnsInfo() const;
+    void showAllDrawedShape(QPainter& pa);                                           // Test
+    void showDebugInfo(QPainter& pa, QRect& rtSel);                                  // Test
 
 signals:
     void sigClearScreen();
@@ -115,8 +110,8 @@ protected:
 private:
     double m_scal;
     QRect m_captureScrnRt;                        // 截图时的桌面矩形：Mac 当前屏幕（非 virtualScerrn）；Windows 为多屏总和的 virtualScerrn
-    QPixmap* m_currPixmap;                        // 当前屏幕截图
-    QPixmap m_savePixmap;                         // 当前屏幕截图 + 遮罩   无构造初始化
+    QPixmap* m_curPix;                            // 当前屏幕截图
+    QPixmap m_savePix;                            // 当前屏幕截图 + 遮罩   无构造初始化
     RectCalcu m_rtCalcu;                          // 选中矩形区域
     bool m_bSmartWin;                             // 是否开启智能窗口
     bool m_bFirstSel;                             // 初次选中 截图矩形 完成
@@ -125,13 +120,13 @@ private:
     std::vector<XDrawStep> m_vDrawed;             // 已绘步骤
     std::vector<XDrawStep> m_vDrawUndo;           // 撤销步骤
     std::set<QRect, comp> m_scrnRts;              // 特殊窗口的矩形，绘画时需略调整
-    XDrawStep* m_pCurrShape;                      // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
+    XDrawStep* m_pCurShape;                       // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
     static XDrawStep m_step;                      // 当前绘画一步骤
 
     // new refactor
-    std::map<QScreen*, ScrnTypes> m_scrns;
     QRect m_autoDetectRt;                         // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
+    std::map<QScreen*, ScrnTypes> m_scrns;
     std::unique_ptr<SelectBar> m_selBar;
     std::unique_ptr<ParameterBar> m_paraBar;
     std::unique_ptr<SelectSize> m_selSizeTip;     // 选中矩形的尺寸提示

@@ -123,12 +123,11 @@ const QPixmap* XHelper::smoothMosaic(QPixmap* pixmap, int radius)
     QGraphicsPixmapItem* item = new QGraphicsPixmapItem(*pixmap);
     item->setGraphicsEffect(blur);
 
-
     QGraphicsScene scene;
     scene.addItem(item);
 
     QPainter painter(pixmap);
-    const double DPI = ScreenShot::getDevicePixelRatio();
+    const double DPI = ScreenShot::GetDevicePixelRatio();
     const QRect tRt(pixmap->rect().topLeft() / DPI, pixmap->rect().size() / DPI);
     scene.render(&painter, tRt, QRectF());
 

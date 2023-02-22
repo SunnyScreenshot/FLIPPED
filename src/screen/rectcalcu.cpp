@@ -10,7 +10,7 @@
 #include "../core/xlog.h"
 
 // 返回副本
-const QRect RectCalcu::getStretchRect()
+const QRect RectCalcu::getStretchRect() const
 {
 	QRect rt;
 	if (scrnType != ScrnOperate::SO_Stretch)
@@ -73,25 +73,25 @@ void RectCalcu::setRtSel(const QRect rt)
 }
 
 // 限制选中矩形不超过虚拟屏幕的边界， rect 为当前选中矩形
-QRect& RectCalcu::limitBound(QRect& rt, QRect rtDesktop)
+QRect& RectCalcu::limitBound(QRect& rt, QRect maxRt)
 {
 	if (!rt.isValid())
 		return rt;
-	if (rt.left() <= rtDesktop.left())
-		rt.setLeft(rtDesktop.left());
-	if (rt.top() <= rtDesktop.top())
-		rt.setTop(rtDesktop.top());
-	if (rt.right() >= rtDesktop.right())
-		rt.setRight(rtDesktop.right());
-	if (rt.bottom() >= rtDesktop.bottom())
-		rt.setBottom(rtDesktop.bottom());
+	if (rt.left() <= maxRt.left())
+		rt.setLeft(maxRt.left());
+	if (rt.top() <= maxRt.top())
+		rt.setTop(maxRt.top());
+	if (rt.right() >= maxRt.right())
+		rt.setRight(maxRt.right());
+	if (rt.bottom() >= maxRt.bottom())
+		rt.setBottom(maxRt.bottom());
 
 	return rt;
 }
 
 
 // 判断当前鼠标所在区域; false 为大概区域（用来粗略计算显示光标区域即可）; true 为详细区域（精确计算所在区域，需要修改矩形大小做准备，显示不同光标）
-const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details)
+const CursorArea RectCalcu::getCursorArea(const QPoint pos, bool details) const
 {
     QRect rt(rtSel);
 	if (!rt.isValid() || !rt.isValid())
@@ -185,7 +185,7 @@ RectCalcu::~RectCalcu()
 }
 
 // 此时并不修改其 resel 数值
-const QRect RectCalcu::getSelRect()
+const QRect RectCalcu::getSelRect() const
 {
 	if (scrnType == ScrnOperate::SO_Select) {
 		return getRect(pos1, pos2);
@@ -203,14 +203,14 @@ const QRect RectCalcu::getSelRect()
 	}
 }
 
-QRect RectCalcu::getExteRect(QRect& rect, int interval)
+QRect RectCalcu::getExteRect(QRect& rect, int interval) const
 {
 	QPoint topLeft = rect.topLeft();
 	QPoint bottomRight = rect.bottomRight();// +QPoint(1, 1);
 	return QRect(QPoint(topLeft.x() - interval, topLeft.y() - interval), QPoint(bottomRight.x() + interval, bottomRight.y() + interval));
 }
 
-QRect RectCalcu::getInteRect(QRect& rect, int interval)
+QRect RectCalcu::getInteRect(QRect& rect, int interval) const
 {
 	// TODO 2021-10-01: 考虑 rect 的width 和 height 本身 <= 2 * HAIF_INTERVAL？
 	QPoint topLeft = rect.topLeft();
