@@ -332,6 +332,10 @@ void ScreenShot::onPin()
 {
     if (m_savePix.isNull())
         return;
+    #ifdef Q_OS_MAC
+        setWindowFlags(Qt::Dialog);
+        showNormal();
+    #endif
 
     auto pin = new PinWidget(m_savePix, m_savePix.rect(), nullptr);   // 使用 nullptr，不会泄露
     pin->move(mapToGlobal(m_rtCalcu.getSelRect().topLeft()));
