@@ -117,10 +117,7 @@ ScreenShot::ScreenShot(QWidget *parent)
     #ifdef _MYDEBUG
         if (m_scrns.size() == 1)
             geom.setWidth(geom.width() / 2);
-    #else
-//        showFullScreen();  // 并不是当前的屏幕大小
     #endif
-
 
     setFixedSize(geom.size());   // resize() cannot get the desired effect
     move(geom.topLeft());
