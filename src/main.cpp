@@ -24,7 +24,6 @@
 #include <QGuiApplication>
 #include "./screen/tray.h"
 #include "tool/pin/pinwidget.h"
-#include "tool/testbtstyle.h"
 #include "widget/xroundwidget.h"
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"

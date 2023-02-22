@@ -245,3 +245,36 @@ double XHelper::getScale(QScreen *screen)
         return scale;
     #endif
 }
+
+void XDrawStep::showDebug() const
+{
+    const auto& t = pen.widthF();
+    qDebug() << "showDebug(): this:" << this;
+    qDebug() << "p1:" << p1 << "   p2:" << p2 << "   rt:" << rt << "   shape:" << int(shape) << "   shapePara:" << int(shapePara);
+    qDebug() << &pen << "  " << pen << "   " << pen.color().name() << "   " << pen.widthF() << "  t:" << &t << "  " << t;
+    qDebug() << &brush << "  " << brush << "   " << brush.color().name();
+    qDebug() << &text << "  " << text << "   font:" << font << "   textParas:" << textParas << "   serialText:" << serialText << Qt::endl;
+}
+
+void XDrawStep::partClear()
+{
+    p1 = QPoint();
+    p2 = QPoint();
+    rt = QRect();
+    custPath.clear();
+}
+
+void XDrawStep::destroyClear()
+{
+    p1 = QPoint();
+    p2 = QPoint();
+    rt = QRect();
+    shape = DrawShape::NoDraw;
+    shapePara = ShapePara::SP_0;
+    custPath.clear();
+    text.clear();
+
+    font.setBold(false);
+    font.setItalic(false);
+    textParas = TextPara(0);
+}

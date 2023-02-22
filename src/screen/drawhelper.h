@@ -118,21 +118,9 @@ public:
     Q_ENUM(CaptureType)
 };
 
-// NoDraw,
-// Rectangles,
-// Ellipses,
-// Line,
-// Arrows,
-// Pen,
-// Mosaics,
-// Text,
-// SerialNumberShape
-
-
+// rectangle | ellipse | arrow | custompath | mosaic、smooth | text | serialnumber | pin | [gif] | revocation | renewal | save | cancel | finish
 struct  XDrawStep
 {
-	//new refactor
-	// base element ------------------
     QPoint p1;                                  // 起点
     QPoint p2;                                  // 终点
     QRect rt;                                   // 初始绘画位置: 由 p1、p2 构成
@@ -152,44 +140,20 @@ struct  XDrawStep
 	QBrush brush = QBrush(Qt::red, Qt::SolidPattern);
     QVector<QPoint> custPath;                   // 手绘路径
 
-    // Mosaics -----------------------
-    // Text --------------------------
+    // Mosaics / Text
     QString text;                               // 文字内容； SerialNumberShape
 	QFont font = QFont("KaiTi", 14);            // 字体
     TextParas textParas;
 
-    // SerialNumberShape ------------------
+    // SerialNumberShape
     static QString serialText;
 
-    void showDebug() const {
-        const auto& t = pen.widthF();
-        qDebug() << "showDebug(): this:" << this;
-        qDebug() << "p1:" << p1 << "   p2:" << p2 << "   rt:" << rt << "   shape:" << int(shape) << "   shapePara:" << int(shapePara);
-        qDebug() << &pen << "  " << pen << "   " << pen.color().name() << "   " << pen.widthF() << "  t:" << &t << "  " << t;
-        qDebug() << &brush << "  " << brush << "   " << brush.color().name() ;
-        qDebug() << &text << "  " << text << "   font:" << font << "   textParas:" << textParas << "   serialText:" << serialText << Qt::endl;
-    }
-    void partClear() {
-        p1 = QPoint();
-        p2 = QPoint();
-        rt = QRect();
-        custPath.clear();
-    }
-
-    void destroyClear()
-    {
-        p1 = QPoint();
-        p2 = QPoint();
-        rt = QRect();
-        shape = DrawShape::NoDraw;
-        shapePara = ShapePara::SP_0;
-        custPath.clear();
-        text.clear();
-        textParas = TextPara(0);
-    }
+public:
+    void showDebug() const;
+    void partClear();
+    void destroyClear();
 };
 
-// ------------------------
 class XHelper : public QObject
 {
     Q_OBJECT
@@ -261,10 +225,10 @@ signals:
     void sigChangeMaxSize(int val);
 
 private:
-    QString m_boardStyle;
-    QColor m_borderColor;                      // 边框
     int m_borderWidth;
-    QColor m_crosshairColor;                   // 边框
+    QString m_boardStyle;
+    QColor m_borderColor;
+    QColor m_crosshairColor;
     int m_crosshairWidth;
     bool m_enableSmartWindow;
 	bool m_enableCrosshair;

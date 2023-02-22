@@ -31,7 +31,6 @@
 #include <QFont>
 #include <QFontInfo>
 #include <QDebug>
-#include "../core/xlog.h"
 #include "../core/arrowline.h"
 #include "../platform/wininfo.h"
 #include "../tool/pin/pinwidget.h"
@@ -472,7 +471,8 @@ void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
 
 void ScreenShot::onLineWidthChange(int width)
 {
-    static QFont font(m_step.font);
+    static QFont font;
+    font.setFamily(m_step.font.family());
     font.setPointSize(14);
     m_widthTip->setFont(font);
     m_widthTip->setText(QString::number(width));
@@ -728,7 +728,7 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
             outlinePen.setWidthF(1.2); // 轮廓描边
             pa.setPen((step.textParas & TextPara::TP_Outline) ? outlinePen : Qt::NoPen);
             
-            step.showDebug();
+//            step.showDebug();
             QPainterPath path;
             for (const auto &it : l) {
                 path.addText(topLeft, pa.font(), it);
@@ -760,11 +760,12 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         pa.setPen(QPen(easyRecognizeColorPen(step.brush.color()).color(), step.pen.widthF()));
         pa.setBrush(Qt::NoBrush);
 
-        QFont font(pa.font());
+        QFont font;
+        font.setFamily(m_step.font.family());
         font.setPointSizeF(qMax<double>(SN_Min, step.pen.widthF()));
         pa.setFont(font);
 
-        pa.drawText(adjustRt, Qt::AlignCenter, str);
+        pa.drawText(adjustRt, Qt::AlignCenter, str);    // No outline effect
         break;
     }
     default:
@@ -1115,10 +1116,8 @@ void ScreenShot::paintEvent(QPaintEvent *e)
     pa.setBrush(Qt::transparent);
 
 	// 绘画图案
-    for (XDrawStep& it : m_vDrawed) {
-        //it.showDebug();
+    for (XDrawStep& it : m_vDrawed)
         drawStep(pa, it);
-    }
 
     // 绘画当前步
     pen.setWidth(penWidth / 2);
@@ -1134,9 +1133,9 @@ void ScreenShot::paintEvent(QPaintEvent *e)
     drawBorder(rtSel, pa);
     drawCrosshair(pa);
     drawToolBar();
+
     pen.setColor(Qt::white);
     pa.setPen(pen);
-
     showDebugInfo(pa, rtSel);
 }
 
@@ -1186,14 +1185,13 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
 
     const int tSpace = 10;
     const int barHeight = m_selBar->height();
-    //const QRect rtSel(m_rtCalcu.getSelRect());
     QPoint topLeft(rtSel.right() - m_selBar->width(), rtSel.bottom() + tSpace);
     const int barMaxTop = rtSel.top() - tSpace - barHeight;
     const int barMaxBottom = rtSel.bottom() + tSpace + barHeight;
 
-    qDebug() << rtSel.left() << "  " << rtSel.top() << "  " << rtSel.right() << "  " << rtSel.bottom()
-        << "[width]  " << rtSel.width() << "  " << rtSel.height()
-        << "[topLeft]  " << rtSel.topLeft() << "  " << rtSel.bottomRight();
+    //qDebug() << rtSel.left() << "  " << rtSel.top() << "  " << rtSel.right() << "  " << rtSel.bottom()
+    //    << "[width]  " << rtSel.width() << "  " << rtSel.height()
+    //    << "[topLeft]  " << rtSel.topLeft() << "  " << rtSel.bottomRight();
     if (rtSel.width() > 0 && rtSel.height() > 0 ) {
         const auto selScrn = curScrn(rtSel.bottomRight());
         QRect rtScrn;
@@ -1390,15 +1388,13 @@ void ScreenShot::drawToolBar() const
             m_paraBar->move(v.at(1));
         }
 
-        // 添加磨砂透明效果
+        // Cross-platform blur transparency effect
         const int blurRadius = 10;
         const double dpr = GetDevicePixelRatio();
         auto t1 = m_curPix->copy(QRect(v[0] * dpr, m_selBar->rect().size() * dpr));
         m_selBar->setBlurBackground(t1, blurRadius);
         auto t2 = m_curPix->copy(QRect(v[1] * dpr, m_paraBar->rect().size() * dpr));
         m_paraBar->setBlurBackground(t2, blurRadius);
-
-
     }
 }
 
@@ -1628,9 +1624,6 @@ void ScreenShot::wheelEvent(QWheelEvent* e)
     // QPoint numPixels = event->pixelDelta();
     QPoint numDegrees = e->angleDelta() / 8;
     QPoint numSteps = numDegrees / 15;
-
-//    qDebug() << "ScreenShot::wheelEvent:" << numSteps.y() << " #############  " << numSteps.x();
-
     if (numDegrees.isNull())
         return;
 

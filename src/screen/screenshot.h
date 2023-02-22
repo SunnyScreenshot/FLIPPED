@@ -123,7 +123,6 @@ private:
     XDrawStep* m_pCurShape;                       // 移动状态下的选中矩形； nullptr 为 最外层框， 非 nullptr 为具体选中
     static XDrawStep m_step;                      // 当前绘画一步骤
 
-    // new refactor
     QRect m_autoDetectRt;                         // 自动检测窗口矩形大小；用以给其它赋值
     Qt::Orientation m_barOrien;
     std::map<QScreen*, ScrnTypes> m_scrns;

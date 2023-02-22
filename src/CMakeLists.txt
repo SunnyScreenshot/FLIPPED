@@ -81,9 +81,7 @@ set(SRC_TOOL
     tool/selectbar.h
     tool/selectbar.cpp
     tool/parameterbar.h
-    tool/parameterbar.cpp
-    tool/testbtstyle.h
-    tool/testbtstyle.cpp)
+    tool/parameterbar.cpp)
 
 set(SRC_PERFERENCE
     preference/preference.h

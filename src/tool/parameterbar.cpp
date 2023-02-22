@@ -93,7 +93,7 @@ QString ParameterBar::amendSvgShow(QString path)
     return (itor != map.cend()) ? itor->second : "path";  // shape
 }
 
-void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive, const int defaultCheck)
+void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString& path, const QStringList& items, const bool exclusive, const int defaultIdx)
 {
     if (!manageBar)
         manageBar = new ManageBar(m_orien, this);
@@ -116,8 +116,8 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString&
         tb->setAutoRaise(true);
         tb->setCheckable(true);
         tb->setChecked(false);
-        if (i == defaultCheck) {
-            tb->setChecked(exclusive);
+        if (i == defaultIdx) {
+            tb->setChecked(true);
             tb->setIcon(XHelper::instance().ChangeSVGColor(it.value(), amendSvgShow(it.value()), XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
         }
 
@@ -271,45 +271,14 @@ void ParameterBar::resizeEvent(QResizeEvent *event)
 void ParameterBar::onTBReleased(QAbstractButton* btn)
 {
     const auto& parent = btn->parentWidget();
-    if (!btn || !parent)
+    if (!btn || !parent) 
         return;
 
+    const auto selectedTb = qobject_cast<QToolButton*>(btn);
+    const QSize iconSize = QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale();
     for (auto& it : parent->findChildren<QToolButton *>()) {
-        QString path = it->property("path").value<QString>();
-        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
-        auto ptr = qobject_cast<QToolButton*>(btn);
-        if (it == ptr) {
-            it->setIcon(XHelper::instance().ChangeSVGColor(path, amendSvgShow(path), XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
-
-            //enum class DrawShape {
-            //    NoDraw,
-            //    Rectangles,
-            //    Ellipses,
-            //    Line,
-            //    Arrows,
-            //    Pen,
-            //    Mosaics,
-            //    Text,
-            //    SerialNumberShape
-            //};
-
-
-            //m_colorBar;
-            //m_serialBar;
-
-            //m_rectBar;
-            //m_ellipseBar;
-            //m_mosaicBar;
-            //m_arrowBar;
-            //m_lienWidthBar;
-            // TODO: 此为当前点击选中这个
+        if (it == selectedTb) {
             QString name = it->objectName();
-//            int n = it->objectName().right(1).toInt();
-            
-            //const QString cTb1("tb1");
-            //const QString cTb2("tb2");
-            //const QString cTb3("tb3");
-
             DrawShape shap = DrawShape::NoDraw;
 
             if (parent == m_rectBar) {
@@ -330,12 +299,13 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
             } else {
             }
 
-            emit sigParaBtnId(shap, ptr);
-
-        } else {
-            if (!it->isChecked())
-                it->setIcon(QIcon(path));
+            emit sigParaBtnId(shap, selectedTb);
         }
+
+        QString path = it->property("path").value<QString>();
+        const QIcon& icon = it->isChecked() ? XHelper::instance().ChangeSVGColor(path, amendSvgShow(path), XHelper::instance().borderColor(), iconSize) : QIcon(path);
+        it->setIconSize(iconSize);
+        it->setIcon(icon);
     }
 }
 

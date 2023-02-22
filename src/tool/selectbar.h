@@ -17,20 +17,6 @@ class QBoxLayout;
 class QAbstractButton;
 class QButtonGroup;
 
-// rectangle
-// ellipse
-// arrow
-// custompath
-// mosaic、smooth
-// text
-// serialnumber、
-// pin
-// gif 暂不添加
-// revocation
-// renewal
-// save
-// cancel
-// finish
 class SelectBar : public QWidget
 {
     Q_OBJECT
