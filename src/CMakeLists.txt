@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME Flipped)
-project(${PROJECT_NAME} VERSION 0.4.13 LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 1.0.0 LANGUAGES CXX)
 
 file(GLOB All_CNGFIG_FILES "data/config/*")
 file(COPY ${All_CNGFIG_FILES} DESTINATION "${CMAKE_BINARY_DIR}/bin/config")

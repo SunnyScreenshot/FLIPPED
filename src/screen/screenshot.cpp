@@ -31,6 +31,7 @@
 #include <QFont>
 #include <QFontInfo>
 #include <QDebug>
+#include <QDir>
 #include "../core/arrowline.h"
 #include "../platform/wininfo.h"
 #include "../tool/pin/pinwidget.h"
@@ -331,24 +332,27 @@ void ScreenShot::onPin()
 {
     if (m_savePix.isNull())
         return;
+
     #ifdef Q_OS_MAC
         setWindowFlags(Qt::Dialog);
         showNormal();
     #endif
 
-    auto pin = new PinWidget(m_savePix, m_savePix.rect(), nullptr);   // 使用 nullptr，不会泄露
-    pin->move(mapToGlobal(m_rtCalcu.getSelRect().topLeft()));
-    pin->show();
+    if (drawToCurPixmap()) {
+        auto pin = new PinWidget(m_savePix, m_savePix.rect(), nullptr);   // 使用 nullptr，不会泄露
+        pin->move(mapToGlobal(m_rtCalcu.getSelRect().topLeft()));
+        pin->show();
 
-    clearnAndClose();
+        clearnAndClose();
+    }
+
+
 }
 
 void ScreenShot::onSave()
 {
     if (drawToCurPixmap()) {
-        if (XHelper::instance().autoCpoyClip())
-            QApplication::clipboard()->setPixmap(m_savePix);
-
+        // Manual save
         const QString imageName = XHelper::instance().formatToName();
         QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
         QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), imageName, fileter);
@@ -359,18 +363,18 @@ void ScreenShot::onSave()
         m_savePix.save(fileNmae, nullptr, XHelper::instance().imgQuailty());  // 绘画在 m_savePix 中，若在 m_savePix 会有 selRect 的左上角的点的偏移
         QTime stopTime = QTime::currentTime();
         int elapsed = startTime.msecsTo(stopTime);
+        qInfo() << "m_savePix save time: " << elapsed << " ms" << m_savePix.size();
 
-#ifdef QT_DEBUG
-        qDebug() << "save m_savePix tim =" << elapsed << "ms" << m_savePix.size();
-        //m_curPix->save("a2.png");
 
-        // auto save pixmap
+        // save to clipboard
+        if (XHelper::instance().autoCpoyClip())
+            QApplication::clipboard()->setPixmap(m_savePix);
+
+        // auto save
         const QString path = XHelper::instance().formatToName(XHelper::instance().path(toAutoSavePath).trimmed());
-        if (!path.isEmpty()) {
+        QDir dir(path);
+        if(dir.exists())
             m_savePix.save(path + QDir::separator() + imageName);
-        }
-#else
-#endif
     }
 
     clearnAndClose();
@@ -402,15 +406,7 @@ void ScreenShot::onInterruptEdit(const QPoint& pos)
 
 void ScreenShot::onParaBtnId(DrawShape shape, QToolButton* tb)
 {
-    if (!tb)
-        return;
-
-//    auto setWhitePen = [&](const double outlineWith = 1.5) -> const QPen {
-//        QPen tPen(m_step.pen);
-//        tPen.setColor(m_step.brush.color() == Qt::white ? Qt::black : Qt::white);
-//        tPen.setWidthF(outlineWith);
-//        return tPen;
-//    };
+    if (!tb) return;
 
     const int idx = tb->objectName().right(1).toInt();
     auto t = tb->objectName();
@@ -526,8 +522,9 @@ bool ScreenShot::drawToCurPixmap()
     QRect rtSel(m_rtCalcu.getSelRect());
     const QRect rtAppVirDesktop(QPoint(0, 0), m_captureScrnRt.size());
     m_rtCalcu.limitBound(rtSel, rtAppVirDesktop);
-    if (rtSel.width() > 0 && rtSel.height() > 0)
-        m_savePix = m_curPix->copy(QRect(rtSel.topLeft() * GetDevicePixelRatio(), rtSel.size() * GetDevicePixelRatio()));  // 注意独立屏幕缩放比（eg: macox = 2）
+    const double DPI = GetDevicePixelRatio();
+    if (rtSel.isValid())
+        m_savePix = m_curPix->copy(QRect(rtSel.topLeft() * DPI, rtSel.size() * DPI));
 
     return (!m_savePix.isNull() && m_curPix);
 }

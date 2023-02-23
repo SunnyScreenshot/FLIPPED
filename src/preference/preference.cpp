@@ -506,7 +506,7 @@ QWidget *Preference::tabAbout()
     else if (_BIT_ARCH == 8)
         bit = "x64";
 
-    QLabel* project = new QLabel(tr("<a style='color: black;' href=https://github.com/XMuli/Flipped> %1</a>").arg(_PROJECT_NAME));
+    QLabel* project = new QLabel(tr("<a style=\"color: black;\" href=https://github.com/XMuli/Flipped> %1</a>").arg(_PROJECT_NAME));
     project->setOpenExternalLinks(true);
     QFont font;
     font.setPointSizeF(ponitSize);
@@ -517,6 +517,10 @@ QWidget *Preference::tabAbout()
                                    .arg(_PROJECT_VERSION)
                                    .arg(bit)
                                    .arg(time.left(time.indexOf(" "))));
+//    QLabel* buildTime = new QLabel(tr("%1 %2 (YYYY.MM.DD)")
+//                                   .arg(_PROJECT_VERSION)
+//                                   .arg(bit));
+
     font.setPointSizeF(ponitSize - 4);
     font.setBold(false);
     buildTime->setFont(font);
@@ -562,10 +566,10 @@ QWidget *Preference::tabAbout()
     QLabel* ghL =new QLabel("GitHub:");
     font.setPointSizeF(ponitSize - 5);
     ghL->setFont(font);
-    QLabel* ghR = new QLabel(tr("<a style='color: green;' href=https://github.com/XMuli/Flipped>Flipped</a>"));
+    QLabel* ghR = new QLabel(tr("<a style=\"color: green;\" href=https://github.com/XMuli/Flipped>Flipped</a>"));
     ghR->setOpenExternalLinks(true);
     ghR->setFont(font);
-    QLabel* blogR = new QLabel(tr("<a style='color: green;' href=https://ifmet.cn>ifmet.cn</a>"));
+    QLabel* blogR = new QLabel(tr("<a style=\"color: green;\" href=https://ifmet.cn>ifmet.cn</a>"));
     blogR->setOpenExternalLinks(true);
     blogR->setFont(font);
 
@@ -582,6 +586,12 @@ QWidget *Preference::tabAbout()
     QLabel* tsR = new QLabel("Tom Jerry");
     tsR->setFont(font);
 
+    QLabel* LQQGroups = new QLabel("QQ Group:");
+    LQQGroups->setFont(font);
+    QLabel* RQQGroups = new QLabel("<a style=\"color: green;\" href=\"https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from=webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu\">418103279");
+    RQQGroups->setOpenExternalLinks(true);
+    RQQGroups->setFont(font);
+
     // 临时屏蔽
     authorL->hide();
     authorR->hide();
@@ -592,6 +602,8 @@ QWidget *Preference::tabAbout()
     ghL->hide();
     ghR->hide();
     blogR->hide();
+//    LQQGroups->hide();
+//    RQQGroups->hide();
 
     grid->addWidget(ackmtR, grid->rowCount(), j + 1, 1, 1, Qt::AlignLeft);
 //    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
@@ -609,10 +621,13 @@ QWidget *Preference::tabAbout()
 //    grid->addItem(new QSpacerItem(0, 6, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
 //    grid->addWidget(tsL, grid->rowCount(), j, Qt::AlignRight);
 //    grid->addWidget(tsR, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
+    grid->addItem(new QSpacerItem(0, 40, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
+    grid->addWidget(LQQGroups, grid->rowCount(), j, Qt::AlignRight);
+    grid->addWidget(RQQGroups, grid->rowCount() - 1, j + 1, Qt::AlignLeft);
 
 //    qDebug() << "tabAbout:grid->rowCount():" << grid->rowCount();  // 创建一个空 grid 时，便默认有一个 1 item，添加第一个后，依旧计数 1 个；
     vLay->addLayout(grid, grid->rowCount());
-    vLay->addStretch(3);
+    vLay->addStretch(2);
     vLay->addSpacing(TAV_MARGIN_VER_BOTTOM);
 
     return page;
