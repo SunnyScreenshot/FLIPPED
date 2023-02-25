@@ -4,7 +4,7 @@
 <context>
     <name>ColorParaBar</name>
     <message>
-        <location filename="../../tool/base/colorparabar.cpp" line="166"/>
+        <location filename="../../tool/base/colorparabar.cpp" line="161"/>
         <source>select color</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12,7 +12,7 @@
 <context>
     <name>HotkeysWidget</name>
     <message>
-        <location filename="../../preference/hotkeyswidget.cpp" line="65"/>
+        <location filename="../../preference/hotkeyswidget.cpp" line="67"/>
         <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
@@ -20,52 +20,37 @@
 <context>
     <name>PinWidget</name>
     <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="95"/>
+        <location filename="../../tool/pin/pinwidget.cpp" line="90"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="96"/>
+        <location filename="../../tool/pin/pinwidget.cpp" line="91"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="98"/>
-        <source>Shadow</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="101"/>
+        <location filename="../../tool/pin/pinwidget.cpp" line="96"/>
         <source>Opicaty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="105"/>
+        <location filename="../../tool/pin/pinwidget.cpp" line="100"/>
         <source>%1%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="114"/>
-        <source>Move to grop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="116"/>
-        <source>Delete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="117"/>
+        <location filename="../../tool/pin/pinwidget.cpp" line="112"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="249"/>
+        <location filename="../../tool/pin/pinwidget.cpp" line="244"/>
         <source>Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/pin/pinwidget.cpp" line="250"/>
+        <location filename="../../tool/pin/pinwidget.cpp" line="245"/>
         <source>Save Files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -73,311 +58,332 @@
 <context>
     <name>Preference</name>
     <message>
-        <location filename="../../preference/preference.cpp" line="72"/>
+        <location filename="../../preference/preference.cpp" line="68"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="73"/>
+        <location filename="../../preference/preference.cpp" line="69"/>
         <source>Interface</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="74"/>
+        <location filename="../../preference/preference.cpp" line="70"/>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="75"/>
+        <location filename="../../preference/preference.cpp" line="71"/>
         <source>Pin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="76"/>
+        <location filename="../../preference/preference.cpp" line="72"/>
         <source>HotKeys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="77"/>
+        <location filename="../../preference/preference.cpp" line="73"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="80"/>
+        <location filename="../../preference/preference.cpp" line="76"/>
         <source>Flipped Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="95"/>
+        <location filename="../../preference/preference.cpp" line="92"/>
         <source>Reset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="127"/>
+        <location filename="../../preference/preference.cpp" line="124"/>
         <source>Lanuage:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="128"/>
+        <location filename="../../preference/preference.cpp" line="125"/>
+        <source>Font:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../preference/preference.cpp" line="126"/>
         <source>Launch:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="129"/>
+        <location filename="../../preference/preference.cpp" line="127"/>
         <source>Log Level:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="130"/>
+        <location filename="../../preference/preference.cpp" line="128"/>
         <source>Update:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="133"/>
+        <location filename="../../preference/preference.cpp" line="132"/>
         <source>Run on system startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="134"/>
+        <location filename="../../preference/preference.cpp" line="133"/>
         <source>As administrator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="136"/>
+        <location filename="../../preference/preference.cpp" line="135"/>
         <source>Automatic check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="137"/>
+        <location filename="../../preference/preference.cpp" line="136"/>
         <source>Update</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="171"/>
+        <location filename="../../preference/preference.cpp" line="179"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="172"/>
+        <location filename="../../preference/preference.cpp" line="180"/>
         <source>简体中文</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="173"/>
+        <location filename="../../preference/preference.cpp" line="181"/>
         <source>繁體中文</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="178"/>
+        <location filename="../../preference/preference.cpp" line="186"/>
         <source>trace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="178"/>
+        <location filename="../../preference/preference.cpp" line="186"/>
         <source>debug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="178"/>
+        <location filename="../../preference/preference.cpp" line="186"/>
         <source>info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="178"/>
+        <location filename="../../preference/preference.cpp" line="186"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="178"/>
+        <location filename="../../preference/preference.cpp" line="186"/>
         <source>error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="178"/>
+        <location filename="../../preference/preference.cpp" line="186"/>
         <source>critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="178"/>
+        <location filename="../../preference/preference.cpp" line="186"/>
         <source>off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="212"/>
+        <location filename="../../preference/preference.cpp" line="223"/>
         <source>Border Style:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="213"/>
+        <location filename="../../preference/preference.cpp" line="224"/>
         <source>Border Color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="214"/>
+        <location filename="../../preference/preference.cpp" line="225"/>
         <source>Border Width:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="215"/>
+        <location filename="../../preference/preference.cpp" line="226"/>
         <source>Crosshair Color:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="216"/>
+        <location filename="../../preference/preference.cpp" line="227"/>
         <source>Crosshair Width:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="223"/>
+        <location filename="../../preference/preference.cpp" line="234"/>
         <source>Smart window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="224"/>
+        <location filename="../../preference/preference.cpp" line="235"/>
         <source>Crosshair</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="225"/>
+        <location filename="../../preference/preference.cpp" line="236"/>
         <source>Show cursor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="226"/>
+        <location filename="../../preference/preference.cpp" line="237"/>
         <source>Auto copy to clipboard</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="310"/>
+        <location filename="../../preference/preference.cpp" line="321"/>
         <source>Image quailty:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="311"/>
+        <location filename="../../preference/preference.cpp" line="322"/>
         <source>File Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="312"/>
+        <location filename="../../preference/preference.cpp" line="323"/>
         <source>Quick save path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="313"/>
+        <location filename="../../preference/preference.cpp" line="324"/>
         <source>Auto save path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="314"/>
+        <location filename="../../preference/preference.cpp" line="325"/>
         <source>Config path:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="323"/>
-        <source>Hint</source>
+        <location filename="../../preference/preference.cpp" line="334"/>
+        <location filename="../../preference/preference.cpp" line="335"/>
+        <location filename="../../preference/preference.cpp" line="336"/>
+        <location filename="../../preference/preference.cpp" line="337"/>
+        <source>Change</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="324"/>
-        <location filename="../../preference/preference.cpp" line="325"/>
-        <location filename="../../preference/preference.cpp" line="326"/>
-        <source>Change path</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="353"/>
+        <location filename="../../preference/preference.cpp" line="364"/>
         <source>Range [0,100] or -1.
 Specify 0 to obtain small compressed files, 100 for large uncompressed files.
 and -1 to use the default settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="398"/>
+        <location filename="../../preference/preference.cpp" line="414"/>
         <source>Window Shadow:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="399"/>
+        <location filename="../../preference/preference.cpp" line="415"/>
         <source>Opacity:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="400"/>
+        <location filename="../../preference/preference.cpp" line="416"/>
         <source>Maximum size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="402"/>
+        <location filename="../../preference/preference.cpp" line="418"/>
         <source>Enable</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="490"/>
-        <source>%1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="496"/>
-        <source>%1-Beta %2 (%3)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="505"/>
-        <source>Flipped is a cross-platform screenshot tool.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../preference/preference.cpp" line="508"/>
-        <source>Author:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="510"/>
-        <source>&lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli&gt; XMuli&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../preference/preference.cpp" line="513"/>
-        <source>Copyright ©</source>
+        <source>&lt;a style=&quot;color: black;&quot; href=https://github.com/XMuli/Flipped&gt; %1&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../preference/preference.cpp" line="515"/>
-        <source>2021-2022 XMuli</source>
+        <source>%1-Beta %2 (%3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="535"/>
+        <location filename="../../preference/preference.cpp" line="528"/>
+        <source>simple and beautiful cross-platform screenshot software.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../preference/preference.cpp" line="531"/>
+        <source>Author:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../preference/preference.cpp" line="533"/>
+        <location filename="../../preference/preference.cpp" line="538"/>
+        <source>&lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli&gt; XMuli&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../preference/preference.cpp" line="536"/>
+        <source>Copyright ©</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../preference/preference.cpp" line="538"/>
+        <source>2021-2023 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../preference/preference.cpp" line="559"/>
         <source>Acknowledgements</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="544"/>
-        <source>&lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli/Flipped&gt;Flipped&lt;/a&gt;</source>
+        <location filename="../../preference/preference.cpp" line="568"/>
+        <source>&lt;a style=&quot;color: green;&quot; href=https://github.com/XMuli/Flipped&gt;Flipped&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="547"/>
-        <source>&lt;a style=&apos;color: green;&apos; href=https://ifmet.cn&gt;ifmet.cn&lt;/a&gt;</source>
+        <location filename="../../preference/preference.cpp" line="571"/>
+        <source>&lt;a style=&quot;color: green;&quot; href=https://ifmet.cn&gt;ifmet.cn&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../preference/preference.cpp" line="778"/>
-        <location filename="../../preference/preference.cpp" line="784"/>
-        <location filename="../../preference/preference.cpp" line="790"/>
+        <location filename="../../preference/preference.cpp" line="734"/>
+        <source>Select Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../preference/preference.cpp" line="890"/>
+        <location filename="../../preference/preference.cpp" line="896"/>
+        <location filename="../../preference/preference.cpp" line="902"/>
         <source>select a path</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../../main.cpp" line="63"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../main.cpp" line="63"/>
+        <source>The application is already running.
+Allowed to run only one instance of the application.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ScreenShot</name>
     <message>
-        <location filename="../../screen/screenshot.cpp" line="350"/>
+        <location filename="../../screen/screenshot.cpp" line="357"/>
         <source>Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../screen/screenshot.cpp" line="351"/>
+        <location filename="../../screen/screenshot.cpp" line="358"/>
         <source>Save Files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -385,126 +391,101 @@ and -1 to use the default settings.</source>
 <context>
     <name>SelectBar</name>
     <message>
-        <location filename="../../tool/selectbar.cpp" line="42"/>
-        <source>rectangle</source>
+        <location filename="../../tool/selectbar.cpp" line="31"/>
+        <source>Rectangle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="32"/>
+        <source>Ellipse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="33"/>
+        <source>Arrow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="34"/>
+        <source>CustomPath</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="35"/>
+        <source>Mosaic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="36"/>
+        <source>Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="37"/>
+        <source>SerialNumber</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="39"/>
+        <source>Pin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="40"/>
+        <source>Revocation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../tool/selectbar.cpp" line="41"/>
+        <source>Renewal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../tool/selectbar.cpp" line="42"/>
-        <source>ellipse</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="42"/>
-        <source>arrow</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="42"/>
-        <source>pen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="42"/>
-        <source>mosaic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="42"/>
-        <source>text</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="42"/>
-        <source>serialnumber</source>
+        <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../tool/selectbar.cpp" line="43"/>
-        <source>pin</source>
+        <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../tool/selectbar.cpp" line="43"/>
-        <source>revocation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="43"/>
-        <source>renewal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="43"/>
-        <source>save</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="43"/>
-        <source>cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../tool/selectbar.cpp" line="43"/>
-        <source>finish</source>
+        <location filename="../../tool/selectbar.cpp" line="44"/>
+        <source>Finish</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Tray</name>
     <message>
-        <location filename="../../screen/tray.cpp" line="100"/>
+        <location filename="../../screen/tray.cpp" line="95"/>
         <source>ScreenShot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="101"/>
+        <location filename="../../screen/tray.cpp" line="96"/>
         <source>Preference</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="102"/>
+        <location filename="../../screen/tray.cpp" line="97"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="129"/>
+        <location filename="../../screen/tray.cpp" line="124"/>
         <source>Active Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="130"/>
-        <source>Scrolling Window</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../screen/tray.cpp" line="131"/>
+        <location filename="../../screen/tray.cpp" line="126"/>
         <source>Delay Capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../screen/tray.cpp" line="132"/>
+        <location filename="../../screen/tray.cpp" line="127"/>
         <source>Full Screen</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../screen/tray.cpp" line="133"/>
-        <source>Fixd-Size Region</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../screen/tray.cpp" line="134"/>
-        <source>Paste</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../screen/tray.cpp" line="135"/>
-        <source>Hide/Show all images</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../screen/tray.cpp" line="136"/>
-        <source>Switch current group</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

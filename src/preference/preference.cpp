@@ -331,10 +331,10 @@ QWidget* Preference::tabOutput()
     NEW_OBJECT(editConfigPath, QLineEdit, toConfigPath);
 
 //    changeFileName = new QSpacerItem(20, 5, QSizePolicy::Minimum, QSizePolicy::Fixed);
-    NEW_OBJECT_AND_TEXT(changeFileName, QPushButton, toFileName, tr("Hint"));
-    NEW_OBJECT_AND_TEXT(changeQuickSavePath, QPushButton, toQuickSavePath, tr("Change path"));
-    NEW_OBJECT_AND_TEXT(changeAutoSavePath, QPushButton, toAutoSavePath, tr("Change path"));
-    NEW_OBJECT_AND_TEXT(changeConfigPath, QPushButton, toConfigPath, tr("Change path"));
+    NEW_OBJECT_AND_TEXT(changeFileName, QPushButton, toFileName, tr("Change"));
+    NEW_OBJECT_AND_TEXT(changeQuickSavePath, QPushButton, toQuickSavePath, tr("Change"));
+    NEW_OBJECT_AND_TEXT(changeAutoSavePath, QPushButton, toAutoSavePath, tr("Change"));
+    NEW_OBJECT_AND_TEXT(changeConfigPath, QPushButton, toConfigPath, tr("Change"));
 
     sbImageQuailty->setRange(-1, 100);
     sbImageQuailty->setMinimumWidth(70);
@@ -393,7 +393,6 @@ QWidget* Preference::tabOutput()
     quickSavePath->hide();
     editQuickSavePath->hide();
     changeQuickSavePath->hide();
-
 
     return page;
 }
