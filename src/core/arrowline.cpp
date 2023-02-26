@@ -54,7 +54,7 @@ const QPainterPath ArrowLine::circleLine() const
     QPainterPath path;
     path.moveTo(m_p1);
     path.lineTo(m_p2);
-    const double mix = 4;
+    const double mix = 2;
     const double max = 100;
     const double r = qBound<double>(mix, m_lineWidth * 1.2, max);
     path.addEllipse(m_p2, r, r);
@@ -71,10 +71,10 @@ const QPainterPath ArrowLine::line() const
 
 void ArrowLine::calcVertexes(QPointF &p1, QPointF &p2) const
 {
-    double lenght = 14;       // 箭头边线长度
-    double degrees = 0.5;     // 箭头夹角
+    double lenght = 12;       // 箭头边线长度
+    double degrees = 0.4;     // 箭头夹角
 //    const double baseLine = sqrt(pow(m_p2.y() - m_p1.y(), 2) + pow(m_p2.x() - m_p1.x(), 2));
-    lenght = qBound<double>(40, lenght + m_lineWidth * 4, 200);
+    lenght = qBound<double>(30, lenght + m_lineWidth * 2, 200);
 
     double angle = atan2(m_p2.y() - m_p1.y(), m_p2.x() - m_p1.x()) + M_PI;
 

@@ -511,20 +511,20 @@ QWidget *Preference::tabAbout()
     font.setPointSizeF(ponitSize);
     font.setBold(true);
     project->setFont(font);
-    QString time = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
-    QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
+    //QString time = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
+    //QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
+    //                               .arg(_PROJECT_VERSION)
+    //                               .arg(bit)
+    //                               .arg(time.left(time.indexOf(" "))));
+    QLabel* buildTime = new QLabel(tr("%1 %2 (YYYY.MM.DD)")
                                    .arg(_PROJECT_VERSION)
-                                   .arg(bit)
-                                   .arg(time.left(time.indexOf(" "))));
-//    QLabel* buildTime = new QLabel(tr("%1 %2 (YYYY.MM.DD)")
-//                                   .arg(_PROJECT_VERSION)
-//                                   .arg(bit));
+                                   .arg(bit));
 
     font.setPointSizeF(ponitSize - 4);
     font.setBold(false);
     buildTime->setFont(font);
     buildTime->setStyleSheet("QLabel{color:rgba(0, 0, 0, 0.6);}");
-    buildTime->setToolTip(time.right(time.count() - time.indexOf(" ") - 1));
+    //buildTime->setToolTip(time.right(time.count() - time.indexOf(" ") - 1));
     QLabel* detail = new QLabel(tr("simple and beautiful cross-platform screenshot software."));
     detail->setFont(font);
 
@@ -601,8 +601,8 @@ QWidget *Preference::tabAbout()
     ghL->hide();
     ghR->hide();
     blogR->hide();
-//    LQQGroups->hide();
-//    RQQGroups->hide();
+    LQQGroups->hide();
+    RQQGroups->hide();
 
     grid->addWidget(ackmtR, grid->rowCount(), j + 1, 1, 1, Qt::AlignLeft);
 //    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);

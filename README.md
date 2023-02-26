@@ -35,20 +35,12 @@
   </p>
   <p align="right"><br><a href="README.md">English</a> | <a href="README.zh_CN.md">简体中文</a></p>
 </div>
-
-
-
-
-
-## Preview
-
-<img src="snapshot/flipped_display.png" width="100%"/>
-
 <br>
 
 ## Index
 
 - [Features](#features)
+- [Preview](#Preview)
 - [Keyboard shortcuts](#Keyboard shortcuts)
 - [Compilation](#Compilation)
   - [Dependencies](#Dependencies)
@@ -56,7 +48,8 @@
   - [MacOS / Linux](#MacOS / Linux)
 - [Prebuilt packages](#Prebuilt packages)
 - [License](#License)
-- [](#)
+- [Author](#Author)
+- [feedback](#feedback)
 
 <br>
 
@@ -68,6 +61,24 @@
 - Draw Rectangle, Ellipse, Arrow, Custom Path, Mosaic, Text, Serial Number
 - Undo, Redo (multi-level), Save, Cancel, Copy
 - Plugin Framework
+
+<br>
+
+## Preview
+
+<img src="snapshot/FlippedDisplay.png" width="100%"/>
+
+
+
+<img src="snapshot/FlippedDisplay2.png" width="100%"/>
+
+<br>
+
+<img src="snapshot/FlippedDisplay3.png" width="100%"/>
+
+<br>
+
+<img src="snapshot/FlippedDisplay4.png" width="70%"/>
 
 <br>
 
@@ -168,8 +179,36 @@
 
 ## Prebuilt packages
 
-Some prebuilt packages are provided on [the release page of the GitHub project repository](https://github.com/XMuli/Flipped/releases).
+Some prebuilt packages are provided on the  [release page](https://github.com/XMuli/Flipped/releases).
+
+<br>
+
+If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke.
+
+<br>
+
+<details>
+    <summary> <b>Reward / Donation</b></summary>
+  <p> - If you have something to learn from the project, you can also invite me to share a glass of Fat House Ice and Coke. - </p>
+  <pre><img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202302282339037.png" width="80%"/></pre>
+</details>
+
+<br>
+
+## Author
+
+[![alt text](https://img.shields.io/badge/QQ-%E5%81%95%E8%87%A7-brightgreen)](https://sighttp.qq.com/authd?IDKEY=31f3ef7312b39e2c8dc822ae2f4c3b3118e1a6f31cc83373) [![alt text](https://img.shields.io/badge/GitHub-XMuli-brightgreen)](https://github.com/XMuli) [![alt text](https://img.shields.io/badge/Blog-%E5%81%95%E8%87%A7%E7%9A%84%E5%B0%8F%E7%AB%99-ff69b4)](https://ifmet.cn/) 
+
+<br>
+
+## Feedback
+[![alt text](https://img.shields.io/badge/QQ_Groups-%E5%81%95%E8%87%A7-brightgreen)](https://sighttp.qq.com/authd?IDKEY=31f3ef7312b39e2c8dc822ae2f4c3b3118e1a6f31cc83373) 
+
+[![alt text](https://img.shields.io/badge/GitHub_Flipped-Issues-brightgreen)](https://github.com/XMuli/Flipped/issues) 
 
 <br>
 
 ## License
+
+This project is distributed and used based on the `GNU General Public License v3.0` protocol. For more information, please refer to [Agreement File](/LICENSE).
+
