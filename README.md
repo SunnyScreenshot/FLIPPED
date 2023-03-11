@@ -35,21 +35,7 @@
   </p>
   <p align="right"><br><a href="README.md">English</a> | <a href="README.zh_CN.md">简体中文</a></p>
 </div>
-<br>
-
-## Index
-
-- [Features](#features)
-- [Preview](#Preview)
-- [Keyboard shortcuts](#Keyboard shortcuts)
-- [Compilation](#Compilation)
-  - [Dependencies](#Dependencies)
-  - [Windows](#Windows)
-  - [MacOS / Linux](#MacOS / Linux)
-- [Prebuilt packages](#Prebuilt packages)
-- [License](#License)
-- [Author](#Author)
-- [feedback](#feedback)
+[TOC]
 
 <br>
 
@@ -66,19 +52,37 @@
 
 ## Preview
 
-<img src="snapshot/FlippedDisplay.png" width="100%"/>
+### Voide
 
-
-
-<img src="snapshot/FlippedDisplay2.png" width="100%"/>
-
-<br>
-
-<img src="snapshot/FlippedDisplay3.png" width="100%"/>
+- [P1] [FLIPPED-MACOS operation demonstration](https://www.bilibili.com/video/BV1rX4y1D7EZ?p=1)
+- [P2] [FLIPPED-WINDOWS operation demonstration](https://www.bilibili.com/video/BV1rX4y1D7EZ?p=2)
+- [P3] [FLIPPED-LINUX (ubuntu 20.04) operation demonstration](https://www.bilibili.com/video/BV1rX4y1D7EZ?p=3)
 
 <br>
 
-<img src="snapshot/FlippedDisplay4.png" width="70%"/>
+### Snapshoot
+
+- **MacOS**
+
+  <img src="snapshot/MacOS13_Cover.png" width="100%"/>
+
+<br>
+
+- **Windows**
+
+  <img src="snapshot/Windows10_Couer.png" width="100%"/>
+
+<br>
+
+- **Linux**
+
+  <img src="snapshot/Ubuntu20.04_Cover.png" width="100%"/>
+
+<br>
+
+**Other:** More screenshot effects can be → [here](. \snapshot) preview, eg:
+
+<img src="snapshot/Windows10_Couer6.png" width="100%"/>
 
 <br>
 
@@ -122,13 +126,13 @@
   # ******************** MSVC 2019 ********************
   #『Step1』
   # x86:
-  添加 "C:\Qt\5.15.2\msvc2019\bin" 到 path 后，终端执行 echo %PATH% 使其立即生效
+  # After adding "C:\Qt\5.15.2\msvc2019\bin" to the path, execute echo %PATH% in the terminal to make it take effect immediately.
   "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" x86
   cmake -G "Visual Studio 16 2019" -A Win32 ..
   devenv Flipped.sln /Build "Release|Win32"
   
   # x64:
-  添加 "C:\Qt\5.15.2\msvc2019_64\bin" 到 path 后，终端执行 echo %PATH% 使其立即生效
+  # After adding "C:\Qt\5.15.2\msvc2019_64\bin" to the path, execute echo %PATH% in the terminal to make it take effect immediately.
   "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" x64
   cmake -G "Visual Studio 16 2019" -A x64 ..
   devenv Flipped.sln /Build "Release|x64"
@@ -142,19 +146,6 @@
   # ******************** MinGW 8.1.0 ********************
   QtCreator opens the `CMakeLists.txt` file in the root directory of the source code
   ```
-
-- **Notes:**
-
-  - **devenv:** 编译项目实例。
-    -  `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\Common7\IDE\devenv.com"`  
-  - **vcvarsall.bat:** 初始化 MSVC 交叉编译的环境（x86/x64）
-    - `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat"` 
-  - msvc交叉编译:使用vcvarsall.bat设置命令行编译环境（https://blog.csdn.net/10km/article/details/51722353）
-    %VS140COMNTOOLS%/VC下就有vcvarsall.bat,用于生成命令行编译环境。
-    如果要在命令行生成 32位代码，就执行vcvarsall x86
-    如果要在32位系统下生成64位代码，就执行vcvarsall x86_amd64
-    如果要在64位系统下生成32位代码，就执行vcvarsall x86或vcvarsall amd64_x86
-    到了 VS2015，已经支持arm平台了，所以如果要生成arm平台的代码，就执行vcvarsall x86_arm 如果你的操作系统是64位的也可以 vcvarsall amd64_arm
 
 <br>
 
@@ -177,38 +168,51 @@
 
 <br>
 
-## Prebuilt packages
+## Package Download
 
-Some prebuilt packages are provided on the  [release page](https://github.com/XMuli/Flipped/releases).
+Some  prebuilt packages and official releases are available on the [Release Page](https://github.com/XMuli/Flipped/releases).
 
 <br>
+
+## Author
+
+[![alt text](https://img.shields.io/badge/QQ-XMuli-brightgreen)](https://sighttp.qq.com/authd?IDKEY=31f3ef7312b39e2c8dc822ae2f4c3b3118e1a6f31cc83373) : Chat with me directly~
+
+[![alt text](https://img.shields.io/badge/GitHub-XMuli-brightgreen)](https://github.com/XMuli) : View my homepage
+
+[![alt text](https://img.shields.io/badge/Blog-%E5%81%95%E8%87%A7%E7%9A%84%E5%B0%8F%E7%AB%99-ff69b4)](https://ifmet.cn/) : Curious about my nest
+
+[![alt text](https://img.shields.io/badge/Blog-国内镜像-ff69b4)](https://blog.csdn.net/qq_33154343) ：Views 100W+
+
+<br>
+
+## Contributors
 
 If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke.
 
 <br>
 
 <details>
-    <summary> <b>Reward / Donation</b></summary>
+    <summary> <b>Of course you can also give a cold Coke [Donate/Reward ← Click to expand QR code]</b></summary>
   <p> - If you have something to learn from the project, you can also invite me to share a glass of Fat House Ice and Coke. - </p>
   <pre><img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202302282339037.png" width="80%"/></pre>
 </details>
 
 <br>
 
-## Author
+## Feedback & How to contribute
 
-[![alt text](https://img.shields.io/badge/QQ-%E5%81%95%E8%87%A7-brightgreen)](https://sighttp.qq.com/authd?IDKEY=31f3ef7312b39e2c8dc822ae2f4c3b3118e1a6f31cc83373) [![alt text](https://img.shields.io/badge/GitHub-XMuli-brightgreen)](https://github.com/XMuli) [![alt text](https://img.shields.io/badge/Blog-%E5%81%95%E8%87%A7%E7%9A%84%E5%B0%8F%E7%AB%99-ff69b4)](https://ifmet.cn/) 
+Feedback & How to contribute
+
+You are very welcome to join us! You can [open an issue](https://github.com/XMuli/Flipped/issues) ; for any bug, suggestion, feature idea, or to help improve this software. Or help improve the project by submitting a Pull Request.
+
+Please follow the  [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/)  code of conduct.
 
 <br>
 
-## Feedback
-[![alt text](https://img.shields.io/badge/QQ_Groups-%E5%81%95%E8%87%A7-brightgreen)](https://sighttp.qq.com/authd?IDKEY=31f3ef7312b39e2c8dc822ae2f4c3b3118e1a6f31cc83373) 
-
-[![alt text](https://img.shields.io/badge/GitHub_Flipped-Issues-brightgreen)](https://github.com/XMuli/Flipped/issues) 
+You can also add  [![alt text](https://img.shields.io/badge/QQ_Groups-418103279-brightgreen)](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from=webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu) of the exchange group.
 
 <br>
 
 ## License
-
-This project is distributed and used based on the `GNU General Public License v3.0` protocol. For more information, please refer to [Agreement File](/LICENSE).
 
