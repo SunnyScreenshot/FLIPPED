@@ -65,25 +65,19 @@
 
 **MACOS**
 
-<img src="snapshot/MacOS13_Cover.png" width="100%"/>
-
-<br>
+<img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121524707.jpg" width="100%"/>
 
 **WINDOWS**
 
-<img src="snapshot/Windows10_Couer.png" width="100%"/>
-
-<br>
+<img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121524281.jpg" width="100%"/>
 
 **LINUX**
 
-<img src="snapshot/Ubuntu20.04_Cover.png" width="100%"/>
+<img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121447431.jpg" width="100%"/>
 
 <br>
 
-**其它：** 更多截图效果可 → [在此](.\snapshot) 预览，eg:
-
-<img src="snapshot/Windows10_Couer6.png" width="100%"/>
+**其它：** 更多截图效果可 → [在此](.\snapshot) 预览
 
 <br>
 

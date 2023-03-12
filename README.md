@@ -64,25 +64,19 @@
 
 - **MacOS**
 
-  <img src="snapshot/MacOS13_Cover.png" width="100%"/>
-
-<br>
+  <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121524707.jpg" width="100%"/>
 
 - **Windows**
 
-  <img src="snapshot/Windows10_Couer.png" width="100%"/>
-
-<br>
+  <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121524281.jpg" width="100%"/>
 
 - **Linux**
 
-  <img src="snapshot/Ubuntu20.04_Cover.png" width="100%"/>
+  <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121447431.jpg" width="100%"/>
 
 <br>
 
-**Other:** More screenshot effects can be → [here](. \snapshot) preview, eg:
-
-<img src="snapshot/Windows10_Couer6.png" width="100%"/>
+**Other:** More snapshoot effects can be → [here](. \snapshot) preview
 
 <br>
 
