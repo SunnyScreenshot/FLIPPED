@@ -1,3 +1,13 @@
+flipped (1.0.0) UNRELEASED; urgency=medium
+
+  * 修复诸多缺陷、屏蔽尚未开发好的部分代码
+  * 一个较大部分的代码重构、部分架构重新设计
+  * 整理项目代码规范、添加对应 README 和介绍视频等
+
+ -- XMuli <xmuli@xmuli-pc>  Mon, 31 Oct 2022 19:52:18 +0800
+ 
+picshot (0.4.1) UNRELEASED; urgency=medium
+
 picshot (0.4.7) UNRELEASED; urgency=medium
 
   * 重新实现绘画 toolbar 的透明磨砂在跨平台上面实现的效果
