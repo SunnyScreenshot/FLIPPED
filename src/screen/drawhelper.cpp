@@ -19,6 +19,8 @@
 #include <QGraphicsScene>
 #include <QPainterPath>
 #include <QLine>
+#include <QDir>
+#include <QSettings>
 #include <QDateTime>
 #include <QStandardPaths>
 #include "../xglobal.h"
@@ -277,4 +279,25 @@ void XDrawStep::destroyClear()
     font.setBold(false);
     font.setItalic(false);
     textParas = TextPara(0);
+}
+
+void XHelper::setRunOnStart()
+{
+#if defined(Q_OS_WIN)
+    settingIni->beginGroup(INIT_GENERAL);
+    const bool bAutoRun = settingIni->value(tgSelfStarting, true).toBool();
+    settingIni->endGroup();
+
+    QSettings reg("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
+    if (bAutoRun) {
+        QString strAppPath = QDir::toNativeSeparators(qApp->applicationFilePath());
+        strAppPath.replace(QChar('/'), QChar('\\'), Qt::CaseInsensitive);
+        reg.setValue("Flipped", strAppPath);
+    }
+    else {
+        reg.setValue("Flipped", "");
+    }
+#else
+    // TODO 2023.03.31:
+#endif
 }

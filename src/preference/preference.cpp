@@ -159,12 +159,10 @@ QWidget *Preference::tabGeneral()
     grid->addLayout(tHLay, i, j + 1, Qt::AlignLeft);
 
     // #ToBeImproved
-    cbSelfStart->setDisabled(true);
     cbAsAdmin->setDisabled(true);
     cbAutoCheck->setDisabled(true);
     pbUpdate->setDisabled(true);
-    launch->hide();
-    cbSelfStart->hide();
+    //launch->hide();
     cbAsAdmin->hide();
     update->hide();
     pbUpdate->hide();
@@ -190,7 +188,7 @@ QWidget *Preference::tabGeneral()
     cbLanuage->setCurrentText(mapLanuage.key(settingIni->value(tgLanuage, mapLanuage.key("English")).toString()));
     auto tt = settingIni->value(tgFont, "SimSun2,19").toString();
     btnFont->setText(settingIni->value(tgFont, "SimSun,9").toString());
-    cbSelfStart->setChecked(settingIni->value(tgSelfStarting, false).toBool());
+    cbSelfStart->setChecked(settingIni->value(tgSelfStarting, true).toBool());
     cbAsAdmin->setChecked(settingIni->value(tgAsAdmin, false).toBool());
     cbLogLevel->setCurrentText(settingIni->value(tgLogLevel, "debug").toString());
     cbAutoCheck->setChecked(settingIni->value(tgAutoCheckUpdate, false).toBool());
@@ -511,7 +509,7 @@ QWidget *Preference::tabAbout()
     font.setPointSizeF(ponitSize);
     font.setBold(true);
     project->setFont(font);
-    QString time = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
+    const static QString time = QDateTime::currentDateTime().toString("yyyy.MM.dd hh:mm:ss");
     QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
                                    .arg(_PROJECT_VERSION)
                                    .arg(bit)
@@ -747,6 +745,8 @@ void Preference::onFontChange()
 void Preference::onSelfStart(int sta)
 {
     WRITE_CONFIG_INI(INIT_GENERAL, tgSelfStarting, checkBoxState2Bool(sta));
+
+    XHelper::instance().setRunOnStart();
 }
 
 void Preference::onAsAdmin(int sta)

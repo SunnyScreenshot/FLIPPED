@@ -50,9 +50,7 @@ Tray::Tray(QObject *parent)
 {
     init();
     initGlobalHotKeys();
-
-
-
+    XHelper::instance().setRunOnStart();
 
 //	QString t = QApplication::instance()->applicationDirPath() + "/../../pluginsimpl/watemark/RelWithDebInfo";
 //    QDir pluginsDir(t);
