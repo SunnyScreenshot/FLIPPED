@@ -162,6 +162,13 @@ QWidget *Preference::tabGeneral()
     cbAsAdmin->setDisabled(true);
     cbAutoCheck->setDisabled(true);
     pbUpdate->setDisabled(true);
+
+#if defined(Q_OS_WIN)
+#else
+    launch->hide();
+    cbSelfStart->hide();
+#endif
+
     //launch->hide();
     cbAsAdmin->hide();
     update->hide();
@@ -514,9 +521,6 @@ QWidget *Preference::tabAbout()
                                    .arg(_PROJECT_VERSION)
                                    .arg(bit)
                                    .arg(time.left(time.indexOf(" "))));
-    //QLabel* buildTime = new QLabel(tr("%1 %2 (YYYY.MM.DD)")
-    //                               .arg(_PROJECT_VERSION)
-    //                               .arg(bit));
 
     font.setPointSizeF(ponitSize - 4);
     font.setBold(false);
