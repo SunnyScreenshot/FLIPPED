@@ -94,6 +94,8 @@ set(SRC_PERFERENCE
 set(SRC_WINSCREEN
     screen/drawhelper.h
     screen/drawhelper.cpp
+    screen/datamaid.h
+    screen/datamaid.cpp
     screen/rectcalcu.h
     screen/rectcalcu.cpp
     screen/screenshot.h
