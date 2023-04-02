@@ -23,6 +23,7 @@
 #include <QDateTime>
 #include <QGuiApplication>
 #include "./screen/tray.h"
+#include "qmetaobject.h"
 #include "tool/pin/pinwidget.h"
 #include "widget/xroundwidget.h"
 #include "tool/parameterbar.h"
@@ -30,6 +31,7 @@
 #include "core/xlog.h"
 #include "preference/preference.h"
 #include "tool/base/blurwidget.h"
+#include "screen/datamaid.h"
 
 int main(int argc, char *argv[])
 {
@@ -54,6 +56,18 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
+    DataMaid data;
+    int count = data.metaObject()->propertyCount();
+       for(int i=0;i<count;i++) {
+           QString name = data.metaObject()->property(i).name();
+
+           auto t = data.metaObject()->property(i).isResettable();
+           qDebug()<< name << "  " << data.property(name.toLatin1().data()).toString();
+       }
+
+
+
+
     QString filePath = QApplication::applicationDirPath() + "/Flipped.temp.lock";
     QLockFile* lockFile = new QLockFile(filePath);
     bool isLock = lockFile->isLocked();
@@ -70,6 +84,17 @@ int main(int argc, char *argv[])
 
 
     // I18N + font
+    //QLocale local = QLocale::system();
+    //QLocale::Language lang = local.language();
+    //QLocale::Country country = local.country();
+    //QString name = local.name();
+
+    //QStringList lanuages;
+    //lanuages << "en_US" << "zh_TW" << "zh_CN";
+    //if (!lanuages.contains(name))
+    //    name = "en_US";
+
+
     settingIni->beginGroup(INIT_GENERAL);
     auto lanuage = settingIni->value(tgLanuage, "en_US").toString();
     auto ftList = settingIni->value(tgFont, "SimSun,9").toString().split(',');

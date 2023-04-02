@@ -567,7 +567,7 @@ QWidget *Preference::tabAbout()
     QLabel* ghL =new QLabel("GitHub:");
     font.setPointSizeF(ponitSize - 5);
     ghL->setFont(font);
-    QLabel* ghR = new QLabel(tr("<a style=\"color: green;\" href=https://github.com/XMuli/Flipped>Flipped</a>"));
+    QLabel* ghR = new QLabel(tr("<a style=\"color: green;\" href=https://github.com>Flipped</a>"));
     ghR->setOpenExternalLinks(true);
     ghR->setFont(font);
     QLabel* blogR = new QLabel(tr("<a style=\"color: green;\" href=https://ifmet.cn>ifmet.cn</a>"));
@@ -603,8 +603,6 @@ QWidget *Preference::tabAbout()
     ghL->hide();
     ghR->hide();
     blogR->hide();
-    LQQGroups->hide();
-    RQQGroups->hide();
 
     grid->addWidget(ackmtR, grid->rowCount(), j + 1, 1, 1, Qt::AlignLeft);
 //    grid->addItem(new QSpacerItem(0, 7, QSizePolicy::Expanding, QSizePolicy::Fixed), grid->rowCount(), j);
@@ -721,8 +719,18 @@ void Preference::onLanuageChange(const QString &language)
 //    trans.load(qmPath);
 //    qApp->installTranslator(&trans);
 
+    //QTranslator transPrev;
+    //transPrev.load(qApp->applicationDirPath() + "/translations/en_US.qm");
+    //qApp->removeTranslator(&transPrev);
+
     QTranslator trans;
-    trans.load("/Users/winks/Desktop/projects/Flipped/src/i18n/zh_CN.qm");  // QLocale::system().name()
+    QString qmPath(qApp->applicationDirPath());
+#if defined(Q_OS_MAC)
+    qmPath += "/../../../../bin/translations/" + lanuage + ".qm";
+#else
+    qmPath += "/translations/" + lang + ".qm";
+#endif
+    trans.load(qmPath);
     qApp->installTranslator(&trans);
 }
 
