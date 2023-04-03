@@ -40,9 +40,9 @@ private slots:
     void onCopy();
     void onSave();
 
-    void onChangeWinShadow(bool enable);
-    void onChangeOpacity(int opacity);
-    void onChangeMaxSize(double val);
+    void onWindowShadow(bool enable);
+    void onOpacity(int opacity);
+    void onMaxSize(double val);
 
 private:
     QPoint m_p;   // 窗口的左上角

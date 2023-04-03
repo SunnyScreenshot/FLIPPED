@@ -9,10 +9,11 @@
 #include "../../widget/xhorizontalline.h"
 #include "../../widget/xverticalline.h"
 #include "../../screen/drawhelper.h"
+#include "../../screen/datamaid.h"
 
 ManageBar::ManageBar(Qt::Orientations orien /*= Qt::Horizontal*/, QWidget* parent /*= nullptr*/)
     : QWidget(parent)
-    , m_scal(XHelper::instance().getScale())
+    , m_scal(dataMaid->scale())
     , m_orien(orien)
     , m_layout(nullptr)
 {

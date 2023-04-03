@@ -33,6 +33,7 @@
 #include <QStandardPaths>
 #include <QSizePolicy>
 #include <QFontDialog>
+#include "../screen/datamaid.h"
 
 // test
 #include <QCoreApplication>
@@ -44,7 +45,7 @@
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
-    , m_scale(XHelper::instance().getScale())
+    , m_scale(dataMaid->scale())
 {
     initUI();
 }
@@ -123,17 +124,17 @@ QWidget *Preference::tabGeneral()
 
     NEW_OBJECT_AND_TEXT(lanuage, QLabel, tgLanuage, tr("Lanuage:"));
     NEW_OBJECT_AND_TEXT(font, QLabel, tgFont, tr("Font:"));
-    NEW_OBJECT_AND_TEXT(launch, QLabel, tgSelfStarting, tr("Launch:"));
+    NEW_OBJECT_AND_TEXT(launch, QLabel, tgAutoRun, tr("Launch:"));
     NEW_OBJECT_AND_TEXT(logLevel, QLabel, tgLogLevel, tr("Log Level:"));
-    NEW_OBJECT_AND_TEXT(update, QLabel, tgUpdate, tr("Update:"));
+    NEW_OBJECT_AND_TEXT(update, QLabel, tgAutoUpdate, tr("Update:"));
 
     NEW_OBJECT(cbLanuage, QComboBox, tgLanuage);
     NEW_OBJECT(btnFont, QPushButton, tgFont);
-    NEW_OBJECT_AND_TEXT(cbSelfStart, QCheckBox, tgSelfStarting, tr("Run on system startup"));
+    NEW_OBJECT_AND_TEXT(cbAutoRun, QCheckBox, tgAutoRun, tr("Run on system startup"));
     NEW_OBJECT_AND_TEXT(cbAsAdmin, QCheckBox, tgAsAdmin, tr("As administrator"));
     NEW_OBJECT(cbLogLevel, QComboBox, tgLogLevel);
-    NEW_OBJECT_AND_TEXT(cbAutoCheck, QCheckBox, tgUpdate, tr("Automatic check"));
-    NEW_OBJECT_AND_TEXT(pbUpdate, QPushButton, tgUpdate, tr("Update"));
+    NEW_OBJECT_AND_TEXT(cbAutoCheck, QCheckBox, tgAutoUpdate, tr("Automatic check"));
+    NEW_OBJECT_AND_TEXT(pbUpdate, QPushButton, tgAutoUpdate, tr("Update"));
 
     int i = 0;
     int j = 0;
@@ -142,7 +143,7 @@ QWidget *Preference::tabGeneral()
     grid->addWidget(font, i, j, Qt::AlignRight);
     grid->addWidget(btnFont, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(launch, i, j, Qt::AlignRight);
-    grid->addWidget(cbSelfStart, i++, j + 1, Qt::AlignLeft);
+    grid->addWidget(cbAutoRun, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(cbAsAdmin, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(logLevel, i, j, Qt::AlignRight);
     grid->addWidget(cbLogLevel, i++, j + 1, Qt::AlignLeft);
@@ -166,7 +167,7 @@ QWidget *Preference::tabGeneral()
 #if defined(Q_OS_WIN)
 #else
     launch->hide();
-    cbSelfStart->hide();
+    cbAutoRun->hide();
 #endif
 
     //launch->hide();
@@ -191,19 +192,19 @@ QWidget *Preference::tabGeneral()
     QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
     cbLogLevel->addItems(lLogLevel);
 
-    settingIni->beginGroup(INIT_GENERAL);
-    cbLanuage->setCurrentText(mapLanuage.key(settingIni->value(tgLanuage, mapLanuage.key("English")).toString()));
-    auto tt = settingIni->value(tgFont, "SimSun2,19").toString();
-    btnFont->setText(settingIni->value(tgFont, "SimSun,9").toString());
-    cbSelfStart->setChecked(settingIni->value(tgSelfStarting, true).toBool());
-    cbAsAdmin->setChecked(settingIni->value(tgAsAdmin, false).toBool());
-    cbLogLevel->setCurrentText(settingIni->value(tgLogLevel, "debug").toString());
-    cbAutoCheck->setChecked(settingIni->value(tgAutoCheckUpdate, false).toBool());
-    settingIni->endGroup();
+    dataDotIni->beginGroup(INIT_GENERAL);
+    cbLanuage->setCurrentText(mapLanuage.key(dataDotIni->value(tgLanuage, mapLanuage.key("English")).toString()));
+    dataDotIni->endGroup();
+
+    btnFont->setText(dataMaid->paraValue("font").value<QString>());
+    cbAutoRun->setChecked(dataMaid->paraValue("autoRun").value<bool>());
+    cbAsAdmin->setChecked(dataMaid->paraValue("asAdmin").value<bool>());
+    cbLogLevel->setCurrentText(dataMaid->paraValue("logLevel").value<QString>());
+    cbAutoCheck->setChecked(dataMaid->paraValue("autoUpdate").value<bool>());
 
     connect(cbLanuage, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
     connect(btnFont, &QPushButton::released, this, &Preference::onFontChange);
-    connect(cbSelfStart, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
+    connect(cbAutoRun, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
     connect(cbAsAdmin, &QCheckBox::stateChanged, this, &Preference::onAsAdmin);
     connect(cbLogLevel, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLogLevelChange);
     connect(cbAutoCheck, &QCheckBox::stateChanged, this, &Preference::onAutoCheck);
@@ -239,7 +240,7 @@ QWidget* Preference::tabInterface()
     NEW_OBJECT_AND_TEXT(cbEnableSamrtWindow, QCheckBox, tiSmartWindow, tr("Smart window"));
     NEW_OBJECT_AND_TEXT(cbEnableCrosshair, QCheckBox, tiCrosshair, tr("Crosshair"));
     NEW_OBJECT_AND_TEXT(cbEnableShowCursor, QCheckBox, tiShowCursor, tr("Show cursor"));
-    NEW_OBJECT_AND_TEXT(cbEnableAutoCopy, QCheckBox, tiAutoCopyToClipboard, tr("Auto copy to clipboard"));
+    NEW_OBJECT_AND_TEXT(cbEnableAutoCopy, QCheckBox, tiAutoCopy2Clipboard, tr("Auto copy to clipboard"));
 
     cpbHighLight->setObjectName(tiBorderColor);
     cpbCrosshair->setObjectName(tiCrosshairColor);
@@ -283,17 +284,15 @@ QWidget* Preference::tabInterface()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tiReset), 1);
 
-    settingIni->beginGroup(INIT_INTERFACE);
-    cbBorderStyle->setCurrentText(settingIni->value(tiBorderStyle, "flipped").toString());
-    cpbHighLight->setCurColor(QColor(settingIni->value(tiBorderColor, QColor("#0e70ff")).toString()));
-    spBorder->setValue(settingIni->value(tiBorderWidth, 2).toInt());
-    cpbCrosshair->setCurColor(QColor(settingIni->value(tiCrosshairColor, QColor("#db000f")).toString()));
-    spCrosshair->setValue(settingIni->value(tiCrosshairWidth, 1).toInt());
-    cbEnableSamrtWindow->setChecked(settingIni->value(tiSmartWindow, true).toBool());
-    cbEnableCrosshair->setChecked(settingIni->value(tiCrosshair, false).toBool());
-    cbEnableShowCursor->setChecked(settingIni->value(tiShowCursor, false).toBool());
-    cbEnableAutoCopy->setChecked(settingIni->value(tiAutoCopyToClipboard, true).toBool());
-    settingIni->endGroup();
+    cbBorderStyle->setCurrentText(dataMaid->paraValue("borderStyle").value<QString>());
+    cpbHighLight->setCurColor(dataMaid->paraValue("borderColor").value<QString>());
+    spBorder->setValue(dataMaid->paraValue("borderWidth").value<int>());
+    cpbCrosshair->setCurColor(dataMaid->paraValue("crosshairColor").value<QString>());
+    spCrosshair->setValue(dataMaid->paraValue("crosshairWidth").value<int>());
+    cbEnableSamrtWindow->setChecked(dataMaid->paraValue("smartWindow").value<bool>());
+    cbEnableCrosshair->setChecked(dataMaid->paraValue("crosshair").value<bool>());
+    cbEnableShowCursor->setChecked(dataMaid->paraValue("showCursor").value<bool>());
+    cbEnableAutoCopy->setChecked(dataMaid->paraValue("autoCopy2Clipboard").value<bool>());
 
     connect(cbBorderStyle, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onBorderStyle);
     connect(cpbHighLight, &ColorParaBar::sigColorChange, this, &Preference::onBorderColor);
@@ -373,14 +372,15 @@ QWidget* Preference::tabOutput()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(toReset), 1);
 
-    settingIni->beginGroup(INIT_OUTPUT);
+    dataDotIni->beginGroup(INIT_OUTPUT);
     bool ok = false;
-    sbImageQuailty->setValue(settingIni->value(toImageQuailty, -1).toInt(&ok));
-    editFileName->setText(settingIni->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
-    editQuickSavePath->setText(settingIni->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
-    editAutoSavePath->setText(settingIni->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
-    editConfigPath->setText(settingIni->value(toConfigPath, qApp->applicationDirPath() + "/config").toString());
-    settingIni->endGroup();
+    editFileName->setText(dataDotIni->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
+    editQuickSavePath->setText(dataDotIni->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
+    editAutoSavePath->setText(dataDotIni->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
+    editConfigPath->setText(dataDotIni->value(toConfigPath, qApp->applicationDirPath() + "/config").toString());
+    dataDotIni->endGroup();
+
+    sbImageQuailty->setValue(dataMaid->paraValue("imageQuailty").value<int>());
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
     connect(editFileName, &QLineEdit::textChanged, this, &Preference::onFileName);
@@ -391,7 +391,7 @@ QWidget* Preference::tabOutput()
     connect(changeAutoSavePath, &QPushButton::released, this, &Preference::onChoosePath);
     connect(changeConfigPath, &QPushButton::released, this, &Preference::onChoosePath);
 
-    const QString tooltip = XHelper::instance().formatToName(editFileName->text());
+    const QString tooltip = dataMaid->formatToFileName(editFileName->text());
     editFileName->setToolTip(tooltip);
 
     // 临时屏蔽功能
@@ -452,11 +452,9 @@ QWidget* Preference::tabPin()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tpReset), 1);
 
-    settingIni->beginGroup(INIT_PIN);
-    cbWindowShadow->setChecked(settingIni->value(tpWindowShadow, true).toBool());
-    sbOpacity->setValue(settingIni->value(tpOpacity, sbOpacity->maximum()).toInt());
-    sbMaxSize->setValue(settingIni->value(tpMaxSize, sbMaxSize->maximum()).toInt());
-    settingIni->endGroup();
+    cbWindowShadow->setChecked(dataMaid->paraValue("windowShadow").value<bool>());
+    sbOpacity->setValue(dataMaid->paraValue("opacity").value<int>());
+    sbMaxSize->setValue(dataMaid->paraValue("maxSize").value<int>());
 
     connect(cbWindowShadow, &QCheckBox::stateChanged, this, &Preference::onWindowShadow);
     connect(sbOpacity, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onOpacity);
@@ -669,7 +667,7 @@ void Preference::onReset()
         map.emplace(std::make_pair(tiSmartWindow, true));
         map.emplace(std::make_pair(tiCrosshair, false));
         map.emplace(std::make_pair(tiShowCursor, false));
-        map.emplace(std::make_pair(tiAutoCopyToClipboard, true));
+        map.emplace(std::make_pair(tiAutoCopy2Clipboard, true));
         for (const auto& it : map) {
             auto tCheckBox = findChild<QCheckBox*>(it.first);
             if (tCheckBox) tCheckBox->setChecked(it.second);
@@ -706,9 +704,9 @@ void Preference::onLanuageChange(const QString &language)
         return;
 
     qDebug() << qApp->applicationDirPath() + "/config/config.ini";
-    settingIni->beginGroup(INIT_GENERAL);
-    settingIni->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
-    settingIni->endGroup();
+    dataDotIni->beginGroup(INIT_GENERAL);
+    dataDotIni->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
+    dataDotIni->endGroup();
 
     auto lang = bt->itemData(bt->currentIndex()).toString();
 
@@ -750,34 +748,33 @@ void Preference::onFontChange()
     QString text = QString("%1, %2").arg(font.family()).arg(font.pointSize());
     btnFont->setText(text);
 
-    WRITE_CONFIG_INI(INIT_GENERAL, tgFont, text);
+    dataMaid->setParaValue(tgFont.toLocal8Bit().data(), text);
     qDebug("当前选择的字体是[%s]-是否加粗[%d]-是否倾斜[%d]-字号[%d]", font.family().toUtf8().data(), font.bold(), font.italic(), font.pointSize());
 }
 
 void Preference::onSelfStart(int sta)
 {
-    WRITE_CONFIG_INI(INIT_GENERAL, tgSelfStarting, checkBoxState2Bool(sta));
-
-    XHelper::instance().setRunOnStart();
+    dataMaid->setParaValue(tgAutoRun.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    dataMaid->setAutoRun();
 }
 
 void Preference::onAsAdmin(int sta)
 {
-    WRITE_CONFIG_INI(INIT_GENERAL, tgAsAdmin, checkBoxState2Bool(sta));
+    dataMaid->setParaValue(tgAsAdmin.toLocal8Bit().data(), checkBoxState2Bool(sta));
 }
 
 void Preference::onLogLevelChange(const QString& language)
 {
-    settingIni->beginGroup(INIT_GENERAL);
-    settingIni->setValue(tgLogLevel, language);
-    settingIni->endGroup();
+    dataDotIni->beginGroup(INIT_GENERAL);
+    dataDotIni->setValue(tgLogLevel, language);
+    dataDotIni->endGroup();
 
     XLog::instance()->setLevel(language.toStdString());
 }
 
 void Preference::onAutoCheck(int sta)
 {
-    WRITE_CONFIG_INI(INIT_GENERAL, tgAutoCheckUpdate, checkBoxState2Bool(sta));
+    dataMaid->setParaValue(tgAutoCheckUpdate.toLocal8Bit().data(), checkBoxState2Bool(sta));
 }
 
 void Preference::onUpdate()
@@ -792,93 +789,73 @@ void Preference::onBorderStyle(const QString& style)
         return;
 
     const QString text = bt->itemData(bt->currentIndex()).toString();
-    XHelper::instance().setBoardStyle(text);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderStyle, text);
+    dataMaid->setParaValue(tiBorderStyle.toLocal8Bit().data(), text);
 }
 
 void Preference::onBorderColor(const QColor& color)
 {
-    auto t = color.name();
-    XHelper::instance().setBorderColor(color);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderColor, color.name());
+    dataMaid->setParaValue(tiBorderColor.toLocal8Bit().data(), color.name());
 }
 
 void Preference::onBorderWidth(int val)
 {
-    XHelper::instance().setBorderWidth(val);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiBorderWidth, val);
+    dataMaid->setParaValue(tiBorderWidth.toLocal8Bit().data(), val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)
 {
-    auto t = color.name();
-    XHelper::instance().setCrosshairColor(color);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairColor, color.name());
+    dataMaid->setParaValue(tiCrosshairColor.toLocal8Bit().data(), color.name());
 }
 
 void Preference::onCrosshairWidth(int val)
 {
-    XHelper::instance().setCrosshairWidth(val);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshairWidth, val);
+    dataMaid->setParaValue(tiCrosshairWidth.toLocal8Bit().data(), val);
 }
 
 
 void Preference::onSmartWindow(int val)
 {
-    const bool b = checkBoxState2Bool(val);
-    XHelper::instance().setSmartWindow(b);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiSmartWindow, b);
+    dataMaid->setParaValue(tiSmartWindow.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onShowCrosshair(int val)
 {
-    const bool b = checkBoxState2Bool(val);
-    XHelper::instance().setCrosshair(b);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiCrosshair, b);
+    dataMaid->setParaValue(tiCrosshair.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onShowCursor(int val)
 {
-    const bool b = checkBoxState2Bool(val);
-    XHelper::instance().setShowCursor(b);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiShowCursor, b);
+    dataMaid->setParaValue(tiShowCursor.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onAutoCopyToClip(int val)
 {
-    const bool b = checkBoxState2Bool(val);
-    XHelper::instance().setAutoCpoyClip(b);
-    WRITE_CONFIG_INI(INIT_INTERFACE, tiAutoCopyToClipboard, b);
+    dataMaid->setParaValue(tiAutoCopy2Clipboard.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onImageQuailty(int val)
 {
-    XHelper::instance().setImgQuailty(val);
-    WRITE_CONFIG_INI(INIT_OUTPUT, toImageQuailty, val);
+    dataMaid->setParaValue(toImageQuailty.toLocal8Bit().data(), val);
 }
 
 void Preference::onFileName(const QString& name)
 {
-    XHelper::instance().setPath(toFileName, name);
-    WRITE_CONFIG_INI(INIT_OUTPUT, toFileName, name);
+    dataMaid->setParaValue(toFileName.toLocal8Bit().data(), name);
 }
 
 void Preference::onQuickSavePath(const QString& path)
 {
-    XHelper::instance().setPath(toQuickSavePath, path);
-    WRITE_CONFIG_INI(INIT_OUTPUT, toQuickSavePath, path);
+    dataMaid->setParaValue(toQuickSavePath.toLocal8Bit().data(), path);
 }
 
 void Preference::onAutoSavePath(const QString& path)
 {
-    XHelper::instance().setPath(toAutoSavePath, path);
-    WRITE_CONFIG_INI(INIT_OUTPUT, toAutoSavePath, path);
+    dataMaid->setParaValue(toAutoSavePath.toLocal8Bit().data(), path);
 }
 
 void Preference::onConfigPath(const QString& path)
 {
-    XHelper::instance().setPath(toConfigPath, path);
-    WRITE_CONFIG_INI(INIT_OUTPUT, toConfigPath, path);
+    dataMaid->setParaValue(toConfigPath.toLocal8Bit().data(), path);
 }
 
 void Preference::onChoosePath()
@@ -920,20 +897,16 @@ void Preference::onChoosePath()
 
 void Preference::onWindowShadow(int sta)
 {
-    bool checked = checkBoxState2Bool(sta);
-    XHelper::instance().setWinShadow(checked);
-    WRITE_CONFIG_INI(INIT_PIN, tpWindowShadow, checked);
+    WRITE_CONFIG_INI(INIT_PIN, tpWindowShadow, checkBoxState2Bool(sta));
 }
 
 void Preference::onOpacity(int val)
 {
-    XHelper::instance().setPinOpacity(val);
     WRITE_CONFIG_INI(INIT_PIN, tpOpacity, val);
 }
 
 void Preference::onMaxSize(int val)
 {
-    XHelper::instance().setPinMaxSize(val);
     WRITE_CONFIG_INI(INIT_PIN, tpMaxSize, val);
 }
 

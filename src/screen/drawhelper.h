@@ -6,7 +6,6 @@
 #ifndef XDRAW_H
 #define XDRAW_H
 
-#include "../core/isingleton.h"
 #include "../preference/appellation.h"
 #include <QObject>
 #include <QPen>
@@ -145,108 +144,5 @@ public:
     void partClear();
     void destroyClear();
 };
-
-class XHelper : public QObject
-{
-    Q_OBJECT
-public:
-    static XHelper& instance() {
-        static XHelper instance;
-        return instance;
-    }
-
-    XHelper(XHelper&&) = delete;
-    XHelper(const XHelper&) = delete;
-    void operator= (const XHelper&) = delete;
-private:
-    XHelper();
-    virtual ~XHelper() = default;
-
-public:
-    double getScale(QScreen* screen = QApplication::primaryScreen());
-
-    void setBoardStyle(const QString style) { m_boardStyle = style; }
-    const QString boardStyle() { return m_boardStyle; }
-    void setBorderColor(QColor color) { m_borderColor = color; }
-    const QColor borderColor() { return m_borderColor; }
-    void setBorderWidth(const int width) { m_borderWidth = width; }
-    const int borderWidth() { return m_borderWidth; }
-    void setCrosshairColor(QColor color) { m_crosshairColor = color; }
-    const QColor crosshairColor() { return m_crosshairColor; }
-    void setCrosshairWidth(const int width) { m_crosshairWidth = width; }
-    const int crosshairWidth() { return m_crosshairWidth; }
-    bool smartWindow() const { return m_enableSmartWindow; }
-    void setSmartWindow(bool enable) { m_enableSmartWindow = enable; }
-    bool crosshair() const { return m_enableCrosshair; }
-    void setCrosshair(bool enable) { m_enableCrosshair = enable; }
-    bool showCursor() const { return m_enableShowCursor; }
-    void setShowCursor(bool enable) { m_enableShowCursor = enable; }
-    bool autoCpoyClip() const { return m_enableAutoCpoyClip; }
-    void setAutoCpoyClip(bool enable) { m_enableAutoCpoyClip = enable; }
-
-    int imgQuailty() const { return m_imgQuailty; }
-    void setImgQuailty(int val) { m_imgQuailty = val; }
-    const QString formatToName(const QString str = XHelper::instance().path(toFileName));
-
-	QIcon ChangeSVGColor(QString path, QString shape, QColor color, QSize size);
-    void SetAttrRecur(QDomElement& elem, QString strtagname, QString strattr, QString strattrval);
-
-    // Mosaics draw
-    const QPixmap* smoothMosaic(QPixmap* pixmap, int radius = 10);
-    const QImage pixlelatedMosaic(QPixmap* pixmap, int px = 20);
-
-    // tabGeneral
-    void setRunOnStart();
-
-    // tabInterface
-
-    // tabOutput
-	QString path(const QString key) const;
-    void setPath(const QString key, const QString val);
-
-    // tabPin
-    bool winShadow() const;
-    void setWinShadow(bool enable);
-
-    int pinOpacity() const;
-    void setPinOpacity(int opacity);
-    int pinMaxSize() const;
-    void setPinMaxSize(int val);
-
-signals:
-    void sigChangeWinShadow(bool enable);
-    void sigChangeOpacity(int opacity);
-    void sigChangeMaxSize(int val);
-
-private:
-    int m_borderWidth;
-    QString m_boardStyle;
-    QColor m_borderColor;
-    QColor m_crosshairColor;
-    int m_crosshairWidth;
-    bool m_enableSmartWindow;
-	bool m_enableCrosshair;
-    bool m_enableShowCursor;
-    bool m_enableAutoCpoyClip;
-
-    int m_imgQuailty;
-	QMap<QString, QString> m_path;
-
-    bool m_winShadow;
-    int m_pinOpacity;
-    int m_pinMaxSize;
-};
-
-// ------------------------
-// 创建全局静态 单例 的对象, 就不浪费生命重新创建了，  路径后面替换为 ConfigLocation
-Q_GLOBAL_STATIC_WITH_ARGS(QSettings, settingIni, (qApp->applicationDirPath() + "/config/config.ini", QSettings::IniFormat));
-//Q_GLOBAL_STATIC(XHelper, insXHelp);
-
- // perference UI config
-const QString INIT_GENERAL("General");                   // 初始化 常规
-const QString INIT_INTERFACE("Interface");               // 初始化 界面
-const QString INIT_OUTPUT("Output");                     // 初始化 输出
-const QString INIT_PIN("Pin");                           // 初始化 贴图
-const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
 
 #endif // XDRAW_H

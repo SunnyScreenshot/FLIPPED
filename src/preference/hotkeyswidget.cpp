@@ -14,11 +14,12 @@
 #include "../widget/xhorizontalline.h"
 #include "../widget/xkeysequenceedit.h"
 #include "../screen/drawhelper.h"
+#include "../screen/datamaid.h"
 #include "appellation.h"
 
 HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 {
-    double m_scale = XHelper::instance().getScale();
+    double m_scale = dataMaid->scale();
 
     setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(this);

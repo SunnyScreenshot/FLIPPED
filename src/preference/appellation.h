@@ -21,27 +21,27 @@ namespace XC {
 //tabGeneral      常规
 const QString tgLanuage("lanuage");
 const QString tgFont("font");
-const QString tgSelfStarting("run_on_ystem_startup");
-const QString tgAsAdmin("as_administrator");
-const QString tgLogLevel("log_level");
-const QString tgAutoCheckUpdate("auto_check");
-const QString tgUpdate("update");
+const QString tgAutoRun("autoRun");
+const QString tgAsAdmin("asAdmin");
+const QString tgLogLevel("logLevel");
+const QString tgAutoCheckUpdate("autoCheck");  // TODO 带 _ 都是没修改的
+const QString tgAutoUpdate("autoUpdate");
 const QString tgReset("tg_reset"); // 单独添加 tg, 下同
 
 //tabInterface()  界面
-const QString tiBorderStyle("border_style");
-const QString tiBorderColor("border_color");
-const QString tiBorderWidth("border_width");
-const QString tiCrosshairColor("crosshair_color");
-const QString tiCrosshairWidth("crosshair_width");
-const QString tiSmartWindow("smart_window");
+const QString tiBorderStyle("borderStyle");
+const QString tiBorderColor("borderColor");
+const QString tiBorderWidth("borderWidth");
+const QString tiCrosshairColor("crosshairColor");
+const QString tiCrosshairWidth("crosshairWidth");
+const QString tiSmartWindow("smartWindow");
 const QString tiCrosshair("crosshair");
-const QString tiShowCursor("show_cursor");
-const QString tiAutoCopyToClipboard("auto_copy_to_clipboard");
+const QString tiShowCursor("showCursor");
+const QString tiAutoCopy2Clipboard("autoCopy2Clipboard");
 const QString tiReset("ti_reset");
 
 //tabOutput()     输出
-const QString toImageQuailty("image_quailty");
+const QString toImageQuailty("imageQuailty");
 const QString toFileName("file_name");
 const QString toQuickSavePath("quick_save_path");
 const QString toAutoSavePath("auto_save_path");
@@ -49,16 +49,16 @@ const QString toConfigPath("config_path");
 const QString toReset("to_reset");
 
 //tabPin()        贴图
-const QString tpWindowShadow("window_shadow");
+const QString tpWindowShadow("windowShadow");
 const QString tpOpacity("opacity");
-const QString tpMaxSize("maximum_size");
+const QString tpMaxSize("maxSize");
 const QString tpReset("tp_reset");
 
 //tabHotkeys()    快捷键
-//const QString thActiveWindow("active_window");
+const QString thScrnCapture("scrnCapture");
 //const QString thScrollingWindow("scrolling_window");
-//const QString thDelayCapture("delay_capture");
-//const QString thFullScreen("full_screen");
+const QString thDelayCapture("delayCapture");
+const QString thFullScreen("fullScrnCapture");
 //const QString thFixdSize_Region("fixd_size_region");
 //const QString thPaste("paste");
 //const QString thHide_ShowAllImages("hide_show_all_images");
@@ -82,12 +82,12 @@ const QString thReset("th_reset");
 
 // 写入配置文件 .ini 的内容
 #define WRITE_CONFIG_INI(group, key, value) \
-    settingIni->beginGroup(group); \
-    settingIni->setValue(key, value); \
-    settingIni->endGroup();
+    dataDotIni->beginGroup(group); \
+    dataDotIni->setValue(key, value); \
+    dataDotIni->endGroup();
 
 // 读取配置文件 .ini 的内容
 #define READ_CONFIG_INI(group, key, defValue) \
-    settingIni->value("/" + group + "/" + key, defValue)
+    dataDotIni->value("/" + group + "/" + key, defValue)
 
 #endif // APPELLATION_H

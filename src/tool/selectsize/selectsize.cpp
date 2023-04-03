@@ -6,6 +6,7 @@
 #include "selectsize.h"
 #include "../../xglobal.h"
 #include "../../screen/drawhelper.h"
+#include "../../screen/datamaid.h"
 #include <QPainter>
 
 SelectSize::SelectSize(QWidget* parent /*= nullptr*/, Qt::WindowFlags f /*= Qt::WindowFlags()*/)
@@ -49,7 +50,7 @@ void SelectSize::paintEvent(QPaintEvent* e)
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-    QColor col(XHelper::instance().borderColor());
+    QColor col(dataMaid->paraValue("borderColor").toString());
     pa.setPen(Qt::NoPen);
     pa.setBrush(col);
     pa.drawRoundedRect(rect(), SS_RADIRS, SS_RADIRS);

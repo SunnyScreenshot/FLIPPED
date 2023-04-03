@@ -25,6 +25,7 @@
 #include <QContextMenuEvent>
 #include <QGraphicsDropShadowEffect>
 #include "QActionGroup"
+#include "../../screen/datamaid.h"
 
 //QPoint m_p;   // 窗口的左上角
 //QPoint m_p1;
@@ -50,15 +51,15 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
     setAttribute(Qt::WA_TranslucentBackground);           // Otherwise it is a black background
     setAttribute(Qt::WA_DeleteOnClose);
 
-    const int maxWidth = XHelper::instance().pinMaxSize();
+    const int maxWidth = dataMaid->paraValue("maxSize").toInt();
     setMaximumSize(maxWidth, maxWidth);
-    setWindowOpacity(XHelper::instance().pinOpacity() / 100.0);
+    setWindowOpacity(dataMaid->paraValue("opacity").toInt() / 100.0);
 
     auto vLayout = new QVBoxLayout(this);
     const int margin = PW_MARGIN;
     vLayout->setContentsMargins(margin, margin, margin, margin);
 
-    m_shadowEffect->setColor(XHelper::instance().borderColor());
+    m_shadowEffect->setColor(dataMaid->paraValue("borderColor").toString());
     m_shadowEffect->setBlurRadius(2 * margin);
     m_shadowEffect->setOffset(0, 0);
     setGraphicsEffect(m_shadowEffect);
@@ -78,9 +79,9 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
     setGeometry(adjusted_pos);
     adjustSize();
 
-    connect(&XHelper::instance(), &XHelper::sigChangeWinShadow, this, &PinWidget::onChangeWinShadow);
-    connect(&XHelper::instance(), &XHelper::sigChangeOpacity, this, &PinWidget::onChangeOpacity);
-    connect(&XHelper::instance(), &XHelper::sigChangeMaxSize, this, &PinWidget::onChangeMaxSize);
+    connect(dataMaid, &DataMaid::sigWindowShadow, this, &PinWidget::onWindowShadow);
+    connect(dataMaid, &DataMaid::sigOpacity, this, &PinWidget::onOpacity);
+    connect(dataMaid, &DataMaid::sigMaxSize, this, &PinWidget::onMaxSize);
 
     initUI();
 }
@@ -101,7 +102,7 @@ void PinWidget::initUI()
         act->setCheckable(true);
         i == 10 ? act->setChecked(true) : act->setChecked(false);
         opicatyGroup->addAction(act);
-        connect(act, &QAction::triggered, this, [&, i]() { onChangeOpacity(i * 10); });
+        connect(act, &QAction::triggered, this, [&, i]() { onOpacity(i * 10); });
     }
 
     m_menu->addMenu(aOpicaty);
@@ -202,7 +203,7 @@ void PinWidget::contextMenuEvent(QContextMenuEvent* event)
     m_menu->exec(event->globalPos());
 }
 
-void PinWidget::onChangeWinShadow(bool enable)
+void PinWidget::onWindowShadow(bool enable)
 {
     //if (enable) {
     //    if (!m_shadowEffect)
@@ -220,12 +221,12 @@ void PinWidget::onChangeWinShadow(bool enable)
     //}
 }
 
-void PinWidget::onChangeOpacity(int opacity)
+void PinWidget::onOpacity(int opacity)
 {
     setWindowOpacity(opacity / 100.0);
 }
 
-void PinWidget::onChangeMaxSize(double val)
+void PinWidget::onMaxSize(double val)
 {
     setMaximumSize(val, val);
 }

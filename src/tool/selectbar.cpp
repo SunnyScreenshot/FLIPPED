@@ -17,10 +17,11 @@
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"
 #include "../widget/xverticalline.h"
+#include "../screen/datamaid.h"
 
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
-    , m_scal(XHelper::instance().getScale())
+    , m_scal(dataMaid->scale())
     , m_orien(orien)
     , m_layout(nullptr)
     , m_blur(std::make_unique<BlurWidget>(this))
@@ -125,7 +126,7 @@ void SelectBar::onToolBtn()
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* it : listBtn) {
         QString path = ":/resources/tool/" + it->objectName() + ".svg";
-        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
+        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * dataMaid->scale());
         const bool bDrawTb = tb->isCheckable() == true;   // 绘画按钮
         const bool bRevoOrReneTb = tb->objectName() == "revocation" || tb->objectName() == "renewal";
         const bool bOtherTb = (!tb->isCheckable() && tb->objectName() != "revocation" && tb->objectName() != "renewal");
@@ -134,7 +135,7 @@ void SelectBar::onToolBtn()
             if (bDrawTb) {
                 QIcon icon(path);
                 if (it->isChecked())
-                    icon = XHelper::instance().ChangeSVGColor(path, "path", XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale());
+                    icon = dataMaid->ChangeSVGColor(path, "path", dataMaid->paraValue("borderColor").toString(), QSize(ICON_WIDTH, ICON_WIDTH) * dataMaid->scale());
                 it->setIcon(icon);
             } /*else if (bRevoOrReneTb) {
             } else if (bOtherTb) {

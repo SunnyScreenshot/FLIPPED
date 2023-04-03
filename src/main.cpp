@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
-    DataMaid data;
+    DataIni data;
     int count = data.metaObject()->propertyCount();
        for(int i=0;i<count;i++) {
            QString name = data.metaObject()->property(i).name();
@@ -95,10 +95,10 @@ int main(int argc, char *argv[])
     //    name = "en_US";
 
 
-    settingIni->beginGroup(INIT_GENERAL);
-    auto lanuage = settingIni->value(tgLanuage, "en_US").toString();
-    auto ftList = settingIni->value(tgFont, "SimSun,9").toString().split(',');
-    settingIni->endGroup();
+    dataDotIni->beginGroup(INIT_GENERAL);
+    auto lanuage = dataDotIni->value(tgLanuage, "en_US").toString();
+    auto ftList = dataDotIni->value(tgFont, "SimSun,9").toString().split(',');
+    dataDotIni->endGroup();
 
     QTranslator trans;
     QString qmPath(qApp->applicationDirPath());

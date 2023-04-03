@@ -4,9 +4,6 @@
 // Source: https://github.com/XMuli/Flipped
 
 #include "colorparabar.h"
-#include "../../xglobal.h"
-#include "../../widget/xlabel.h"
-#include "../../screen/drawhelper.h"
 #include <QLabel>
 #include <QBoxLayout>
 #include <QGridLayout>
@@ -19,13 +16,18 @@
 #include <QColor>
 #include <QColorDialog>
 #include <QMetaProperty>
+#include "../../xglobal.h"
+#include "../../widget/xlabel.h"
+#include "../../screen/drawhelper.h"
+#include "../../screen/datamaid.h"
+
 //test
 #include <QMessageBox>
 #include <QDebug>
 
 ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
-    , m_scal(XHelper::instance().getScale())
+    , m_scal(dataMaid->scale())
     , m_orien(orien)
     , m_layout(nullptr)
     , m_curXLab(nullptr)

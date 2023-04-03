@@ -19,10 +19,11 @@
 #include "../widget/xverticalline.h"
 #include "../core/xlog.h"
 #include "base/blurwidget.h"
+#include "../screen/datamaid.h"
 
 ParameterBar::ParameterBar(Qt::Orientations orien, QWidget* parent)
     : QWidget(parent)
-    , m_scal(XHelper::instance().getScale())
+    , m_scal(dataMaid->scale())
     , m_orien(orien)
     , m_layout(nullptr)
     , m_blur(std::make_unique<BlurWidget>(this))
@@ -118,7 +119,7 @@ void ParameterBar::creatorParaBar(QPointer<ManageBar>& manageBar, const QString&
         tb->setChecked(false);
         if (i == defaultIdx) {
             tb->setChecked(true);
-            tb->setIcon(XHelper::instance().ChangeSVGColor(it.value(), amendSvgShow(it.value()), XHelper::instance().borderColor(), QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale()));
+            tb->setIcon(dataMaid->ChangeSVGColor(it.value(), amendSvgShow(it.value()), dataMaid->paraValue("borderColor").toString(), QSize(ICON_WIDTH, ICON_WIDTH) * dataMaid->scale()));
         }
 
         tb->setProperty("path", it.value());
@@ -275,7 +276,7 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
         return;
 
     const auto selectedTb = qobject_cast<QToolButton*>(btn);
-    const QSize iconSize = QSize(ICON_WIDTH, ICON_WIDTH) * XHelper::instance().getScale();
+    const QSize iconSize = QSize(ICON_WIDTH, ICON_WIDTH) * dataMaid->scale();
     for (auto& it : parent->findChildren<QToolButton *>()) {
         if (it == selectedTb) {
             QString name = it->objectName();
@@ -303,7 +304,7 @@ void ParameterBar::onTBReleased(QAbstractButton* btn)
         }
 
         QString path = it->property("path").value<QString>();
-        const QIcon& icon = it->isChecked() ? XHelper::instance().ChangeSVGColor(path, amendSvgShow(path), XHelper::instance().borderColor(), iconSize) : QIcon(path);
+        const QIcon& icon = it->isChecked() ? dataMaid->ChangeSVGColor(path, amendSvgShow(path), dataMaid->paraValue("borderColor").toString(), iconSize) : QIcon(path);
         it->setIconSize(iconSize);
         it->setIcon(icon);
     }
