@@ -80,14 +80,14 @@ const QString thReset("th_reset");
     if (_object) \
         _object->setObjectName(_objectName);
 
-// 写入配置文件 .ini 的内容
-#define WRITE_CONFIG_INI(group, key, value) \
-    dataDotIni->beginGroup(group); \
-    dataDotIni->setValue(key, value); \
-    dataDotIni->endGroup();
+//// 写入配置文件 .ini 的内容
+//#define WRITE_CONFIG_INI(group, key, value) \
+//    SETTINGINI->beginGroup(group); \
+//    SETTINGINI->setValue(key, value); \
+//    SETTINGINI->endGroup();
 
-// 读取配置文件 .ini 的内容
-#define READ_CONFIG_INI(group, key, defValue) \
-    dataDotIni->value("/" + group + "/" + key, defValue)
+//// 读取配置文件 .ini 的内容
+//#define READ_CONFIG_INI(group, key, defValue) \
+//    SETTINGINI->value("/" + group + "/" + key, defValue)
 
 #endif // APPELLATION_H

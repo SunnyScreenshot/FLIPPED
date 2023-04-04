@@ -20,7 +20,26 @@
 #include <QGlobalStatic>
 #include <QCoreApplication>
 #include <QGuiApplication>
-#include "drawhelper.h"
+
+#define DATAMAID DataMaid::instance()
+#define SETTINGINI SettingIni::instance()->settings()
+
+#define WRITE_INI(root, key, val) \
+    SETTINGINI->setValue("/" + root + "/" + key, val)
+#define READ_INI(root, key, defVal) \
+    SETTINGINI->value("/" + root + "/" + key, defVal)
+
+// perference UI config
+const QString INIT_GENERAL("General");                   // 初始化 常规
+const QString INIT_INTERFACE("Interface");               // 初始化 界面
+const QString INIT_OUTPUT("Output");                     // 初始化 输出
+const QString INIT_PIN("Pin");                           // 初始化 贴图
+const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
+
+// *********且要将 属性的名称 给四处统一一下*********
+// SettingIni：定义一个唯一的 QSettings 对象；仅被 DataIni 来使用
+// DataIni：通过 SETTINGINI 对 .ini 进行数据的读和写
+// DataMaid：类似单例，所有的 .ini 的参数，全部存放于此；other ui class ⇌ [DataMaid 主 ⇌ DataIni] ⇌ .ini
 
 // .ini config data helper
 class DataIni : public QObject
@@ -161,13 +180,16 @@ class DataMaid : public QObject
 {
     Q_OBJECT
 public:
-    explicit DataMaid(QObject* parent = nullptr);
+    DataMaid(QObject* parent = nullptr);
     void init();
     QVariant paraValue(const char* key);
     void setParaValue(const char* key, const QVariant& val);
 
     void readFromAllIni();
     void writeToAllIni(const bool bReset = false);
+
+public:
+    static DataMaid* instance();
 
 public:
     void writeToGeneralIni(const bool bReset);
@@ -198,21 +220,19 @@ signals:
 private:
     DataIni m_dataIni;
 };
-Q_GLOBAL_STATIC(DataMaid, dataMaid);
-Q_GLOBAL_STATIC_WITH_ARGS(QSettings, dataDotIni, (qApp->applicationDirPath() + "/config/config.ini", QSettings::IniFormat));
 
-// perference UI config
-const QString INIT_GENERAL("General");                   // 初始化 常规
-const QString INIT_INTERFACE("Interface");               // 初始化 界面
-const QString INIT_OUTPUT("Output");                     // 初始化 输出
-const QString INIT_PIN("Pin");                           // 初始化 贴图
-const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
+class SettingIni {
+public:
+    SettingIni(const QString& fileName, QSettings::Format format, QObject* parent);
+    ~SettingIni() = default;
 
-// TODO 2023.04.03: 删除  dataDotIni 和 XHelper 两个类
-// *********且要将 属性的名称 给四处统一一下*********
-//calss DataIni 仅和 .ini 进行数据传递
-//外面再添加一个 DataIni(包含 DataIni) 才是和外面进行交互的 单例
+    QSettings* settings();
 
+public:
+    static SettingIni* instance();
 
+private:
+    QSettings m_settings;
+};
 
 #endif // DATAMAID_H

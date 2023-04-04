@@ -4,10 +4,10 @@
 // Source: https://github.com/XMuli/Flipped
 
 #include "selectsize.h"
+#include <QPainter>
 #include "../../xglobal.h"
 #include "../../screen/drawhelper.h"
 #include "../../screen/datamaid.h"
-#include <QPainter>
 
 SelectSize::SelectSize(QWidget* parent /*= nullptr*/, Qt::WindowFlags f /*= Qt::WindowFlags()*/)
     : QLabel(parent, f)
@@ -50,7 +50,7 @@ void SelectSize::paintEvent(QPaintEvent* e)
     QPainter pa(this);
     pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
-    QColor col(dataMaid->paraValue("borderColor").toString());
+    QColor col(DATAMAID->paraValue("borderColor").toString());
     pa.setPen(Qt::NoPen);
     pa.setBrush(col);
     pa.drawRoundedRect(rect(), SS_RADIRS, SS_RADIRS);

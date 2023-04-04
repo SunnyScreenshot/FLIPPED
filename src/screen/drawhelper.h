@@ -20,7 +20,6 @@
 #include <QSettings>
 #include <QString>
 #include <QDebug>
-//#include <Format>
 
 class QLine;
 class QPoint;

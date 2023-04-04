@@ -21,7 +21,7 @@
 
 SelectBar::SelectBar(Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
-    , m_scal(dataMaid->scale())
+    , m_scal(DATAMAID->scale())
     , m_orien(orien)
     , m_layout(nullptr)
     , m_blur(std::make_unique<BlurWidget>(this))
@@ -126,7 +126,7 @@ void SelectBar::onToolBtn()
     QList<QToolButton *> listBtn = findChildren<QToolButton *>();
     for (QToolButton* it : listBtn) {
         QString path = ":/resources/tool/" + it->objectName() + ".svg";
-        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * dataMaid->scale());
+        it->setIconSize(QSize(ICON_WIDTH, ICON_WIDTH) * DATAMAID->scale());
         const bool bDrawTb = tb->isCheckable() == true;   // 绘画按钮
         const bool bRevoOrReneTb = tb->objectName() == "revocation" || tb->objectName() == "renewal";
         const bool bOtherTb = (!tb->isCheckable() && tb->objectName() != "revocation" && tb->objectName() != "renewal");
@@ -135,7 +135,7 @@ void SelectBar::onToolBtn()
             if (bDrawTb) {
                 QIcon icon(path);
                 if (it->isChecked())
-                    icon = dataMaid->ChangeSVGColor(path, "path", dataMaid->paraValue("borderColor").toString(), QSize(ICON_WIDTH, ICON_WIDTH) * dataMaid->scale());
+                    icon = DATAMAID->ChangeSVGColor(path, "path", DATAMAID->paraValue("borderColor").toString(), QSize(ICON_WIDTH, ICON_WIDTH) * DATAMAID->scale());
                 it->setIcon(icon);
             } /*else if (bRevoOrReneTb) {
             } else if (bOtherTb) {

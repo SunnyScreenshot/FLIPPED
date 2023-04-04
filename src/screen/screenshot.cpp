@@ -56,11 +56,11 @@ XDrawStep ScreenShot::m_step = XDrawStep();
 
 ScreenShot::ScreenShot(QWidget *parent)
 	: QWidget(parent)
-    , m_scal(dataMaid->scale())
+    , m_scal(DATAMAID->scale())
     , m_captureScrnRt()
     , m_curPix(nullptr)
     , m_rtCalcu(this)
-    , m_bSmartWin(dataMaid->paraValue("smartWindow").toBool())
+    , m_bSmartWin(DATAMAID->paraValue("smartWindow").toBool())
     , m_bFirstSel(false)
     , m_bFirstPress(false)
     , m_pCurShape(nullptr)
@@ -200,7 +200,7 @@ void ScreenShot::updateCursorShape(const QPoint pos)
         setCursor(Qt::CrossCursor);
     } else if (m_rtCalcu.scrnType == ScrnOperate::SO_Stretch) {
     } else if (m_rtCalcu.scrnType == ScrnOperate::SO_Wait) {
-        if (!dataMaid->paraValue("smartWindow").toBool())
+        if (!DATAMAID->paraValue("smartWindow").toBool())
             return;
 
         if (cursArea == CursorArea::External) {
@@ -354,25 +354,25 @@ void ScreenShot::onSave()
 {
     if (drawToCurPixmap()) {
         // Manual save
-        const QString imageName = dataMaid->formatToFileName();
+        const QString imageName = DATAMAID->formatToFileName();
         QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
         QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), imageName, fileter);
         if (fileNmae.isEmpty())
             return;
 
         QTime startTime = QTime::currentTime();
-        m_savePix.save(fileNmae, nullptr, dataMaid->paraValue("imageQuailty").toInt());  // 绘画在 m_savePix 中，若在 m_savePix 会有 selRect 的左上角的点的偏移
+        m_savePix.save(fileNmae, nullptr, DATAMAID->paraValue("imageQuailty").toInt());  // 绘画在 m_savePix 中，若在 m_savePix 会有 selRect 的左上角的点的偏移
         QTime stopTime = QTime::currentTime();
         int elapsed = startTime.msecsTo(stopTime);
         qInfo() << "m_savePix save time: " << elapsed << " ms" << m_savePix.size();
 
 
         // save to clipboard
-        if (dataMaid->paraValue("autoCopy2Clipboard").toBool())
+        if (DATAMAID->paraValue("autoCopy2Clipboard").toBool())
             QApplication::clipboard()->setPixmap(m_savePix);
 
         // auto save
-        const QString path = dataMaid->formatToFileName(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first().trimmed());
+        const QString path = DATAMAID->formatToFileName(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first().trimmed());
         QDir dir(path);
         if(dir.exists())
             m_savePix.save(path + QDir::separator() + imageName);
@@ -589,8 +589,8 @@ void ScreenShot::drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound) 
     pa.save();
     pa.setRenderHint(QPainter::Antialiasing, true);
     QPen pen;
-    pen.setWidth(dataMaid->paraValue("borderWidth").toInt() * m_scal + SELECT_ASSIST_RECT_PEN_WIDTH);
-    pen.setColor(dataMaid->paraValue("borderColor").toString());  //
+    pen.setWidth(DATAMAID->paraValue("borderWidth").toInt() * m_scal + SELECT_ASSIST_RECT_PEN_WIDTH);
+    pen.setColor(DATAMAID->paraValue("borderColor").toString());  //
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
 
@@ -626,7 +626,7 @@ void ScreenShot::drawBorderFlipped(QPainter& pa, const QRect& rt, bool isRound) 
         pa.drawLine(l8.translated(QPoint(penWidth / 2, 0)));
     }
 
-    pen.setWidth(dataMaid->paraValue("borderWidth").toInt() * m_scal);
+    pen.setWidth(DATAMAID->paraValue("borderWidth").toInt() * m_scal);
     pa.setPen(pen);
     pa.drawRect(rt);
     pa.restore();
@@ -695,10 +695,10 @@ void ScreenShot::drawStep(QPainter& pa, const XDrawStep& step)
         QPixmap mosaicPixmap = m_curPix->copy(QRect(step.rt.topLeft() * DPI, step.rt.size() * DPI));
         const int mscPx = step.pen.width();
         if (step.shapePara == ShapePara::SP_0) {
-            const QPixmap* pix = dataMaid->smoothMosaic(&mosaicPixmap, mscPx);
+            const QPixmap* pix = DATAMAID->smoothMosaic(&mosaicPixmap, mscPx);
             pa.drawPixmap(step.rt, *pix);
 		} else if (step.shapePara == ShapePara::SP_1) {
-            const QImage img = dataMaid->pixlelatedMosaic(&mosaicPixmap, mscPx);
+            const QImage img = DATAMAID->pixlelatedMosaic(&mosaicPixmap, mscPx);
             pa.drawImage(step.rt, img);
         }
 
@@ -1169,7 +1169,7 @@ void ScreenShot::showDebugInfo(QPainter& pa, QRect& rtSel)
     pa.drawText(tPosText - QPoint(0, space * 6), QString("m_rtAtuoMonitor: (%1, %2, %3 * %4)")
         .arg(m_autoDetectRt.x()).arg(m_autoDetectRt.y()).arg(m_autoDetectRt.width()).arg(m_autoDetectRt.height()));
     pa.drawText(tPosText - QPoint(0, space * 7), QString("XHelper::instance().smartWindow(): %1")
-        .arg(dataMaid->paraValue("smartWindow").toBool()));
+        .arg(DATAMAID->paraValue("smartWindow").toBool()));
     pa.drawText(tPosText - QPoint(0, space * 8), QString("m_vDrawed:%1").arg(m_vDrawed.size()));
     if (m_pCurShape) {
         QRect rtCurMove = m_pCurShape->rt.translated(m_rtCalcu.pos2 - m_rtCalcu.pos1);
@@ -1333,7 +1333,7 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa) const
     if (rtSel.width() < 0 || rtSel.height() < 0)
         return;
     pa.save();
-    const QPen pen(QPen(QColor(dataMaid->paraValue("borderColor").toString()), dataMaid->paraValue("borderWidth").toInt()));
+    const QPen pen(QPen(QColor(DATAMAID->paraValue("borderColor").toString()), DATAMAID->paraValue("borderWidth").toInt()));
     pa.setPen(pen);
     pa.setBrush(Qt::NoBrush);
     m_selSizeTip->move(drawSelSizeTip(rtSel));
@@ -1347,7 +1347,7 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa) const
         }
     }
 
-    const QString style = dataMaid->paraValue("borderStyle").toString();
+    const QString style = DATAMAID->paraValue("borderStyle").toString();
     if (style == "flipped") {
         drawBorderFlipped(pa, rt);
     } else if (style == "black_white") {
@@ -1362,9 +1362,9 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa) const
 
 void ScreenShot::drawCrosshair(QPainter& pa) const
 {
-    if (dataMaid->paraValue("crosshair").toBool() && !m_bFirstPress) {
+    if (DATAMAID->paraValue("crosshair").toBool() && !m_bFirstPress) {
         pa.save();
-        pa.setPen(QPen(QColor(dataMaid->paraValue("crosshairColor").toString()), dataMaid->paraValue("crosshairWidth").toInt()));
+        pa.setPen(QPen(QColor(DATAMAID->paraValue("crosshairColor").toString()), DATAMAID->paraValue("crosshairWidth").toInt()));
         pa.setBrush(Qt::NoBrush);
 
         QPoint p(QCursor::pos());

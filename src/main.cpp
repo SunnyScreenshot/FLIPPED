@@ -94,12 +94,8 @@ int main(int argc, char *argv[])
     //if (!lanuages.contains(name))
     //    name = "en_US";
 
-
-    dataDotIni->beginGroup(INIT_GENERAL);
-    auto lanuage = dataDotIni->value(tgLanuage, "en_US").toString();
-    auto ftList = dataDotIni->value(tgFont, "SimSun,9").toString().split(',');
-    dataDotIni->endGroup();
-
+    auto lanuage = DATAMAID->paraValue("lanuage").toString();
+    auto ftList = DATAMAID->paraValue("font").toString().split(',');
     QTranslator trans;
     QString qmPath(qApp->applicationDirPath());
 #if defined(Q_OS_MAC)

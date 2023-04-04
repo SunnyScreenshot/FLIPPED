@@ -27,7 +27,7 @@
 
 ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidget *parent)
     : QWidget(parent)
-    , m_scal(dataMaid->scale())
+    , m_scal(DATAMAID->scale())
     , m_orien(orien)
     , m_layout(nullptr)
     , m_curXLab(nullptr)

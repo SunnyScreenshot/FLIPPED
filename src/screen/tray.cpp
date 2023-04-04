@@ -50,7 +50,7 @@ Tray::Tray(QObject *parent)
 {
     init();
     initGlobalHotKeys();
-    dataMaid->setAutoRun();
+    DATAMAID->setAutoRun();
 
 //	QString t = QApplication::instance()->applicationDirPath() + "/../../pluginsimpl/watemark/RelWithDebInfo";
 //    QDir pluginsDir(t);
@@ -129,13 +129,13 @@ void Tray::initGlobalHotKeys()
 //        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)
     };
 
-    dataDotIni->beginGroup(INIT_HOTKEYS);
+    SETTINGINI->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);    // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         const CaptureHelper::CaptureType sst = std::get<3>(it);
-        const QString strHotKey = dataDotIni->value(describe, hotkey).toString();
+        const QString strHotKey = SETTINGINI->value(describe, hotkey).toString();
         if (!strHotKey.isEmpty())
             hotkey = strHotKey;
 
@@ -148,7 +148,7 @@ void Tray::initGlobalHotKeys()
             << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
             << "hotkey:" << hotkey << "    hk Is Registered:" << pHK->isRegistered() << Qt::endl;
     }
-    dataDotIni->endGroup();
+    SETTINGINI->endGroup();
 }
 
 void Tray::onSrnShot()
@@ -190,7 +190,7 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
     if (!editor)
         return;
 
-    dataDotIni->beginGroup(INIT_HOTKEYS);
+    SETTINGINI->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
 //        QString& hotkey = std::get<1>(it);
@@ -208,7 +208,7 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
                 << "  pHK:" << pHK << "  pHK->shortcut():" << pHK->shortcut();
 
             if (pHK->isRegistered()) {
-                dataDotIni->setValue(describe, keySequence.toString());
+                SETTINGINI->setValue(describe, keySequence.toString());
                 editor->setStyleSheet("background-color: #98fb98;");
             } else {
                 //pHK->setShortcut(prev);
@@ -219,5 +219,5 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
         }
     }
 
-    dataDotIni->endGroup();
+    SETTINGINI->endGroup();
 }

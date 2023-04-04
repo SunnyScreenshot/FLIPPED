@@ -19,7 +19,7 @@
 
 HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 {
-    double m_scale = dataMaid->scale();
+    double m_scale = DATAMAID->scale();
 
     setContentsMargins(0, 0, 0, 0);
     QVBoxLayout* vLay = new QVBoxLayout(this);

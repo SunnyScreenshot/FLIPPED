@@ -45,7 +45,7 @@
 
 Preference::Preference(QWidget *parent)
     : QWidget(parent)
-    , m_scale(dataMaid->scale())
+    , m_scale(DATAMAID->scale())
 {
     initUI();
 }
@@ -192,19 +192,17 @@ QWidget *Preference::tabGeneral()
     QStringList lLogLevel = {tr("trace"), tr("debug"), tr("info"), tr("warn"), tr("error"), tr("critical"), tr("off")};
     cbLogLevel->addItems(lLogLevel);
 
-    dataDotIni->beginGroup(INIT_GENERAL);
-    cbLanuage->setCurrentText(mapLanuage.key(dataDotIni->value(tgLanuage, mapLanuage.key("English")).toString()));
-    dataDotIni->endGroup();
+    cbLanuage->setCurrentText(mapLanuage.key(DATAMAID->paraValue("lanuage").value<QString>()));
 
-    btnFont->setText(dataMaid->paraValue("font").value<QString>());
-    cbAutoRun->setChecked(dataMaid->paraValue("autoRun").value<bool>());
-    cbAsAdmin->setChecked(dataMaid->paraValue("asAdmin").value<bool>());
-    cbLogLevel->setCurrentText(dataMaid->paraValue("logLevel").value<QString>());
-    cbAutoCheck->setChecked(dataMaid->paraValue("autoUpdate").value<bool>());
+    btnFont->setText(DATAMAID->paraValue("font").value<QString>());
+    cbAutoRun->setChecked(DATAMAID->paraValue("autoRun").value<bool>());
+    cbAsAdmin->setChecked(DATAMAID->paraValue("asAdmin").value<bool>());
+    cbLogLevel->setCurrentText(DATAMAID->paraValue("logLevel").value<QString>());
+    cbAutoCheck->setChecked(DATAMAID->paraValue("autoUpdate").value<bool>());
 
     connect(cbLanuage, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLanuageChange);
     connect(btnFont, &QPushButton::released, this, &Preference::onFontChange);
-    connect(cbAutoRun, &QCheckBox::stateChanged, this, &Preference::onSelfStart);
+    connect(cbAutoRun, &QCheckBox::stateChanged, this, &Preference::onAutoRun);
     connect(cbAsAdmin, &QCheckBox::stateChanged, this, &Preference::onAsAdmin);
     connect(cbLogLevel, QOverload<const QString&>::of(&QComboBox::currentTextChanged), this, &Preference::onLogLevelChange);
     connect(cbAutoCheck, &QCheckBox::stateChanged, this, &Preference::onAutoCheck);
@@ -284,15 +282,15 @@ QWidget* Preference::tabInterface()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tiReset), 1);
 
-    cbBorderStyle->setCurrentText(dataMaid->paraValue("borderStyle").value<QString>());
-    cpbHighLight->setCurColor(dataMaid->paraValue("borderColor").value<QString>());
-    spBorder->setValue(dataMaid->paraValue("borderWidth").value<int>());
-    cpbCrosshair->setCurColor(dataMaid->paraValue("crosshairColor").value<QString>());
-    spCrosshair->setValue(dataMaid->paraValue("crosshairWidth").value<int>());
-    cbEnableSamrtWindow->setChecked(dataMaid->paraValue("smartWindow").value<bool>());
-    cbEnableCrosshair->setChecked(dataMaid->paraValue("crosshair").value<bool>());
-    cbEnableShowCursor->setChecked(dataMaid->paraValue("showCursor").value<bool>());
-    cbEnableAutoCopy->setChecked(dataMaid->paraValue("autoCopy2Clipboard").value<bool>());
+    cbBorderStyle->setCurrentText(DATAMAID->paraValue("borderStyle").value<QString>());
+    cpbHighLight->setCurColor(DATAMAID->paraValue("borderColor").value<QString>());
+    spBorder->setValue(DATAMAID->paraValue("borderWidth").value<int>());
+    cpbCrosshair->setCurColor(DATAMAID->paraValue("crosshairColor").value<QString>());
+    spCrosshair->setValue(DATAMAID->paraValue("crosshairWidth").value<int>());
+    cbEnableSamrtWindow->setChecked(DATAMAID->paraValue("smartWindow").value<bool>());
+    cbEnableCrosshair->setChecked(DATAMAID->paraValue("crosshair").value<bool>());
+    cbEnableShowCursor->setChecked(DATAMAID->paraValue("showCursor").value<bool>());
+    cbEnableAutoCopy->setChecked(DATAMAID->paraValue("autoCopy2Clipboard").value<bool>());
 
     connect(cbBorderStyle, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onBorderStyle);
     connect(cpbHighLight, &ColorParaBar::sigColorChange, this, &Preference::onBorderColor);
@@ -372,15 +370,15 @@ QWidget* Preference::tabOutput()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(toReset), 1);
 
-    dataDotIni->beginGroup(INIT_OUTPUT);
+    SETTINGINI->beginGroup(INIT_OUTPUT);
     bool ok = false;
-    editFileName->setText(dataDotIni->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
-    editQuickSavePath->setText(dataDotIni->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
-    editAutoSavePath->setText(dataDotIni->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
-    editConfigPath->setText(dataDotIni->value(toConfigPath, qApp->applicationDirPath() + "/config").toString());
-    dataDotIni->endGroup();
+    editFileName->setText(SETTINGINI->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
+    editQuickSavePath->setText(SETTINGINI->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
+    editAutoSavePath->setText(SETTINGINI->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
+    editConfigPath->setText(SETTINGINI->value(toConfigPath, qApp->applicationDirPath() + "/config").toString());
+    SETTINGINI->endGroup();
 
-    sbImageQuailty->setValue(dataMaid->paraValue("imageQuailty").value<int>());
+    sbImageQuailty->setValue(DATAMAID->paraValue("imageQuailty").value<int>());
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
     connect(editFileName, &QLineEdit::textChanged, this, &Preference::onFileName);
@@ -391,7 +389,7 @@ QWidget* Preference::tabOutput()
     connect(changeAutoSavePath, &QPushButton::released, this, &Preference::onChoosePath);
     connect(changeConfigPath, &QPushButton::released, this, &Preference::onChoosePath);
 
-    const QString tooltip = dataMaid->formatToFileName(editFileName->text());
+    const QString tooltip = DATAMAID->formatToFileName(editFileName->text());
     editFileName->setToolTip(tooltip);
 
     // 临时屏蔽功能
@@ -452,9 +450,9 @@ QWidget* Preference::tabPin()
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(tpReset), 1);
 
-    cbWindowShadow->setChecked(dataMaid->paraValue("windowShadow").value<bool>());
-    sbOpacity->setValue(dataMaid->paraValue("opacity").value<int>());
-    sbMaxSize->setValue(dataMaid->paraValue("maxSize").value<int>());
+    cbWindowShadow->setChecked(DATAMAID->paraValue("windowShadow").value<bool>());
+    sbOpacity->setValue(DATAMAID->paraValue("opacity").value<int>());
+    sbMaxSize->setValue(DATAMAID->paraValue("maxSize").value<int>());
 
     connect(cbWindowShadow, &QCheckBox::stateChanged, this, &Preference::onWindowShadow);
     connect(sbOpacity, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onOpacity);
@@ -704,10 +702,8 @@ void Preference::onLanuageChange(const QString &language)
         return;
 
     qDebug() << qApp->applicationDirPath() + "/config/config.ini";
-    dataDotIni->beginGroup(INIT_GENERAL);
-    dataDotIni->setValue(tgLanuage, bt->itemData(bt->currentIndex()).toString());
-    dataDotIni->endGroup();
 
+    DATAMAID->setParaValue("lanuage", bt->itemData(bt->currentIndex()).toString());
     auto lang = bt->itemData(bt->currentIndex()).toString();
 
 //    QTranslator trans;
@@ -734,47 +730,39 @@ void Preference::onLanuageChange(const QString &language)
 
 void Preference::onFontChange()
 {
-    QString t("SimSun");
-    t = READ_CONFIG_INI(INIT_GENERAL, tgFont, t).toString();
-    qDebug() << "t:" << t;
-
     bool ret = false;
-    QFont font = QFontDialog::getFont(&ret, QFont(t.split(',').at(0)), this, tr("Select Font"));
-    if (!ret)
-        return;
+    const auto fontFamily = DATAMAID->paraValue("font").toString();
+    QFont font = QFontDialog::getFont(&ret, QFont(fontFamily.split(',').at(0)), this, tr("Select Font"));
+    if (!ret) return;
         
     qApp->setFont(font);
     auto btnFont = findChild<QPushButton*>(tgFont);
     QString text = QString("%1, %2").arg(font.family()).arg(font.pointSize());
     btnFont->setText(text);
 
-    dataMaid->setParaValue(tgFont.toLocal8Bit().data(), text);
+    DATAMAID->setParaValue(tgFont.toLocal8Bit().data(), text);
     qDebug("当前选择的字体是[%s]-是否加粗[%d]-是否倾斜[%d]-字号[%d]", font.family().toUtf8().data(), font.bold(), font.italic(), font.pointSize());
 }
 
-void Preference::onSelfStart(int sta)
+void Preference::onAutoRun(int sta)
 {
-    dataMaid->setParaValue(tgAutoRun.toLocal8Bit().data(), checkBoxState2Bool(sta));
-    dataMaid->setAutoRun();
+    DATAMAID->setParaValue(tgAutoRun.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    DATAMAID->setAutoRun();
 }
 
 void Preference::onAsAdmin(int sta)
 {
-    dataMaid->setParaValue(tgAsAdmin.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    DATAMAID->setParaValue(tgAsAdmin.toLocal8Bit().data(), checkBoxState2Bool(sta));
 }
 
 void Preference::onLogLevelChange(const QString& language)
 {
-    dataDotIni->beginGroup(INIT_GENERAL);
-    dataDotIni->setValue(tgLogLevel, language);
-    dataDotIni->endGroup();
-
-    XLog::instance()->setLevel(language.toStdString());
+    DATAMAID->setParaValue(tgLogLevel.toLocal8Bit().data(), language);
 }
 
 void Preference::onAutoCheck(int sta)
 {
-    dataMaid->setParaValue(tgAutoCheckUpdate.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    DATAMAID->setParaValue(tgAutoCheckUpdate.toLocal8Bit().data(), checkBoxState2Bool(sta));
 }
 
 void Preference::onUpdate()
@@ -789,73 +777,75 @@ void Preference::onBorderStyle(const QString& style)
         return;
 
     const QString text = bt->itemData(bt->currentIndex()).toString();
-    dataMaid->setParaValue(tiBorderStyle.toLocal8Bit().data(), text);
+    DATAMAID->setParaValue(tiBorderStyle.toLocal8Bit().data(), text);
 }
 
 void Preference::onBorderColor(const QColor& color)
 {
-    dataMaid->setParaValue(tiBorderColor.toLocal8Bit().data(), color.name());
+    DATAMAID->setParaValue(tiBorderColor.toLocal8Bit().data(), color.name());
+    qDebug() << "-#1-->" << color.name() << "  " 
+        << tiBorderColor.toLocal8Bit().data() << "   "  << "--#2------------>" << DATAMAID->paraValue("borderColor").toString();;
 }
 
 void Preference::onBorderWidth(int val)
 {
-    dataMaid->setParaValue(tiBorderWidth.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(tiBorderWidth.toLocal8Bit().data(), val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)
 {
-    dataMaid->setParaValue(tiCrosshairColor.toLocal8Bit().data(), color.name());
+    DATAMAID->setParaValue(tiCrosshairColor.toLocal8Bit().data(), color.name());
 }
 
 void Preference::onCrosshairWidth(int val)
 {
-    dataMaid->setParaValue(tiCrosshairWidth.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(tiCrosshairWidth.toLocal8Bit().data(), val);
 }
 
 
 void Preference::onSmartWindow(int val)
 {
-    dataMaid->setParaValue(tiSmartWindow.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiSmartWindow.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onShowCrosshair(int val)
 {
-    dataMaid->setParaValue(tiCrosshair.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiCrosshair.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onShowCursor(int val)
 {
-    dataMaid->setParaValue(tiShowCursor.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiShowCursor.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onAutoCopyToClip(int val)
 {
-    dataMaid->setParaValue(tiAutoCopy2Clipboard.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiAutoCopy2Clipboard.toLocal8Bit().data(), checkBoxState2Bool(val));
 }
 
 void Preference::onImageQuailty(int val)
 {
-    dataMaid->setParaValue(toImageQuailty.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(toImageQuailty.toLocal8Bit().data(), val);
 }
 
 void Preference::onFileName(const QString& name)
 {
-    dataMaid->setParaValue(toFileName.toLocal8Bit().data(), name);
+    DATAMAID->setParaValue(toFileName.toLocal8Bit().data(), name);
 }
 
 void Preference::onQuickSavePath(const QString& path)
 {
-    dataMaid->setParaValue(toQuickSavePath.toLocal8Bit().data(), path);
+    DATAMAID->setParaValue(toQuickSavePath.toLocal8Bit().data(), path);
 }
 
 void Preference::onAutoSavePath(const QString& path)
 {
-    dataMaid->setParaValue(toAutoSavePath.toLocal8Bit().data(), path);
+    DATAMAID->setParaValue(toAutoSavePath.toLocal8Bit().data(), path);
 }
 
 void Preference::onConfigPath(const QString& path)
 {
-    dataMaid->setParaValue(toConfigPath.toLocal8Bit().data(), path);
+    DATAMAID->setParaValue(toConfigPath.toLocal8Bit().data(), path);
 }
 
 void Preference::onChoosePath()
@@ -897,17 +887,17 @@ void Preference::onChoosePath()
 
 void Preference::onWindowShadow(int sta)
 {
-    WRITE_CONFIG_INI(INIT_PIN, tpWindowShadow, checkBoxState2Bool(sta));
+    DATAMAID->setParaValue(tpWindowShadow.toLocal8Bit().data(), checkBoxState2Bool(sta));
 }
 
 void Preference::onOpacity(int val)
 {
-    WRITE_CONFIG_INI(INIT_PIN, tpOpacity, val);
+    DATAMAID->setParaValue(tpOpacity.toLocal8Bit().data(), val);
 }
 
 void Preference::onMaxSize(int val)
 {
-    WRITE_CONFIG_INI(INIT_PIN, tpMaxSize, val);
+    DATAMAID->setParaValue(tpMaxSize.toLocal8Bit().data(), val);
 }
 
 void Preference::changeEvent(QEvent *e)

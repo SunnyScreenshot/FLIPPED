@@ -51,15 +51,15 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
     setAttribute(Qt::WA_TranslucentBackground);           // Otherwise it is a black background
     setAttribute(Qt::WA_DeleteOnClose);
 
-    const int maxWidth = dataMaid->paraValue("maxSize").toInt();
+    const int maxWidth = DATAMAID->paraValue("maxSize").toInt();
     setMaximumSize(maxWidth, maxWidth);
-    setWindowOpacity(dataMaid->paraValue("opacity").toInt() / 100.0);
+    setWindowOpacity(DATAMAID->paraValue("opacity").toInt() / 100.0);
 
     auto vLayout = new QVBoxLayout(this);
     const int margin = PW_MARGIN;
     vLayout->setContentsMargins(margin, margin, margin, margin);
 
-    m_shadowEffect->setColor(dataMaid->paraValue("borderColor").toString());
+    m_shadowEffect->setColor(DATAMAID->paraValue("borderColor").toString());
     m_shadowEffect->setBlurRadius(2 * margin);
     m_shadowEffect->setOffset(0, 0);
     setGraphicsEffect(m_shadowEffect);
@@ -79,9 +79,9 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
     setGeometry(adjusted_pos);
     adjustSize();
 
-    connect(dataMaid, &DataMaid::sigWindowShadow, this, &PinWidget::onWindowShadow);
-    connect(dataMaid, &DataMaid::sigOpacity, this, &PinWidget::onOpacity);
-    connect(dataMaid, &DataMaid::sigMaxSize, this, &PinWidget::onMaxSize);
+    connect(DATAMAID, &DataMaid::sigWindowShadow, this, &PinWidget::onWindowShadow);
+    connect(DATAMAID, &DataMaid::sigOpacity, this, &PinWidget::onOpacity);
+    connect(DATAMAID, &DataMaid::sigMaxSize, this, &PinWidget::onMaxSize);
 
     initUI();
 }

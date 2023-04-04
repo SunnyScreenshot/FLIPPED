@@ -41,7 +41,7 @@ protected slots:
     // tabGeneral
     void onLanuageChange(const QString& language);
     void onFontChange();
-    void onSelfStart(int sta);
+    void onAutoRun(int sta);
     void onAsAdmin(int sta);
     void onLogLevelChange(const QString& language);
     void onAutoCheck(int sta);
