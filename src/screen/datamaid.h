@@ -9,25 +9,21 @@
 #include <QObject>
 #include <QSize>
 #include <QIcon>
+#include <QImage>
 #include <QColor>
 #include <QScreen>
 #include <QString>
 #include <QPixmap>
-#include <QImage>
-#include <QDomElement>
 #include <QScreen>
+#include <QVariant>
 #include <QSettings>
+#include <QDomElement>
 #include <QGlobalStatic>
+#include <QStandardPaths>
 #include <QCoreApplication>
 #include <QGuiApplication>
 
 #define DATAMAID DataMaid::instance()
-#define SETTINGINI SettingIni::instance()->settings()
-
-#define WRITE_INI(root, key, val) \
-    SETTINGINI->setValue("/" + root + "/" + key, val)
-#define READ_INI(root, key, defVal) \
-    SETTINGINI->value("/" + root + "/" + key, defVal)
 
 // perference UI config
 const QString INIT_GENERAL("General");                   // 初始化 常规
@@ -36,12 +32,10 @@ const QString INIT_OUTPUT("Output");                     // 初始化 输出
 const QString INIT_PIN("Pin");                           // 初始化 贴图
 const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
 
-// *********且要将 属性的名称 给四处统一一下*********
-// SettingIni：定义一个唯一的 QSettings 对象；仅被 DataIni 来使用
 // DataIni：通过 SETTINGINI 对 .ini 进行数据的读和写
 // DataMaid：类似单例，所有的 .ini 的参数，全部存放于此；other ui class ⇌ [DataMaid 主 ⇌ DataIni] ⇌ .ini
-
-// .ini config data helper
+// 
+// DataIni 通过 QSetting 对 .ini 进行读写， 数据统一保存到 DataMaid::instance() 中，里面为时刻最新的
 class DataIni : public QObject
 {
     Q_OBJECT
@@ -63,6 +57,10 @@ class DataIni : public QObject
     Q_PROPERTY(bool autoCopy2Clipboard MEMBER m_autoCopy2Clipboard NOTIFY sigAutoCopy2Clipboard)
 
     Q_PROPERTY(int imageQuailty MEMBER m_imageQuailty NOTIFY sigImageQuailty)
+    Q_PROPERTY(QString fileName MEMBER m_fileName NOTIFY sigFileName)
+    Q_PROPERTY(QString quickSavePath MEMBER m_quickSavePath NOTIFY sigQuickSavePath)
+    Q_PROPERTY(QString autoSavePath MEMBER m_autoSavePath NOTIFY sigAutoSavePath)
+    Q_PROPERTY(QString configPath MEMBER m_configPath NOTIFY sigConfigPath)
 
     Q_PROPERTY(bool windowShadow MEMBER m_windowShadow NOTIFY sigWindowShadow)
     Q_PROPERTY(int opacity MEMBER m_opacity NOTIFY sigOpacity)
@@ -72,8 +70,11 @@ class DataIni : public QObject
     Q_PROPERTY(QString delayCapture MEMBER m_delayCapture NOTIFY sigDelayCapture)
     Q_PROPERTY(QString fullScrnCapture MEMBER m_fullScrnCapture NOTIFY sigFullScrnCapture)
 
+private:
+    inline bool setQStrProperty(const QString& proper, const QVariant& val);
+
 public:
-    explicit DataIni(QObject *parent = nullptr);
+    explicit DataIni(QObject* parent = nullptr);
     void readFromAllIni();
     void writeToAllIni(const bool bReset = false);
 
@@ -92,32 +93,37 @@ public:
     void writeToHotkeysIni(const bool bReset);
 
 private:
-    QString resetLanuage() { m_lanuage = "en_US"; return m_lanuage;}
-    QString resetFont() { m_font = "SimSun,9"; return m_font;}
-    bool resetAutoRun() { m_autoRun = true; return m_autoRun;}
-    bool resetAsAdmin() { m_asAdmin = false; return m_asAdmin;}
-    QString resetLogLevel() { m_logLevel = "debug"; return m_logLevel;}
-    bool resetAutoUpdate() { m_autoUpdate = false; return m_autoUpdate;}
+    QString resetLanuage() { m_lanuage = "en_US"; return m_lanuage; }
+    QString resetFont() { m_font = "SimSun,9"; return m_font; }
+    bool resetAutoRun() { m_autoRun = true; return m_autoRun; }
+    bool resetAsAdmin() { m_asAdmin = false; return m_asAdmin; }
+    QString resetLogLevel() { m_logLevel = "debug"; return m_logLevel; }
+    bool resetAutoUpdate() { m_autoUpdate = false; return m_autoUpdate; }
 
-    QString resetBorderStyle() { m_borderStyle = "flipped"; return m_borderStyle;}
-    QString resetBorderColor() { m_borderColor = "#0e70ff"; return m_borderColor;}
-    int resetBorderWidth() { m_borderWidth = 2; return m_borderWidth;}
-    QString resetCrosshairColor() { m_crosshairColor = "#db000f"; return m_crosshairColor;}
-    int resetCrosshairWidth() { m_crosshairWidth = 1; return m_crosshairWidth;}
-    bool resetSmartWindow() { m_smartWindow = true; return m_smartWindow;}
-    bool resetCrosshair() { m_crosshair = false; return m_crosshair;}
-    bool resetShowCursor() { m_showCursor = false; return m_showCursor;}
-    bool resetAutoCopy2Clipboard() { m_autoCopy2Clipboard = true; return m_autoCopy2Clipboard;}
+    QString resetBorderStyle() { m_borderStyle = "flipped"; return m_borderStyle; }
+    QString resetBorderColor() { m_borderColor = "#0e70ff"; return m_borderColor; }
+    int resetBorderWidth() { m_borderWidth = 2; return m_borderWidth; }
+    QString resetCrosshairColor() { m_crosshairColor = "#db000f"; return m_crosshairColor; }
+    int resetCrosshairWidth() { m_crosshairWidth = 1; return m_crosshairWidth; }
+    bool resetSmartWindow() { m_smartWindow = true; return m_smartWindow; }
+    bool resetCrosshair() { m_crosshair = false; return m_crosshair; }
+    bool resetShowCursor() { m_showCursor = false; return m_showCursor; }
+    bool resetAutoCopy2Clipboard() { m_autoCopy2Clipboard = true; return m_autoCopy2Clipboard; }
 
-    int resetImageQuailty() { m_imageQuailty = -1; return m_imageQuailty;}
+    int resetImageQuailty() { m_imageQuailty = -1; return m_imageQuailty; }
+    QString resetFileName() { m_fileName = "Flipped_$yyyyMMdd_hhmmss$.png"; return m_fileName; }
+    QString resetQuickSavePath() { m_quickSavePath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(); return m_quickSavePath; }
+    QString resetAutoSavePath() { m_autoSavePath = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(); return m_autoSavePath; }
+    QString resetConfigPath() { m_configPath = qApp->applicationDirPath() + "/config"; return m_configPath; }
 
-    bool resetWindowShadow() { m_windowShadow = false; return m_windowShadow;}
-    int resetOpacity() { m_opacity = 100; return m_opacity;}
-    int resetMaxSize() { m_maxSize = 100000; return m_maxSize;}
 
-    QString resetScrnCapture() { m_scrnCapture = "Ctrl+Shift+L"; return m_scrnCapture;}       // TODO 2023.04.02: 对应的 Mac 上面需要修改
-    QString resetDelayCapture() { m_delayCapture = "Ctrl+Shift+S"; return m_delayCapture;}
-    QString resetFullScrnCapture() { m_fullScrnCapture = "Ctrl+Shift+F"; return m_fullScrnCapture;}
+    bool resetWindowShadow() { m_windowShadow = false; return m_windowShadow; }
+    int resetOpacity() { m_opacity = 100; return m_opacity; }
+    int resetMaxSize() { m_maxSize = 100000; return m_maxSize; }
+
+    QString resetScrnCapture() { m_scrnCapture = "Ctrl+Shift+L"; return m_scrnCapture; }       // TODO 2023.04.02: 对应的 Mac 上面需要修改
+    QString resetDelayCapture() { m_delayCapture = "Ctrl+Shift+S"; return m_delayCapture; }
+    QString resetFullScrnCapture() { m_fullScrnCapture = "Ctrl+Shift+F"; return m_fullScrnCapture; }
 
 signals:
     void sigLanuage(QString language);
@@ -138,6 +144,10 @@ signals:
     void sigAutoCopy2Clipboard(bool enable);
 
     void sigImageQuailty(int val);
+    void sigFileName(QString str);
+    void sigQuickSavePath(QString str);
+    void sigAutoSavePath(QString str);
+    void sigConfigPath(QString str);
 
     void sigWindowShadow(bool shadow);
     void sigOpacity(int val);
@@ -166,6 +176,10 @@ private:
     bool    m_autoCopy2Clipboard;
 
     int     m_imageQuailty;        // Output
+    QString m_fileName;
+    QString m_quickSavePath;
+    QString m_autoSavePath;
+    QString m_configPath;
 
     bool    m_windowShadow;        // Pin
     int     m_opacity;
@@ -174,6 +188,8 @@ private:
     QString m_scrnCapture;         // Hotkeys
     QString m_delayCapture;
     QString m_fullScrnCapture;
+
+    QSettings m_settings;
 };
 
 class DataMaid : public QObject
@@ -183,7 +199,9 @@ public:
     DataMaid(QObject* parent = nullptr);
     void init();
     QVariant paraValue(const char* key);
+    QVariant paraValue(const QString key);
     void setParaValue(const char* key, const QVariant& val);
+    void setParaValue(const QString key, const QVariant& val);
 
     void readFromAllIni();
     void writeToAllIni(const bool bReset = false);
@@ -221,18 +239,5 @@ private:
     DataIni m_dataIni;
 };
 
-class SettingIni {
-public:
-    SettingIni(const QString& fileName, QSettings::Format format, QObject* parent);
-    ~SettingIni() = default;
-
-    QSettings* settings();
-
-public:
-    static SettingIni* instance();
-
-private:
-    QSettings m_settings;
-};
-
 #endif // DATAMAID_H
+

@@ -56,18 +56,6 @@ int main(int argc, char *argv[])
     a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
-    DataIni data;
-    int count = data.metaObject()->propertyCount();
-       for(int i=0;i<count;i++) {
-           QString name = data.metaObject()->property(i).name();
-
-           auto t = data.metaObject()->property(i).isResettable();
-           qDebug()<< name << "  " << data.property(name.toLatin1().data()).toString();
-       }
-
-
-
-
     QString filePath = QApplication::applicationDirPath() + "/Flipped.temp.lock";
     QLockFile* lockFile = new QLockFile(filePath);
     bool isLock = lockFile->isLocked();

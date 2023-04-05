@@ -365,20 +365,15 @@ QWidget* Preference::tabOutput()
     creatPathEdit(configurePath, editConfigPath, changeConfigPath);
     sbImageQuailty->setToolTip(tr("Range [0,100] or -1.\nSpecify 0 to obtain small compressed files, 100 for large uncompressed files.\nand -1 to use the default settings."));
 
-//    qDebug() << "tabOutput:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(toReset), 1);
 
-    SETTINGINI->beginGroup(INIT_OUTPUT);
-    bool ok = false;
-    editFileName->setText(SETTINGINI->value(toFileName, "flipped_$yyyyMMdd_hhmmss$.png").toString());
-    editQuickSavePath->setText(SETTINGINI->value(toQuickSavePath, QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first()).toString());
-    editAutoSavePath->setText(SETTINGINI->value(toAutoSavePath, QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first()).toString());
-    editConfigPath->setText(SETTINGINI->value(toConfigPath, qApp->applicationDirPath() + "/config").toString());
-    SETTINGINI->endGroup();
-
     sbImageQuailty->setValue(DATAMAID->paraValue("imageQuailty").value<int>());
+    editFileName->setText(DATAMAID->paraValue(toFileName).toString());
+    editQuickSavePath->setText(DATAMAID->paraValue(toQuickSavePath).toString());
+    editAutoSavePath->setText(DATAMAID->paraValue(toAutoSavePath).toString());
+    editConfigPath->setText(DATAMAID->paraValue(toConfigPath).toString());
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
     connect(editFileName, &QLineEdit::textChanged, this, &Preference::onFileName);
@@ -391,11 +386,6 @@ QWidget* Preference::tabOutput()
 
     const QString tooltip = DATAMAID->formatToFileName(editFileName->text());
     editFileName->setToolTip(tooltip);
-
-    // 临时屏蔽功能
-    quickSavePath->hide();
-    editQuickSavePath->hide();
-    changeQuickSavePath->hide();
 
     return page;
 }
@@ -720,7 +710,7 @@ void Preference::onLanuageChange(const QString &language)
     QTranslator trans;
     QString qmPath(qApp->applicationDirPath());
 #if defined(Q_OS_MAC)
-    qmPath += "/../../../../bin/translations/" + lanuage + ".qm";
+    qmPath += "/../../../../bin/translations/" + lang + ".qm";
 #else
     qmPath += "/translations/" + lang + ".qm";
 #endif
@@ -740,29 +730,29 @@ void Preference::onFontChange()
     QString text = QString("%1, %2").arg(font.family()).arg(font.pointSize());
     btnFont->setText(text);
 
-    DATAMAID->setParaValue(tgFont.toLocal8Bit().data(), text);
+    DATAMAID->setParaValue(tgFont, text);
     qDebug("当前选择的字体是[%s]-是否加粗[%d]-是否倾斜[%d]-字号[%d]", font.family().toUtf8().data(), font.bold(), font.italic(), font.pointSize());
 }
 
 void Preference::onAutoRun(int sta)
 {
-    DATAMAID->setParaValue(tgAutoRun.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    DATAMAID->setParaValue(tgAutoRun, checkBoxState2Bool(sta));
     DATAMAID->setAutoRun();
 }
 
 void Preference::onAsAdmin(int sta)
 {
-    DATAMAID->setParaValue(tgAsAdmin.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    DATAMAID->setParaValue(tgAsAdmin, checkBoxState2Bool(sta));
 }
 
 void Preference::onLogLevelChange(const QString& language)
 {
-    DATAMAID->setParaValue(tgLogLevel.toLocal8Bit().data(), language);
+    DATAMAID->setParaValue(tgLogLevel, language);
 }
 
 void Preference::onAutoCheck(int sta)
 {
-    DATAMAID->setParaValue(tgAutoCheckUpdate.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    DATAMAID->setParaValue(tgAutoCheckUpdate, checkBoxState2Bool(sta));
 }
 
 void Preference::onUpdate()
@@ -777,75 +767,81 @@ void Preference::onBorderStyle(const QString& style)
         return;
 
     const QString text = bt->itemData(bt->currentIndex()).toString();
-    DATAMAID->setParaValue(tiBorderStyle.toLocal8Bit().data(), text);
+    DATAMAID->setParaValue(tiBorderStyle, text);
 }
 
 void Preference::onBorderColor(const QColor& color)
 {
-    DATAMAID->setParaValue(tiBorderColor.toLocal8Bit().data(), color.name());
-    qDebug() << "-#1-->" << color.name() << "  " 
-        << tiBorderColor.toLocal8Bit().data() << "   "  << "--#2------------>" << DATAMAID->paraValue("borderColor").toString();;
+    DATAMAID->setParaValue(tiBorderColor, color.name());
 }
 
 void Preference::onBorderWidth(int val)
 {
-    DATAMAID->setParaValue(tiBorderWidth.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(tiBorderWidth, val);
 }
 
 void Preference::onCrosshairColor(const QColor& color)
 {
-    DATAMAID->setParaValue(tiCrosshairColor.toLocal8Bit().data(), color.name());
+    DATAMAID->setParaValue(tiCrosshairColor, color.name());
 }
 
 void Preference::onCrosshairWidth(int val)
 {
-    DATAMAID->setParaValue(tiCrosshairWidth.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(tiCrosshairWidth, val);
 }
 
 
 void Preference::onSmartWindow(int val)
 {
-    DATAMAID->setParaValue(tiSmartWindow.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiSmartWindow, checkBoxState2Bool(val));
 }
 
 void Preference::onShowCrosshair(int val)
 {
-    DATAMAID->setParaValue(tiCrosshair.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiCrosshair, checkBoxState2Bool(val));
 }
 
 void Preference::onShowCursor(int val)
 {
-    DATAMAID->setParaValue(tiShowCursor.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiShowCursor, checkBoxState2Bool(val));
 }
 
 void Preference::onAutoCopyToClip(int val)
 {
-    DATAMAID->setParaValue(tiAutoCopy2Clipboard.toLocal8Bit().data(), checkBoxState2Bool(val));
+    DATAMAID->setParaValue(tiAutoCopy2Clipboard, checkBoxState2Bool(val));
 }
 
 void Preference::onImageQuailty(int val)
 {
-    DATAMAID->setParaValue(toImageQuailty.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(toImageQuailty, val);
 }
 
 void Preference::onFileName(const QString& name)
 {
-    DATAMAID->setParaValue(toFileName.toLocal8Bit().data(), name);
+    DATAMAID->setParaValue(toFileName, name);
 }
 
 void Preference::onQuickSavePath(const QString& path)
 {
-    DATAMAID->setParaValue(toQuickSavePath.toLocal8Bit().data(), path);
+    //defPath = editQuickSavePath->text();
+    //selPath = QFileDialog::getExistingDirectory(this, tr("select a path"), defPath, QFileDialog::ShowDirsOnly);
+
+    //if (!selPath.isEmpty() && defPath != selPath)
+    //    editQuickSavePath->setText(selPath);
+
+    DATAMAID->setParaValue(toQuickSavePath, path);
 }
 
 void Preference::onAutoSavePath(const QString& path)
 {
-    DATAMAID->setParaValue(toAutoSavePath.toLocal8Bit().data(), path);
+    onChoosePath();
+    DATAMAID->setParaValue(toAutoSavePath, path);
 }
 
 void Preference::onConfigPath(const QString& path)
 {
-    DATAMAID->setParaValue(toConfigPath.toLocal8Bit().data(), path);
+    onChoosePath();
+    DATAMAID->setParaValue(toConfigPath, path);
 }
 
 void Preference::onChoosePath()
@@ -887,17 +883,17 @@ void Preference::onChoosePath()
 
 void Preference::onWindowShadow(int sta)
 {
-    DATAMAID->setParaValue(tpWindowShadow.toLocal8Bit().data(), checkBoxState2Bool(sta));
+    DATAMAID->setParaValue(tpWindowShadow, checkBoxState2Bool(sta));
 }
 
 void Preference::onOpacity(int val)
 {
-    DATAMAID->setParaValue(tpOpacity.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(tpOpacity, val);
 }
 
 void Preference::onMaxSize(int val)
 {
-    DATAMAID->setParaValue(tpMaxSize.toLocal8Bit().data(), val);
+    DATAMAID->setParaValue(tpMaxSize, val);
 }
 
 void Preference::changeEvent(QEvent *e)

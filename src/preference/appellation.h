@@ -18,55 +18,57 @@
 
 namespace XC {
 
-//tabGeneral      常规
-const QString tgLanuage("lanuage");
-const QString tgFont("font");
-const QString tgAutoRun("autoRun");
-const QString tgAsAdmin("asAdmin");
-const QString tgLogLevel("logLevel");
-const QString tgAutoCheckUpdate("autoCheck");  // TODO 带 _ 都是没修改的
-const QString tgAutoUpdate("autoUpdate");
-const QString tgReset("tg_reset"); // 单独添加 tg, 下同
+    //tabGeneral      常规
+    const QString tgLanuage("lanuage");
+    const QString tgFont("font");
+    const QString tgAutoRun("autoRun");
+    const QString tgAsAdmin("asAdmin");
+    const QString tgLogLevel("logLevel");
+    const QString tgAutoCheckUpdate("autoCheck");  // TODO 带 _ 都是没修改的
+    const QString tgAutoUpdate("autoUpdate");
+    const QString tgReset("tg_reset"); // 单独添加 tg, 下同
 
-//tabInterface()  界面
-const QString tiBorderStyle("borderStyle");
-const QString tiBorderColor("borderColor");
-const QString tiBorderWidth("borderWidth");
-const QString tiCrosshairColor("crosshairColor");
-const QString tiCrosshairWidth("crosshairWidth");
-const QString tiSmartWindow("smartWindow");
-const QString tiCrosshair("crosshair");
-const QString tiShowCursor("showCursor");
-const QString tiAutoCopy2Clipboard("autoCopy2Clipboard");
-const QString tiReset("ti_reset");
+    //tabInterface()  界面
+    const QString tiBorderStyle("borderStyle");
+    const QString tiBorderColor("borderColor");
+    const QString tiBorderWidth("borderWidth");
+    const QString tiCrosshairColor("crosshairColor");
+    const QString tiCrosshairWidth("crosshairWidth");
+    const QString tiSmartWindow("smartWindow");
+    const QString tiCrosshair("crosshair");
+    const QString tiShowCursor("showCursor");
+    const QString tiAutoCopy2Clipboard("autoCopy2Clipboard");
+    const QString tiReset("ti_reset");
 
-//tabOutput()     输出
-const QString toImageQuailty("imageQuailty");
-const QString toFileName("file_name");
-const QString toQuickSavePath("quick_save_path");
-const QString toAutoSavePath("auto_save_path");
-const QString toConfigPath("config_path");
-const QString toReset("to_reset");
+    //tabOutput()     输出
+    const QString toImageQuailty("imageQuailty");
+    const QString toFileName("fileName");
+    const QString toQuickSavePath("quickSavePath");
+    const QString toAutoSavePath("autoSavePath");
+    const QString toConfigPath("configPath");
+    const QString toReset("to_reset");
 
-//tabPin()        贴图
-const QString tpWindowShadow("windowShadow");
-const QString tpOpacity("opacity");
-const QString tpMaxSize("maxSize");
-const QString tpReset("tp_reset");
+    //tabPin()        贴图
+    const QString tpWindowShadow("windowShadow");
+    const QString tpOpacity("opacity");
+    const QString tpMaxSize("maxSize");
+    const QString tpReset("tp_reset");
 
-//tabHotkeys()    快捷键
-const QString thScrnCapture("scrnCapture");
-//const QString thScrollingWindow("scrolling_window");
-const QString thDelayCapture("delayCapture");
-const QString thFullScreen("fullScrnCapture");
-//const QString thFixdSize_Region("fixd_size_region");
-//const QString thPaste("paste");
-//const QString thHide_ShowAllImages("hide_show_all_images");
-//const QString thSwitchCurGroup("switch_current_group");
-const QString thReset("th_reset");
+    //tabHotkeys()    快捷键
+    const QString thScrnCapture("scrnCapture");
+    //const QString thScrollingWindow("scrolling_window");
+    const QString thDelayCapture("delayCapture");
+    const QString thFullScreen("fullScrnCapture");
+    //const QString thFixdSize_Region("fixd_size_region");
+    //const QString thPaste("paste");
+    //const QString thHide_ShowAllImages("hide_show_all_images");
+    //const QString thSwitchCurGroup("switch_current_group");
+    const QString thReset("th_reset");
 
-//tabAbout()      关于
+    //tabAbout()      关于
 }
+
+using namespace XC;
 
 // 对象名、类型、命名的对象名称
 #define NEW_OBJECT(_object, _type, _objectName) \

@@ -129,13 +129,13 @@ void Tray::initGlobalHotKeys()
 //        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)
     };
 
-    SETTINGINI->beginGroup(INIT_HOTKEYS);
+    
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);    // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
         QString& describe = std::get<2>(it);
         const CaptureHelper::CaptureType sst = std::get<3>(it);
-        const QString strHotKey = SETTINGINI->value(describe, hotkey).toString();
+        const QString strHotKey = DATAMAID->paraValue(describe).toString();  // 没有则返回 hotkey
         if (!strHotKey.isEmpty())
             hotkey = strHotKey;
 
@@ -148,7 +148,6 @@ void Tray::initGlobalHotKeys()
             << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
             << "hotkey:" << hotkey << "    hk Is Registered:" << pHK->isRegistered() << Qt::endl;
     }
-    SETTINGINI->endGroup();
 }
 
 void Tray::onSrnShot()
@@ -190,7 +189,6 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
     if (!editor)
         return;
 
-    SETTINGINI->beginGroup(INIT_HOTKEYS);
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
 //        QString& hotkey = std::get<1>(it);
@@ -208,7 +206,7 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
                 << "  pHK:" << pHK << "  pHK->shortcut():" << pHK->shortcut();
 
             if (pHK->isRegistered()) {
-                SETTINGINI->setValue(describe, keySequence.toString());
+                DATAMAID->setParaValue(describe, keySequence.toString());
                 editor->setStyleSheet("background-color: #98fb98;");
             } else {
                 //pHK->setShortcut(prev);
@@ -218,6 +216,4 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
             continue;
         }
     }
-
-    SETTINGINI->endGroup();
 }
