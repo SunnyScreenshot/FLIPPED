@@ -43,9 +43,11 @@ namespace XC {
     //tabOutput()     输出
     const QString toImageQuailty("imageQuailty");
     const QString toFileName("fileName");
+    const QString toConfigPath("configPath");
+    const QString toQuickSave("quickSave");
+    const QString toAutoSave("autoSave");
     const QString toQuickSavePath("quickSavePath");
     const QString toAutoSavePath("autoSavePath");
-    const QString toConfigPath("configPath");
     const QString toReset("to_reset");
 
     //tabPin()        贴图

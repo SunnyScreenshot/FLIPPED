@@ -55,7 +55,8 @@ private:
     QPixmap* virtualScrnPixmap();
     bool drawToCurPixmap();
     void drawStep(QPainter& pa, const XDrawStep& step);
-    void setSavePixmap(bool quickSave = true, bool autoSave = true);
+    void imageQuickSave();
+    void imageAutoSave();
 
     void whichShape();
     bool isDrawShape(XDrawStep& step) const;
@@ -91,6 +92,7 @@ public slots:
     void onSave();
     void onCancel();
     void onFinish();
+
     void onInterruptEdit(const QPoint& pos);
     void clearnAndClose();
     void onParaBtnId(DrawShape shape, QToolButton* tb);

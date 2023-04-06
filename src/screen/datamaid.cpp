@@ -38,8 +38,8 @@ DataIni::DataIni(QObject *parent)
     , m_settings(qApp->applicationDirPath() + "/config/config.ini", QSettings::IniFormat, nullptr)
 {
     resetAllData();
-    //readFromAllIni();
-    writeToAllIni(true);
+    readFromAllIni();
+    //writeToAllIni(true);
 
     connect(this, &DataIni::sigLanuage, this, [this](QString language) { WRITE_INI(INIT_GENERAL, tgLanuage, language); });
     connect(this, &DataIni::sigFont, this, [this](QString font) { WRITE_INI(INIT_GENERAL, tgFont, font); });
@@ -60,9 +60,11 @@ DataIni::DataIni(QObject *parent)
 
     connect(this, &DataIni::sigImageQuailty, this, [this](int val) { WRITE_INI(INIT_OUTPUT, toImageQuailty, val); });
     connect(this, &DataIni::sigFileName, this, [this](QString str) { WRITE_INI(INIT_OUTPUT, toFileName, str); });
+    connect(this, &DataIni::sigConfigPath, this, [this](QString str) { WRITE_INI(INIT_OUTPUT, toConfigPath, str); });
+    connect(this, &DataIni::sigQuickSave, this, [this](bool enable) { WRITE_INI(INIT_OUTPUT, toQuickSave, enable); });
+    connect(this, &DataIni::sigAutoSave, this, [this](bool enable) { WRITE_INI(INIT_OUTPUT, toAutoSave, enable); });
     connect(this, &DataIni::sigQuickSavePath, this, [this](QString str) { WRITE_INI(INIT_OUTPUT, toQuickSavePath, str); });
     connect(this, &DataIni::sigAutoSavePath, this, [this](QString str) { WRITE_INI(INIT_OUTPUT, toAutoSavePath, str); });
-    connect(this, &DataIni::sigConfigPath, this, [this](QString str) { WRITE_INI(INIT_OUTPUT, toConfigPath, str); });
 
     connect(this, &DataIni::sigWindowShadow, this, [this](bool shadow) { WRITE_INI(INIT_PIN, tpWindowShadow, shadow); });
     connect(this, &DataIni::sigOpacity, this, [this](int val) { WRITE_INI(INIT_PIN, tpOpacity, val); });
@@ -75,11 +77,6 @@ DataIni::DataIni(QObject *parent)
 
 void DataIni::readFromAllIni()
 {
-//
-//#define  qstring2c_str(_str) \
-//    qstring2str(_str).c_str()
-
-
     const auto lanuage    = READ_INI(INIT_GENERAL, tgLanuage, resetLanuage()).toString();
     const auto font       = READ_INI(INIT_GENERAL, tgFont, resetFont()).toString();
     const auto autoRun    = READ_INI(INIT_GENERAL, tgAutoRun, resetAutoRun()).toBool();
@@ -114,14 +111,18 @@ void DataIni::readFromAllIni()
 
     const auto imageQuailty = READ_INI(INIT_OUTPUT, toImageQuailty, resetImageQuailty()).toInt();
     const auto fileName = READ_INI(INIT_OUTPUT, toFileName, resetFileName()).toString();
+    const auto configPath = READ_INI(INIT_OUTPUT, toConfigPath, resetConfigPath()).toString();
+    const auto quickSave = READ_INI(INIT_OUTPUT, toQuickSave, resetQuickSave()).toBool();
+    const auto autoSave = READ_INI(INIT_OUTPUT, toAutoSave, resetAutoSave()).toBool();
     const auto quickSavePath = READ_INI(INIT_OUTPUT, toQuickSavePath, resetQuickSavePath()).toString();
     const auto autoSavePath = READ_INI(INIT_OUTPUT, toAutoSavePath, resetAutoSavePath()).toString();
-    const auto configPath = READ_INI(INIT_OUTPUT, toConfigPath, resetConfigPath()).toString();
     setQStrProperty(toImageQuailty, imageQuailty);
     setQStrProperty(toFileName, fileName);
+    setQStrProperty(toConfigPath, configPath);
+    setQStrProperty(toQuickSave, quickSave);
+    setQStrProperty(toAutoSave, autoSave);
     setQStrProperty(toQuickSavePath, quickSavePath);
     setQStrProperty(toAutoSavePath, autoSavePath);
-    setQStrProperty(toConfigPath, configPath);
 
     const auto windowShadow = READ_INI(INIT_PIN, tpWindowShadow, resetWindowShadow()).toBool();
     const auto opacity      = READ_INI(INIT_PIN, tpOpacity, resetOpacity()).toInt();
@@ -177,9 +178,11 @@ void DataIni::writeToOutputIni(const bool bReset)
     if (bReset)  resetOutput();
     WRITE_INI(INIT_OUTPUT, toImageQuailty, m_imageQuailty);
     WRITE_INI(INIT_OUTPUT, toFileName, m_fileName);
+    WRITE_INI(INIT_OUTPUT, toConfigPath, m_configPath);
+    WRITE_INI(INIT_OUTPUT, toQuickSave, m_quickSave);
+    WRITE_INI(INIT_OUTPUT, toAutoSave, m_autoSave);
     WRITE_INI(INIT_OUTPUT, toQuickSavePath, m_quickSavePath);
     WRITE_INI(INIT_OUTPUT, toAutoSavePath, m_autoSavePath);
-    WRITE_INI(INIT_OUTPUT, toConfigPath, m_configPath);
 }
 
 void DataIni::writeToPinIni(const bool bReset)
@@ -234,9 +237,11 @@ void DataIni::resetOutput()
 {
     resetImageQuailty();
     resetFileName();
+    resetConfigPath();
+    resetQuickSave();
+    resetAutoSave();
     resetQuickSavePath();
     resetAutoSavePath();
-    resetConfigPath();
 }
 
 void DataIni::resetPin()
@@ -480,18 +485,3 @@ const QString DataMaid::formatToFileName(const QString name)
 
     return finalyName;
 }
-
-//SettingIni::SettingIni(const QString& fileName, QSettings::Format format, QObject* parent)
-//    : m_settings(fileName, format, parent)
-//{
-//}
-//
-//QSettings* SettingIni::settings()
-//{
-//    return &m_settings;
-//}
-//
-//SettingIni *SettingIni::instance()
-//{
-//    return settingIni();
-//}

@@ -346,36 +346,39 @@ void ScreenShot::onPin()
 
         clearnAndClose();
     }
-
-
 }
 
 void ScreenShot::onSave()
 {
     if (drawToCurPixmap()) {
         // Manual save
-        const QString imageName = DATAMAID->formatToFileName();
+        const QString imageName = DATAMAID->formatToFileName(DATAMAID->paraValue(toFileName).toString());
         QString fileter(tr("Image Files(*.png);;Image Files(*.jpg);;All Files(*.*)"));
         QString fileNmae = QFileDialog::getSaveFileName(this, tr("Save Files"), imageName, fileter);
-        if (fileNmae.isEmpty())
+        if (fileNmae.isEmpty()) {
             return;
+        } else {
+            int ret = fileNmae.lastIndexOf('/');
+            if (ret == -1)
+                ret = fileNmae.lastIndexOf('\\');
+
+            if (ret != -1) {
+                const QString realFileName = fileNmae.right(fileNmae.count() - ret -1);
+                DATAMAID->setParaValue("realFileName", realFileName);
+            }
+        }
 
         QTime startTime = QTime::currentTime();
-        m_savePix.save(fileNmae, nullptr, DATAMAID->paraValue("imageQuailty").toInt());  // 绘画在 m_savePix 中，若在 m_savePix 会有 selRect 的左上角的点的偏移
+        m_savePix.save(fileNmae, nullptr, DATAMAID->paraValue(toImageQuailty).toInt());  // 绘画在 m_savePix 中，若在 m_savePix 会有 selRect 的左上角的点的偏移
         QTime stopTime = QTime::currentTime();
         int elapsed = startTime.msecsTo(stopTime);
         qInfo() << "m_savePix save time: " << elapsed << " ms" << m_savePix.size();
 
-
         // save to clipboard
-        if (DATAMAID->paraValue("autoCopy2Clipboard").toBool())
+        if (DATAMAID->paraValue(tiAutoCopy2Clipboard).toBool())
             QApplication::clipboard()->setPixmap(m_savePix);
 
-        // auto save
-        const QString path = DATAMAID->formatToFileName(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first().trimmed());
-        QDir dir(path);
-        if(dir.exists())
-            m_savePix.save(path + QDir::separator() + imageName);
+        imageAutoSave();
     }
 
     clearnAndClose();
@@ -392,10 +395,12 @@ void ScreenShot::onCancel()
     clearnAndClose();
 }
 
-void ScreenShot::onFinish()
+void ScreenShot::onFinish()  // 实际就是复制到剪切板
 {
     if (drawToCurPixmap() && !m_savePix.isNull())
         QApplication::clipboard()->setPixmap(m_savePix);
+
+    imageAutoSave();
     clearnAndClose();
 }
 
@@ -998,11 +1003,28 @@ void ScreenShot::whichShape()
     m_pCurShape = nullptr;  // 没有选中任何一个
 }
 
-void ScreenShot::setSavePixmap(bool quickSave /*= true*/, bool autoSave /*= true*/)
+void ScreenShot::imageQuickSave()
 {
-    if (quickSave) {
-        //auto path = XHelper::instance().path(toQuickSavePath);
-    }
+    const bool enable = DATAMAID->paraValue(toQuickSave).toBool();
+    if (!enable) return;
+
+    const QString path = DATAMAID->formatToFileName(DATAMAID->paraValue(toQuickSavePath).toString());
+    const QString imageName = DATAMAID->paraValue("realFileName").toString();
+    QDir dir(path);
+    if (dir.exists() && !m_savePix.isNull())
+        m_savePix.save(path + QDir::separator() + imageName);
+}
+
+void ScreenShot::imageAutoSave()
+{
+    const bool enable = DATAMAID->paraValue(toAutoSave).toBool();
+    if (!enable) return;
+
+    const QString path = DATAMAID->formatToFileName(DATAMAID->paraValue(toAutoSavePath).toString());
+    const QString imageName = DATAMAID->paraValue("realFileName").toString();
+    QDir dir(path);
+    if (dir.exists() && !m_savePix.isNull())
+        m_savePix.save(path + QDir::separator() + imageName);
 }
 
 // 样式一: 浅蓝色

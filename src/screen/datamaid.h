@@ -58,9 +58,13 @@ class DataIni : public QObject
 
     Q_PROPERTY(int imageQuailty MEMBER m_imageQuailty NOTIFY sigImageQuailty)
     Q_PROPERTY(QString fileName MEMBER m_fileName NOTIFY sigFileName)
+        
+    Q_PROPERTY(QString configPath MEMBER m_configPath NOTIFY sigConfigPath)
+    Q_PROPERTY(bool quickSave MEMBER m_quickSave NOTIFY sigQuickSave)
+    Q_PROPERTY(bool autoSave MEMBER m_autoSave NOTIFY sigAutoSave)
     Q_PROPERTY(QString quickSavePath MEMBER m_quickSavePath NOTIFY sigQuickSavePath)
     Q_PROPERTY(QString autoSavePath MEMBER m_autoSavePath NOTIFY sigAutoSavePath)
-    Q_PROPERTY(QString configPath MEMBER m_configPath NOTIFY sigConfigPath)
+
 
     Q_PROPERTY(bool windowShadow MEMBER m_windowShadow NOTIFY sigWindowShadow)
     Q_PROPERTY(int opacity MEMBER m_opacity NOTIFY sigOpacity)
@@ -112,9 +116,12 @@ private:
 
     int resetImageQuailty() { m_imageQuailty = -1; return m_imageQuailty; }
     QString resetFileName() { m_fileName = "Flipped_$yyyyMMdd_hhmmss$.png"; return m_fileName; }
+    QString resetConfigPath() { m_configPath = qApp->applicationDirPath() + "/config"; return m_configPath; }
+    bool resetQuickSave() { m_quickSave = true; return m_quickSave; }
+    bool resetAutoSave() { m_autoSave = false; return m_autoSave; }
+
     QString resetQuickSavePath() { m_quickSavePath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(); return m_quickSavePath; }
     QString resetAutoSavePath() { m_autoSavePath = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(); return m_autoSavePath; }
-    QString resetConfigPath() { m_configPath = qApp->applicationDirPath() + "/config"; return m_configPath; }
 
 
     bool resetWindowShadow() { m_windowShadow = false; return m_windowShadow; }
@@ -145,9 +152,11 @@ signals:
 
     void sigImageQuailty(int val);
     void sigFileName(QString str);
+    void sigConfigPath(QString str);
+    void sigQuickSave(int sta);
+    void sigAutoSave(int sta);
     void sigQuickSavePath(QString str);
     void sigAutoSavePath(QString str);
-    void sigConfigPath(QString str);
 
     void sigWindowShadow(bool shadow);
     void sigOpacity(int val);
@@ -177,9 +186,11 @@ private:
 
     int     m_imageQuailty;        // Output
     QString m_fileName;
+    QString m_configPath;
+    bool    m_quickSave;
+    bool    m_autoSave;
     QString m_quickSavePath;
     QString m_autoSavePath;
-    QString m_configPath;
 
     bool    m_windowShadow;        // Pin
     int     m_opacity;

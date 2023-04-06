@@ -290,7 +290,7 @@ QWidget* Preference::tabInterface()
     cbEnableSamrtWindow->setChecked(DATAMAID->paraValue("smartWindow").value<bool>());
     cbEnableCrosshair->setChecked(DATAMAID->paraValue("crosshair").value<bool>());
     cbEnableShowCursor->setChecked(DATAMAID->paraValue("showCursor").value<bool>());
-    cbEnableAutoCopy->setChecked(DATAMAID->paraValue("autoCopy2Clipboard").value<bool>());
+    cbEnableAutoCopy->setChecked(DATAMAID->paraValue(tiAutoCopy2Clipboard).value<bool>());
 
     connect(cbBorderStyle, static_cast<void(QComboBox::*)(const QString&)>(&QComboBox::currentTextChanged), this, &Preference::onBorderStyle);
     connect(cpbHighLight, &ColorParaBar::sigColorChange, this, &Preference::onBorderColor);
@@ -322,21 +322,21 @@ QWidget* Preference::tabOutput()
 
     NEW_OBJECT_AND_TEXT(imageQuailty, QLabel, toImageQuailty, tr("Image quailty:"));
     NEW_OBJECT_AND_TEXT(fileName, QLabel, toFileName, tr("File Name:"));
-    NEW_OBJECT_AND_TEXT(quickSavePath, QLabel, toQuickSavePath, tr("Quick save path:"));
-    NEW_OBJECT_AND_TEXT(autoAavePath, QLabel, toAutoSavePath, tr("Auto save path:"));
     NEW_OBJECT_AND_TEXT(configurePath, QLabel, toConfigPath, tr("Config path:"));
+    NEW_OBJECT_AND_TEXT(cbQuickSave, QCheckBox, toQuickSavePath, tr("Quick save path:"));
+    NEW_OBJECT_AND_TEXT(cbAutoSave, QCheckBox, toAutoSavePath, tr(" Auto save path:"));
 
     NEW_OBJECT(sbImageQuailty, QSpinBox, toImageQuailty);
     NEW_OBJECT(editFileName, QLineEdit, toFileName);
+    NEW_OBJECT(editConfigPath, QLineEdit, toConfigPath);
     NEW_OBJECT(editQuickSavePath, QLineEdit, toQuickSavePath);
     NEW_OBJECT(editAutoSavePath, QLineEdit, toAutoSavePath);
-    NEW_OBJECT(editConfigPath, QLineEdit, toConfigPath);
 
 //    changeFileName = new QSpacerItem(20, 5, QSizePolicy::Minimum, QSizePolicy::Fixed);
     NEW_OBJECT_AND_TEXT(changeFileName, QPushButton, toFileName, tr("Change"));
+    NEW_OBJECT_AND_TEXT(changeConfigPath, QPushButton, toConfigPath, tr("Change"));
     NEW_OBJECT_AND_TEXT(changeQuickSavePath, QPushButton, toQuickSavePath, tr("Change"));
     NEW_OBJECT_AND_TEXT(changeAutoSavePath, QPushButton, toAutoSavePath, tr("Change"));
-    NEW_OBJECT_AND_TEXT(changeConfigPath, QPushButton, toConfigPath, tr("Change"));
 
     sbImageQuailty->setRange(-1, 100);
     sbImageQuailty->setMinimumWidth(70);
@@ -347,8 +347,16 @@ QWidget* Preference::tabOutput()
     grid->addWidget(sbImageQuailty, i++, j + 1, Qt::AlignLeft);
     grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - TOV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
 
-    auto creatPathEdit = [&](QLabel* label, QLineEdit* edit, QPushButton* btn) {
-        grid->addWidget(label, i, j, Qt::AlignRight);
+    auto creatPathEdit = [&](QObject* obj, QLineEdit* edit, QPushButton* btn) {
+        if (obj->inherits("QLabel")) {
+            const auto it = qobject_cast<QLabel *>(obj);
+            grid->addWidget(it, i, j, Qt::AlignRight);
+        } else if (obj->inherits("QCheckBox")) {
+            const auto it = qobject_cast<QCheckBox*>(obj);
+            grid->addWidget(it, i, j, Qt::AlignRight);
+        }
+
+        
         btn->setMinimumWidth(100);
         QHBoxLayout* hLay = new QHBoxLayout();
         hLay->setMargin(0);
@@ -360,29 +368,40 @@ QWidget* Preference::tabOutput()
     };
 
     creatPathEdit(fileName, editFileName, changeFileName);
-    creatPathEdit(quickSavePath, editQuickSavePath, changeQuickSavePath);
-    creatPathEdit(autoAavePath, editAutoSavePath, changeAutoSavePath);
     creatPathEdit(configurePath, editConfigPath, changeConfigPath);
+    creatPathEdit(cbQuickSave, editQuickSavePath, changeQuickSavePath);
+    creatPathEdit(cbAutoSave, editAutoSavePath, changeAutoSavePath);
     sbImageQuailty->setToolTip(tr("Range [0,100] or -1.\nSpecify 0 to obtain small compressed files, 100 for large uncompressed files.\nand -1 to use the default settings."));
 
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
     vLay->addLayout(creatResetBtn(toReset), 1);
 
-    sbImageQuailty->setValue(DATAMAID->paraValue("imageQuailty").value<int>());
+    sbImageQuailty->setValue(DATAMAID->paraValue(toImageQuailty).value<int>());
     editFileName->setText(DATAMAID->paraValue(toFileName).toString());
-    editQuickSavePath->setText(DATAMAID->paraValue(toQuickSavePath).toString());
-    editAutoSavePath->setText(DATAMAID->paraValue(toAutoSavePath).toString());
     editConfigPath->setText(DATAMAID->paraValue(toConfigPath).toString());
+    cbQuickSave->setChecked(DATAMAID->paraValue(toQuickSave).toBool());
+
+    editQuickSavePath->setText(DATAMAID->paraValue(toQuickSavePath).toString());
+    const bool quickSaveEnable = DATAMAID->paraValue(toQuickSave).toBool();
+    editQuickSavePath->setEnabled(quickSaveEnable);
+    changeQuickSavePath->setEnabled(quickSaveEnable);
+
+    editAutoSavePath->setText(DATAMAID->paraValue(toAutoSavePath).toString());
+    const bool autoSaveEnable = DATAMAID->paraValue(toAutoSave).toBool();
+    editAutoSavePath->setEnabled(cbAutoSave->isChecked());
+    changeAutoSavePath->setEnabled(autoSaveEnable);
 
     connect(sbImageQuailty, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &Preference::onImageQuailty);
     connect(editFileName, &QLineEdit::textChanged, this, &Preference::onFileName);
     connect(editQuickSavePath, &QLineEdit::textChanged, this, &Preference::onQuickSavePath);
     connect(editAutoSavePath, &QLineEdit::textChanged, this, &Preference::onAutoSavePath);
     connect(editConfigPath, &QLineEdit::textChanged, this, &Preference::onConfigPath);
+    connect(changeConfigPath, &QPushButton::released, this, &Preference::onChoosePath);
+    connect(cbQuickSave, &QCheckBox::stateChanged, this, &Preference::onQuickSave);
+    connect(cbAutoSave, &QCheckBox::stateChanged, this, &Preference::onAutoSave);
     connect(changeQuickSavePath, &QPushButton::released, this, &Preference::onChoosePath);
     connect(changeAutoSavePath, &QPushButton::released, this, &Preference::onChoosePath);
-    connect(changeConfigPath, &QPushButton::released, this, &Preference::onChoosePath);
 
     const QString tooltip = DATAMAID->formatToFileName(editFileName->text());
     editFileName->setToolTip(tooltip);
@@ -823,12 +842,6 @@ void Preference::onFileName(const QString& name)
 
 void Preference::onQuickSavePath(const QString& path)
 {
-    //defPath = editQuickSavePath->text();
-    //selPath = QFileDialog::getExistingDirectory(this, tr("select a path"), defPath, QFileDialog::ShowDirsOnly);
-
-    //if (!selPath.isEmpty() && defPath != selPath)
-    //    editQuickSavePath->setText(selPath);
-
     DATAMAID->setParaValue(toQuickSavePath, path);
 }
 
@@ -844,15 +857,37 @@ void Preference::onConfigPath(const QString& path)
     DATAMAID->setParaValue(toConfigPath, path);
 }
 
+void Preference::onQuickSave(int val)
+{
+    const bool enbale = checkBoxState2Bool(val);
+    DATAMAID->setParaValue(toQuickSave, enbale);
+
+    auto lineEdit = findChild<QLineEdit*>(toQuickSavePath);
+    if (lineEdit) lineEdit->setEnabled(enbale);
+    auto changeBtn = findChild<QPushButton*>(toQuickSavePath);
+    if (changeBtn) changeBtn->setEnabled(enbale);
+}
+
+void Preference::onAutoSave(int val)
+{
+    const bool enbale = checkBoxState2Bool(val);
+    DATAMAID->setParaValue(toAutoSave, enbale);
+
+    auto lineEdit = findChild<QLineEdit*>(toAutoSavePath);
+    if (lineEdit) lineEdit->setEnabled(enbale);
+    auto changeBtn = findChild<QPushButton*>(toAutoSavePath);
+    if (changeBtn) changeBtn->setEnabled(enbale);
+}
+
 void Preference::onChoosePath()
 {
     auto btn = qobject_cast<QPushButton*>(sender());
-    auto btnQuickSavePath = findChild<QPushButton*>(toQuickSavePath);
-    auto btnAutoSavePath = findChild<QPushButton*>(toAutoSavePath);
     auto btnConfigPath = findChild<QPushButton*>(toConfigPath);
+    auto editConfigPath = findChild<QLineEdit*>(toConfigPath);
     auto editQuickSavePath = findChild<QLineEdit*>(toQuickSavePath);
     auto editAutoSavePath = findChild<QLineEdit*>(toAutoSavePath);
-    auto editConfigPath = findChild<QLineEdit*>(toConfigPath);
+    auto btnQuickSavePath = findChild<QPushButton*>(toQuickSavePath);
+    auto btnAutoSavePath = findChild<QPushButton*>(toAutoSavePath);
 
     if (!btn || !btnQuickSavePath || !btnAutoSavePath || !btnConfigPath
         || !editQuickSavePath || !editAutoSavePath || !editConfigPath)

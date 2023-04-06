@@ -61,9 +61,11 @@ protected slots:
     // tabOutput
     void onImageQuailty(int val);
     void onFileName(const QString& name);
+    void onConfigPath(const QString& path);
+    void onQuickSave(int val);
+    void onAutoSave(int val);
     void onQuickSavePath(const QString& path);
     void onAutoSavePath(const QString& path);
-    void onConfigPath(const QString& path);
     void onChoosePath();
 
     // tabPin
