@@ -32,6 +32,10 @@
 #include <QFontInfo>
 #include <QDebug>
 #include <QDir>
+#include <QShortcut>
+#include <QSystemTrayIcon>
+#include <QDir>
+#include <QMessageBox>
 #include "../core/arrowline.h"
 #include "../platform/wininfo.h"
 #include "../tool/pin/pinwidget.h"
@@ -153,6 +157,13 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(m_selBar.get(), &SelectBar::sigSelShape, m_paraBar.get(), &ParameterBar::onSelShape);
     connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
     connect(this, &ScreenShot::sigLineWidthChange, this, &ScreenShot::onLineWidthChange);
+
+#if defined(Q_OS_WIN)
+    new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S), this, SLOT(onQuickSave()));
+#else
+    new QShortcut(QKeySequence(Qt::ControlModifier + Qt::SHIFT + Qt::Key_S), this, SLOT(onQuickSave()));
+#endif
+
 }
 
 void ScreenShot::launchCapture(CaptureHelper::CaptureType type)
@@ -401,6 +412,51 @@ void ScreenShot::onFinish()  // 实际就是复制到剪切板
         QApplication::clipboard()->setPixmap(m_savePix);
 
     imageAutoSave();
+    clearnAndClose();
+}
+
+// 响应快速保存的时候快捷键
+void ScreenShot::onQuickSave()
+{
+    if (drawToCurPixmap()) {
+        // Manual save
+        const QString path = DATAMAID->paraValue(toQuickSavePath).toString();
+        const QString name = DATAMAID->formatToFileName(DATAMAID->paraValue(toFileName).toString());
+        QString pathName = path + QDir::separator() + name;
+
+
+        QDir dir(path);
+        if(!dir.exists()) {
+             if (!dir.mkdir(path)) {
+                 QMessageBox::critical(nullptr, tr("Fail"), tr("Failed to create folder %1, please try with administrator privileges").arg(path));
+                 return;
+             }
+         }
+
+
+        QTime startTime = QTime::currentTime();
+        bool ret = m_savePix.save(pathName, nullptr, DATAMAID->paraValue(toImageQuailty).toInt());
+        QTime stopTime = QTime::currentTime();
+        int elapsed = startTime.msecsTo(stopTime);
+        qInfo() << "m_savePix save time: " << elapsed << " ms" << m_savePix.size();
+
+        static QSystemTrayIcon* tray = new QSystemTrayIcon(nullptr);
+        const QString& title = ret ? tr("Success") : tr("Fail");
+        const QString& msg = tr("Image saved to %1") .arg(pathName);
+        tray->setIcon(QIcon(":/resources/tool_para/arrows/arrow_1.svg"));
+        tray->show();
+
+
+        connect(tray, &QSystemTrayIcon::activated, [&tray, title, msg](){
+            tray->showMessage(title, msg, QSystemTrayIcon::Information, 6000);
+        });
+
+        if (DATAMAID->paraValue(tiAutoCopy2Clipboard).toBool())
+            QApplication::clipboard()->setPixmap(m_savePix);
+
+        imageAutoSave();
+    }
+
     clearnAndClose();
 }
 

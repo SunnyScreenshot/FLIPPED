@@ -7,8 +7,6 @@
 #include "../xglobal.h"
 #include "../widget/xhorizontalline.h"
 #include "../tool/base/colorparabar.h"
-#include "../screen/drawhelper.h"
-#include "../core/xlog.h"
 #include "appellation.h"
 #include "hotkeyswidget.h"
 #include <QPushButton>
@@ -382,6 +380,12 @@ QWidget* Preference::tabOutput()
     editConfigPath->setText(DATAMAID->paraValue(toConfigPath).toString());
     cbQuickSave->setChecked(DATAMAID->paraValue(toQuickSave).toBool());
 
+    QString tip = "Ctrl + Shift + S";
+#if defined(Q_OS_MAC)
+    tip = "Control + Shift + S";
+#endif
+    cbQuickSave->setToolTip(tip);
+
     editQuickSavePath->setText(DATAMAID->paraValue(toQuickSavePath).toString());
     const bool quickSaveEnable = DATAMAID->paraValue(toQuickSave).toBool();
     editQuickSavePath->setEnabled(quickSaveEnable);
@@ -460,7 +464,7 @@ QWidget* Preference::tabPin()
     vLay->addLayout(creatResetBtn(tpReset), 1);
 
     cbWindowShadow->setChecked(DATAMAID->paraValue("windowShadow").value<bool>());
-    sbOpacity->setValue(DATAMAID->paraValue("opacity").value<int>());
+    sbOpacity->setValue(DATAMAID->paraValue(tpOpacity).value<int>());
     sbMaxSize->setValue(DATAMAID->paraValue("maxSize").value<int>());
 
     connect(cbWindowShadow, &QCheckBox::stateChanged, this, &Preference::onWindowShadow);
@@ -504,11 +508,11 @@ QWidget *Preference::tabAbout()
     logo->setPixmap(QIcon(":/resources/logo.png").pixmap(QSize(48, 48) * m_scale));
     grid->addWidget(logo, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
 
+    const double ponitSize = 14;
 #if defined(Q_OS_MAC)
-    const double ponitSize = 14;
-#else
-    const double ponitSize = 14;
+    ponitSize = 14;
 #endif
+
     QString bit;
     if (_BIT_ARCH == 4)
         bit = "x86";
@@ -525,7 +529,7 @@ QWidget *Preference::tabAbout()
     QLabel* buildTime = new QLabel(tr("%1-Beta %2 (%3)")
                                    .arg(_PROJECT_VERSION)
                                    .arg(bit)
-                                   .arg(time.left(time.indexOf(" "))));
+                                   .arg(_VERSION_BUILD_TIME/*time.left(time.indexOf(" "))*/));
 
     font.setPointSizeF(ponitSize - 4);
     font.setBold(false);

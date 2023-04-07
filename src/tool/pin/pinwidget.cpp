@@ -53,7 +53,7 @@ PinWidget::PinWidget(const QPixmap &pixmap, const QRect &geometry, QWidget *pare
 
     const int maxWidth = DATAMAID->paraValue("maxSize").toInt();
     setMaximumSize(maxWidth, maxWidth);
-    setWindowOpacity(DATAMAID->paraValue("opacity").toInt() / 100.0);
+    setWindowOpacity(DATAMAID->paraValue(tpOpacity).toInt() / 100.0);
 
     auto vLayout = new QVBoxLayout(this);
     const int margin = PW_MARGIN;
@@ -100,7 +100,12 @@ void PinWidget::initUI()
     for (int i = 10; i >= 1; --i) {
         auto act = aOpicaty->addAction(tr("%1%").arg(i * 10));
         act->setCheckable(true);
-        i == 10 ? act->setChecked(true) : act->setChecked(false);
+
+        if (DATAMAID->paraValue(tpOpacity).toInt() == i * 10)
+            act->setChecked(true);
+        else
+            act->setChecked(false);
+
         opicatyGroup->addAction(act);
         connect(act, &QAction::triggered, this, [&, i]() { onOpacity(i * 10); });
     }

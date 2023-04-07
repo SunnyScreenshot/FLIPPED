@@ -22,6 +22,8 @@
 #include <QDir>
 #include <QDateTime>
 #include <QGuiApplication>
+#include <QSystemTrayIcon>
+#include <QSystemTrayIcon>
 #include "./screen/tray.h"
 #include "qmetaobject.h"
 #include "tool/pin/pinwidget.h"
@@ -66,6 +68,19 @@ int main(int argc, char *argv[])
         msgBox.exec();
         return 0;
     }
+
+
+    auto trayIcon = new QSystemTrayIcon(nullptr);
+    trayIcon->show();
+
+    QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon(1);
+        trayIcon->showMessage("titleEdit->text()", "bodyEdit->toPlainText()", msgIcon,
+                          5 * 1000);
+
+//    QSystemTrayIcon* tray = new QSystemTrayIcon(nullptr);
+//    const QString msg = QObject::tr("Image saved to %1") .arg(111);
+//    tray->showMessage(QObject::tr("Success"), msg, QSystemTrayIcon::Information);
+
 
     //if (lockFile)
     //    delete lockFile;

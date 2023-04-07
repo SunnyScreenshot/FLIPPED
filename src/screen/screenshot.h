@@ -93,6 +93,8 @@ public slots:
     void onCancel();
     void onFinish();
 
+    void onQuickSave();
+
     void onInterruptEdit(const QPoint& pos);
     void clearnAndClose();
     void onParaBtnId(DrawShape shape, QToolButton* tb);
