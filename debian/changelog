@@ -1,3 +1,18 @@
+flipped (1.1.0) UNRELEASED; urgency=medium
+
+  * 重构整个程序和 .ini 交互的逻辑架构，也使用了很多宏；代码清爽了很多
+  * 功能：Quick save
+  * 功能：Auto save
+  * 功能：快捷键冲突检测、系统消息通知
+
+ -- XMuli <xmuli@xmuli-pc>  Sta, 1 Arpil 2022 18:20:13 +0800
+
+flipped (1.0.1) UNRELEASED; urgency=medium
+
+  * 添加开机自启动[Windows]
+
+ -- XMuli <xmuli@xmuli-pc>  Sta, 1 Arpil 2022 18:20:13 +0800
+
 flipped (1.0.0) UNRELEASED; urgency=medium
 
   * 修复诸多缺陷、屏蔽尚未开发好的部分代码
