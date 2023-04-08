@@ -505,7 +505,7 @@ QWidget *Preference::tabAbout()
     logo->setPixmap(QIcon(":/resources/logo.png").pixmap(QSize(48, 48) * m_scale));
     grid->addWidget(logo, i++, j, 2, 2, Qt::AlignCenter);  //占据两格
 
-    const double ponitSize = 14;
+    double ponitSize = 14;
 #if defined(Q_OS_MAC)
     ponitSize = 14;
 #endif
