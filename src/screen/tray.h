@@ -35,6 +35,8 @@ public slots:
     void onPreference(bool checked);
     void onKeySequenceChanged(const QKeySequence& keySequence);
 
+    void onNotificQuickSave(const bool bSaveOk, const QString& pathName);
+    void onNotificHotkeyRegisteredFail(std::map<const QString, const QString> map);
     // tabGeneral
     //void onLanuageChange(const QString& language);
     //void onSelfStart(int sta);

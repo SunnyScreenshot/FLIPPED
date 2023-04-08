@@ -41,6 +41,7 @@
 #include "../tool/pin/pinwidget.h"
 #include "rectcalcu.h"
 #include "../screen/datamaid.h"
+#include "tray.h"
 
 namespace Util {
     bool getRectFromCurrentPoint(WinID winId, QRect &outRect)
@@ -158,12 +159,8 @@ ScreenShot::ScreenShot(QWidget *parent)
     connect(this, &ScreenShot::sigClearScreen, this, &ScreenShot::onClearScreen);
     connect(this, &ScreenShot::sigLineWidthChange, this, &ScreenShot::onLineWidthChange);
 
-#if defined(Q_OS_WIN)
-    new QShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S), this, SLOT(onQuickSave()));
-#else
-    new QShortcut(QKeySequence(Qt::ControlModifier + Qt::SHIFT + Qt::Key_S), this, SLOT(onQuickSave()));
-#endif
-
+    new QShortcut(QKeySequence(Qt::SHIFT + Qt::Key_F4), this, SLOT(onQuickSave()));
+    connect(this, &ScreenShot::sigNotificQuickSave, &(Tray::instance()), &Tray::onNotificQuickSave);
 }
 
 void ScreenShot::launchCapture(CaptureHelper::CaptureType type)
@@ -422,7 +419,7 @@ void ScreenShot::onQuickSave()
         // Manual save
         const QString path = DATAMAID->paraValue(toQuickSavePath).toString();
         const QString name = DATAMAID->formatToFileName(DATAMAID->paraValue(toFileName).toString());
-        QString pathName = path + QDir::separator() + name;
+        QString pathName = path + "/" + name;
 
 
         QDir dir(path);
@@ -440,16 +437,7 @@ void ScreenShot::onQuickSave()
         int elapsed = startTime.msecsTo(stopTime);
         qInfo() << "m_savePix save time: " << elapsed << " ms" << m_savePix.size();
 
-        static QSystemTrayIcon* tray = new QSystemTrayIcon(nullptr);
-        const QString& title = ret ? tr("Success") : tr("Fail");
-        const QString& msg = tr("Image saved to %1") .arg(pathName);
-        tray->setIcon(QIcon(":/resources/tool_para/arrows/arrow_1.svg"));
-        tray->show();
-
-
-        connect(tray, &QSystemTrayIcon::activated, [&tray, title, msg](){
-            tray->showMessage(title, msg, QSystemTrayIcon::Information, 6000);
-        });
+        emit sigNotificQuickSave(ret, pathName);
 
         if (DATAMAID->paraValue(tiAutoCopy2Clipboard).toBool())
             QApplication::clipboard()->setPixmap(m_savePix);

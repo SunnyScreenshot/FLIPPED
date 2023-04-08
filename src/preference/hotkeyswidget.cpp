@@ -11,11 +11,11 @@
 #include <QPushButton>
 #include "../xglobal.h"
 #include "../screen/tray.h"
-#include "../widget/xhorizontalline.h"
 #include "../widget/xkeysequenceedit.h"
 #include "../screen/drawhelper.h"
 #include "../screen/datamaid.h"
 #include "appellation.h"
+#include "../screen/tray.h"
 
 HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 {
@@ -34,7 +34,9 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     grid->setColumnStretch(0, 8);
     grid->setColumnStretch(1, 9);
 
-    QStringList list = { "Ctrl+Shift+A", /*"Ctrl+Shift+W",*/ "Ctrl+Shift+L", "Ctrl+Shift+S", /*"Ctrl+Shift+F", "Ctrl+Shift+T", "Ctrl+Shift+H", "Ctrl+Shift+X"*/ };
+    QStringList list = {  DATAMAID->paraValue(thScrnCapture).toString()
+                         ,DATAMAID->paraValue(thDelayCapture).toString()
+                         ,DATAMAID->paraValue(thFullScreen).toString()};
     std::map<XKeySequenceEdit*, const QString> vHkEdit;
     int idx = 0;
     for (auto& it : Tray::instance().getVHotKeys()) {
@@ -47,7 +49,12 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
         vHkEdit.insert(std::make_pair(pEdit, list.at(idx++)));
         pEdit->setObjectName(describe);
         pEdit->setMinimumWidth(110 * m_scale);
-        hk->isRegistered() ? pEdit->setStyleSheet("background-color: #98fb98;") : pEdit->setStyleSheet("background-color: #ff7f50;");
+        const bool reg = hk->isRegistered();
+        if (reg) {
+            pEdit->setStyleSheet("background-color: #98fb98;");
+        } else {
+            pEdit->setStyleSheet("background-color: #ff7f50;");
+        }
 
         grid->addWidget(new QLabel(describe + ":"), i, j, 1, 1, Qt::AlignRight);
         grid->addWidget(pEdit, i++, j + 1, 1, 1, Qt::AlignLeft);
@@ -56,7 +63,6 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
 //        if (std::get<3>(it) == Tray::ScrnShotType::SST_FullScreen)
 //            grid->addWidget(new XHorizontalLine(contentsRect().width() * 3 / 4 - THV_MARGIN_HOR * m_scale * 2), i++, j, 1, grid->columnCount(), Qt::AlignCenter);
     }
-
 //    qDebug() << "tabHotkeys:grid->rowCount():" << grid->rowCount();
     vLay->addLayout(grid, grid->rowCount());
     vLay->addStretch(3);
@@ -77,6 +83,9 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
             }});
     }
     vLay->addLayout(hLay, 1);
+
+
+
 }
 
 void HotkeysWidget::mousePressEvent(QMouseEvent *event)

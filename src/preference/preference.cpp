@@ -380,10 +380,7 @@ QWidget* Preference::tabOutput()
     editConfigPath->setText(DATAMAID->paraValue(toConfigPath).toString());
     cbQuickSave->setChecked(DATAMAID->paraValue(toQuickSave).toBool());
 
-    QString tip = "Ctrl + Shift + S";
-#if defined(Q_OS_MAC)
-    tip = "Control + Shift + S";
-#endif
+    QString tip = "Shift + F4";
     cbQuickSave->setToolTip(tip);
 
     editQuickSavePath->setText(DATAMAID->paraValue(toQuickSavePath).toString());

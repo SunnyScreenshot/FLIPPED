@@ -39,7 +39,7 @@ DataIni::DataIni(QObject *parent)
 {
     resetAllData();
     readFromAllIni();
-    //writeToAllIni(true);
+//    writeToAllIni(true);
 
     connect(this, &DataIni::sigLanuage, this, [this](QString language) { WRITE_INI(INIT_GENERAL, tgLanuage, language); });
     connect(this, &DataIni::sigFont, this, [this](QString font) { WRITE_INI(INIT_GENERAL, tgFont, font); });

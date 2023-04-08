@@ -119,10 +119,10 @@ void Tray::init()
 void Tray::initGlobalHotKeys()
 {
     m_vHotKeys = {
-        std::make_tuple(nullptr, "Ctrl+Shift+A", tr("Active Window"), CaptureHelper::SST_ActionWindow),
+        std::make_tuple(nullptr, DATAMAID->paraValue(thScrnCapture).toString(), tr("Active Window"), CaptureHelper::SST_ActionWindow),
         //std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
-        std::make_tuple(nullptr, "Ctrl+Shift+L", tr("Delay Capture"), CaptureHelper::SST_DelayCapture),
-        std::make_tuple(nullptr, "Ctrl+Shift+S", tr("Full Screen"), CaptureHelper::SST_FullScreen),
+        std::make_tuple(nullptr, DATAMAID->paraValue(thDelayCapture).toString(), tr("Delay Capture"), CaptureHelper::SST_DelayCapture),
+        std::make_tuple(nullptr, DATAMAID->paraValue(thFullScreen).toString(), tr("Full Screen"), CaptureHelper::SST_FullScreen),
 //        std::make_tuple(nullptr, "Ctrl+Shift+F", tr("Fixd-Size Region"), ScrnShotType::SST_FixdSizeRegion),
 //        std::make_tuple(nullptr, "Ctrl+Shift+T", tr("Paste"), ScrnShotType::SST_Paste),
 //        std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
@@ -130,6 +130,7 @@ void Tray::initGlobalHotKeys()
     };
 
     
+    std::map<const QString, const QString> hotkeyRegFail;
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);    // QHotkey*& 指针的引用类型
         QString& hotkey = std::get<1>(it);
@@ -143,11 +144,15 @@ void Tray::initGlobalHotKeys()
         QMetaEnum enumSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
         pHK->setObjectName(enumSst.valueToKey(sst));
         connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
+
+        if (!pHK->isRegistered())
+            hotkeyRegFail.insert(std::make_pair(describe, hotkey));
         
         qDebug() << "pHK: " << pHK << Qt::endl
             << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
             << "hotkey:" << hotkey << "    hk Is Registered:" << pHK->isRegistered() << Qt::endl;
     }
+    onNotificHotkeyRegisteredFail(hotkeyRegFail);
 }
 
 void Tray::onSrnShot()
@@ -217,3 +222,26 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
         }
     }
 }
+
+void Tray::onNotificQuickSave(const bool bSaveOk, const QString& pathName)
+{
+    const QString& title = bSaveOk ? tr("Success") : tr("Fail");
+    const QString& msg = tr("Image saved to %1").arg(pathName);
+    m_trayIcon->showMessage(title, msg, QIcon(":/resources/logo.png"), 6000);
+}
+
+void Tray::onNotificHotkeyRegisteredFail(std::map<const QString, const QString> map)
+{
+    if (map.size() <= 0)
+        return;
+
+    const QString& title = tr("Fail ShotKeys");
+    QString msg;
+    for (const auto& it: map) {
+        msg += (it.first + ": " + it.second + "\n");
+        msg.left(msg.lastIndexOf('\n'));
+    }
+
+    m_trayIcon->showMessage(title, msg, QIcon(":/resources/logo.png"), 6000);
+}
+

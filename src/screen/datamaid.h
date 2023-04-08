@@ -32,10 +32,8 @@ const QString INIT_OUTPUT("Output");                     // 初始化 输出
 const QString INIT_PIN("Pin");                           // 初始化 贴图
 const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
 
-// DataIni：通过 SETTINGINI 对 .ini 进行数据的读和写
+// DataIni 通过 QSetting 对 .ini 进行读写， 数据统一保存到 DataMaid::instance() 中，里面为实时最新的
 // DataMaid：类似单例，所有的 .ini 的参数，全部存放于此；other ui class ⇌ [DataMaid 主 ⇌ DataIni] ⇌ .ini
-// 
-// DataIni 通过 QSetting 对 .ini 进行读写， 数据统一保存到 DataMaid::instance() 中，里面为时刻最新的
 class DataIni : public QObject
 {
     Q_OBJECT
@@ -123,14 +121,13 @@ private:
     QString resetQuickSavePath() { m_quickSavePath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(); return m_quickSavePath; }
     QString resetAutoSavePath() { m_autoSavePath = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(); return m_autoSavePath; }
 
-
     bool resetWindowShadow() { m_windowShadow = false; return m_windowShadow; }
     int resetOpacity() { m_opacity = 100; return m_opacity; }
     int resetMaxSize() { m_maxSize = 100000; return m_maxSize; }
 
-    QString resetScrnCapture() { m_scrnCapture = "Ctrl+Shift+L"; return m_scrnCapture; }       // TODO 2023.04.02: 对应的 Mac 上面需要修改
-    QString resetDelayCapture() { m_delayCapture = "Ctrl+Shift+S"; return m_delayCapture; }
-    QString resetFullScrnCapture() { m_fullScrnCapture = "Ctrl+Shift+F"; return m_fullScrnCapture; }
+    QString resetScrnCapture() { m_scrnCapture = "F6"; return m_scrnCapture; }
+    QString resetDelayCapture() { m_delayCapture = "F7"; return m_delayCapture; }
+    QString resetFullScrnCapture() { m_fullScrnCapture = "F8"; return m_fullScrnCapture; }
 
 signals:
     void sigLanuage(QString language);

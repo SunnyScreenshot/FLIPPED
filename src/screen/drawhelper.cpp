@@ -25,8 +25,6 @@
 #include <QStandardPaths>
 #include "../xglobal.h"
 #include "../preference/appellation.h"
-#include "screenshot.h"
-#include "datamaid.h"
 
 QString XDrawStep::serialText = "0_0_0_0";
 

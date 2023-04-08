@@ -82,6 +82,7 @@ private:
 signals:
     void sigClearScreen();
     void sigLineWidthChange(int width);
+    void sigNotificQuickSave(const bool bSaveOk, const QString& pathName);
 
 public slots:
     void onEnableDraw(bool enable);
