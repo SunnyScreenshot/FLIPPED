@@ -64,9 +64,13 @@
 
 - **MacOS**
 
+  <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121457071.jpg" width="100%"/>
+
   <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121524707.jpg" width="100%"/>
 
 - **Windows**
+
+  <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121616530.jpg" width="100%"/>
 
   <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121524281.jpg" width="100%"/>
 
@@ -76,25 +80,28 @@
 
 <br>
 
-**Other:** More snapshoot effects can be → [here](. \snapshot) preview
+<font color=#D0087E size=4 face="幼圆"> **Other:** More snapshoot effects can be → [here](. \snapshot) preview </font>
+
+<img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121515818.jpg" width="30%"/> <img src="https://fastly.jsdelivr.net/gh/XMuli/xmuliPic@pic/2022/202303121522838.jpg" width="30%"/>
 
 <br>
 
 ## Keyboard shortcuts
 
-| Keys                                                         | Description                      | Mode   |
-| ------------------------------------------------------------ | -------------------------------- | ------ |
-| <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> ( <kbd>A</kbd>, <kbd>S</kbd>, <kbd>W</kbd>, <kbd>D</kbd> ) | Move selection 1px               | Local  |
-| <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 1 px          | Local  |
-| <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 1 px            | Local  |
-| <kbd>Shift</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Move selection 10 px             | Local  |
-| <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 10 px         | Local  |
-| <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 10 px           | Local  |
-| <kbd>Esc</kbd>                                               | Quit capture                     | Local  |
-|                                                              |                                  |        |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd>  + <kbd>A</kbd>           | Window activation capture screen | Global |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd>  + <kbd>L</kbd>           | Time-lapse screen capture        | Global |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd>  + <kbd>S</kbd>           | Full screen capture screen       | Global |
+| Keys                                                         | Description              | Mode  |
+| ------------------------------------------------------------ | ------------------------ | ----- |
+| <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> ( <kbd>A</kbd>, <kbd>S</kbd>, <kbd>W</kbd>, <kbd>D</kbd> ) | Move selection 1px       | Local |
+| <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 1 px  | Local |
+| <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 1 px    | Local |
+| <kbd>Shift</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Move selection 10 px     | Local |
+| <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 10 px | Local |
+| <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 10 px   | Local |
+| <kbd>Shift</kbd> + <kbd>F4</kbd>                             | 快速保存截图             | 局部  |
+| <kbd>Esc</kbd>                                               | 退出                     | 局部  |
+|                                                              |                          |       |
+| <kbd>F6</kbd>                                                | 窗口智能截图             | 全局  |
+| <kbd>F7</kbd>                                                | 延时截图                 | 全局  |
+| <kbd>F8</kbd>                                                | 全屏截图                 | 全局  |
 
 <br>
 
@@ -162,27 +169,17 @@
 
 <br>
 
-## Package Download
-
-Some  prebuilt packages and official releases are available on the [Release Page](https://github.com/XMuli/Flipped/releases).
-
-<br>
-
 ## Author
 
-[![alt text](https://img.shields.io/badge/QQ-XMuli-brightgreen)](https://sighttp.qq.com/authd?IDKEY=31f3ef7312b39e2c8dc822ae2f4c3b3118e1a6f31cc83373) : Chat with me directly~
+[![alt text](https://img.shields.io/badge/QQ-XMuli-brightgreen)](https://sighttp.qq.com/authd?IDKEY=31f3ef7312b39e2c8dc822ae2f4c3b3118e1a6f31cc83373) : Chat with me directly~                   |    [![alt text](https://img.shields.io/badge/GitHub-XMuli-brightgreen)](https://github.com/XMuli) : View my homepage
 
-[![alt text](https://img.shields.io/badge/GitHub-XMuli-brightgreen)](https://github.com/XMuli) : View my homepage
-
-[![alt text](https://img.shields.io/badge/Blog-%E5%81%95%E8%87%A7%E7%9A%84%E5%B0%8F%E7%AB%99-ff69b4)](https://ifmet.cn/) : Curious about my nest
-
-[![alt text](https://img.shields.io/badge/Blog-国内镜像-ff69b4)](https://blog.csdn.net/qq_33154343) ：Views 100W+
+[![alt text](https://img.shields.io/badge/Blog-%E5%81%95%E8%87%A7%E7%9A%84%E5%B0%8F%E7%AB%99-ff69b4)](https://ifmet.cn/) : Curious about my nest           |    [![alt text](https://img.shields.io/badge/Blog-国内镜像-ff69b4)](https://blog.csdn.net/qq_33154343) ：Views 100W+
 
 <br>
 
 ## Contributors
 
-If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke.
+If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke.   → [project-flipped](https://github.com/XMuli/FlippedPackage)
 
 <br>
 
@@ -198,9 +195,7 @@ If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">yo
 
 Feedback & How to contribute
 
-You are very welcome to join us! You can [open an issue](https://github.com/XMuli/Flipped/issues) ; for any bug, suggestion, feature idea, or to help improve this software. Or help improve the project by submitting a Pull Request.
-
-Please follow the  [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/)  code of conduct.
+You are very welcome to join us! You can [open an issue](https://github.com/XMuli/FlippedPackage/issues) ; for any bug, suggestion, feature idea, or to help improve this software. Or help improve the project by submitting a Pull Request.
 
 <br>
 
@@ -208,5 +203,16 @@ You can also add  [![alt text](https://img.shields.io/badge/QQ_Groups-418103279-
 
 <br>
 
-## License
+## Package Download
 
+<font color=#D0087E> → Offline Installer Download [Releases](https://github.com/XMuli/FlippedPackage/releases); </font>
+
+<font color=#D0087E>→ **Feedback BUG/SUGGEST, user community, etc., and the latest version of the installer get, in QQ group:[418103279 ](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from= webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu)** </font>
+
+<br>
+
+## Series Address
+
+[QtExamples](https://github.com/XMuli/QtExamples) Welcome `star` ⭐ and `fork` 🍴 to this series of `C++ / QT / DTK` studies, with a table of contents for learning from the beginning to the end
+
+[ExCMake](https://github.com/XMuli/ExCMake) Welcome `star` ⭐ and `fork` 🍴 to this series of `CMake` studies, with a table of contents for learning from the beginning to the end
