@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QHotkey>
 #include <QPointer>
+#include <QSystemTrayIcon>
 #include "screenshot.h"
 
 class QSystemTrayIcon;
@@ -37,6 +38,8 @@ public slots:
 
     void onNotificQuickSave(const bool bSaveOk, const QString& pathName);
     void onNotificHotkeyRegisteredFail(std::map<const QString, const QString> map);
+
+    void onActivated(QSystemTrayIcon::ActivationReason reason);
     // tabGeneral
     //void onLanuageChange(const QString& language);
     //void onSelfStart(int sta);

@@ -103,6 +103,8 @@ void Tray::init()
     m_trayIcon->setToolTip(tr(_PROJECT_NAME));
 	m_trayIcon->setContextMenu(m_trayIconMenu);
 
+
+    connect(m_trayIcon, &QSystemTrayIcon::activated, this, &Tray::onActivated);
 	connect(srnShot, &QAction::triggered, this, &Tray::onSrnShot);
     connect(preference, &QAction::triggered, this, &Tray::onPreference);
 	connect(quit, &QAction::triggered, [](){qApp->quit();});
@@ -243,5 +245,17 @@ void Tray::onNotificHotkeyRegisteredFail(std::map<const QString, const QString> 
     }
 
     m_trayIcon->showMessage(title, msg, QIcon(":/resources/logo.png"), 6000);
+}
+
+void Tray::onActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (QSystemTrayIcon::Trigger == reason) {  //  鼠标单击
+        if (!m_pSrnShot)
+            m_pSrnShot = new ScreenShot();
+
+            m_pSrnShot->launchCapture(CaptureHelper::SST_ActionWindow);
+    } else {
+
+    }
 }
 
