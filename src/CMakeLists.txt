@@ -84,6 +84,25 @@ set(SRC_TOOL
     tool/parameterbar.cpp)
 
 set(SRC_PERFERENCE
+    preference/UIWidget/tabgeneral.h
+    preference/UIWidget/tabgeneral.cpp
+    preference/UIWidget/tabgeneral.ui
+    preference/UIWidget/tabinterface.h
+    preference/UIWidget/tabinterface.cpp
+    preference/UIWidget/tabinterface.ui
+    preference/UIWidget/taboutput.h
+    preference/UIWidget/taboutput.cpp
+    preference/UIWidget/taboutput.ui
+    preference/UIWidget/tabpin.h
+    preference/UIWidget/tabpin.cpp
+    preference/UIWidget/tabpin.ui
+    preference/UIWidget/tabhotkeys.h
+    preference/UIWidget/tabhotkeys.cpp
+    preference/UIWidget/tabhotkeys.ui
+    preference/UIWidget/tababout.h
+    preference/UIWidget/tababout.cpp
+    preference/UIWidget/tababout.ui
+
     preference/preference.h
     preference/preference.cpp
     preference/hotkeyswidget.h
