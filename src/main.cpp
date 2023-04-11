@@ -12,7 +12,8 @@
 #include <QStyleFactory>
 #include <QLockFile>
 #include <QMessageBox>
-#include "core/xqtlog.h"
+
+#include "./preference/UIWidget/prefmanage.h"
 
 // test
 #include <iostream>
@@ -41,7 +42,6 @@ int main(int argc, char *argv[])
     qInstallMessageHandler(nullptr);
 
     // 高分屏四种方案 https://blog.csdn.net/qq_33154343/article/details/108905279
-
 #if(QT_VERSION > QT_VERSION_CHECK(5,6,0))
 //    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);  // 2K、4K 2@ 倍；获取的分辨率 4K 下实际为 /2 后。 此行需在 QApplication a(argc,argv);前面
 //    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);    // 控制图片缩放质量，svg 的图片不会模糊在 4K 上。   此行无需在 QApplication a(argc,argv);前面
@@ -70,20 +70,11 @@ int main(int argc, char *argv[])
     }
 
 
-    auto trayIcon = new QSystemTrayIcon(nullptr);
-    trayIcon->show();
+    PrefManage* manage = new PrefManage();
+    manage->show();
 
-    QSystemTrayIcon::MessageIcon msgIcon = QSystemTrayIcon::MessageIcon(1);
-        trayIcon->showMessage("titleEdit->text()", "bodyEdit->toPlainText()", msgIcon,
-                          5 * 1000);
-
-//    QSystemTrayIcon* tray = new QSystemTrayIcon(nullptr);
-//    const QString msg = QObject::tr("Image saved to %1") .arg(111);
-//    tray->showMessage(QObject::tr("Success"), msg, QSystemTrayIcon::Information);
-
-
-    //if (lockFile)
-    //    delete lockFile;
+    if (lockFile)
+        delete lockFile;
 
 
     // I18N + font
@@ -97,6 +88,7 @@ int main(int argc, char *argv[])
     //if (!lanuages.contains(name))
     //    name = "en_US";
 
+#if 0
     auto lanuage = DATAMAID->paraValue("lanuage").toString();
     auto ftList = DATAMAID->paraValue("font").toString().split(',');
     QTranslator trans;
@@ -122,6 +114,8 @@ int main(int argc, char *argv[])
     const QString value = "macintosh";  // macintosh Windows Fusion
     QApplication::setStyle(value);
 #else
+#endif
+
 #endif
 
 //    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);

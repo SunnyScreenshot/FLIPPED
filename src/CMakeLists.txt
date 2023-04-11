@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.16)
 set(PROJECT_NAME Flipped)
-project(${PROJECT_NAME} VERSION 1.1.0 LANGUAGES CXX)
+project(${PROJECT_NAME} VERSION 1.2.0 LANGUAGES CXX)
 
 file(GLOB All_CNGFIG_FILES "data/config/*")
 file(COPY ${All_CNGFIG_FILES} DESTINATION "${CMAKE_BINARY_DIR}/bin/config")
@@ -84,24 +84,28 @@ set(SRC_TOOL
     tool/parameterbar.cpp)
 
 set(SRC_PERFERENCE
+    preference/UIWidget/prefmanage.ui
+    preference/UIWidget/tabgeneral.ui
+    preference/UIWidget/tabinterface.ui
+    preference/UIWidget/taboutput.ui
+    preference/UIWidget/tabpin.ui
+    preference/UIWidget/tabhotkeys.ui
+    preference/UIWidget/tababout.ui
+
+    preference/UIWidget/prefmanage.h
+    preference/UIWidget/prefmanage.cpp
     preference/UIWidget/tabgeneral.h
     preference/UIWidget/tabgeneral.cpp
-    preference/UIWidget/tabgeneral.ui
     preference/UIWidget/tabinterface.h
     preference/UIWidget/tabinterface.cpp
-    preference/UIWidget/tabinterface.ui
     preference/UIWidget/taboutput.h
     preference/UIWidget/taboutput.cpp
-    preference/UIWidget/taboutput.ui
     preference/UIWidget/tabpin.h
     preference/UIWidget/tabpin.cpp
-    preference/UIWidget/tabpin.ui
     preference/UIWidget/tabhotkeys.h
     preference/UIWidget/tabhotkeys.cpp
-    preference/UIWidget/tabhotkeys.ui
     preference/UIWidget/tababout.h
     preference/UIWidget/tababout.cpp
-    preference/UIWidget/tababout.ui
 
     preference/preference.h
     preference/preference.cpp
@@ -168,6 +172,8 @@ include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
 link_directories(${CMAKE_BINARY_DIR}/bin
     ${CMAKE_BINARY_DIR}/3rdparty/QHotkey)
 
+#QT5_WRAP_UI(UI_HEADERS ${UIS})
+
 add_executable(${PROJECT_NAME}
     ${SRC_MAIN}
     ${SRC_PLATFORM}
@@ -231,7 +237,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VE
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # 4/8
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown  Win: AMD64
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
-target_compile_definitions(${PROJECT_NAME} PUBLIC _VERSION_BUILD_TIME="2023.04.08")          # build time about version
+target_compile_definitions(${PROJECT_NAME} PUBLIC _VERSION_BUILD_TIME="2023.04.12")          # build time about version
 if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         WIN32_LEAN_AND_MEAN                                                                  # Header files containing only the common APIs

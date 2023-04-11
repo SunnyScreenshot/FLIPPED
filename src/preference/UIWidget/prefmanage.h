@@ -16,6 +16,12 @@ public:
     ~PrefManage();
 
 private:
+    void initUIInterface();
+    void initUIHotkeys();
+    void initUIAbout();
+    void initUI();
+
+private:
     Ui::PrefManage *ui;
 };
 
