@@ -85,28 +85,9 @@ set(SRC_TOOL
 
 set(SRC_PERFERENCE
     preference/UIWidget/prefmanage.ui
-    preference/UIWidget/tabgeneral.ui
-    preference/UIWidget/tabinterface.ui
-    preference/UIWidget/taboutput.ui
-    preference/UIWidget/tabpin.ui
-    preference/UIWidget/tabhotkeys.ui
-    preference/UIWidget/tababout.ui
 
     preference/UIWidget/prefmanage.h
     preference/UIWidget/prefmanage.cpp
-    preference/UIWidget/tabgeneral.h
-    preference/UIWidget/tabgeneral.cpp
-    preference/UIWidget/tabinterface.h
-    preference/UIWidget/tabinterface.cpp
-    preference/UIWidget/taboutput.h
-    preference/UIWidget/taboutput.cpp
-    preference/UIWidget/tabpin.h
-    preference/UIWidget/tabpin.cpp
-    preference/UIWidget/tabhotkeys.h
-    preference/UIWidget/tabhotkeys.cpp
-    preference/UIWidget/tababout.h
-    preference/UIWidget/tababout.cpp
-
     preference/preference.h
     preference/preference.cpp
     preference/hotkeyswidget.h

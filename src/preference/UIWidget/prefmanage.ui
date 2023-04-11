@@ -511,7 +511,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="spinBox_3">
+            <widget class="QSpinBox" name="spImageQuailty">
              <property name="minimum">
               <number>-1</number>
              </property>
@@ -580,17 +580,17 @@
                <number>3</number>
               </property>
               <item row="1" column="0" colspan="3">
-               <widget class="QLineEdit" name="lineEdit">
+               <widget class="QLineEdit" name="leFileName">
                 <property name="text">
                  <string/>
                 </property>
                </widget>
               </item>
               <item row="11" column="0" colspan="3">
-               <widget class="QLineEdit" name="lineEdit_4"/>
+               <widget class="QLineEdit" name="leAutoSave"/>
               </item>
               <item row="5" column="0" colspan="3">
-               <widget class="QLineEdit" name="lineEdit_2"/>
+               <widget class="QLineEdit" name="leConfig"/>
               </item>
               <item row="2" column="0">
                <spacer name="verticalSpacer_6">
@@ -646,7 +646,7 @@
                </spacer>
               </item>
               <item row="8" column="0" colspan="3">
-               <widget class="QLineEdit" name="lineEdit_3"/>
+               <widget class="QLineEdit" name="leQuickSave"/>
               </item>
               <item row="3" column="0" colspan="2">
                <widget class="QLabel" name="label_11">
@@ -766,7 +766,7 @@
         <number>0</number>
        </property>
        <item>
-        <layout class="QGridLayout" name="gridLayout_5" columnstretch="0,3,1,2">
+        <layout class="QGridLayout" name="gridLayout_5" columnstretch="1,1,4,1">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -803,7 +803,13 @@
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QSpinBox" name="spinBox_4">
+          <widget class="QSpinBox" name="spMaxSize">
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="maximum">
             <number>100000</number>
            </property>
@@ -813,7 +819,13 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QSpinBox" name="spinBox_5">
+          <widget class="QSpinBox" name="spOpacity">
+           <property name="maximumSize">
+            <size>
+             <width>80</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="maximum">
             <number>100</number>
            </property>
@@ -910,7 +922,7 @@
         <number>0</number>
        </property>
        <item>
-        <layout class="QGridLayout" name="hotkeyLayout" columnstretch="1,4,2,3">
+        <layout class="QGridLayout" name="hotkeyLayout">
          <property name="leftMargin">
           <number>10</number>
          </property>

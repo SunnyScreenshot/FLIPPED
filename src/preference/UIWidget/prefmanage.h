@@ -15,6 +15,13 @@ public:
     explicit PrefManage(QWidget *parent = nullptr);
     ~PrefManage();
 
+private slots:
+    void on_generalReset_released();
+    void on_interfaceReset_released();
+    void on_outputReset_released();
+    void on_pinReset_released();
+    void on_hotkeysReset_released();
+
 private:
     void initUIInterface();
     void initUIHotkeys();

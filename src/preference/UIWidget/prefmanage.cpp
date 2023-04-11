@@ -99,3 +99,52 @@ void PrefManage::initUI()
 
 //    QDesktopServices::openUrl(QUrl(QString("https://www.baidu.com")));
 
+
+void PrefManage::on_generalReset_released()
+{
+    qDebug() << "-----------1";
+
+//    cbLanuage
+//    btnFont
+//    cbAutoRun
+//    cbLogLevel
+
+}
+
+
+void PrefManage::on_interfaceReset_released()
+{
+//    cbBorderStyle
+//    spBorderWidth
+//    spCrosshairWidth
+//    cbAutoDetectWindows
+//    cbCrosshair
+//    cbAutoCopy2clipboard
+}
+
+
+void PrefManage::on_outputReset_released()
+{
+//    spImageQuailty
+//    leFileName
+//    leConfig
+//    leQuickSave
+//    leAutoSave
+}
+
+
+void PrefManage::on_pinReset_released()
+{
+//    spOpacity
+//    spMaxSize
+}
+
+
+void PrefManage::on_hotkeysReset_released()
+{
+//    构建时，需自行标注对象名称
+//    hkCapture
+//    hkDelayCapture
+//    hkFullScreCapture
+}
+
