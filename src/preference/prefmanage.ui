@@ -29,7 +29,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -69,7 +69,7 @@
           <number>5</number>
          </property>
          <item row="2" column="1">
-          <widget class="QCheckBox" name="checkBox">
+          <widget class="QCheckBox" name="cbAutoRun">
            <property name="text">
             <string>Run on system startup</string>
            </property>
@@ -109,7 +109,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QComboBox" name="comboBox_2">
+          <widget class="QComboBox" name="cbLogLevel">
            <item>
             <property name="text">
              <string>debug</string>
@@ -148,7 +148,10 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="btnFont">
+           <property name="styleSheet">
+            <string notr="true">text-align: left</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -165,23 +168,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="comboBox">
-           <item>
-            <property name="text">
-             <string notr="true">English</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">简体中文</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">繁體中文</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="cbLanuage"/>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_2">
@@ -225,7 +212,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="generalReset">
              <property name="text">
               <string>Reset</string>
              </property>
@@ -305,7 +292,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="comboBox_3">
+          <widget class="QComboBox" name="cbBorderStyle">
            <item>
             <property name="text">
              <string>Flipped</string>
@@ -324,14 +311,14 @@
           </widget>
          </item>
          <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBox">
+          <widget class="QSpinBox" name="spBorderWidth">
            <property name="maximum">
             <number>100</number>
            </property>
           </widget>
          </item>
          <item row="9" column="1">
-          <widget class="QCheckBox" name="checkBox_3">
+          <widget class="QCheckBox" name="cbAutoCopy2clipboard">
            <property name="text">
             <string>Auto copy to clipboard</string>
            </property>
@@ -379,7 +366,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_3">
+            <widget class="QPushButton" name="interfaceReset">
              <property name="text">
               <string>Reset</string>
              </property>
@@ -401,7 +388,7 @@
           </spacer>
          </item>
          <item row="5" column="1">
-          <widget class="QSpinBox" name="spinBox_2">
+          <widget class="QSpinBox" name="spCrosshairWidth">
            <property name="maximum">
             <number>100</number>
            </property>
@@ -431,9 +418,9 @@
           </spacer>
          </item>
          <item row="7" column="1">
-          <widget class="QCheckBox" name="checkBox_2">
+          <widget class="QCheckBox" name="cbAutoDetectWindows">
            <property name="text">
-            <string>Smart window</string>
+            <string>Auto detect windows</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -441,7 +428,7 @@
           </widget>
          </item>
          <item row="8" column="1">
-          <widget class="QCheckBox" name="checkBox_4">
+          <widget class="QCheckBox" name="cbCrosshair">
            <property name="text">
             <string>Crosshair</string>
            </property>
@@ -557,7 +544,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_4">
+            <widget class="QPushButton" name="outputReset">
              <property name="text">
               <string>Reset</string>
              </property>
@@ -606,7 +593,7 @@
                </spacer>
               </item>
               <item row="7" column="0" colspan="2">
-               <widget class="QCheckBox" name="checkBox_6">
+               <widget class="QCheckBox" name="cbQuickSave">
                 <property name="text">
                  <string>Quick save</string>
                 </property>
@@ -616,7 +603,7 @@
                </widget>
               </item>
               <item row="10" column="0" colspan="2">
-               <widget class="QCheckBox" name="checkBox_5">
+               <widget class="QCheckBox" name="cbAutoSave">
                 <property name="text">
                  <string>Auto save</string>
                 </property>
@@ -672,7 +659,7 @@
                </spacer>
               </item>
               <item row="7" column="2">
-               <widget class="QPushButton" name="pushButton_5">
+               <widget class="QPushButton" name="btnQuickSave">
                 <property name="maximumSize">
                  <size>
                   <width>80</width>
@@ -685,7 +672,7 @@
                </widget>
               </item>
               <item row="10" column="2">
-               <widget class="QPushButton" name="pushButton_7">
+               <widget class="QPushButton" name="btnAutoSave">
                 <property name="maximumSize">
                  <size>
                   <width>80</width>
@@ -698,7 +685,7 @@
                </widget>
               </item>
               <item row="3" column="2">
-               <widget class="QPushButton" name="pushButton_6">
+               <widget class="QPushButton" name="btnConfig">
                 <property name="maximumSize">
                  <size>
                   <width>80</width>
@@ -766,7 +753,7 @@
         <number>0</number>
        </property>
        <item>
-        <layout class="QGridLayout" name="gridLayout_5" columnstretch="1,1,4,1">
+        <layout class="QGridLayout" name="gridLayout_5" columnstretch="2,2,4,2">
          <property name="leftMargin">
           <number>10</number>
          </property>
@@ -819,7 +806,7 @@
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QSpinBox" name="spOpacity">
+          <widget class="QSpinBox" name="sbOpacity">
            <property name="maximumSize">
             <size>
              <width>80</width>
@@ -889,7 +876,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_8">
+            <widget class="QPushButton" name="pinReset">
              <property name="text">
               <string>Reset</string>
              </property>
@@ -957,7 +944,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_9">
+            <widget class="QPushButton" name="hotkeysReset">
              <property name="text">
               <string>Reset</string>
              </property>

@@ -84,10 +84,10 @@ set(SRC_TOOL
     tool/parameterbar.cpp)
 
 set(SRC_PERFERENCE
-    preference/UIWidget/prefmanage.ui
+    preference/prefmanage.ui
 
-    preference/UIWidget/prefmanage.h
-    preference/UIWidget/prefmanage.cpp
+    preference/prefmanage.h
+    preference/prefmanage.cpp
     preference/preference.h
     preference/preference.cpp
     preference/hotkeyswidget.h

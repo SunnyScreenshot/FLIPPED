@@ -13,7 +13,7 @@
 #include <QLockFile>
 #include <QMessageBox>
 
-#include "./preference/UIWidget/prefmanage.h"
+#include "./preference/prefmanage.h"
 
 // test
 #include <iostream>
