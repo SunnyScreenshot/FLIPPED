@@ -1414,11 +1414,11 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa) const
     }
 
     const QString style = DATAMAID->paraValue("borderStyle").toString();
-    if (style == "flipped") {
+    if (style == "Flipped") {
         drawBorderFlipped(pa, rt);
-    } else if (style == "black_white") {
+    } else if (style == "BalckAndWhite") {
         drawBorderBlackWhite (pa, rt);
-    } else if (style == "light_blue") {
+    } else if (style == "LightBlue") {
         pa.drawRect(rt);
         drawBorderLightBlue(pa, rt);
     }

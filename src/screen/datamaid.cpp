@@ -37,6 +37,7 @@ DataIni::DataIni(QObject *parent)
     : QObject(parent)
     , m_settings(qApp->applicationDirPath() + "/config/config.ini", QSettings::IniFormat, nullptr)
 {
+    m_settings.setIniCodec("utf-8");
     resetAllData();
     readFromAllIni();
 //    writeToAllIni(true);

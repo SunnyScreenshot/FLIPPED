@@ -102,7 +102,7 @@ private:
     QString resetLogLevel() { m_logLevel = "debug"; return m_logLevel; }
     bool resetAutoUpdate() { m_autoUpdate = false; return m_autoUpdate; }
 
-    QString resetBorderStyle() { m_borderStyle = "flipped"; return m_borderStyle; }
+    QString resetBorderStyle() { m_borderStyle = "Flipped"; return m_borderStyle; }
     QString resetBorderColor() { m_borderColor = "#0e70ff"; return m_borderColor; }
     int resetBorderWidth() { m_borderWidth = 2; return m_borderWidth; }
     QString resetCrosshairColor() { m_crosshairColor = "#db000f"; return m_crosshairColor; }

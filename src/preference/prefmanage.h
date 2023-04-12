@@ -17,53 +17,6 @@ public:
     ~PrefManage();
 
 private:
-    inline bool cbState2Bool(int state);
-
-private slots:
-
-    // tabGeneral
-    void onLanuage(const QString& language);
-    void onFont();
-    void onAutoRun(int sta);
-//    void onAsAdmin(int sta);
-    void onLogLevel(const QString& language);
-    //void onAutoCheck(int sta);
-    //void onUpdate();
-
-//    // tabInterface
-//    void onBorderStyle(const QString& style);
-//    void onBorderColor(const QColor& color);
-//    void onBorderWidth(int val);
-//    void onCrosshairColor(const QColor& color);
-//    void onCrosshairWidth(int val);
-//    void onSmartWindow(int val);
-//    void onShowCrosshair(int val);
-//    void onShowCursor(int val);
-//    void onAutoCopyToClip(int val);
-
-//    // tabOutput
-//    void onImageQuailty(int val);
-//    void onFileName(const QString& name);
-//    void onConfigPath(const QString& path);
-//    void onQuickSave(int val);
-//    void onAutoSave(int val);
-//    void onQuickSavePath(const QString& path);
-//    void onAutoSavePath(const QString& path);
-//    void onChoosePath();
-
-//    // tabPin
-//    void onWindowShadow(int sta);
-//    void onOpacity(int val);
-//    void onMaxSize(int val);
-
-    // about
-    void on_generalReset_released();
-    void on_interfaceReset_released();
-    void on_outputReset_released();
-    void on_pinReset_released();
-    void on_hotkeysReset_released();
-
-private:
     void initUIGeneral();
     void initUIInterface();
     void initUIOutput();
@@ -72,9 +25,52 @@ private:
     void initUIAbout();
     void initUI();
 
+    inline bool cbState2Bool(int state);
+
+private slots:
+    // tabGeneral
+    void on_cbLanuage_currentTextChanged(const QString &language);
+    void on_btnFont_released();
+    void on_cbAutoRun_stateChanged(int sta);
+    void on_cbLogLevel_currentTextChanged(const QString &level);
+
+    // tabInterface
+    void onBorderColor(const QColor& color);
+    void onCrosshairColor(const QColor& color);
+    void on_cbBorderStyle_currentTextChanged(const QString &style);
+    void on_spBorderWidth_valueChanged(int val);
+    void on_spCrosshairWidth_valueChanged(int val);
+    void on_cbAutoDetectWindows_stateChanged(int val);
+    void on_cbCrosshair_stateChanged(int val);
+    void on_cbAutoCopy2clipboard_stateChanged(int val);
+
+    // tabOutput
+    void on_cbQuickSave_stateChanged(int val);
+    void on_cbAutoSave_stateChanged(int val);
+    void on_sbImageQuailty_valueChanged(int val);
+    void on_leFileName_textChanged(const QString &name);
+    void on_leConfig_textChanged(const QString &path);
+    void on_leQuickSave_textChanged(const QString &path);
+    void on_leAutoSave_textChanged(const QString &path);
+    QString onSelectPath();
+
+    // tabPin
+    void on_sbOpacity_valueChanged(int val);
+    void on_spMaxSize_valueChanged(int val);
+
+    // tabAbout
+
+    // Reset
+    void on_generalReset_released();
+    void on_interfaceReset_released();
+    void on_outputReset_released();
+    void on_pinReset_released();
+    void on_hotkeysReset_released();
+
 private:
     Ui::PrefManage *ui;
     std::map<const QString, const QString> m_lanuages;
+    std::map<const QString, const QString> m_borderStyle;
 
 
 };
