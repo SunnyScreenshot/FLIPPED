@@ -39,9 +39,11 @@ DataIni::DataIni(QObject *parent)
 {
     m_settings.setIniCodec("utf-8");
     resetAllData();
+    qDebug() << qApp->applicationDirPath() + "/config/config.ini";
     readFromAllIni();
-//    writeToAllIni(true);
+    //writeToAllIni(true);
 
+    connect(this, &DataIni::sigFirstRun, this, [this](bool firstRun) { WRITE_INI(INIT_GENERAL, tgFirstRun, firstRun); });
     connect(this, &DataIni::sigLanuage, this, [this](QString language) { WRITE_INI(INIT_GENERAL, tgLanuage, language); });
     connect(this, &DataIni::sigFont, this, [this](QString font) { WRITE_INI(INIT_GENERAL, tgFont, font); });
     connect(this, &DataIni::sigAutoRun, this, [this](bool enable) { WRITE_INI(INIT_GENERAL, tgAutoRun, enable); });
@@ -78,12 +80,14 @@ DataIni::DataIni(QObject *parent)
 
 void DataIni::readFromAllIni()
 {
+    const auto firstRun   = READ_INI(INIT_GENERAL, tgFirstRun, resetFirstRun()).toBool();
     const auto lanuage    = READ_INI(INIT_GENERAL, tgLanuage, resetLanuage()).toString();
     const auto font       = READ_INI(INIT_GENERAL, tgFont, resetFont()).toString();
     const auto autoRun    = READ_INI(INIT_GENERAL, tgAutoRun, resetAutoRun()).toBool();
     const auto asAdmin    = READ_INI(INIT_GENERAL, tgAsAdmin, resetAsAdmin()).toBool();
     const auto logLevel   = READ_INI(INIT_GENERAL, tgLogLevel, resetLogLevel()).toString();
     const auto autoUpdate = READ_INI(INIT_GENERAL, tgAutoCheckUpdate, resetAutoUpdate()).toBool();
+    setQStrProperty(tgLanuage, firstRun);
     setQStrProperty(tgLanuage, lanuage);
     setQStrProperty(tgFont, font);
     setQStrProperty(tgAutoRun, autoRun);
@@ -152,6 +156,7 @@ void DataIni::writeToAllIni(const bool bReset)
 void DataIni::writeToGeneralIni(const bool bReset)
 {
     if (bReset)  resetGeneral();
+    WRITE_INI(INIT_GENERAL, tgFirstRun, m_firstRun);
     WRITE_INI(INIT_GENERAL, tgLanuage, m_lanuage);
     WRITE_INI(INIT_GENERAL, tgFont, m_font);
     WRITE_INI(INIT_GENERAL, tgAutoRun, m_autoRun);
@@ -213,6 +218,7 @@ void DataIni::resetAllData()
 
 void DataIni::resetGeneral()
 {
+    resetFirstRun();
     resetLanuage();
     resetFont();
     resetAutoRun();
@@ -261,7 +267,6 @@ void DataIni::resetHotkeys()
 
 DataMaid::DataMaid(QObject *parent)
 {
-    m_dataIni.resetAllData();
 }
 
 QVariant DataMaid::paraValue(const char *key)
@@ -292,6 +297,60 @@ void DataMaid::readFromAllIni()
 void DataMaid::writeToAllIni(const bool bReset)
 {
     m_dataIni.writeToAllIni(bReset);
+}
+
+#include <QLocale>
+#include <QTranslator>
+#include <QDir>
+#include <QFileInfoList>
+void DataMaid::setRunLanguage()
+{
+    // 获取有无此文件名称？
+    const auto appPath = qApp->applicationDirPath();
+    QStringList qms;
+    QDir dir(appPath + QDir::separator() + "translations");
+    if (dir.exists()) {
+        for (QFileInfo fullDir : dir.entryInfoList(QDir::Files)) {
+            if (fullDir.fileName() == "." || fullDir.fileName() == "..")
+                continue;
+
+            QString exeName = fullDir.fileName().trimmed();
+            qms << exeName.left(exeName.lastIndexOf('.'));
+        }
+
+    }
+
+    // 第一次则根据本机系统判断语言
+    static bool bFirstRun = paraValue(tgFirstRun).toBool();
+    static QString lanuage = paraValue(tgLanuage).toString();
+    if (bFirstRun) {
+        setParaValue(tgFirstRun, false);
+        QLocale local = QLocale::system();
+        QLocale::Language lang = local.language();
+        QLocale::Country country = local.country();
+        QString name = local.name();
+        qDebug() << "name:" << name;
+
+        if (qms.contains(name))
+            lanuage = name;
+    }
+
+    setParaValue(tgLanuage, lanuage);
+    QTranslator trans;
+    QString qmPath(appPath);
+#if defined(Q_OS_MAC)
+    qmPath += "/../../../../bin/translations/" + lanuage + ".qm";
+#else
+    qmPath += "/translations/" + lanuage + ".qm";
+#endif
+    trans.load(qmPath);
+    qApp->installTranslator(&trans);
+
+    const QStringList font = paraValue(tgFont).toString().split(',');
+    qApp->setFont(QFont(font.at(0), font.at(1).toInt()));
+
+    qDebug() << "[*.qm path]:" << qmPath << _COMPILER_ID << "   " << bool(QString(_COMPILER_ID).compare("MSVC") == 0) << Qt::endl
+        << "font:" << font.at(0) << ", " << font.at(1).toInt();
 }
 
 DataMaid* DataMaid::instance()
@@ -476,6 +535,7 @@ void DataMaid::setAutoRun()
     // TODO 2023.03.31:
 #endif
 }
+
 const QString DataMaid::formatToFileName(const QString name)
 {
     auto fileName = name.trimmed();

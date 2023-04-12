@@ -8,7 +8,7 @@
 
 #include <QString>
 
-// Description: 统一存放 class Preference 中新建的对象的 objectName
+// Description: 统一存放 class PrefManage 中新建的对象的 objectName
  // perference UI config
 //const QString INIT_GENERAL("General");                   // 初始化 常规
 //const QString INIT_INTERFACE("Interface");               // 初始化 界面
@@ -19,6 +19,7 @@
 namespace XC {
 
     //tabGeneral      常规
+    const QString tgFirstRun("firstRun");
     const QString tgLanuage("lanuage");
     const QString tgFont("font");
     const QString tgAutoRun("autoRun");

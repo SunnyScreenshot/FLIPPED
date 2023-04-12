@@ -15,13 +15,10 @@
 #include <QKeySequence>
 #include <QHotkey>
 #include <QMetaEnum>
-#include "QThread"
-#include "../preference/preference.h"
+#include "../preference/prefmanage.h"
 #include "../widget/xkeysequenceedit.h"
-#include "../pluginsinterface/iplugininterface.h"
 #include "../screen/drawhelper.h"
 #include "../screen/datamaid.h"
-//#include "../../pluginsimpl/watemark/pluginwatemark.h"
 
 /*!
  * \brief WinFullScreen::instance 单例的实现
@@ -186,7 +183,7 @@ void Tray::onPreference(bool checked)
 {
     Q_UNUSED(checked);
 
-    if (!m_pPref) m_pPref = new Preference();
+    if (!m_pPref) m_pPref = new PrefManage();
     m_pPref->setVisible(true);
 }
 

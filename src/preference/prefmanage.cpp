@@ -171,6 +171,9 @@ void PrefManage::initUIAbout()
 
 void PrefManage::initUI()
 {
+    setAttribute(Qt::WA_DeleteOnClose, true);
+    setWindowTitle(tr("Flipped Preferences"));
+
     initUIGeneral();
     initUIInterface();
     initUIOutput();

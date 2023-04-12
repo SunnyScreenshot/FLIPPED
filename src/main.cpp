@@ -13,8 +13,6 @@
 #include <QLockFile>
 #include <QMessageBox>
 
-#include "./preference/prefmanage.h"
-
 // test
 #include <iostream>
 #include <QPixmap>
@@ -69,40 +67,10 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-
-    PrefManage* manage = new PrefManage();
-    manage->show();
-
     if (lockFile)
         delete lockFile;
 
-
-    // I18N + font
-    //QLocale local = QLocale::system();
-    //QLocale::Language lang = local.language();
-    //QLocale::Country country = local.country();
-    //QString name = local.name();
-
-    //QStringList lanuages;
-    //lanuages << "en_US" << "zh_TW" << "zh_CN";
-    //if (!lanuages.contains(name))
-    //    name = "en_US";
-
-#if 0
-    auto lanuage = DATAMAID->paraValue("lanuage").toString();
-    auto ftList = DATAMAID->paraValue("font").toString().split(',');
-    QTranslator trans;
-    QString qmPath(qApp->applicationDirPath());
-#if defined(Q_OS_MAC)
-    qmPath += "/../../../../bin/translations/" + lanuage + ".qm";
-#else
-    qmPath += "/translations/" + lanuage + ".qm";
-#endif
-    trans.load(qmPath);
-    qApp->installTranslator(&trans);
-    qApp->setFont(QFont(ftList.at(0), ftList.at(1).toInt()));
-    qDebug()<<"[*.qm path]:" << qmPath << _COMPILER_ID << "   "<< bool(QString(_COMPILER_ID).compare("MSVC") == 0) << Qt::endl
-        << "ftList.at(0):" << ftList.at(0) << "  ftList.at(1).toInt():" << ftList.at(1).toInt();
+    DATAMAID->setRunLanguage();
 
     Tray::instance();
 
@@ -116,7 +84,6 @@ int main(int argc, char *argv[])
 #else
 #endif
 
-#endif
 
 //    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);
 //    t1->setWindowFlags(Qt::FramelessWindowHint);

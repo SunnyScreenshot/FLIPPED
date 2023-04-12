@@ -16,7 +16,7 @@ class QSystemTrayIcon;
 class QAction;
 class QMenu;
 class QHotkey;
-class Preference;
+class PrefManage;
 
 class Tray : public QObject
 {
@@ -49,7 +49,7 @@ public slots:
 
 private:
 	QPointer<ScreenShot> m_pSrnShot;           // 前台截图 UI
-    QPointer<Preference> m_pPref;              // 偏好设置 UI 
+    QPointer<PrefManage> m_pPref;              // 偏好设置 UI
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 

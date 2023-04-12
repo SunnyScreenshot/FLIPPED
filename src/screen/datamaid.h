@@ -37,6 +37,7 @@ const QString INIT_HOTKEYS("Hotkeys");                   // 初始化 快捷键
 class DataIni : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool firstRun MEMBER m_firstRun NOTIFY sigFirstRun)
     Q_PROPERTY(QString lanuage MEMBER m_lanuage NOTIFY sigLanuage)
     Q_PROPERTY(QString font MEMBER m_font NOTIFY sigFont)
     Q_PROPERTY(bool autoRun MEMBER m_autoRun NOTIFY sigAutoRun)
@@ -95,6 +96,7 @@ public:
     void writeToHotkeysIni(const bool bReset);
 
 private:
+    bool resetFirstRun() { m_firstRun = true; return m_firstRun; }
     QString resetLanuage() { m_lanuage = "en_US"; return m_lanuage; }
     QString resetFont() { m_font = "SimSun,9"; return m_font; }
     bool resetAutoRun() { m_autoRun = true; return m_autoRun; }
@@ -130,6 +132,7 @@ private:
     QString resetFullScrnCapture() { m_fullScrnCapture = "F8"; return m_fullScrnCapture; }
 
 signals:
+    void sigFirstRun(bool firstRun);
     void sigLanuage(QString language);
     void sigFont(QString font);
     void sigAutoRun(bool enable);
@@ -164,7 +167,8 @@ signals:
     void sigFullScrnCapture(QString hotkey);
 
 private:
-    QString m_lanuage;             // General
+    bool    m_firstRun;            // General
+    QString m_lanuage;
     QString m_font;
     bool    m_autoRun;
     bool    m_asAdmin;
@@ -197,7 +201,7 @@ private:
     QString m_delayCapture;
     QString m_fullScrnCapture;
 
-    QSettings m_settings;
+    QSettings m_settings;          // global only one
 };
 
 class DataMaid : public QObject
@@ -205,7 +209,6 @@ class DataMaid : public QObject
     Q_OBJECT
 public:
     DataMaid(QObject* parent = nullptr);
-    void init();
     QVariant paraValue(const char* key);
     QVariant paraValue(const QString key);
     void setParaValue(const char* key, const QVariant& val);
@@ -213,6 +216,8 @@ public:
 
     void readFromAllIni();
     void writeToAllIni(const bool bReset = false);
+
+    void setRunLanguage();
 
 public:
     static DataMaid* instance();
