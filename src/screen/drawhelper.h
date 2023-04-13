@@ -95,10 +95,10 @@ class CaptureHelper : public QObject
     Q_OBJECT
 public:
     enum CaptureType {
-        SST_ActionWindow,
+        SST_ScrnCapture,
         SST_ScrollingWindow,
         SST_DelayCapture,
-        SST_FullScreen,
+        SST_FullScrnCapture,
         SST_FixdSizeRegion,
         SST_Paste,
         SST_HideShowAllImages,

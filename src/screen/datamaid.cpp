@@ -35,12 +35,43 @@ bool DataIni::setQStrProperty(const QString &proper, const QVariant &val)
 
 DataIni::DataIni(QObject *parent)
     : QObject(parent)
+    , m_firstRun(true)
+    , m_lanuage("en_US")
+    , m_font("SimSun,9")
+    , m_autoRun(true)
+    , m_asAdmin(false)
+    , m_logLevel("debug")
+    , m_autoUpdate(false)
+
+    , m_borderStyle("Flipped")
+    , m_borderColor("#0e70ff")
+    , m_borderWidth(2)
+    , m_crosshairColor("#db000f")
+    , m_crosshairWidth(1)
+    , m_smartWindow(true)
+    , m_crosshair(false)
+    , m_showCursor(false)
+    , m_autoCopy2Clipboard(true)
+
+    , m_imageQuailty(-1)
+    , m_fileName("Flipped_$yyyyMMdd_hhmmss$.png")
+    , m_configPath(qApp->applicationDirPath() + "/config")
+    , m_quickSave(true)
+    , m_autoSave(false)
+    , m_quickSavePath(QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first())
+    , m_autoSavePath(QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first())
+
+    , m_windowShadow(false)
+    , m_opacity(100)
+    , m_maxSize(100000)
+
+    , m_scrnCapture("F6")
+    , m_delayCapture("F7")
+    , m_fullScrnCapture("F8")
     , m_settings(qApp->applicationDirPath() + "/config/config.ini", QSettings::IniFormat, nullptr)
 {
     m_settings.setIniCodec("utf-8");
-    resetAllData();
-    qDebug() << qApp->applicationDirPath() + "/config/config.ini";
-    readFromAllIni();
+//    resetAllData();
     //writeToAllIni(true);
 
     connect(this, &DataIni::sigFirstRun, this, [this](bool firstRun) { WRITE_INI(INIT_GENERAL, tgFirstRun, firstRun); });
@@ -80,13 +111,13 @@ DataIni::DataIni(QObject *parent)
 
 void DataIni::readFromAllIni()
 {
-    const auto firstRun   = READ_INI(INIT_GENERAL, tgFirstRun, resetFirstRun()).toBool();
-    const auto lanuage    = READ_INI(INIT_GENERAL, tgLanuage, resetLanuage()).toString();
-    const auto font       = READ_INI(INIT_GENERAL, tgFont, resetFont()).toString();
-    const auto autoRun    = READ_INI(INIT_GENERAL, tgAutoRun, resetAutoRun()).toBool();
-    const auto asAdmin    = READ_INI(INIT_GENERAL, tgAsAdmin, resetAsAdmin()).toBool();
-    const auto logLevel   = READ_INI(INIT_GENERAL, tgLogLevel, resetLogLevel()).toString();
-    const auto autoUpdate = READ_INI(INIT_GENERAL, tgAutoCheckUpdate, resetAutoUpdate()).toBool();
+    const auto firstRun   = READ_INI(INIT_GENERAL, tgFirstRun, defFirstRun()).toBool();
+    const auto lanuage    = READ_INI(INIT_GENERAL, tgLanuage, defLanuage()).toString();
+    const auto font       = READ_INI(INIT_GENERAL, tgFont, defFont()).toString();
+    const auto autoRun    = READ_INI(INIT_GENERAL, tgAutoRun, defAutoRun()).toBool();
+    const auto asAdmin    = READ_INI(INIT_GENERAL, tgAsAdmin, defAsAdmin()).toBool();
+    const auto logLevel   = READ_INI(INIT_GENERAL, tgLogLevel, defLogLevel()).toString();
+    const auto autoUpdate = READ_INI(INIT_GENERAL, tgAutoCheckUpdate, defAutoUpdate()).toBool();
     setQStrProperty(tgLanuage, firstRun);
     setQStrProperty(tgLanuage, lanuage);
     setQStrProperty(tgFont, font);
@@ -95,15 +126,15 @@ void DataIni::readFromAllIni()
     setQStrProperty(tgLogLevel, logLevel);
     setQStrProperty(tgAutoUpdate, autoUpdate);
 
-    const auto borderStyle        = READ_INI(INIT_INTERFACE, tiBorderStyle, resetBorderStyle()).toString();
-    const auto borderColor        = READ_INI(INIT_INTERFACE, tiBorderColor, resetBorderColor()).toString();
-    const auto borderWidth        = READ_INI(INIT_INTERFACE, tiBorderWidth, resetBorderWidth()).toInt();
-    const auto crosshairColor     = READ_INI(INIT_INTERFACE, tiCrosshairColor, resetCrosshairColor()).toString();
-    const auto crosshairWidth     = READ_INI(INIT_INTERFACE, tiCrosshairWidth, resetCrosshairWidth()).toInt();
-    const auto smartWindow        = READ_INI(INIT_INTERFACE, tiSmartWindow, resetSmartWindow()).toBool();
-    const auto crosshair          = READ_INI(INIT_INTERFACE, tiCrosshair, resetCrosshair()).toBool();
-    const auto showCursor         = READ_INI(INIT_INTERFACE, tiShowCursor, resetShowCursor()).toBool();
-    const auto autoCopy2Clipboard = READ_INI(INIT_INTERFACE, tiAutoCopy2Clipboard, resetAutoCopy2Clipboard()).toBool();
+    const auto borderStyle        = READ_INI(INIT_INTERFACE, tiBorderStyle, defBorderStyle()).toString();
+    const auto borderColor        = READ_INI(INIT_INTERFACE, tiBorderColor, defBorderColor()).toString();
+    const auto borderWidth        = READ_INI(INIT_INTERFACE, tiBorderWidth, defBorderWidth()).toInt();
+    const auto crosshairColor     = READ_INI(INIT_INTERFACE, tiCrosshairColor, defCrosshairColor()).toString();
+    const auto crosshairWidth     = READ_INI(INIT_INTERFACE, tiCrosshairWidth, defCrosshairWidth()).toInt();
+    const auto smartWindow        = READ_INI(INIT_INTERFACE, tiSmartWindow, defSmartWindow()).toBool();
+    const auto crosshair          = READ_INI(INIT_INTERFACE, tiCrosshair, defCrosshair()).toBool();
+    const auto showCursor         = READ_INI(INIT_INTERFACE, tiShowCursor, defShowCursor()).toBool();
+    const auto autoCopy2Clipboard = READ_INI(INIT_INTERFACE, tiAutoCopy2Clipboard, defAutoCopy2Clipboard()).toBool();
     setQStrProperty(tiBorderStyle, borderStyle);
     setQStrProperty(tiBorderColor, borderColor);
     setQStrProperty(tiBorderWidth, borderWidth);
@@ -114,13 +145,13 @@ void DataIni::readFromAllIni()
     setQStrProperty(tiShowCursor, showCursor);
     setQStrProperty(tiAutoCopy2Clipboard, autoCopy2Clipboard);
 
-    const auto imageQuailty = READ_INI(INIT_OUTPUT, toImageQuailty, resetImageQuailty()).toInt();
-    const auto fileName = READ_INI(INIT_OUTPUT, toFileName, resetFileName()).toString();
-    const auto configPath = READ_INI(INIT_OUTPUT, toConfigPath, resetConfigPath()).toString();
-    const auto quickSave = READ_INI(INIT_OUTPUT, toQuickSave, resetQuickSave()).toBool();
-    const auto autoSave = READ_INI(INIT_OUTPUT, toAutoSave, resetAutoSave()).toBool();
-    const auto quickSavePath = READ_INI(INIT_OUTPUT, toQuickSavePath, resetQuickSavePath()).toString();
-    const auto autoSavePath = READ_INI(INIT_OUTPUT, toAutoSavePath, resetAutoSavePath()).toString();
+    const auto imageQuailty = READ_INI(INIT_OUTPUT, toImageQuailty, defImageQuailty()).toInt();
+    const auto fileName = READ_INI(INIT_OUTPUT, toFileName, defFileName()).toString();
+    const auto configPath = READ_INI(INIT_OUTPUT, toConfigPath, defConfigPath()).toString();
+    const auto quickSave = READ_INI(INIT_OUTPUT, toQuickSave, defQuickSave()).toBool();
+    const auto autoSave = READ_INI(INIT_OUTPUT, toAutoSave, defAutoSave()).toBool();
+    const auto quickSavePath = READ_INI(INIT_OUTPUT, toQuickSavePath, defQuickSavePath()).toString();
+    const auto autoSavePath = READ_INI(INIT_OUTPUT, toAutoSavePath, defAutoSavePath()).toString();
     setQStrProperty(toImageQuailty, imageQuailty);
     setQStrProperty(toFileName, fileName);
     setQStrProperty(toConfigPath, configPath);
@@ -129,16 +160,16 @@ void DataIni::readFromAllIni()
     setQStrProperty(toQuickSavePath, quickSavePath);
     setQStrProperty(toAutoSavePath, autoSavePath);
 
-    const auto windowShadow = READ_INI(INIT_PIN, tpWindowShadow, resetWindowShadow()).toBool();
-    const auto opacity      = READ_INI(INIT_PIN, tpOpacity, resetOpacity()).toInt();
-    const auto maxSize      = READ_INI(INIT_PIN, tpMaxSize, resetMaxSize()).toInt();
+    const auto windowShadow = READ_INI(INIT_PIN, tpWindowShadow, defWindowShadow()).toBool();
+    const auto opacity      = READ_INI(INIT_PIN, tpOpacity, defOpacity()).toInt();
+    const auto maxSize      = READ_INI(INIT_PIN, tpMaxSize, defMaxSize()).toInt();
     setQStrProperty(tpWindowShadow, windowShadow);
     setQStrProperty(tpOpacity, opacity);
     setQStrProperty(tpMaxSize, maxSize);
 
-    const auto scrnCapture     = READ_INI(INIT_HOTKEYS, thScrnCapture, resetScrnCapture()).toString();
-    const auto delayCapture    = READ_INI(INIT_HOTKEYS, thDelayCapture, resetDelayCapture()).toString();
-    const auto fullScrnCapture = READ_INI(INIT_HOTKEYS, thFullScreen, resetFullScrnCapture()).toString();
+    const auto scrnCapture     = READ_INI(INIT_HOTKEYS, thScrnCapture, defScrnCapture()).toString();
+    const auto delayCapture    = READ_INI(INIT_HOTKEYS, thDelayCapture, defDelayCapture()).toString();
+    const auto fullScrnCapture = READ_INI(INIT_HOTKEYS, thFullScreen, defFullScrnCapture()).toString();
     setQStrProperty(thScrnCapture, scrnCapture);
     setQStrProperty(thDelayCapture, delayCapture);
     setQStrProperty(thFullScreen, fullScrnCapture);
@@ -153,9 +184,15 @@ void DataIni::writeToAllIni(const bool bReset)
     writeToHotkeysIni(bReset);
 }
 
+const bool DataIni::bFirstRunFromIni() const
+{
+    const auto bFirstRun = READ_INI(INIT_GENERAL, tgFirstRun, defFirstRun()).toBool();
+    return bFirstRun;
+}
+
 void DataIni::writeToGeneralIni(const bool bReset)
 {
-    if (bReset)  resetGeneral();
+    if (bReset) defGeneral();
     WRITE_INI(INIT_GENERAL, tgFirstRun, m_firstRun);
     WRITE_INI(INIT_GENERAL, tgLanuage, m_lanuage);
     WRITE_INI(INIT_GENERAL, tgFont, m_font);
@@ -167,7 +204,7 @@ void DataIni::writeToGeneralIni(const bool bReset)
 
 void DataIni::writeToInterfaceIni(const bool bReset)
 {
-    if (bReset)  resetInterface();
+    if (bReset)  defInterface();
     WRITE_INI(INIT_INTERFACE, tiBorderStyle, m_borderStyle);
     WRITE_INI(INIT_INTERFACE, tiBorderColor, m_borderColor);
     WRITE_INI(INIT_INTERFACE, tiBorderWidth, m_borderWidth);
@@ -181,7 +218,7 @@ void DataIni::writeToInterfaceIni(const bool bReset)
 
 void DataIni::writeToOutputIni(const bool bReset)
 {
-    if (bReset)  resetOutput();
+    if (bReset)  defOutput();
     WRITE_INI(INIT_OUTPUT, toImageQuailty, m_imageQuailty);
     WRITE_INI(INIT_OUTPUT, toFileName, m_fileName);
     WRITE_INI(INIT_OUTPUT, toConfigPath, m_configPath);
@@ -193,7 +230,7 @@ void DataIni::writeToOutputIni(const bool bReset)
 
 void DataIni::writeToPinIni(const bool bReset)
 {
-    if (bReset)  resetPin();
+    if (bReset)  defPin();
     WRITE_INI(INIT_PIN, tpWindowShadow, m_windowShadow);
     WRITE_INI(INIT_PIN, tpOpacity, m_opacity);
     WRITE_INI(INIT_PIN, tpMaxSize, m_maxSize);
@@ -201,72 +238,76 @@ void DataIni::writeToPinIni(const bool bReset)
 
 void DataIni::writeToHotkeysIni(const bool bReset)
 {
-    if (bReset)  resetHotkeys();
+    if (bReset)  defHotkeys();
     WRITE_INI(INIT_HOTKEYS, thScrnCapture, m_scrnCapture);
     WRITE_INI(INIT_HOTKEYS, thDelayCapture, m_delayCapture);
     WRITE_INI(INIT_HOTKEYS, thFullScreen, m_fullScrnCapture);
 }
 
-void DataIni::resetAllData()
+void DataIni::defAllData()
 {
-    resetGeneral();
-    resetInterface();
-    resetOutput();
-    resetPin();
-    resetHotkeys();
+    defGeneral();
+    defInterface();
+    defOutput();
+    defPin();
+    defHotkeys();
 }
 
-void DataIni::resetGeneral()
+void DataIni::defGeneral()
 {
-    resetFirstRun();
-    resetLanuage();
-    resetFont();
-    resetAutoRun();
-    resetAsAdmin();
-    resetLogLevel();
-    resetAutoUpdate();
+    defFirstRun();
+    defLanuage();
+    defFont();
+    defAutoRun();
+    defAsAdmin();
+    defLogLevel();
+    defAutoUpdate();
 }
 
-void DataIni::resetInterface()
+void DataIni::defInterface()
 {
-    resetBorderStyle();
-    resetBorderColor();
-    resetBorderWidth();
-    resetCrosshairColor();
-    resetCrosshairWidth();
-    resetSmartWindow();
-    resetCrosshair();
-    resetShowCursor();
-    resetAutoCopy2Clipboard();
+    defBorderStyle();
+    defBorderColor();
+    defBorderWidth();
+    defCrosshairColor();
+    defCrosshairWidth();
+    defSmartWindow();
+    defCrosshair();
+    defShowCursor();
+    defAutoCopy2Clipboard();
 }
 
-void DataIni::resetOutput()
+void DataIni::defOutput()
 {
-    resetImageQuailty();
-    resetFileName();
-    resetConfigPath();
-    resetQuickSave();
-    resetAutoSave();
-    resetQuickSavePath();
-    resetAutoSavePath();
+    defImageQuailty();
+    defFileName();
+    defConfigPath();
+    defQuickSave();
+    defAutoSave();
+    defQuickSavePath();
+    defAutoSavePath();
 }
 
-void DataIni::resetPin()
+void DataIni::defPin()
 {
-    resetWindowShadow();
-    resetOpacity();
-    resetMaxSize();
+    defWindowShadow();
+    defOpacity();
+    defMaxSize();
 }
 
-void DataIni::resetHotkeys()
+void DataIni::defHotkeys()
 {
-    resetScrnCapture();
-    resetDelayCapture();
-    resetFullScrnCapture();
+    defScrnCapture();
+    defDelayCapture();
+    defFullScrnCapture();
 }
 
 DataMaid::DataMaid(QObject *parent)
 {
+    if (bFirstRunFromIni())
+        writeToAllIni();
+    else
+        readFromAllIni();
 }
 
 QVariant DataMaid::paraValue(const char *key)
@@ -299,6 +340,11 @@ void DataMaid::writeToAllIni(const bool bReset)
     m_dataIni.writeToAllIni(bReset);
 }
 
+const bool DataMaid::bFirstRunFromIni() const
+{
+    return m_dataIni.bFirstRunFromIni();
+}
+
 #include <QLocale>
 #include <QTranslator>
 #include <QDir>
@@ -321,7 +367,7 @@ void DataMaid::setRunLanguage()
     }
 
     // 第一次则根据本机系统判断语言
-    static bool bFirstRun = paraValue(tgFirstRun).toBool();
+    static bool bFirstRun = DATAMAID->bFirstRunFromIni();
     static QString lanuage = paraValue(tgLanuage).toString();
     if (bFirstRun) {
         setParaValue(tgFirstRun, false);
@@ -350,7 +396,7 @@ void DataMaid::setRunLanguage()
     qApp->setFont(QFont(font.at(0), font.at(1).toInt()));
 
     qDebug() << "[*.qm path]:" << qmPath << _COMPILER_ID << "   " << bool(QString(_COMPILER_ID).compare("MSVC") == 0) << Qt::endl
-        << "font:" << font.at(0) << ", " << font.at(1).toInt();
+             << "font:" << font.at(0) << ", " << font.at(1).toInt();
 }
 
 DataMaid* DataMaid::instance()

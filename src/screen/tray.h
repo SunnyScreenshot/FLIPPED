@@ -53,7 +53,8 @@ private:
 	QMenu* m_trayIconMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 
-    std::vector<std::tuple<QHotkey*, QString, QString, CaptureHelper::CaptureType>> m_vHotKeys;
+    // hkPtr, "F6", tr("Active Window"), objectName/tupe: SST_ActionWindow
+    std::vector<std::tuple<QHotkey*,QString, QString, CaptureHelper::CaptureType>> m_vHotKeys;
 };
 
 #endif // TARY_H

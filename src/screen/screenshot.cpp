@@ -165,11 +165,11 @@ ScreenShot::ScreenShot(QWidget *parent)
 
 void ScreenShot::launchCapture(CaptureHelper::CaptureType type)
 {
-    if (type == CaptureHelper::SST_ActionWindow) {
+    if (type == CaptureHelper::SST_ScrnCapture) {
         windowCapture();
     } else if (type == CaptureHelper::SST_DelayCapture) {
         delayCapture();
-    } else if (type == CaptureHelper::SST_FullScreen) {
+    } else if (type == CaptureHelper::SST_FullScrnCapture) {
         fullScrnCapture();
     } else {
     }
@@ -1413,7 +1413,7 @@ void ScreenShot::drawBorder(QRect& rtSel, QPainter& pa) const
         }
     }
 
-    const QString style = DATAMAID->paraValue("borderStyle").toString();
+    const QString style = DATAMAID->paraValue(tiBorderStyle).toString();
     if (style == "Flipped") {
         drawBorderFlipped(pa, rt);
     } else if (style == "BalckAndWhite") {

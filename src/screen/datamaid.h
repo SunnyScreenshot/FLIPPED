@@ -57,13 +57,11 @@ class DataIni : public QObject
 
     Q_PROPERTY(int imageQuailty MEMBER m_imageQuailty NOTIFY sigImageQuailty)
     Q_PROPERTY(QString fileName MEMBER m_fileName NOTIFY sigFileName)
-        
     Q_PROPERTY(QString configPath MEMBER m_configPath NOTIFY sigConfigPath)
     Q_PROPERTY(bool quickSave MEMBER m_quickSave NOTIFY sigQuickSave)
     Q_PROPERTY(bool autoSave MEMBER m_autoSave NOTIFY sigAutoSave)
     Q_PROPERTY(QString quickSavePath MEMBER m_quickSavePath NOTIFY sigQuickSavePath)
     Q_PROPERTY(QString autoSavePath MEMBER m_autoSavePath NOTIFY sigAutoSavePath)
-
 
     Q_PROPERTY(bool windowShadow MEMBER m_windowShadow NOTIFY sigWindowShadow)
     Q_PROPERTY(int opacity MEMBER m_opacity NOTIFY sigOpacity)
@@ -80,13 +78,14 @@ public:
     explicit DataIni(QObject* parent = nullptr);
     void readFromAllIni();
     void writeToAllIni(const bool bReset = false);
+    const bool bFirstRunFromIni() const;
 
-    void resetAllData();
-    void resetGeneral();
-    void resetInterface();
-    void resetOutput();
-    void resetPin();
-    void resetHotkeys();
+    void defAllData();
+    void defGeneral();
+    void defInterface();
+    void defOutput();
+    void defPin();
+    void defHotkeys();
 
 public:
     void writeToGeneralIni(const bool bReset);
@@ -95,41 +94,40 @@ public:
     void writeToPinIni(const bool bReset);
     void writeToHotkeysIni(const bool bReset);
 
-private:
-    bool resetFirstRun() { m_firstRun = true; return m_firstRun; }
-    QString resetLanuage() { m_lanuage = "en_US"; return m_lanuage; }
-    QString resetFont() { m_font = "SimSun,9"; return m_font; }
-    bool resetAutoRun() { m_autoRun = true; return m_autoRun; }
-    bool resetAsAdmin() { m_asAdmin = false; return m_asAdmin; }
-    QString resetLogLevel() { m_logLevel = "debug"; return m_logLevel; }
-    bool resetAutoUpdate() { m_autoUpdate = false; return m_autoUpdate; }
+public:
+    bool defFirstRun() const { return m_firstRun; }
+    QString defLanuage() const {return m_lanuage; }
+    QString defFont() const { return m_font; }
+    bool defAutoRun() const { return m_autoRun; }
+    bool defAsAdmin() const { return m_asAdmin; }
+    QString defLogLevel() const { return m_logLevel; }
+    bool defAutoUpdate() const { return m_autoUpdate; }
 
-    QString resetBorderStyle() { m_borderStyle = "Flipped"; return m_borderStyle; }
-    QString resetBorderColor() { m_borderColor = "#0e70ff"; return m_borderColor; }
-    int resetBorderWidth() { m_borderWidth = 2; return m_borderWidth; }
-    QString resetCrosshairColor() { m_crosshairColor = "#db000f"; return m_crosshairColor; }
-    int resetCrosshairWidth() { m_crosshairWidth = 1; return m_crosshairWidth; }
-    bool resetSmartWindow() { m_smartWindow = true; return m_smartWindow; }
-    bool resetCrosshair() { m_crosshair = false; return m_crosshair; }
-    bool resetShowCursor() { m_showCursor = false; return m_showCursor; }
-    bool resetAutoCopy2Clipboard() { m_autoCopy2Clipboard = true; return m_autoCopy2Clipboard; }
+    QString defBorderStyle() const { return m_borderStyle; }
+    QString defBorderColor() const { return m_borderColor; }
+    int defBorderWidth() const { return m_borderWidth; }
+    QString defCrosshairColor() const { return m_crosshairColor; }
+    int defCrosshairWidth() const { return m_crosshairWidth; }
+    bool defSmartWindow() const { return m_smartWindow; }
+    bool defCrosshair() const { return m_crosshair; }
+    bool defShowCursor() const { return m_showCursor; }
+    bool defAutoCopy2Clipboard() const { return m_autoCopy2Clipboard; }
 
-    int resetImageQuailty() { m_imageQuailty = -1; return m_imageQuailty; }
-    QString resetFileName() { m_fileName = "Flipped_$yyyyMMdd_hhmmss$.png"; return m_fileName; }
-    QString resetConfigPath() { m_configPath = qApp->applicationDirPath() + "/config"; return m_configPath; }
-    bool resetQuickSave() { m_quickSave = true; return m_quickSave; }
-    bool resetAutoSave() { m_autoSave = false; return m_autoSave; }
+    int defImageQuailty() const { return m_imageQuailty; }
+    QString defFileName() const { return m_fileName; }
+    QString defConfigPath() const { return m_configPath; }
+    bool defQuickSave() const { return m_quickSave; }
+    bool defAutoSave() const { return m_autoSave; }
+    QString defQuickSavePath() const { return m_quickSavePath; }
+    QString defAutoSavePath() const { return m_autoSavePath; }
 
-    QString resetQuickSavePath() { m_quickSavePath = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first(); return m_quickSavePath; }
-    QString resetAutoSavePath() { m_autoSavePath = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation).first(); return m_autoSavePath; }
+    bool defWindowShadow() const { return m_windowShadow; }
+    int defOpacity() const { return m_opacity; }
+    int defMaxSize() const { return m_maxSize; }
 
-    bool resetWindowShadow() { m_windowShadow = false; return m_windowShadow; }
-    int resetOpacity() { m_opacity = 100; return m_opacity; }
-    int resetMaxSize() { m_maxSize = 100000; return m_maxSize; }
-
-    QString resetScrnCapture() { m_scrnCapture = "F6"; return m_scrnCapture; }
-    QString resetDelayCapture() { m_delayCapture = "F7"; return m_delayCapture; }
-    QString resetFullScrnCapture() { m_fullScrnCapture = "F8"; return m_fullScrnCapture; }
+    QString defScrnCapture() const { return m_scrnCapture; }
+    QString defDelayCapture() const { return m_delayCapture; }
+    QString defFullScrnCapture() const { return m_fullScrnCapture; }
 
 signals:
     void sigFirstRun(bool firstRun);
@@ -216,7 +214,7 @@ public:
 
     void readFromAllIni();
     void writeToAllIni(const bool bReset = false);
-
+    const bool bFirstRunFromIni() const;
     void setRunLanguage();
 
 public:

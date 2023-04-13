@@ -18,6 +18,7 @@ public:
 
 private:
     void initUI();
+
 //	void test();
 
 signals:

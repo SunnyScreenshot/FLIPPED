@@ -71,8 +71,6 @@ private:
     Ui::PrefManage *ui;
     std::map<const QString, const QString> m_lanuages;
     std::map<const QString, const QString> m_borderStyle;
-
-
 };
 
 #endif // PREFMANAGE_H

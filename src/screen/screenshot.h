@@ -35,7 +35,7 @@ public:
     bool isSelBorder();
     const Qt::Orientation getBarOrien() const;
     void setBarOrien(Qt::Orientation val);
-    void launchCapture(CaptureHelper::CaptureType type = CaptureHelper::SST_ActionWindow);
+    void launchCapture(CaptureHelper::CaptureType type = CaptureHelper::SST_ScrnCapture);
     static double GetScale(const QScreen* scrn = QApplication::primaryScreen());
     static double GetDevicePixelRatio(const QScreen* scrn = QApplication::primaryScreen());
 

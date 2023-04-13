@@ -118,17 +118,16 @@ void Tray::init()
 void Tray::initGlobalHotKeys()
 {
     m_vHotKeys = {
-        std::make_tuple(nullptr, DATAMAID->paraValue(thScrnCapture).toString(), tr("Active Window"), CaptureHelper::SST_ActionWindow),
-        //std::make_tuple(nullptr, "Ctrl+Shift+W", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
+        std::make_tuple(nullptr, DATAMAID->paraValue(thScrnCapture).toString(), tr("Scrn Capture"), CaptureHelper::SST_ScrnCapture),
+        //std::make_tuple(nullptr, "", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
         std::make_tuple(nullptr, DATAMAID->paraValue(thDelayCapture).toString(), tr("Delay Capture"), CaptureHelper::SST_DelayCapture),
-        std::make_tuple(nullptr, DATAMAID->paraValue(thFullScreen).toString(), tr("Full Screen"), CaptureHelper::SST_FullScreen),
-//        std::make_tuple(nullptr, "Ctrl+Shift+F", tr("Fixd-Size Region"), ScrnShotType::SST_FixdSizeRegion),
-//        std::make_tuple(nullptr, "Ctrl+Shift+T", tr("Paste"), ScrnShotType::SST_Paste),
-//        std::make_tuple(nullptr, "Ctrl+Shift+H", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
-//        std::make_tuple(nullptr, "Ctrl+Shift+X", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)
+        std::make_tuple(nullptr, DATAMAID->paraValue(thFullScreen).toString(), tr("Full Screen"), CaptureHelper::SST_FullScrnCapture),
+//        std::make_tuple(nullptr, "", tr("Fixd-Size Region"), ScrnShotType::SST_FixdSizeRegion),
+//        std::make_tuple(nullptr, "", tr("Paste"), ScrnShotType::SST_Paste),
+//        std::make_tuple(nullptr, "", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
+//        std::make_tuple(nullptr, "", tr("Switch current group"), ScrnShotType::SST_SwitchCurrentGroup)
     };
 
-    
     std::map<const QString, const QString> hotkeyRegFail;
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);    // QHotkey*& 指针的引用类型
@@ -147,9 +146,9 @@ void Tray::initGlobalHotKeys()
         if (!pHK->isRegistered())
             hotkeyRegFail.insert(std::make_pair(describe, hotkey));
         
-        qDebug() << "pHK: " << pHK << Qt::endl
-            << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
-            << "hotkey:" << hotkey << "    hk Is Registered:" << pHK->isRegistered() << Qt::endl;
+        //qDebug() << "pHK: " << pHK << Qt::endl
+        //    << "std::get<0>(it):" << std::get<0>(it) << Qt::endl
+        //    << "hotkey:" << hotkey << "    hk Is Registered:" << pHK->isRegistered() << Qt::endl;
     }
     onNotificHotkeyRegisteredFail(hotkeyRegFail);
 }
@@ -166,16 +165,16 @@ void Tray::onSrnShot()
     if (!hk && !act)
         return;
 
-    int sst = CaptureHelper::SST_ActionWindow;
+    int sst = CaptureHelper::SST_ScrnCapture;
     if (hk) {
         bool ok = false;
         QMetaEnum metaSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
         sst = metaSst.keyToValue(hk->objectName().toStdString().c_str(), &ok);
     }
 
-    if (act || sst == CaptureHelper::SST_ActionWindow
+    if (act || sst == CaptureHelper::SST_ScrnCapture
         || sst == CaptureHelper::SST_DelayCapture
-        || sst == CaptureHelper::SST_FullScreen)
+        || sst == CaptureHelper::SST_FullScrnCapture)
         m_pSrnShot->launchCapture(static_cast<CaptureHelper::CaptureType>(sst));
 }
 
@@ -196,28 +195,34 @@ void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
     for (auto& it : m_vHotKeys) {
         auto& pHK = std::get<0>(it);                                          // QHotkey*& 指针的引用类型
 //        QString& hotkey = std::get<1>(it);
-        QString& describe = std::get<2>(it);
+        CaptureHelper::CaptureType& sst = std::get<3>(it);
 
-        if (editor->objectName() == describe) {
+        QMetaEnum enumSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
+        QString objName = enumSst.valueToKey(sst);
+        if (editor->objectName() == objName) {
             auto prev = pHK->shortcut();
             qDebug() << "----->prev:" << prev << "   keySequence:" << keySequence;
-            if (prev == keySequence || keySequence.isEmpty())
-                return;
-
+            if (prev == keySequence || keySequence.isEmpty()) return;
             pHK->setShortcut(keySequence, true);
 
-            qDebug() << "#editor->keySequence():" << editor->keySequence() << "  keySequence:" << keySequence 
-                << "  pHK:" << pHK << "  pHK->shortcut():" << pHK->shortcut();
-
             if (pHK->isRegistered()) {
-                DATAMAID->setParaValue(describe, keySequence.toString());
                 editor->setStyleSheet("background-color: #98fb98;");
             } else {
-                //pHK->setShortcut(prev);
                 editor->setStyleSheet("background-color: #ff7f50;");
             }
-        } else {
-            continue;
+
+            QString paraName;
+            if (sst == CaptureHelper::SST_ScrnCapture) {
+                paraName = thScrnCapture;
+            } else if (sst == CaptureHelper::SST_DelayCapture) {
+                paraName = thDelayCapture;
+            } else if (sst == CaptureHelper::SST_FullScrnCapture) {
+                paraName = thFullScreen;
+            }
+
+            DATAMAID->setParaValue(paraName, keySequence.toString());
+            qDebug() << "#editor->keySequence():" << editor->keySequence() << "  keySequence:" << keySequence
+                << "  pHK:" << pHK << "  pHK->shortcut():" << pHK->shortcut();
         }
     }
 }
@@ -250,7 +255,7 @@ void Tray::onActivated(QSystemTrayIcon::ActivationReason reason)
         if (!m_pSrnShot)
             m_pSrnShot = new ScreenShot();
 
-            m_pSrnShot->launchCapture(CaptureHelper::SST_ActionWindow);
+            m_pSrnShot->launchCapture(CaptureHelper::SST_ScrnCapture);
     } else {
 
     }

@@ -1,4 +1,5 @@
 #include "prefmanage.h"
+#include "qmetaobject.h"
 #include "ui_prefmanage.h"
 
 #include <map>
@@ -67,6 +68,8 @@ void PrefManage::initUIGeneral()
 
 void PrefManage::initUIInterface()
 {
+    QString style = DATAMAID->paraValue("borderStyle").value<QString>();  // Fix: 提前，cbBorderStyle->addItem 会导致其值改变
+
     m_borderStyle = {  {tr("Flipped"), "Flipped"}
                       ,{tr("BalckAndWhite"), "BalckAndWhite"}
                       ,{tr("LightBlue"), "LightBlue"}};
@@ -80,7 +83,8 @@ void PrefManage::initUIInterface()
     ui->interfaceLayout->addWidget(cpbHighLight, 1, 1);
     ui->interfaceLayout->addWidget(cpbCrosshair, 4, 1);
 
-    ui->cbBorderStyle->setCurrentText(DATAMAID->paraValue("borderStyle").value<QString>());
+    
+    ui->cbBorderStyle->setCurrentText(style);
     cpbHighLight->setCurColor(DATAMAID->paraValue("borderColor").value<QString>());
     ui->spBorderWidth->setValue(DATAMAID->paraValue("borderWidth").value<int>());
     cpbCrosshair->setCurColor(DATAMAID->paraValue("crosshairColor").value<QString>());
@@ -123,26 +127,22 @@ void PrefManage::initUIPin()
     ui->sbMaxSize->setValue(DATAMAID->paraValue(tpMaxSize).value<int>());
 }
 
+
 void PrefManage::initUIHotkeys()
 {
     int row = 0;
     int col = 2;
-//    QStringList list = {  DATAMAID->paraValue(thScrnCapture).toString()
-//                         ,DATAMAID->paraValue(thDelayCapture).toString()
-//                         ,DATAMAID->paraValue(thFullScreen).toString()};
-//    std::map<XKeySequenceEdit*, const QString> vHkEdit;
-//    int idx = 0;
+
     for (auto& it : Tray::instance().getVHotKeys()) {
         auto& hk = std::get<0>(it);
         QString& hotkey = std::get<1>(it);
-        QString& describe = std::get<2>(it);
-        qDebug() << "----->t0:" << hk << "    hotkey:" << hotkey << "    describe:" << describe;
+        CaptureHelper::CaptureType& sst = std::get<3>(it);
 
         XKeySequenceEdit* pEdit = new XKeySequenceEdit(QKeySequence(hotkey));
         ui->hotkeyLayout->addWidget(pEdit, row++, col);
 
-//        vHkEdit.insert(std::make_pair(pEdit, list.at(idx++)));
-        pEdit->setObjectName(describe);
+        QMetaEnum enumSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
+        pEdit->setObjectName(enumSst.valueToKey(sst));
         pEdit->setMinimumWidth(110 * DATAMAID->scale());
         const bool reg = hk->isRegistered();
         if (reg) {
@@ -151,6 +151,8 @@ void PrefManage::initUIHotkeys()
             pEdit->setStyleSheet("background-color: #ff7f50;");
         }
 
+        qDebug() << "====>" << pEdit << "  " << pEdit->objectName() << pEdit->parent() << " " << pEdit->parentWidget() << Qt::endl
+            << ui->hotkeyLayout;
         connect(pEdit, &XKeySequenceEdit::sigKeySeqChanged, &(Tray::instance()), &Tray::onKeySequenceChanged);
     }
 }
@@ -279,61 +281,68 @@ void PrefManage::on_spMaxSize_valueChanged(int val)
 
 void PrefManage::on_generalReset_released()
 {
-    qDebug() << "-----------1";
-
-//    cbLanuage
-//    btnFont
-//    cbAutoRun
-//    cbLogLevel
-
+    const DataIni origIni;
+    ui->cbLanuage->setCurrentText(origIni.defLanuage());
+    ui->btnFont->setText(origIni.defFont());
+    ui->cbAutoRun->setChecked(origIni.defAutoRun());
+    ui->cbLogLevel->setCurrentText(origIni.defLogLevel());
 }
 
 
 void PrefManage::on_interfaceReset_released()
 {
-    qDebug() << "-----------2";
-//    cbBorderStyle
-//    spBorderWidth
-//    spCrosshairWidth
-//    cbAutoDetectWindows
-//    cbCrosshair
-//    cbAutoCopy2clipboard
+    const DataIni origIni;
+    ui->cbBorderStyle->setCurrentText(origIni.defBorderStyle());
+    ui->spBorderWidth->setValue(origIni.defBorderWidth());
+    ui->spCrosshairWidth->setValue(origIni.defCrosshairWidth());
+    ui->cbAutoDetectWindows->setChecked(origIni.defSmartWindow());
+    ui->cbCrosshair->setChecked(origIni.defCrosshair());
+    ui->cbAutoCopy2clipboard->setChecked(origIni.defAutoCopy2Clipboard());
 }
 
 
 void PrefManage::on_outputReset_released()
 {
-    qDebug() << "-----------3";
-//    spImageQuailty
-//    leFileName
-//    leConfig
-//    leQuickSave
-//    leAutoSave
+    const DataIni origIni;
+    ui->sbImageQuailty->setValue(origIni.defImageQuailty());
 
-// btnConfig
-// btnQuickSave
-// btnAutoSave
+    ui->leFileName->setText(origIni.defFileName());
+    ui->leConfig->setText(origIni.defConfigPath());
 
-// cbQuickSave
-// cbAutoSave
+    auto t = origIni.defQuickSavePath();
+    ui->leQuickSave->setText(origIni.defQuickSavePath());
+    ui->leAutoSave->setText(origIni.defAutoSavePath());
+
+    ui->cbQuickSave->setChecked(origIni.defQuickSave());
+    ui->cbAutoSave->setChecked(origIni.defAutoSave());
 }
 
 
 void PrefManage::on_pinReset_released()
 {
-    qDebug() << "-----------4";
-//    spOpacity
-//    spMaxSize
+    const DataIni origIni;
+    ui->sbOpacity->setValue(origIni.defOpacity());
+    ui->sbMaxSize->setValue(origIni.defMaxSize());
 }
 
 
 void PrefManage::on_hotkeysReset_released()
 {
-    qDebug() << "-----------5";
-//    构建时，需自行标注对象名称
-//    hkCapture
-//    hkDelayCapture
-    //    hkFullScreCapture
+    const DataIni origIni;
+    QMetaEnum enumSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
+    QString hkCaptureName = enumSst.valueToKey(CaptureHelper::SST_ScrnCapture);
+    QString hkDelayCaptureName = enumSst.valueToKey(CaptureHelper::SST_DelayCapture);
+    QString hkFullScreCaptureName = enumSst.valueToKey(CaptureHelper::SST_FullScrnCapture);
+
+    auto hkCapture = ui->tabHotkeys->findChild<XKeySequenceEdit*>(hkCaptureName);
+    if (hkCapture) hkCapture->setKeySequence(origIni.defScrnCapture());  // 很奇怪，没有触发槽函数，所以下一行代码修改
+    DATAMAID->setParaValue(thScrnCapture, origIni.defScrnCapture());  
+    auto hkDelayCapture = ui->tabHotkeys->findChild<XKeySequenceEdit*>(hkDelayCaptureName);
+    if (hkDelayCapture) hkDelayCapture->setKeySequence(origIni.defDelayCapture());
+    DATAMAID->setParaValue(thDelayCapture, origIni.defDelayCapture());
+    auto hkFullScreCapture = ui->tabHotkeys->findChild<XKeySequenceEdit*>(hkFullScreCaptureName);
+    if (hkFullScreCapture) hkFullScreCapture->setKeySequence(origIni.defFullScrnCapture());
+    DATAMAID->setParaValue(thFullScreen, origIni.defFullScrnCapture());
 }
 
 
@@ -351,19 +360,19 @@ void PrefManage::on_leFileName_textChanged(const QString &name)
 
 void PrefManage::on_leConfig_textChanged(const QString &path)
 {
-    DATAMAID->setParaValue(toConfigPath, onSelectPath());
+    DATAMAID->setParaValue(toConfigPath, path);
 }
 
 
 void PrefManage::on_leQuickSave_textChanged(const QString &path)
 {
-    DATAMAID->setParaValue(toQuickSavePath, onSelectPath());
+    DATAMAID->setParaValue(toQuickSavePath, path);
 }
 
 
 void PrefManage::on_leAutoSave_textChanged(const QString &path)
 {
-    DATAMAID->setParaValue(toAutoSavePath, onSelectPath());
+    DATAMAID->setParaValue(toAutoSavePath, path);
 }
 
 
