@@ -29,18 +29,18 @@ PrefManage::PrefManage(QWidget *parent)
     ui->setupUi(this);
     initUI();
 
-    connect(ui->tabWidget,  &QTabWidget::currentChanged, [this](int index){
-        this->show();
-        this->update();
+//    connect(ui->tabWidget,  &QTabWidget::currentChanged, [this](int index){
+//        this->show();
+//        this->update();
 
-//        ui->tabGeneral->adjustSize();
-//        ui->tabInterface->adjustSize();
-//        ui->tabOutput->adjustSize();
-//        ui->tabHotkeys->adjustSize();
-//        ui->tabPin->adjustSize();
-//        ui->tabAbout->adjustSize();
-        this->adjustSize();
-    });
+////        ui->tabGeneral->adjustSize();
+////        ui->tabInterface->adjustSize();
+////        ui->tabOutput->adjustSize();
+////        ui->tabHotkeys->adjustSize();
+////        ui->tabPin->adjustSize();
+////        ui->tabAbout->adjustSize();
+//        this->adjustSize();
+//    });
 }
 
 PrefManage::~PrefManage()

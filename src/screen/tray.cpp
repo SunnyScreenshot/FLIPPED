@@ -183,7 +183,10 @@ void Tray::onPreference(bool checked)
     Q_UNUSED(checked);
 
     if (!m_pPref) m_pPref = new PrefManage();
+
     m_pPref->setVisible(true);
+    m_pPref->adjustSize();
+    m_pPref->setFixedSize(m_pPref->size());
 }
 
 void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
