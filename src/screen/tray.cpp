@@ -186,7 +186,11 @@ void Tray::onPreference(bool checked)
 
     m_pPref->setVisible(true);
     m_pPref->adjustSize();
+
+#ifdef Q_OS_WIN
     m_pPref->setFixedSize(m_pPref->size());
+#endif
+
 }
 
 void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
@@ -246,7 +250,8 @@ void Tray::onNotificHotkeyRegisteredFail(std::map<const QString, const QString> 
     QString msg;
     for (const auto& it: map) {
         msg += (it.first + ": " + it.second + "\n");
-        msg.left(msg.lastIndexOf('\n'));
+        auto t = msg.lastIndexOf('\n');
+        msg.left(t);
     }
 
     m_trayIcon->showMessage(title, msg, QIcon(":/resources/Logo.png"), 6000);

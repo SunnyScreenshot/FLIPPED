@@ -405,6 +405,9 @@ void PrefManage::on_cbLanuage_currentTextChanged(const QString &language)
     const QString strLanuage = btn->itemData(btn->currentIndex()).toString();
     DATAMAID->setParaValue("lanuage", strLanuage);
 
+    auto t = DATAMAID->paraValue("font").value<QString>();
+    
+
     QTranslator trans;
     QString qmPath(qApp->applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -416,6 +419,15 @@ void PrefManage::on_cbLanuage_currentTextChanged(const QString &language)
     qApp->installTranslator(&trans);
 
     ui->retranslateUi(this);
+    ui->btnFont->setText(DATAMAID->paraValue("font").value<QString>()); // fix: 切换后文本空白； 没有 tr 放于 retranslateUi 后
+    
+    QString bit;
+    if (_BIT_ARCH == 4) bit = "x86";
+    else if (_BIT_ARCH == 8) bit = "x64";
+    ui->labVersion->setText(QString("%1-Beta %2 (%3)")
+        .arg(_PROJECT_VERSION)
+        .arg(bit)
+        .arg(_VERSION_BUILD_TIME));
 }
 
 
