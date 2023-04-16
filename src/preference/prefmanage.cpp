@@ -54,11 +54,11 @@ void PrefManage::initUIGeneral()
                   ,{"zh_CN", "简体中文"}
                   ,{"zh_TW", "繁體中文"}};
 
-    for (const auto& it : m_lanuages)
-        ui->cbLanuage->addItem(it.second, it.first);
-
     const auto it = m_lanuages.find(DATAMAID->paraValue("lanuage").value<QString>());
     const QString strLanuage = (it != m_lanuages.end()) ? it->second : m_lanuages.at("en_US");
+
+    for (const auto& it : m_lanuages)
+        ui->cbLanuage->addItem(it.second, it.first);
 
     ui->cbLanuage->setCurrentText(strLanuage);
     ui->btnFont->setText(DATAMAID->paraValue("font").value<QString>());
