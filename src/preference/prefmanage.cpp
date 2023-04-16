@@ -50,9 +50,9 @@ PrefManage::~PrefManage()
 
 void PrefManage::initUIGeneral()
 {
-    m_lanuages = { {"en_US", "English"}
-                  ,{"zh_CN", "简体中文"}
-                  ,{"zh_TW", "繁體中文"}};
+    m_lanuages = { std::make_pair("en_US", "English")
+                  ,std::make_pair("zh_CN", "简体中文")
+                  ,std::make_pair("zh_TW", "繁體中文")};
 
     const auto it = m_lanuages.find(DATAMAID->paraValue("lanuage").value<QString>());
     const QString strLanuage = (it != m_lanuages.end()) ? it->second : m_lanuages.at("en_US");
@@ -405,6 +405,9 @@ void PrefManage::on_cbLanuage_currentTextChanged(const QString &language)
     const QString strLanuage = btn->itemData(btn->currentIndex()).toString();
     DATAMAID->setParaValue("lanuage", strLanuage);
 
+    auto t = DATAMAID->paraValue("font").value<QString>();
+    
+
     QTranslator trans;
     QString qmPath(qApp->applicationDirPath());
 #if defined(Q_OS_MAC)
@@ -416,6 +419,15 @@ void PrefManage::on_cbLanuage_currentTextChanged(const QString &language)
     qApp->installTranslator(&trans);
 
     ui->retranslateUi(this);
+    ui->btnFont->setText(DATAMAID->paraValue("font").value<QString>()); // fix: 切换后文本空白； 没有 tr 放于 retranslateUi 后
+    
+    QString bit;
+    if (_BIT_ARCH == 4) bit = "x86";
+    else if (_BIT_ARCH == 8) bit = "x64";
+    ui->labVersion->setText(QString("%1-Beta %2 (%3)")
+        .arg(_PROJECT_VERSION)
+        .arg(bit)
+        .arg(_VERSION_BUILD_TIME));
 }
 
 

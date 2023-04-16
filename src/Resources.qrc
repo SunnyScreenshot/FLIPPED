@@ -27,7 +27,6 @@
         <file>resources/tool_para/line_width/line_width_3.svg</file>
         <file>resources/tool_para/arrows/arrow_4.svg</file>
         <file>resources/tool/pin.svg</file>
-        <file>resources/Logo.png</file>
         <file>resources/tool_para/serialnumber/ellipse_fill.svg</file>
         <file>resources/tool_para/serialnumber/letters.svg</file>
         <file>resources/tool_para/serialnumber/numbers.svg</file>
@@ -37,6 +36,7 @@
         <file>resources/tool_para/text/outline.svg</file>
         <file>resources/tool/custompath.svg</file>
         <file>resources/border_style/light_blue/boardPoint.svg</file>
+        <file>resources/Logo.png</file>
         <file>resources/Logo.svg</file>
     </qresource>
 </RCC>
