@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Flipped Preferences</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_15">
    <item>
@@ -29,7 +29,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -1074,7 +1074,13 @@
            <item row="2" column="1" colspan="2">
             <widget class="QLabel" name="label_30">
              <property name="text">
-              <string>Copyright © 2023 XMuli</string>
+              <string>Copyright © 2023 &lt;a style='color: green;' href=https://github.com/XMuli&gt; XMuli&lt;/a&gt;</string>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse</set>
              </property>
             </widget>
            </item>
@@ -1086,13 +1092,16 @@
               </font>
              </property>
              <property name="text">
-              <string>FLIPPED</string>
+              <string>&lt;a style=&quot;color: black;&quot; style=&quot;text-decoration:none;&quot;  href=https://github.com/XMuli/FlippedPackage&gt;FLIPPED&lt;/a&gt;</string>
              </property>
              <property name="scaledContents">
               <bool>false</bool>
              </property>
              <property name="openExternalLinks">
               <bool>true</bool>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse</set>
              </property>
             </widget>
            </item>
@@ -1101,12 +1110,18 @@
              <property name="text">
               <string>%1-Beta %2 (%3)</string>
              </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse</set>
+             </property>
             </widget>
            </item>
            <item row="0" column="0" rowspan="3">
             <widget class="QLabel" name="labLogo">
              <property name="text">
-              <string>LOGO ICON</string>
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="../Resources.qrc">:/resources/Logo.png</pixmap>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -1119,7 +1134,7 @@
            <item row="3" column="0" colspan="3">
             <widget class="QLabel" name="label_29">
              <property name="text">
-              <string>simple and beautiful cross-platform screenshot software</string>
+              <string>simple and beautiful cross-platform screenshot software.</string>
              </property>
             </widget>
            </item>
@@ -1172,7 +1187,7 @@
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QLabel" name="label_25">
+             <widget class="QLabel" name="labQt">
               <property name="text">
                <string>QT</string>
               </property>
@@ -1194,13 +1209,19 @@
             <item row="1" column="3">
              <widget class="QLabel" name="label_20">
               <property name="text">
-               <string>418103279</string>
+               <string>&lt;a style=&quot;color: green;&quot; href=&quot;https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&amp;jump_from=webapi&amp;authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu&quot;&gt;418103279</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::RichText</enum>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
               </property>
               <property name="openExternalLinks">
                <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -1215,7 +1236,7 @@
              </widget>
             </item>
             <item row="2" column="3">
-             <widget class="QLabel" name="label_26">
+             <widget class="QLabel" name="labQHotkey">
               <property name="text">
                <string>QHotkey</string>
               </property>
@@ -1225,7 +1246,7 @@
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_24">
+             <widget class="QLabel" name="labLicenses">
               <property name="text">
                <string>Licenses</string>
               </property>
@@ -1298,6 +1319,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../Resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -218,7 +218,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VE
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # 4/8
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown  Win: AMD64
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
-target_compile_definitions(${PROJECT_NAME} PUBLIC _VERSION_BUILD_TIME="2023.04.12")          # build time about version
+target_compile_definitions(${PROJECT_NAME} PUBLIC _VERSION_BUILD_TIME="2023.04.16")          # build time about version
 if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PRIVATE
         WIN32_LEAN_AND_MEAN                                                                  # Header files containing only the common APIs
