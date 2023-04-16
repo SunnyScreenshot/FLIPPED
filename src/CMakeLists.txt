@@ -88,8 +88,8 @@ set(SRC_PERFERENCE
 
     preference/prefmanage.h
     preference/prefmanage.cpp
-    preference/preference.h
-    preference/preference.cpp
+#    preference/preference.h
+#    preference/preference.cpp
     preference/hotkeyswidget.h
     preference/hotkeyswidget.cpp
     preference/appellation.h

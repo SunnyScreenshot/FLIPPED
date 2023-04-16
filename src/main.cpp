@@ -30,7 +30,6 @@
 #include "tool/parameterbar.h"
 #include "tool/selectbar.h"
 #include "core/xlog.h"
-#include "preference/preference.h"
 #include "tool/base/blurwidget.h"
 #include "screen/datamaid.h"
 

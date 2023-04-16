@@ -167,7 +167,7 @@ void PrefManage::initUIAbout()
     QString bit;
     if (_BIT_ARCH == 4) bit = "x86";
     else if (_BIT_ARCH == 8) bit = "x64";
-    ui->labVersion->setText(tr("%1-Beta %2 (%3)")
+    ui->labVersion->setText(QString("%1-Beta %2 (%3)")
                             .arg(_PROJECT_VERSION)
                             .arg(bit)
                             .arg(_VERSION_BUILD_TIME));
