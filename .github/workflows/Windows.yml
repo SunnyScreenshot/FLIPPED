@@ -110,7 +110,7 @@ jobs:
         run: |
           $systemInfo="${{ env.targetOS }}-${{ matrix.msvc_arch }}"
           $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
-          $productName="${{ env.targetLowerName }}-$productVersion-beta-$systemInfo"
+          $productName="${{ env.targetName }}-$productVersion-beta-$systemInfo"
 
           echo "systemInfo=$systemInfo" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "productVersion=$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append

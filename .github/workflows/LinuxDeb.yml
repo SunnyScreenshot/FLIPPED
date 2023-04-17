@@ -2,8 +2,8 @@ name: LinuxDeb
 on: 
   push:
     paths-ignore:
-      # - '**'
-      - 'README.md'
+      - '**'
+      # - 'README.md'
   pull_request:
     paths-ignore:
       - 'README.md'
