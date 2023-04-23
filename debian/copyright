@@ -4,11 +4,11 @@ Upstream-Contact: https://github.com/XMuli/Flipped
 Source: https://github.com/XMuli/Flipped
 
 Files: *
-Copyright: 2022 XMuli <xmulitech@gmail.com>
+Copyright: 2023 XMuli <xmulitech@gmail.com>
 License: MIT
 
 Files: debian/*
-Copyright: 2022 XMuli <xmulitech@gmail.com>
+Copyright: 2023 XMuli <xmulitech@gmail.com>
 License: MIT
 
 License: MIT
