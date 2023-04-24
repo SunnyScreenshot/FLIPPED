@@ -18,7 +18,6 @@
 #include <QMetaProperty>
 #include "../../xglobal.h"
 #include "../../widget/xlabel.h"
-#include "../../screen/drawhelper.h"
 #include "../../screen/datamaid.h"
 
 //test

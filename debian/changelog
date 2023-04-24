@@ -3,7 +3,7 @@ flipped (1.2.3) UNRELEASED; urgency=medium
   * fix build Linux and MacOS
   * UI refactor
 
- -- XMuli <xmuli@xmuli-pc>  Sun, 23 Arpil 2022 22:08:13 +0800
+ -- XMuli <xmuli@xmuli-pc>  Sun, 23 Arpil 2023 22:08:13 +0800
 
 flipped (1.1.0) UNRELEASED; urgency=medium
 
@@ -12,13 +12,13 @@ flipped (1.1.0) UNRELEASED; urgency=medium
   * 功能：Auto save
   * 功能：快捷键冲突检测、系统消息通知
 
- -- XMuli <xmuli@xmuli-pc>  Sta, 16 Arpil 2022 18:20:13 +0800
+ -- XMuli <xmuli@xmuli-pc>  Sta, 16 Arpil 2023 19:20:13 +0800
 
 flipped (1.0.1) UNRELEASED; urgency=medium
 
   * 添加开机自启动[Windows]
 
- -- XMuli <xmuli@xmuli-pc>  Sta, 1 Arpil 2022 18:20:13 +0800
+ -- XMuli <xmuli@xmuli-pc>  Sta, 1 Arpil 2023 18:20:13 +0800
 
 flipped (1.0.0) UNRELEASED; urgency=medium
 

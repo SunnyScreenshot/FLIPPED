@@ -50,9 +50,9 @@ PrefManage::~PrefManage()
 
 void PrefManage::initUIGeneral()
 {
-    m_lanuages = { std::make_pair("en_US", "English")
-                  ,std::make_pair("zh_CN", "简体中文")
-                  ,std::make_pair("zh_TW", "繁體中文")};
+    m_lanuages = { {"en_US", "English"}
+                  ,{"zh_CN", "简体中文"}
+                  ,{"zh_TW", "繁體中文"}};
 
     const auto it = m_lanuages.find(DATAMAID->paraValue("lanuage").value<QString>());
     const QString strLanuage = (it != m_lanuages.end()) ? it->second : m_lanuages.at("en_US");

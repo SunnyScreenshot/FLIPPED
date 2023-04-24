@@ -48,10 +48,10 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          $systemInfo="${{ env.targetOS }}-${{ matrix.arch }}-x64"
+          $systemInfo="${{ env.targetOS }}_${{ matrix.arch }}"
           $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
-          # $productName="${{ env.targetName }}-$productVersion-beta-$systemInfo"
-          $productDebName="${{ env.targetLowerName }}-$productVersion"
+          # $productName="${{ env.targetName }}_$productVersion_beta_$systemInfo"
+          $productDebName="${{ env.targetLowerName }}_$productVersion"
 
           echo "systemInfo=$systemInfo" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "productVersion=$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append

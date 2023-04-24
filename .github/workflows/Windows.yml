@@ -2,7 +2,8 @@ name: Windows
 on: 
   push:
     paths-ignore: # 或 paths
-      - 'README.md'
+      - '**'
+      # - 'README.md'
   pull_request:
     paths:
       - 'README.md'
@@ -108,9 +109,9 @@ jobs:
         if: startsWith(github.event.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          $systemInfo="${{ env.targetOS }}-${{ matrix.msvc_arch }}"
+          $systemInfo="${{ env.targetOS }}_${{ matrix.msvc_arch }}"
           $productVersion="${{ github.ref }}".substring("refs/tags/v".length)
-          $productName="${{ env.targetName }}-$productVersion-beta-$systemInfo"
+          $productName="${{ env.targetName }}_$productVersion_beta_$systemInfo"
 
           echo "systemInfo=$systemInfo" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "productVersion=$productVersion" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
