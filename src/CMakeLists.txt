@@ -1,24 +1,53 @@
-﻿cmake_minimum_required(VERSION 3.16)
-set(PROJECT_NAME Flipped)
-project(${PROJECT_NAME} VERSION 1.2.3 LANGUAGES CXX)
+﻿cmake_minimum_required(VERSION 3.5)
 
-file(GLOB All_CNGFIG_FILES "data/config/*")
-file(COPY ${All_CNGFIG_FILES} DESTINATION "${CMAKE_BINARY_DIR}/bin/config")
+set(project_name FLIPPED)
+set(project_version_major 2)
+set(project_version_minor 0)
+set(project_version_path 0)
+set(project_version ${project_version_major}.${project_version_minor}.${project_version_path})
+project(${project_name} VERSION ${project_version} LANGUAGES CXX)
 
-if(MSVC)
-    OPTION(USE_MP "use multiple" ON)
-    OPTION(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP "Set The Global Option COMPILE_FLAGS /MP to target." ON)
-    if(ProjectConfig_Global_COMPILE_FLAGS_WITH_MP OR USE_MP)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-    endif()
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin") # qtcreator + msvc 可执行文件的输出目录
+set(CMAKE_BINARY_DIR "${EXECUTABLE_OUTPUT_PATH}")             # visual studio 2022 可执行的输出目录
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR})                      # 创建输出目录
+set(_VERSION ${VERSION})
+#message("--------------------->${QT_VERSION} ${QT_VERSION_MAJOR}  ${QT_VERSION_MINOR}  ${QT_VERSION_PATCH}")
 
-    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
-    add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
-    add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-else()
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
-endif()
+# 作为宏传递给 C++ 代码
+add_definitions(-DMY_PROJECT_NAME="${project_name}")
+add_definitions(-DMY_BUILD_TIME="2023-08-08")
+add_definitions(-DMY_VARIABLE="${project_version}")
+add_compile_definitions(MY_DEBUG_DETAIL)  # 屏蔽则关闭详细调试日志信息
+#add_compile_definitions(MY_SHIELD_CONFIG_JSON)  # 屏蔽配置文件读写 json
+
+set(qt_moduls Widgets Network Multimedia WebSockets Xml Svg)
+set(qt_version_moduls)
+foreach(it ${qt_moduls})
+    list(APPEND qt_version_moduls Qt${QT_VERSION_MAJOR}::${it})
+    message("--->qt_moduls:" Qt${QT_VERSION_MAJOR}::${it})
+endforeach()
+
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${qt_moduls} LinguistTools)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${qt_moduls} LinguistTools) # LinguistTools No link
+
+set(PROJECT_WIDGETS
+    widgets/chatinputedit.h
+    widgets/chatinputedit.cpp
+    widgets/bubble.h
+    widgets/bubble.cpp
+    widgets/bubble.ui
+    widgets/bubblehistory.h
+    widgets/bubblehistory.cpp
+    widgets/aboutinfo.h
+    widgets/aboutinfo.cpp
+    widgets/aboutinfo.ui
+)
 
 set(SRC_MAIN
     xglobal.h
@@ -115,47 +144,134 @@ set(SRC_RESOURCES
     Resources.qrc
     logo.rc)
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(QT_MODULES Core Gui Widgets Svg Xml)
-set(QT_VERSION_MODULES)
+set(src_root_path ${CMAKE_CURRENT_SOURCE_DIR})                                              # default root path curr path （CMakeList.txt）
+file(GLOB_RECURSE source_lists LIST_DIRECTORIES false
+    "${src_root_path}/*.cpp"
+    "${src_root_path}/*.h")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${QT_MODULES})
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${QT_MODULES} LinguistTools) # LinguistTools No link
+source_group(TREE ${src_root_path} FILES ${source_lists})                                   # will be organized according to the actual directory structure, .h.cpp is put together
+include_directories(${PROJECT_SOURCE_DIR}/widgets)  # 修复 Qt Design 使用提升自定义控件后， MinGW 找不到而编译失败
 
-foreach(_qt_module ${QT_MODULES})
-    list(APPEND QT_VERSION_MODULES Qt${QT_VERSION_MAJOR}::${_qt_module})
+#***************************************************通用参数的定义 开始**********************************************
+# get kit architecture bit
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(architecture_bit "x86")
+    set(build_x64bit false)
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(architecture_bit "x64")
+    set(build_x64bit true)
+endif()
+
+# 设置变量 qt/ssl/lupdate/lrelease 在不同编译器下的环境和版本下的 path
+# env_qt_version_dir/env_qt_dir/lupdate_path/lrelease_path;  [exe_dir] <->  EXECUTABLE_OUTPUT_PATH | CMAKE_BINARY_DIR
+if(WIN32)
+    set(env_qt_version_dir "C:/Qt/${QT_VERSION}")
+    if(${build_x64bit})
+        set(env_os "Windows(kits 64bit)")
+        if(MSVC)
+            set(env_qt_dir "${env_qt_version_dir}/msvc2019_64")
+        elseif(MINGW)
+            set(env_qt_dir "${env_qt_version_dir}/mingw81_64")
+        endif()
+    else()
+        set(env_os "Windows(kits 86bit)")
+        if(MSVC)
+            set(env_qt_dir "${env_qt_version_dir}/msvc2019")
+        elseif(MINGW)
+            set(env_qt_dir "${env_qt_version_dir}/mingw81_32")
+        endif()
+    endif()
+
+    execute_process(COMMAND cmd.exe "/C" "echo %USERPROFILE%" OUTPUT_VARIABLE HOME_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+else()
+
+    if(APPLE)
+        set(env_os "MacOS")
+        set(env_qt_version_dir "${HOME_DIR}/Qt/${QT_VERSION}")
+        execute_process(COMMAND bash "-c" "echo $HOME" OUTPUT_VARIABLE HOME_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+        set(env_qt_dir "${env_qt_version_dir}/clang_64")
+    elseif(UNIX)
+        set(env_os "Unix/Linux")
+
+        set(env_qt_version_dir "opt/Qt/${QT_VERSION}") # ununtu 22.04
+        execute_process(COMMAND bash "-c" "echo $HOME" OUTPUT_VARIABLE HOME_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
+        set(env_qt_dir "${env_qt_version_dir}/gcc_64")
+    endif()
+endif()
+
+if(APPLE)
+    set(exe_dir ${EXECUTABLE_OUTPUT_PATH}/${project_name}.app/Contents/MacOS)
+else()
+    set(exe_dir ${EXECUTABLE_OUTPUT_PATH})
+endif()
+
+set(lupdate_path "${env_qt_dir}/bin/lupdate")
+set(lrelease_path "${env_qt_dir}/bin/lrelease")
+
+message("--->architecture_bit:" ${architecture_bit}  "  build_x64bit:" ${build_x64bit}  "  ssl_dir:" ${ssl_dir} "  HOME_DIR:" ${HOME_DIR} "  env_os:" ${env_os})
+message("lupdate_path:" ${lupdate_path})
+message("lrelease_path:" ${lrelease_path})
+message("exe_dir:" ${exe_dir})
+message("EXECUTABLE_OUTPUT_PATH:" ${EXECUTABLE_OUTPUT_PATH})
+message("CMAKE_BINARY_DIR:" ${CMAKE_BINARY_DIR})
+
+#***************************************************拷贝资源文件到 bin 下**********************************************
+# 拷贝配置文件
+file(GLOB all_config_files "resources/config/*")
+file(COPY ${all_config_files} DESTINATION "${CMAKE_BINARY_DIR}/config")
+#configure_file(xconfig.ini ${exe_dir}/xconfig.ini COPYONLY)
+
+## copy "resources" 文件夹下的指定文件夹
+#set(folders_to_copy "changelog" "licenses" "logo" "prompt")
+#set(source_root "${CMAKE_SOURCE_DIR}/resources")
+#set(traget_root "${CMAKE_BINARY_DIR}/resources")
+
+## 遍历复制文件夹集合中的每个文件夹
+#foreach(it ${folders_to_copy})
+#    set(copy_source_dir "${source_root}/${it}")
+##    set(copy_traget_dir "${traget_root}/${it}")
+#    file(COPY ${copy_source_dir} DESTINATION ${traget_root})
+#endforeach()
+
+#************************************************* .ts 生成 .qm***************************************************
+# 创建保存 ts 的文件夹，和依据里面的 *.ts 文件，生成 .qm 放入最终文件中
+set(ts_dir "${CMAKE_CURRENT_SOURCE_DIR}/translations")
+if(APPLE)
+    set(qm_dir ${EXECUTABLE_OUTPUT_PATH}/${project_name}.app/Contents/MacOS/translations)
+else()
+    set(qm_dir ${EXECUTABLE_OUTPUT_PATH}/translations)
+endif()
+
+file(MAKE_DIRECTORY "${ts_dir}")
+file(MAKE_DIRECTORY "${qm_dir}")
+file(GLOB ts_files "${ts_dir}/*.ts")
+
+set(ts_files_name "")    # 获取文件名部分（不包括路径）
+foreach(it ${ts_files})
+    get_filename_component(ts_filename ${it} NAME_WE)
+    list(APPEND ts_files_name ${ts_filename})
 endforeach()
 
-# Translation
-option(FLIPPED_GENERATE_TS "Regenerate translation source files" OFF)
-set(FLIPPED_TS_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_CN.ts
-    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/zh_TW.ts
-    ${CMAKE_CURRENT_SOURCE_DIR}/data/translations/en_US.ts)
+##编译时更新 .ts 和生成 .qm
+foreach(it ${ts_files_name})
+    # 命令参数问题：确保命令的参数传递方式正确。有时候在使用 execute_process 时，参数的传递需要一些特殊的格式，比如将参数放到列表中传递。
+    execute_process(COMMAND "${lupdate_path}" -no-obsolete -no-ui-lines "${CMAKE_SOURCE_DIR}" -ts "${ts_dir}/${it}.ts") # 注意参数  # -no-obsolete -no-ui-lines
+    execute_process(COMMAND "${lrelease_path}" "${ts_dir}/${it}.ts" -qm "${qm_dir}/${it}.qm")
+endforeach()
 
-if (FLIPPED_GENERATE_TS)
-    message("FLIPPED_GENERATE_TS is ON")
-    qt5_create_translation(FLIPPED_QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${FLIPPED_TS_FILES} OPTIONS -source-language en_US -no-obsolete)
-else ()
-    message("FLIPPED_GENERATE_TS is OFF")
-    qt5_add_translation(FLIPPED_QM_FILES ${FLIPPED_TS_FILES})   # Avoid deleting *.ts files during project cleanup
-endif ()
+file(GLOB_RECURSE qm_files "${qm_dir}/*.qm")
 
-message(@1--> ${FLIPPED_TS_FILES})
-message(@2--> ${FLIPPED_QM_FILES})
+message("-->ts_files_name: ${ts_files_name}")
+message("-->ts_files: ${ts_files}")
+message("-->qm_files: ${qm_files}")
+#***************************************************使用第三方库 QHotkey 开始**********************************************
 
 include_directories(${CMAKE_SOURCE_DIR}/3rdparty/spdlog/include
     ${CMAKE_SOURCE_DIR}/3rdparty/QHotkey/QHotkey)
 link_directories(${CMAKE_BINARY_DIR}/bin
     ${CMAKE_BINARY_DIR}/3rdparty/QHotkey)
-
-#QT5_WRAP_UI(UI_HEADERS ${UIS})
-
-add_executable(${PROJECT_NAME}
+#***************************************************使用第三方库 结束**********************************************
+add_executable(${project_name}
     ${SRC_MAIN}
     ${SRC_PLATFORM}
     ${SRC_CORE}
@@ -166,51 +282,63 @@ add_executable(${PROJECT_NAME}
     ${SRC_EXAMPLE}
     ${SRC_PLUGIN_INTERFACE}
     ${SRC_RESOURCES}
-    ${FLIPPED_QM_FILES}  # Note: https://www.cnblogs.com/Paoyao/p/15752116.html
+    ${qm_files}  # Note: https://www.cnblogs.com/Paoyao/p/15752116.html
 )
 
-#if (APPLE)
-#    set(MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME})
-#    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.XMuli.Flipped")
-#    set(MACOSX_BUNDLE_INFO_STRING "A cross-platform screenshot software")
-#    # set(MACOSX_BUNDLE_ICON_FILE "xxx.icns")
-#    # set(MACOSX_BUNDLE_LONG_VERSION_STRING ${PROJECT_VERSION})
-#    # set(MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION})
-#    # set(MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION})
-#endif()
-
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey)
-elseif (APPLE)
-    target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey)
-elseif (UNIX)
-    target_link_libraries(${PROJECT_NAME} ${QT_VERSION_MODULES} qhotkey X11)
+if (UNIX)
+    target_link_libraries(${project_name} PRIVATE ${qt_version_moduls} qhotkey X11)
+else()
+    target_link_libraries(${project_name} PRIVATE ${qt_version_moduls} qhotkey)
 endif()
 
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER org.XMuli.Flipped
+set_target_properties(${project_name} PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER https://thinkymate.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE)
+    WIN32_EXECUTABLE TRUE
+)
 
-if(MSVC)
-    #set_target_properties( ${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin" )
-    set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}/bin")
-    set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin")
-    set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}/bin")
-    set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}/bin")
+# 获取 CPU 核心数量，开启 IDE 多核编译
+include(ProcessorCount)
+ProcessorCount(N)
+message("-->Number of available processor cores: ${N}")
+
+if(WIN32)
+    if(MSVC)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /MP")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+    elseif(MINGW)
+        set(CMAKE_MAKE_PROGRAM "${CMAKE_MAKE_PROGRAM} -j${N}")
+    endif()
+elseif(UNIX)
+    add_compile_options(-j${N})
 endif()
 
-# 文件归类, ref:
-# https://stackoverflow.com/questions/33808087/cmake-how-to-create-visual-studio-filters
-# https://blog.csdn.net/gzj2013/article/details/102619480
-set(_src_root_path ${CMAKE_CURRENT_SOURCE_DIR})                                              # default root path curr path （CMakeList.txt）
-file(GLOB_RECURSE _source_list LIST_DIRECTORIES false
-    "${_src_root_path}/*.cpp"
-    "${_src_root_path}/*.h")
+if(MSVC)
+    # 设置默认启动 project
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${project_name})
+    # Fix: Visual Studio 2022 生成的目标文件的输出目录, 移除掉 Release/Debug 的多一层文件夹
+    set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_BINARY_DIR}")
+    set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}")
+    set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${CMAKE_BINARY_DIR}")
+    set_target_properties(${project_name} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_BINARY_DIR}")
+    # 开启 MSVC 终端上的中文不乱码
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
+    add_compile_options(/source-charset:utf-8 /execution-charset:utf-8)
+    # 开启 UNICODE 等常规
+    target_compile_definitions(${project_name} PRIVATE
+        WIN32_LEAN_AND_MEAN                                                                  # Header files containing only the common APIs
+        _CRT_SECURE_NO_WARNINGS                                                              # Unsafe functions such as strcpy, scanf, etc. are allowed
+        UNICODE
+        _UNICODE)
+elseif(MINGW)
+endif()
 
-source_group(TREE ${_src_root_path} FILES ${_source_list})                                   # will be organized according to the actual directory structure, .h.cpp is put together
+## Define some variables that can be used in *.cpp
+#target_compile_definitions(${project_name} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # 4/8
+#target_compile_definitions(${project_name} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown  Win: AMD64
+#target_compile_definitions(${project_name} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC or GNU
 
 # Define some variables that can be used in *.cpp
 target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_NAME="${PROJECT_NAME}")
@@ -218,97 +346,78 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VE
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # 4/8
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown  Win: AMD64
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
-target_compile_definitions(${PROJECT_NAME} PUBLIC _VERSION_BUILD_TIME="2023.04.23")          # build time about version
-if(WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        WIN32_LEAN_AND_MEAN                                                                  # Header files containing only the common APIs
-        _CRT_SECURE_NO_WARNINGS                                                              # Unsafe functions such as strcpy, scanf, etc. are allowed
-        UNICODE
-        _UNICODE)
-endif()
+target_compile_definitions(${PROJECT_NAME} PUBLIC _VERSION_BUILD_TIME="2023.08.13")
+# build time about version
 
-set(QT_MESSAGELOGCONTEXT TRUE)                                                               # qInstallMessageHandler(): The file and line numbers can be printed in release mode
-add_definitions(-DQT_MESSAGELOGCONTEXT)                                                      # Add QtMessage macro definition, off by default
-
-foreach (FILE ${FLIPPED_QM_FILES})
-    get_filename_component(F_NAME ${FILE} NAME)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${F_NAME}
-        ${CMAKE_CURRENT_BINARY_DIR}/../bin/translations/${F_NAME})
-
-    message("Copy *.qm Path: " ${CMAKE_CURRENT_BINARY_DIR}/../bin/translations/${F_NAME})
-endforeach ()
-
-message("==========BRGIN============")
-message("_PROJECT_NAME:${PROJECT_NAME}")
-message("_PROJECT_VERSION:" ${PROJECT_VERSION})
+message("------------BRGIN------------")
+message("_PROJECT_NAME:${project_name}")
+message("_PROJECT_VERSION:" ${project_version})
 message("_BIT_ARCH:" ${CMAKE_SIZEOF_VOID_P})
 message("_COMPILER:" ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message("_COMPILER_ID:" ${CMAKE_CXX_COMPILER_ID})
-message("CMake Path"
+message("CMake Path:"
     "\n PROJECT_NAME:"  ${PROJECT_NAME}
     "\n CMAKE_INSTALL_PREFIX: "  ${CMAKE_INSTALL_PREFIX}
     "\n PROJECT_BINARY_DIR: "  ${PROJECT_BINARY_DIR}
     "\n CMAKE_INSTALL_BINDIR: "  ${CMAKE_INSTALL_BINDIR}
     "\n CMAKE_INSTALL_LIBDIR: "  ${CMAKE_INSTALL_LIBDIR}
     "\n CMAKE_INSTALL_INCLUDEDIR: "  ${CMAKE_INSTALL_INCLUDEDIR})
-message("==========END============")
+message("------------END------------")
 
-#=========================================================================================
-# Install settings   CMAKE_NSTALL_PREFIX: "/usr/local" or "c:/Program Files/${PROJECT_NAME}"
-if (WIN32)
-    install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX})
-elseif (APPLE)
-elseif (UNIX)
-    if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-        set(CMAKE_INSTALL_PREFIX "/bin")
-    endif ()
+install(TARGETS ${project_name}
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-    # Install Translations
-    install(FILES ${FLIPPED_QM_FILES} DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/data/translations)
-    install(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}    # bin
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})   # lib
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(${project_name})
 endif()
 
-## CPACK: General Settings
-#set(CPACK_PACKAGE_NAME "Flipped")
-#set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Lightweight, beautiful and cross-platform screenshot tool")
-#set(CPACK_PACKAGE_CONTACT "https://github.com/XMuli/Flipped/issues")
-##set (CPACK_GENERATOR "TBZ2")
-#set(CPACK_SET_DESTDIR ON)                             # ON 安装指定路径，设置下一个; OFF 则使用 CMAKE_INSTALL_PREFIX
-#set(CPACK_INSTALL_PREFIX "C:/Program Files(x86)/Flipped")   # 安装到的目录路径
-#set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})         # 生成的安装的版本号信息
-#set(CPACK_RPM_PACKAGE_GROUP "XMuli")
-#set(CPACK_PACKAGE_VENDOR "XMuli")
-#set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+#打包和压缩***************************************************************************************
+# 拷贝 ssl 和对应的 qt 依赖
 
-#if (WIN32)
-#    # see: https://cmake.org/cmake/help/book/mastering-cmake/chapter/Packaging%20With%20CPack.html
-#    set(CPACK_GENERATOR NSIS)
-##    set(CPACK_NSIS_MUI_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
-##    set(CPACK_NSIS_MUI_UNIICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeLogo.ico")
-##    set(CPACK_NSIS_INSTALLED_ICON_NAME "bin\\cmake-gui.exe")
-#    set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME} ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}")
-##    set(CPACK_PACKAGE_ICON "${CMake_SOURCE_DIR}/Utilities/Release\\CMakeInstall.bmp")
-##    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/Copyright.txt")
 
-#    set(CPACK_NSIS_MODIFY_PATH ON)
-#    set(CPACK_CREATE_DESKTOP_LINKS ${PROJECT_NAME})
+if(APPLE)
+#    file(COPY "/usr/local/Cellar/openssl@3/3.1.1/lib/libcrypto.3.dylib" DESTINATION "${EXECUTABLE_OUTPUT_PATH}")
+#    file(COPY "/usr/local/Cellar/openssl@3/3.1.1/lib/libssl.3.dylib" DESTINATION "${exe_output_dir}")
 
-##    set (CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
-#    set(CPACK_PACKAGE_EXECUTABLES "${PROJECT_NAME}" "${PROJECT_NAME}" )
-#    set(CPACK_NSIS_MENU_LINKS
-#        "doc/${PROJECT_NAME}-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}/${PROJECT_NAME}.html"
-#        "${PROJECT_NAME} Help" "https://github.com/XMuli/Flipped" "${PROJECT_NAME} Web Site")
+    set(windeployqt "${env_qt_dir}/bin/macdeployqt")
+    add_custom_command(TARGET ${project_name} POST_BUILD
+        COMMAND "${windeployqt} ${EXECUTABLE_OUTPUT_PATH}/${project_name}.app" -verbose=1
+    )
 
-#elseif (APPLE)
-#    # ...
-#elseif (UNIX)
-#    set (CPACK_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}")
-#    set (CPACK_DEBIAN_PACKAGE_SHILIBDEPS ON)
-##    set (CPACK_DEBIAN_PACKAGE_RECOMMENDS "kimageformat-plugins")
-#endif()
+    add_custom_command(TARGET ${project_name} POST_BUILD
+        COMMAND "${windeployqt}/ ${EXECUTABLE_OUTPUT_PATH}/${project_name}.app -dmg"
+    )
 
-#include(CPack)
+elseif(UNIX)
+
+elseif(WIN32)
+#    if(${build_x64bit})
+#        set(ssl_dir "C:/Qt/Tools/OpenSSL/Win_x64/")
+#        set(ssl_file "libssl-1_1-x64.dll" "libcrypto-1_1-x64.dll")
+#    else()
+#        set(ssl_dir "C:/Qt/Tools/OpenSSL/Win_x86/")
+#        set(ssl_file "libssl-1_1.dll" "libcrypto-1_1.dll")
+#    endif()
+
+#    foreach(it ${ssl_file})
+#        file(COPY "${ssl_dir}/bin/${it}" DESTINATION "${EXECUTABLE_OUTPUT_PATH}")
+#        message("--->it:" "${ssl_dir}/bin/${it}")
+#    endforeach()
+
+    set(windeployqt "${env_qt_dir}/bin/windeployqt.exe")
+    add_custom_command(TARGET ${project_name} POST_BUILD
+        COMMAND "${windeployqt}" "${EXECUTABLE_OUTPUT_PATH}/${project_name}.exe" --no-translations
+    )
+endif()
+
+
+message("copy depend COMPILER_ID[${CMAKE_CXX_COMPILER_ID}] ${env_os}: ssl/qt")
+message("--->windeployqt(or mac/linux): ${windeployqt}")
+
+# 添加一个自定义的目标，将编译和自定义打包命令关联起来
+add_custom_target(run_custom_qt_packaging
+    DEPENDS ${project_name}
+)
+
+
