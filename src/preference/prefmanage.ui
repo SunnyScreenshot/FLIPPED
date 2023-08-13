@@ -1167,7 +1167,7 @@
                    <item>
                     <widget class="QLabel" name="label_30">
                      <property name="text">
-                      <string>Copyright © 2023 &lt;a style='color: green;' href=https://github.com/XMuli&gt; XMuli&lt;/a&gt;</string>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright © 2022-2023 &lt;a href=&quot;https://github.com/XMuli&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;XMuli&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
