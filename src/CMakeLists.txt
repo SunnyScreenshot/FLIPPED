@@ -1,8 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.5)
 
 set(project_name FLIPPED)
-set(project_version_major 2)
-set(project_version_minor 0)
+set(project_version_major 1)
+set(project_version_minor 3)
 set(project_version_path 0)
 set(project_version ${project_version_major}.${project_version_minor}.${project_version_path})
 project(${project_name} VERSION ${project_version} LANGUAGES CXX)
@@ -13,7 +13,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/bin") # qtcreator + msvc 可执行文件的输出目录
+set(EXECUTABLE_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../bin") # qtcreator + msvc 可执行文件的输出目录
 set(CMAKE_BINARY_DIR "${EXECUTABLE_OUTPUT_PATH}")             # visual studio 2022 可执行的输出目录
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR})                      # 创建输出目录
 set(_VERSION ${VERSION})

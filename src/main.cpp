@@ -24,6 +24,7 @@
 #include <QSystemTrayIcon>
 #include <QSystemTrayIcon>
 #include "./screen/tray.h"
+#include "preference/prefmanage.h"
 #include "qmetaobject.h"
 #include "tool/pin/pinwidget.h"
 #include "widget/xroundwidget.h"
@@ -52,36 +53,39 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(_PROJECT_VERSION);
 
     QApplication a(argc, argv);
-    a.setQuitOnLastWindowClosed(false);
+//    a.setQuitOnLastWindowClosed(false);
 //    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
-    QString filePath = QApplication::applicationDirPath() + "/Flipped.temp.lock";
-    QLockFile* lockFile = new QLockFile(filePath);
-    bool isLock = lockFile->isLocked();
-    qDebug() << "filePath:" << filePath << "  isLock:" << isLock;
+//    QString filePath = QApplication::applicationDirPath() + "/Flipped.temp.lock";
+//    QLockFile* lockFile = new QLockFile(filePath);
+//    bool isLock = lockFile->isLocked();
+//    qDebug() << "filePath:" << filePath << "  isLock:" << isLock;
 
-    if (!lockFile->tryLock(100)) {
-        QMessageBox msgBox(QMessageBox::Warning, QObject::tr("Warning"), QObject::tr("The application is already running.\nAllowed to run only one instance of the application."));
-        msgBox.exec();
-        return 0;
-    }
+//    if (!lockFile->tryLock(100)) {
+//        QMessageBox msgBox(QMessageBox::Warning, QObject::tr("Warning"), QObject::tr("The application is already running.\nAllowed to run only one instance of the application."));
+//        msgBox.exec();
+//        return 0;
+//    }
 
-    if (lockFile)
-        delete lockFile;
+//    if (lockFile)
+//        delete lockFile;
 
-    DATAMAID->setRunLanguage();
+//    DATAMAID->setRunLanguage();
 
-    Tray::instance();
+//    Tray::instance();
 
-    QStringList listStyle = QStyleFactory::keys();
-    foreach(QString val, listStyle)
-      qDebug()<<val<<"  ";
+    PrefManage prefManage;
+    prefManage.show();
 
-#ifdef Q_OS_MAC
-    const QString value = "macintosh";  // macintosh Windows Fusion
-    QApplication::setStyle(value);
-#else
-#endif
+//    QStringList listStyle = QStyleFactory::keys();
+//    foreach(QString val, listStyle)
+//      qDebug()<<val<<"  ";
+
+//#ifdef Q_OS_MAC
+//    const QString value = "macintosh";  // macintosh Windows Fusion
+//    QApplication::setStyle(value);
+//#else
+//#endif
 
 
 //    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);

@@ -160,9 +160,6 @@ void PrefManage::initUIHotkeys()
 void PrefManage::initUIAbout()
 {
 //    ui->labLogo->setPixmap(QIcon(":/resources/Logo.png").pixmap(QSize(200, 200)));
-    ui->labLicenses->hide();
-    ui->labQt->hide();
-    ui->labQHotkey->hide();
 
     QString bit;
     if (_BIT_ARCH == 4) bit = "x86";
