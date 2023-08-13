@@ -141,8 +141,8 @@ set(SRC_PLUGIN_INTERFACE
     pluginsinterface/iplugininterface.cpp)
 
 set(SRC_RESOURCES
-    Resources.qrc
-    logo.rc)
+    resources.qrc
+    resources/logo/resources.rc)
 
 set(src_root_path ${CMAKE_CURRENT_SOURCE_DIR})                                              # default root path curr path （CMakeList.txt）
 file(GLOB_RECURSE source_lists LIST_DIRECTORIES false
@@ -217,21 +217,20 @@ message("CMAKE_BINARY_DIR:" ${CMAKE_BINARY_DIR})
 
 #***************************************************拷贝资源文件到 bin 下**********************************************
 # 拷贝配置文件
-file(GLOB all_config_files "resources/config/*")
+file(GLOB all_config_files "src/resources/config/*")
 file(COPY ${all_config_files} DESTINATION "${CMAKE_BINARY_DIR}/config")
-#configure_file(xconfig.ini ${exe_dir}/xconfig.ini COPYONLY)
 
-## copy "resources" 文件夹下的指定文件夹
-#set(folders_to_copy "changelog" "licenses" "logo" "prompt")
-#set(source_root "${CMAKE_SOURCE_DIR}/resources")
-#set(traget_root "${CMAKE_BINARY_DIR}/resources")
+# copy "resources" 文件夹下的指定文件夹
+set(folders_to_copy "logo" "licenses" "changelog")
+set(source_root "${CMAKE_SOURCE_DIR}/src/resources")
+set(traget_root "${CMAKE_BINARY_DIR}/resources")
 
-## 遍历复制文件夹集合中的每个文件夹
-#foreach(it ${folders_to_copy})
-#    set(copy_source_dir "${source_root}/${it}")
-##    set(copy_traget_dir "${traget_root}/${it}")
-#    file(COPY ${copy_source_dir} DESTINATION ${traget_root})
-#endforeach()
+# 遍历复制文件夹集合中的每个文件夹
+foreach(it ${folders_to_copy})
+    set(copy_source_dir "${source_root}/${it}")
+#    set(copy_traget_dir "${traget_root}/${it}")
+    file(COPY ${copy_source_dir} DESTINATION ${traget_root})
+endforeach()
 
 #************************************************* .ts 生成 .qm***************************************************
 # 创建保存 ts 的文件夹，和依据里面的 *.ts 文件，生成 .qm 放入最终文件中
@@ -377,9 +376,6 @@ endif()
 
 
 if(APPLE)
-#    file(COPY "/usr/local/Cellar/openssl@3/3.1.1/lib/libcrypto.3.dylib" DESTINATION "${EXECUTABLE_OUTPUT_PATH}")
-#    file(COPY "/usr/local/Cellar/openssl@3/3.1.1/lib/libssl.3.dylib" DESTINATION "${exe_output_dir}")
-
     set(windeployqt "${env_qt_dir}/bin/macdeployqt")
     add_custom_command(TARGET ${project_name} POST_BUILD
         COMMAND "${windeployqt} ${EXECUTABLE_OUTPUT_PATH}/${project_name}.app" -verbose=1
@@ -392,19 +388,6 @@ if(APPLE)
 elseif(UNIX)
 
 elseif(WIN32)
-#    if(${build_x64bit})
-#        set(ssl_dir "C:/Qt/Tools/OpenSSL/Win_x64/")
-#        set(ssl_file "libssl-1_1-x64.dll" "libcrypto-1_1-x64.dll")
-#    else()
-#        set(ssl_dir "C:/Qt/Tools/OpenSSL/Win_x86/")
-#        set(ssl_file "libssl-1_1.dll" "libcrypto-1_1.dll")
-#    endif()
-
-#    foreach(it ${ssl_file})
-#        file(COPY "${ssl_dir}/bin/${it}" DESTINATION "${EXECUTABLE_OUTPUT_PATH}")
-#        message("--->it:" "${ssl_dir}/bin/${it}")
-#    endforeach()
-
     set(windeployqt "${env_qt_dir}/bin/windeployqt.exe")
     add_custom_command(TARGET ${project_name} POST_BUILD
         COMMAND "${windeployqt}" "${EXECUTABLE_OUTPUT_PATH}/${project_name}.exe" --no-translations

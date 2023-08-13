@@ -1143,7 +1143,7 @@
                    <string/>
                   </property>
                   <property name="pixmap">
-                   <pixmap resource="../Resources.qrc">:/resources/Logo.png</pixmap>
+                   <pixmap resource="../resources.qrc">:/resources/logo/logo.png</pixmap>
                   </property>
                   <property name="scaledContents">
                    <bool>true</bool>
@@ -1346,7 +1346,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../Resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

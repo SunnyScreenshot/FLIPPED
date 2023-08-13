@@ -163,8 +163,6 @@ void PrefManage::initUIHotkeys()
 
 void PrefManage::initUIAbout()
 {
-//    ui->labLogo->setPixmap(QIcon(":/resources/Logo.png").pixmap(QSize(200, 200)));
-
     QString bit;
     if (_BIT_ARCH == 4) bit = "x86";
     else if (_BIT_ARCH == 8) bit = "x64";

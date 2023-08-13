@@ -36,7 +36,9 @@
         <file>resources/tool_para/text/outline.svg</file>
         <file>resources/tool/custompath.svg</file>
         <file>resources/border_style/light_blue/boardPoint.svg</file>
-        <file>resources/Logo.png</file>
-        <file>resources/Logo.svg</file>
+        <file>resources/logo/logo.ico</file>
+        <file>resources/logo/logo.png</file>
+        <file>resources/logo/logo.svg</file>
+        <file>resources/logo/resources.rc</file>
     </qresource>
 </RCC>

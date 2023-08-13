@@ -411,12 +411,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="248"/>
+        <location filename="../preference/prefmanage.cpp" line="250"/>
         <source>Select a path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="438"/>
+        <location filename="../preference/prefmanage.cpp" line="436"/>
         <source>Select Font</source>
         <translation type="unfinished"></translation>
     </message>

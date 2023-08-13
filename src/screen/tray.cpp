@@ -96,7 +96,7 @@ void Tray::init()
 	m_trayIconMenu->addSeparator();
 	m_trayIconMenu->addAction(quit);
 
-    m_trayIcon->setIcon(QIcon(":/resources/Logo.png"));
+    m_trayIcon->setIcon(QIcon(":/resources/logo/logo.png"));
     m_trayIcon->setToolTip(tr(_PROJECT_NAME));
 	m_trayIcon->setContextMenu(m_trayIconMenu);
 
@@ -238,7 +238,7 @@ void Tray::onNotificQuickSave(const bool bSaveOk, const QString& pathName)
 {
     const QString& title = bSaveOk ? tr("Success") : tr("Fail");
     const QString& msg = tr("Image saved to %1").arg(pathName);
-    m_trayIcon->showMessage(title, msg, QIcon(":/resources/Logo.png"), 6000);
+    m_trayIcon->showMessage(title, msg, QIcon(":/resources/logo/logo.png"), 6000);
 }
 
 void Tray::onNotificHotkeyRegisteredFail(std::map<const QString, const QString> map)
@@ -254,7 +254,7 @@ void Tray::onNotificHotkeyRegisteredFail(std::map<const QString, const QString> 
         msg.left(t);
     }
 
-    m_trayIcon->showMessage(title, msg, QIcon(":/resources/Logo.png"), 6000);
+    m_trayIcon->showMessage(title, msg, QIcon(":/resources/logo/logo.png"), 6000);
 }
 
 void Tray::onActivated(QSystemTrayIcon::ActivationReason reason)
