@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1059</width>
-    <height>635</height>
+    <width>558</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Flipped Preferences</string>
+   <string>FLIPPED Preferences</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_15">
    <item>
@@ -29,7 +29,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>5</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabGeneral">
       <attribute name="title">
@@ -374,7 +374,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>40</height>
+              <height>5</height>
              </size>
             </property>
            </spacer>
@@ -471,7 +471,7 @@
              </property>
              <item row="0" column="0">
               <widget class="QWidget" name="widget_6" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,4">
+               <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,0">
                 <item>
                  <widget class="QLabel" name="label_10">
                   <property name="text">
@@ -484,6 +484,12 @@
                 </item>
                 <item>
                  <widget class="QSpinBox" name="sbImageQuailty">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="minimum">
                    <number>-1</number>
                   </property>
@@ -790,7 +796,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>40</height>
+              <height>10</height>
              </size>
             </property>
            </spacer>
@@ -820,9 +826,15 @@
           </item>
           <item row="1" column="1">
            <widget class="QSpinBox" name="sbMaxSize">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>80</width>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>
@@ -839,9 +851,15 @@
           </item>
           <item row="0" column="1">
            <widget class="QSpinBox" name="sbOpacity">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>80</width>
+              <width>16777215</width>
               <height>16777215</height>
              </size>
             </property>
@@ -973,7 +991,7 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>13</width>
-              <height>20</height>
+              <height>10</height>
              </size>
             </property>
            </spacer>
@@ -1095,6 +1113,19 @@
                  <number>0</number>
                 </property>
                 <item>
+                 <spacer name="horizontalSpacer_8">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>156</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
                  <widget class="QLabel" name="labLogo">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1183,6 +1214,19 @@
                   </layout>
                  </widget>
                 </item>
+                <item>
+                 <spacer name="horizontalSpacer_10">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>156</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
                </layout>
               </widget>
              </item>
@@ -1192,7 +1236,7 @@
                 <string/>
                </property>
                <property name="alignment">
-                <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+                <set>Qt::AlignBottom|Qt::AlignHCenter</set>
                </property>
                <property name="textInteractionFlags">
                 <set>Qt::LinksAccessibleByMouse</set>
@@ -1205,7 +1249,7 @@
                 <string>simple and beautiful cross-platform screenshot software.</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <set>Qt::AlignCenter</set>
                </property>
               </widget>
              </item>
@@ -1217,7 +1261,7 @@
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>17</width>
-                 <height>411</height>
+                 <height>10</height>
                 </size>
                </property>
               </spacer>
@@ -1227,24 +1271,33 @@
                <property name="title">
                 <string>About</string>
                </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,1,1,1,2">
+               <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,1,1,1">
                 <item>
                  <widget class="QLabel" name="labGitHub">
                   <property name="text">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/XMuli/FILPPED&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#008000;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/XMuli/FILPPED&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                   <property name="textFormat">
                    <enum>Qt::RichText</enum>
+                  </property>
+                  <property name="openExternalLinks">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QLabel" name="labLicenses">
                   <property name="text">
-                   <string>Licenses</string>
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/XMuli/FILPPED/blob/master/LICENSE&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:green;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                  <property name="textFormat">
+                   <enum>Qt::RichText</enum>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  </property>
+                  <property name="openExternalLinks">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -1276,19 +1329,6 @@
                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                   </property>
                  </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_6">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
                 </item>
                </layout>
               </widget>

@@ -211,364 +211,189 @@
 <context>
     <name>PrefManage</name>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <location filename="../preference/prefmanage.ui"/>
-        <source>Flipped Preferences</source>
-        <translation>Flipped 设置</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>General</source>
         <translation>常规</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Run on system startup</source>
         <translation>开机自启</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Lanuage:</source>
         <translation>语言:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Log Level:</source>
         <translation>日志级别:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>debug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>trace</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>warn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>off</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Launch:</source>
         <translation>启动:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Font:</source>
         <translation>字体:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Reset</source>
         <translation>重置</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Interface</source>
         <translation>界面</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Border Style:</source>
         <translation>选框样式:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Auto copy to clipboard</source>
         <translation>自动复制到剪切板</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Border Width:</source>
         <translation>边框宽度:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Crosshair Color:</source>
         <translation>十字线颜色:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>Border Color</source>
-        <translation>选框颜色</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Auto detect windows</source>
         <translation>自动检测窗口</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Crosshair</source>
         <translation>十字线</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Crosshair Width:</source>
         <translation>十字线宽度:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Output</source>
         <translation>输出</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Image quailty:</source>
         <translation>图片质量:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>Path Save</source>
-        <translation>路径保存</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Quick save</source>
         <translation>快速保存</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Auto save</source>
         <translation>自动保存</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>File Name</source>
-        <translation>文件名</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>Config</source>
-        <translation>配置文件</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Select</source>
         <translation>选择</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Pin</source>
         <translation>贴图</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Opacity:</source>
         <translation>不透光度:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Maximum size:</source>
         <translation>最大尺寸:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Hotkeys</source>
         <translation>快捷键</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Capture:</source>
         <translation>捕捉截图:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Delay capture:</source>
         <translation>延时截图:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>Full screen capture:</source>
         <translation>全屏截图:</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <location filename="../preference/prefmanage.ui"/>
-        <source>Copyright © 2023 &lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli&gt; XMuli&lt;/a&gt;</source>
-        <translation>版权所有 © 2023 &lt;a style=&apos;color: green;&apos; href=https://github.com/XMuli&gt; XMuli&lt;/a&gt;</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>&lt;a style=&quot;color: black;&quot; style=&quot;text-decoration:none;&quot;  href=https://github.com/XMuli/FlippedPackage&gt;FLIPPED&lt;/a&gt;</source>
-        <translation>&lt;a style=&quot;color: black;&quot; style=&quot;text-decoration:none;&quot;  href=https://github.com/XMuli/FlippedPackage&gt;FLIPPED&lt;/a&gt;</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
         <location filename="../preference/prefmanage.ui"/>
         <source>simple and beautiful cross-platform screenshot software.</source>
         <translation>简易且漂亮的跨平台截图贴图的软件。</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>Feedback</source>
-        <translation>反馈</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>QT</source>
-        <translation>QT</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <location filename="../preference/prefmanage.ui"/>
-        <source>iCancely</source>
-        <translation>iCancely</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <location filename="../preference/prefmanage.ui"/>
-        <source>&lt;a style=&quot;color: green;&quot; href=&quot;https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&amp;jump_from=webapi&amp;authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu&quot;&gt;418103279</source>
-        <translation>&lt;a style=&quot;color: green;&quot; href=&quot;https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&amp;jump_from=webapi&amp;authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu&quot;&gt;418103279</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>Acknowledgements</source>
-        <translation>鸣谢</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>QHotkey</source>
-        <translation>QHotkey</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>Licenses</source>
-        <translation>许可证</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <location filename="../preference/prefmanage.ui"/>
-        <source>UI Design:</source>
-        <translation>UI 设计:</translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage - Copy (2).ui"/>
-        <location filename="../preference/prefmanage - Copy.ui"/>
-        <source>QQ Group:</source>
-        <translation>QQ 群:</translation>
     </message>
     <message>
         <location filename="../preference/prefmanage.cpp" line="73"/>
@@ -586,12 +411,12 @@
         <translation>天然蓝</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="249"/>
+        <location filename="../preference/prefmanage.cpp" line="248"/>
         <source>Select a path</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="437"/>
+        <location filename="../preference/prefmanage.cpp" line="438"/>
         <source>Select Font</source>
         <translation>选择字体</translation>
     </message>
@@ -627,17 +452,37 @@
     </message>
     <message>
         <location filename="../preference/prefmanage.ui"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/XMuli/FILPPED&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;FLIPPED&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;FLIPPED&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../preference/prefmanage.ui"/>
-        <source>QQ Group Feedback:</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright © 2022-2023 &lt;a href=&quot;https://github.com/XMuli&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;XMuli&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../preference/prefmanage.ui"/>
-        <source>Licenses:</source>
+        <source>UI: iCancely</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../preference/prefmanage.ui"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QQ Group: &lt;a href=&quot;https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&amp;amp;jump_from=webapi&amp;amp;authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;418103279&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../preference/prefmanage.ui"/>
+        <source>FLIPPED Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../preference/prefmanage.ui"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/XMuli/FILPPED&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../preference/prefmanage.ui"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/XMuli/FILPPED/blob/master/LICENSE&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:green;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -651,6 +496,20 @@
     <message>
         <location filename="../../3rdparty/QHotkey/QHotkey/qhotkey.cpp" line="314"/>
         <source>Failed to unregister %1. Error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../main.cpp" line="65"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../main.cpp" line="65"/>
+        <source>The application is already running.
+Allowed to run only one instance of the application.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

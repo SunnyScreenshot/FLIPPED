@@ -119,6 +119,10 @@ void PrefManage::initUIOutput()
 
 //    QString tip = "Shift + F4";
 //    cbQuickSave->setToolTip(tip);
+
+    connect(ui->btnConfig, &QPushButton::released, this, &PrefManage::onSelectPath);
+    connect(ui->btnQuickSave, &QPushButton::released, this, &PrefManage::onSelectPath);
+    connect(ui->btnAutoSave, &QPushButton::released, this, &PrefManage::onSelectPath);
 }
 
 void PrefManage::initUIPin()
@@ -375,26 +379,24 @@ void PrefManage::on_leAutoSave_textChanged(const QString &path)
     DATAMAID->setParaValue(toAutoSavePath, path);
 }
 
-
-void PrefManage::on_cbQuickSave_stateChanged(int val)
+void PrefManage::on_cbQuickSave_clicked(bool checked)
 {
-    const bool enbale = cbState2Bool(val);
-    DATAMAID->setParaValue(toQuickSave, enbale);
+    DATAMAID->setParaValue(toQuickSave, checked);
 
-    ui->btnQuickSave->setEnabled(enbale);
-    ui->leQuickSave->setEnabled(enbale);
+    ui->btnQuickSave->setEnabled(checked);
+    ui->leQuickSave->setEnabled(checked);
 }
 
 
-void PrefManage::on_cbAutoSave_stateChanged(int val)
+void PrefManage::on_cbAutoSave_clicked(bool checked)
 {
-    const bool enbale = cbState2Bool(val);
-    DATAMAID->setParaValue(toAutoSave, enbale);
+    DATAMAID->setParaValue(toAutoSave, checked);
 
-    ui->btnAutoSave->setEnabled(enbale);
-    ui->leAutoSave->setEnabled(enbale);
+    qDebug() << "enbale:" << checked;
+
+    ui->btnAutoSave->setEnabled(checked);
+    ui->leAutoSave->setEnabled(checked);
 }
-
 
 void PrefManage::on_cbLanuage_currentTextChanged(const QString &language)
 {
@@ -456,4 +458,7 @@ void PrefManage::on_cbLogLevel_currentTextChanged(const QString &level)
 {
     DATAMAID->setParaValue(tgLogLevel, level);
 }
+
+
+
 

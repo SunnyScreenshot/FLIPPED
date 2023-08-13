@@ -45,8 +45,8 @@ private slots:
     void on_cbAutoCopy2clipboard_stateChanged(int val);
 
     // tabOutput
-    void on_cbQuickSave_stateChanged(int val);
-    void on_cbAutoSave_stateChanged(int val);
+    void on_cbQuickSave_clicked(bool checked);
+    void on_cbAutoSave_clicked(bool checked);
     void on_sbImageQuailty_valueChanged(int val);
     void on_leFileName_textChanged(const QString &name);
     void on_leConfig_textChanged(const QString &path);

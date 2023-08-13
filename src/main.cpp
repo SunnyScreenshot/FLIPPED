@@ -53,29 +53,27 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationVersion(_PROJECT_VERSION);
 
     QApplication a(argc, argv);
-//    a.setQuitOnLastWindowClosed(false);
-//    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
+    a.setQuitOnLastWindowClosed(false);
+    qApp->setAttribute(Qt::AA_DontCreateNativeWidgetSiblings, true);
 
-//    QString filePath = QApplication::applicationDirPath() + "/Flipped.temp.lock";
-//    QLockFile* lockFile = new QLockFile(filePath);
-//    bool isLock = lockFile->isLocked();
-//    qDebug() << "filePath:" << filePath << "  isLock:" << isLock;
+    QString filePath = QApplication::applicationDirPath() + "/Flipped.temp.lock";
+    QLockFile* lockFile = new QLockFile(filePath);
+    bool isLock = lockFile->isLocked();
+    qDebug() << "filePath:" << filePath << "  isLock:" << isLock;
 
-//    if (!lockFile->tryLock(100)) {
-//        QMessageBox msgBox(QMessageBox::Warning, QObject::tr("Warning"), QObject::tr("The application is already running.\nAllowed to run only one instance of the application."));
-//        msgBox.exec();
-//        return 0;
-//    }
+    if (!lockFile->tryLock(100)) {
+        QMessageBox msgBox(QMessageBox::Warning, QObject::tr("Warning"), QObject::tr("The application is already running.\nAllowed to run only one instance of the application."));
+        msgBox.exec();
+        return 0;
+    }
 
-//    if (lockFile)
-//        delete lockFile;
+    if (lockFile)
+        delete lockFile;
 
-//    DATAMAID->setRunLanguage();
+    DATAMAID->setRunLanguage();
 
-//    Tray::instance();
+    Tray::instance();
 
-    PrefManage prefManage;
-    prefManage.show();
 
 //    QStringList listStyle = QStyleFactory::keys();
 //    foreach(QString val, listStyle)
