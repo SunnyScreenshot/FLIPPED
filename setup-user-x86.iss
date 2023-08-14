@@ -4,7 +4,7 @@
 #define MyAppName "FLIPPED"
 #define MyAppVersion "MSVC-1.3.0-Beta"
 #define MyAppPublisher "XMuli"
-#define MyAppURL "https://github.com/XMuli/FILPPED"
+#define MyAppURL "https://github.com/XMuli/FLIPPED"
 #define MyAppExeName "FLIPPED.exe"
 #define MyArchitecture "x86"
 #define MySrc "."

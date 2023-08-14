@@ -188,7 +188,7 @@ void Tray::onPreference(bool checked)
     m_pPref->adjustSize();
 
 #ifdef Q_OS_WIN
-    m_pPref->setFixedSize(m_pPref->size());
+//    m_pPref->setFixedSize(m_pPref->size());
 #endif
 
 }
