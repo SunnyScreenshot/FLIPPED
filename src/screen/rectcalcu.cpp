@@ -176,7 +176,7 @@ RectCalcu::RectCalcu(ScreenShot* pSrnShot)
 	, rtSel(0, 0, -1, -1)
 	, m_bClear(false)
 	, cursArea(CursorArea::Unknow)
-    , m_pSrnShot(pSrnShot)
+    , m_scrnShot(pSrnShot)
 {
 }
 
@@ -191,7 +191,7 @@ const QRect RectCalcu::getSelRect() const
 		return getRect(pos1, pos2);
 	} else if (scrnType == ScrnOperate::SO_Move) {
 		// TODO 2022.06.14: 单例改写了为 new 形式，故此处有一个 移动图形的 bug，且略感觉此获取方式有点不优雅
-		if (m_pSrnShot && m_pSrnShot->isSelBorder()) // 选中绘画的矩形
+		if (m_scrnShot && m_scrnShot->isSelBorder()) // 选中绘画的矩形
 			return rtSel.translated(pos2 - pos1);
 
 		return rtSel;

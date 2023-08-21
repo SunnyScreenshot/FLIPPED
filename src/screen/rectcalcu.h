@@ -90,7 +90,7 @@ private:
 	QRect  rtSel;               // 由 pos1, pos2 所得
 	bool m_bClear;              // 当前清理状态
 	CursorArea cursArea;        // 光标对应区域
-	ScreenShot* m_pSrnShot;     // 用来判定 当前选中 移动 形状
+	ScreenShot* m_scrnShot;     // 用来判定 当前选中 移动 形状
 };
 
 #endif //PICSHOT_RECTCALCU_H

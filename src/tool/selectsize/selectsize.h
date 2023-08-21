@@ -8,7 +8,7 @@
 
 #include <QLabel>
 
-// 选中矩形区域的尺寸大小，显示在左上角
+// 选中矩形区域的尺寸大小，显示在左上角、尺寸位置的显示
 class SelectSize : public QLabel
 {
     Q_OBJECT

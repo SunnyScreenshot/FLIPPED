@@ -14,6 +14,8 @@
 #include <QFileInfoList>
 #include <QKeySequence>
 #include <QHotkey>
+#include <QFont>
+#include <QString>
 #include <QMetaEnum>
 #include "../preference/prefmanage.h"
 #include "../widget/xkeysequenceedit.h"
@@ -39,70 +41,55 @@ std::vector<std::tuple<QHotkey*, QString, QString, CaptureHelper::CaptureType>> 
 
 Tray::Tray(QObject *parent)
     : QObject(parent)
-	, m_pSrnShot(nullptr)
-    , m_pPref(nullptr)
-	, m_trayIconMenu(new QMenu())
+    , m_scrnShot(nullptr)
+    , m_prefManage(nullptr)
+    , m_trayMenu(new QMenu())
     , m_trayIcon(new QSystemTrayIcon(this))
-    //, m_hkManage(new HotkeySvs(this))
 {
     init();
     initGlobalHotKeys();
     DATAMAID->setAutoRun();
-
-//	QString t = QApplication::instance()->applicationDirPath() + "/../../pluginsimpl/watemark/RelWithDebInfo";
-//    QDir pluginsDir(t);
-//        QStringList nameFilters;
-//        nameFilters<<"*.so"<<"*.dylib"<<"*.dll";
-//        QFileInfoList plugins = pluginsDir.entryInfoList(nameFilters, QDir::NoDotAndDotDot | QDir::Files, QDir::Name);
-//
-//        foreach(QFileInfo plugin, plugins){
-//            QPluginLoader pluginLoader(plugin.absoluteFilePath(), this);
-//            IPluginInterface *pPlugin=qobject_cast<IPluginInterface *>(pluginLoader.instance());
-//            if (pPlugin){
-//                QString temp= pPlugin->plugName();
-////                QAction *action = new QAction(plugin_ptr->name());
-////                editMenu->addAction(action);
-////                editToolBar->addAction(action);
-////                editPlugins[plugin_ptr->name()]=plugin_ptr;
-////                connect(action,SIGNAL(triggered(bool)),this,SLOT(pluginPerform()));
-//
-////                pPlugin.unload();
-//            }else{
-//                qDebug()<<"bad plugin:"<<plugin.absoluteFilePath();
-//            }
-//        }
 }
 
 Tray::~Tray()
 {
-    if (m_pSrnShot)
-        m_pSrnShot->deleteLater();
+    if (m_scrnShot) m_scrnShot->deleteLater();
+    if (m_prefManage) m_prefManage->deleteLater();
 
-    if (m_pPref)
-        m_pPref->deleteLater();
-
-    delete m_trayIconMenu;
-    m_trayIconMenu = nullptr;
+    delete m_trayMenu;
+    m_trayMenu = nullptr;
 }
 
 void Tray::init()
 {
+    const auto& tFont = DATAMAID->paraValue("font").value<QString>().split(',');
+    QString fontFamily = "Microsoft YaHei";
+    int fontPointSize = 9;
+    if (tFont.size() == 2) {
+        fontFamily = tFont.at(0);
+        fontPointSize = tFont.at(1).toInt();
+    }
+
+    QFont font(fontFamily, fontPointSize);
+    qGuiApp->setFont(font);
+    m_trayMenu->setFont(font);
+
     QAction* srnShot = new QAction(tr("ScreenShot"), this);
     QAction* preference = new QAction(tr("Preference"), this);
     QAction* quit = new QAction(tr("Quit"), this);
 
-	m_trayIconMenu->addAction(srnShot);
-    m_trayIconMenu->addAction(preference);
-	m_trayIconMenu->addSeparator();
-	m_trayIconMenu->addAction(quit);
+    m_trayMenu->addAction(srnShot);
+    m_trayMenu->addAction(preference);
+    m_trayMenu->addSeparator();
+    m_trayMenu->addAction(quit);
 
     m_trayIcon->setIcon(QIcon(":/resources/logo/logo.png"));
     m_trayIcon->setToolTip(tr(_PROJECT_NAME));
-	m_trayIcon->setContextMenu(m_trayIconMenu);
+    m_trayIcon->setContextMenu(m_trayMenu);
 
 
     connect(m_trayIcon, &QSystemTrayIcon::activated, this, &Tray::onActivated);
-	connect(srnShot, &QAction::triggered, this, &Tray::onSrnShot);
+    connect(srnShot, &QAction::triggered, this, &Tray::onScrnShot);
     connect(preference, &QAction::triggered, this, &Tray::onPreference);
 	connect(quit, &QAction::triggered, [](){qApp->quit();});
 
@@ -141,7 +128,7 @@ void Tray::initGlobalHotKeys()
         pHK =  new QHotkey(QKeySequence(hotkey), true, qApp);
         QMetaEnum enumSst = QMetaEnum::fromType<CaptureHelper::CaptureType>();
         pHK->setObjectName(enumSst.valueToKey(sst));
-        connect(pHK, &QHotkey::activated, this, &Tray::onSrnShot);
+        connect(pHK, &QHotkey::activated, this, &Tray::onScrnShot);
 
         if (!pHK->isRegistered())
             hotkeyRegFail.insert(std::make_pair(describe, hotkey));
@@ -153,17 +140,15 @@ void Tray::initGlobalHotKeys()
     onNotificHotkeyRegisteredFail(hotkeyRegFail);
 }
 
-void Tray::onSrnShot()
+void Tray::onScrnShot()
 {
     // 第二次就是野指针, 故使用 QPointer 解决 https://blog.csdn.net/luoyayun361/article/details/90199081
-    if (!m_pSrnShot)
-        m_pSrnShot = new ScreenShot();
+    if (!m_scrnShot) m_scrnShot = new ScreenShot();
 
-    auto t = sender();
+
     QHotkey* hk = qobject_cast<QHotkey*>(sender());
     const auto act = qobject_cast<QAction*>(sender());
-    if (!hk && !act)
-        return;
+    if (!hk && !act) return;
 
     int sst = CaptureHelper::SST_ScrnCapture;
     if (hk) {
@@ -175,22 +160,17 @@ void Tray::onSrnShot()
     if (act || sst == CaptureHelper::SST_ScrnCapture
         || sst == CaptureHelper::SST_DelayCapture
         || sst == CaptureHelper::SST_FullScrnCapture)
-        m_pSrnShot->launchCapture(static_cast<CaptureHelper::CaptureType>(sst));
+        m_scrnShot->launchCapture(static_cast<CaptureHelper::CaptureType>(sst));
 }
 
 void Tray::onPreference(bool checked)
 {
     Q_UNUSED(checked);
 
-    if (!m_pPref) m_pPref = new PrefManage();
+    if (!m_prefManage) m_prefManage = new PrefManage();
 
-    m_pPref->setVisible(true);
-    m_pPref->adjustSize();
-
-#ifdef Q_OS_WIN
-//    m_pPref->setFixedSize(m_pPref->size());
-#endif
-
+    m_prefManage->show();
+    m_prefManage->resize(680, 360);
 }
 
 void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
@@ -260,10 +240,10 @@ void Tray::onNotificHotkeyRegisteredFail(std::map<const QString, const QString> 
 void Tray::onActivated(QSystemTrayIcon::ActivationReason reason)
 {
     if (QSystemTrayIcon::Trigger == reason) {  //  鼠标单击
-        if (!m_pSrnShot)
-            m_pSrnShot = new ScreenShot();
+        if (!m_scrnShot)
+            m_scrnShot = new ScreenShot();
 
-            m_pSrnShot->launchCapture(CaptureHelper::SST_ScrnCapture);
+            m_scrnShot->launchCapture(CaptureHelper::SST_ScrnCapture);
     } else {
 
     }

@@ -32,7 +32,7 @@ private:
     void initGlobalHotKeys();
 
 public slots:
-	void onSrnShot();
+    void onScrnShot();
     void onPreference(bool checked);
     void onKeySequenceChanged(const QKeySequence& keySequence);
 
@@ -48,9 +48,9 @@ public slots:
     //void onUpdate();
 
 private:
-	QPointer<ScreenShot> m_pSrnShot;           // 前台截图 UI
-    QPointer<PrefManage> m_pPref;              // 偏好设置 UI
-	QMenu* m_trayIconMenu;
+    QPointer<ScreenShot> m_scrnShot;               // 前台截图 UI
+    QPointer<PrefManage> m_prefManage;              // 偏好设置 UI
+    QPointer<QMenu>      m_trayMenu;
     QPointer<QSystemTrayIcon> m_trayIcon;
 
     // hkPtr, "F6", tr("Active Window"), objectName/tupe: SST_ActionWindow

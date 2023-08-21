@@ -6,7 +6,6 @@
 #include "selectsize.h"
 #include <QPainter>
 #include "../../xglobal.h"
-#include "../../screen/drawhelper.h"
 #include "../../screen/datamaid.h"
 
 SelectSize::SelectSize(QWidget* parent /*= nullptr*/, Qt::WindowFlags f /*= Qt::WindowFlags()*/)
@@ -26,9 +25,7 @@ void SelectSize::onTextChanged(QString text)
     text = this->text();
     QFontMetrics fm(font());
     QRect bound = fm.boundingRect(QRect(), Qt::AlignCenter, text);
-//    qDebug() << "SelectSize::onTextChanged()" << text << "  " <<bound << "  " << rect();
-    setFixedSize(bound.size());
-//    qDebug() <<bound << "  " << rect();
+    resize(bound.size() + QSize(2, 2)); // fix: 1080 和 2K 屏幕下，字体被遮挡
 }
 
 void SelectSize::initUI()
@@ -36,14 +33,6 @@ void SelectSize::initUI()
     setContentsMargins(SS_MARGIN_LEFT, SS_MARGIN_TOP, SS_MARGIN_RIGHT, SS_MARGIN_BOTTOM);
     connect(this, &SelectSize::sigTextChanged, this, &SelectSize::onTextChanged);
 }
-
-//void SelectSize::showEvent(QShowEvent *e)
-//{
-//    QWidget::showEvent(e);
-//    onTextChanged("");
-
-//    qDebug() << " rect:" << rect() << "   " << this->text();
-//}
 
 void SelectSize::paintEvent(QPaintEvent* e)
 {
