@@ -86,13 +86,13 @@ int main(int argc, char *argv[])
 //#endif
 
 
-//    SelectBar* t1 = new SelectBar(Qt::Horizontal, t0);
+//    SelectBar* t1 = new SelectBar(Qt::Horizontal);
 //    t1->setWindowFlags(Qt::FramelessWindowHint);
 ////    t1 ->setBlurBackground(QPixmap("D:/projects/Flipped/src/p1.jpg"), 4);
 //    t1->move(200, 100);
 //    t1->show();
 
-//    ParameterBar* t2 = new ParameterBar(Qt::Horizontal, t0);
+//    ParameterBar* t2 = new ParameterBar(Qt::Horizontal);
 ////    t2->setBlurBackground(QPixmap("D:/projects/Flipped/src/p2.jpg"), 5);
 //    t2->move(200, 200);
 //    t2->show();
@@ -101,16 +101,16 @@ int main(int argc, char *argv[])
 ////    t3->resize(400, 300);
 //    t3->move(200, 300);
 //    t3->show();
-//
+
 //    ColorParaBar* t3_1 = new ColorParaBar(ColorParaBarMode::CPB_HighLight, Qt::Horizontal);
 //    //    t3->resize(400, 300);
 //    t3_1->move(200, 400);
 //    t3_1->show();
-//
-//    ExWidget* t4 = new ExWidget();
-//    //    t3->resize(400, 300);
-//    t4->move(100, 200);
-//    t4->show();
+
+////    ExWidget* t4 = new ExWidget();
+////    //    t3->resize(400, 300);
+////    t4->move(100, 200);
+////    t4->show();
 
 //    PinWidget* w5 = new PinWidget(QPixmap("C:/Users/xmuli/Desktop/Snipaste_2022-07-16_02-13-39.png"), QRect(100, 100, 400, 400));
 //    w5->show();

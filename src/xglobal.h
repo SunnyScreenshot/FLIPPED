@@ -54,7 +54,7 @@
 #define CPB_PB_LABEL_WIDTH 12              // 圆形取色盘宽度
 #define CPB_PB_MARGIN_HOR 10               // 取色盘, 圆形按钮的边框 左右 距离
 #define CPB_PB_MARGIN_VER 6                // 取色盘, 圆形按钮的边框 上下 距离
-#define CPB_PB_SPACING_HOR  7              // 取色盘, 圆形按钮之间的水平间距
+#define CPB_PB_SPACING_HOR  4              // 取色盘, 圆形按钮之间的水平间距
 #define CPB_PB_SPACING_VER  4              // 取色盘, 圆形按钮之间的竖直间距
 
   // Mode: CPB_HighLight  -> QHBoxLayout

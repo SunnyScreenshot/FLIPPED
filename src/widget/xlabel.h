@@ -8,6 +8,7 @@
 
 #include <QLabel>
 #include <QColor>
+#include <QToolButton>
 
 class QWidget;
 class QString;
@@ -15,18 +16,18 @@ class QWidget;
 class QPainter;
 class QMouseEvent;
 
-class XLabel : public QLabel
+class XLabel : public QToolButton
 {
     Q_OBJECT
 public:
     explicit XLabel(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
-    explicit XLabel(const QString &text, QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
-    virtual ~XLabel();
+    virtual ~XLabel() = default;
 
+    void setChecked(const bool& checked = false);
     void setColor(QColor c, double alpha = 1);
-    void setIsPickColor(bool enablem = false);
+    void setRainbow(bool bRainbow = false);
 private:
-    void init();
+    void initUI();
     void setConicalGradientColor(QPainter &pa);
 
 protected:
@@ -35,10 +36,10 @@ protected:
 private:
     QColor m_color;
     double m_alpha;
-    bool m_bPickColor;    // 默认为非渐变色
+    bool   m_bChecked;     // 当前被选中否？
+    bool   m_bRainbow;      // false:纯色   true:彩色
 };
 
-//Q_DECLARE_METATYPE(XLabel);  // 另外自定义类型中一定要有默认构造函数
-Q_DECLARE_METATYPE(XLabel*); // 提供给 QVariant 使用
+Q_DECLARE_METATYPE(XLabel*); // 提供给 QVariant 使用; // 另外自定义类型中一定要有默认构造函数
 
 #endif // XLABEL_H

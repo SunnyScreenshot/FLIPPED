@@ -8,13 +8,13 @@
 #include "../../xglobal.h"
 #include "../../screen/datamaid.h"
 
-SelectSize::SelectSize(QWidget* parent /*= nullptr*/, Qt::WindowFlags f /*= Qt::WindowFlags()*/)
+SelectSize::SelectSize(QWidget* parent, Qt::WindowFlags f)
     : QLabel(parent, f)
 {
     initUI();
 }
 
-SelectSize::SelectSize(const QString& text, QWidget* parent /*= nullptr*/, Qt::WindowFlags f /*= Qt::WindowFlags()*/)
+SelectSize::SelectSize(const QString& text, QWidget* parent, Qt::WindowFlags f)
     : QLabel(text, parent, f)
 {
     initUI();

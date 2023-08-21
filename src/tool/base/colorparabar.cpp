@@ -70,7 +70,7 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
                 lab->installEventFilter(this);
 
                 if ((it + 1) == m_labMap.end()) // 最后一个渐变色
-                    lab->setIsPickColor(true);
+                    lab->setRainbow(true);
                 else
                     lab->setColor(it.value(), 1);
 
@@ -99,7 +99,7 @@ ColorParaBar::ColorParaBar(ColorParaBarMode mode, Qt::Orientations orien, QWidge
                 lab->installEventFilter(this);
 
                 if (it + 1 == m_labMap.cend())  // 最后一个渐变色
-                    lab->setIsPickColor(true);
+                    lab->setRainbow(true);
                 else
                     lab->setColor(it.value(), 1);
 
@@ -154,8 +154,10 @@ void ColorParaBar::onUpdateSel(const QColor& col)
 bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
 {
     XLabel* lab = qobject_cast<XLabel *>(watched);
-    if (!lab)
-        return false;
+    if (!lab) return false;
+
+    for (auto& it : findChildren<XLabel*>())
+        it->setChecked(it == m_curXLab);
 
     if (event->type() == QEvent::MouseButtonRelease) {
         if (lab->objectName().compare(m_labMap.lastKey()) == 0) {
@@ -180,19 +182,19 @@ bool ColorParaBar::eventFilter(QObject *watched, QEvent *event)
 void ColorParaBar::paintEvent(QPaintEvent *event)
 {
     QWidget::paintEvent(event);
-    if (!m_curXLab)
-        return;
+//    if (!m_curXLab)
+//        return;
 
-    QPainter pa(this);
-    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-    QPen pen(m_curCol);
-    pen.setWidth(CPB_WIDTH_SELECTED);
-    pa.setPen(pen);
-    pa.setBrush(Qt::NoBrush);
+//    QPainter pa(this);
+//    pa.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+//    QPen pen(m_curCol);
+//    pen.setWidth(CPB_WIDTH_SELECTED);
+//    pa.setPen(pen);
+//    pa.setBrush(Qt::NoBrush);
 
-    int margin = CPB_MARGIN_SELECTED;
-    auto topLeft = m_curXLab->mapToGlobal(QPoint(0, 0)); // 子控件的窗口的（左上角的）绝对坐标; QPoint(0, 0) 为子控件的左上角坐标，子窗口的总是(0, 0)
-    topLeft = mapFromGlobal(topLeft);              // 切换为相对父窗口的绝对坐标
-    const QRect rt = QRect(topLeft, m_curXLab->size()).adjusted(-margin, -margin, margin, margin);
-    pa.drawEllipse(rt.center(), rt.width() / 2, rt.height() / 2);
+//    int margin = CPB_MARGIN_SELECTED;
+//    auto topLeft = m_curXLab->mapToGlobal(QPoint(0, 0)); // 子控件的窗口的（左上角的）绝对坐标; QPoint(0, 0) 为子控件的左上角坐标，子窗口的总是(0, 0)
+//    topLeft = mapFromGlobal(topLeft);              // 切换为相对父窗口的绝对坐标
+//    const QRect rt = QRect(topLeft, m_curXLab->size()).adjusted(-margin, -margin, margin, margin);
+//    pa.drawEllipse(rt.center(), rt.width() / 2, rt.height() / 2);
 }
