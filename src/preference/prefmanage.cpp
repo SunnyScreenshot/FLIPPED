@@ -170,7 +170,7 @@ void PrefManage::initUIAbout()
                             .arg(_PROJECT_VERSION)
                             .arg(_COMPILER_ID)
                             .arg(bit)
-                            .arg(_VERSION_BUILD_TIME));
+                            .arg(MY_BUILD_TIME));
 
 }
 
@@ -425,7 +425,7 @@ void PrefManage::on_cbLanuage_currentTextChanged(const QString &language)
     ui->labVersion->setText(QString("%1-Beta %2 (%3)")
         .arg(_PROJECT_VERSION)
         .arg(bit)
-        .arg(_VERSION_BUILD_TIME));
+        .arg(MY_BUILD_TIME));
 }
 
 

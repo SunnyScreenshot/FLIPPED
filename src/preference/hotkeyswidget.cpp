@@ -35,8 +35,8 @@ HotkeysWidget::HotkeysWidget(QWidget *parent) : QWidget(parent)
     grid->setColumnStretch(1, 9);
 
     QStringList list = {  DATAMAID->paraValue(thScrnCapture).toString()
-                         ,DATAMAID->paraValue(thDelayCapture).toString()
-                         ,DATAMAID->paraValue(thFullScreen).toString()};
+                         ,DATAMAID->paraValue(thFullScreen).toString()
+                         ,DATAMAID->paraValue(thDelayCapture).toString()};
     std::map<XKeySequenceEdit*, const QString> vHkEdit;
     int idx = 0;
     for (auto& it : Tray::instance().getVHotKeys()) {

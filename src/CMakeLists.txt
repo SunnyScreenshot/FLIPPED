@@ -2,7 +2,7 @@
 
 set(project_name FLIPPED)
 set(project_version_major 1)
-set(project_version_minor 3)
+set(project_version_minor 5)
 set(project_version_path 0)
 set(project_version ${project_version_major}.${project_version_minor}.${project_version_path})
 project(${project_name} VERSION ${project_version} LANGUAGES CXX)
@@ -21,7 +21,7 @@ set(_VERSION ${VERSION})
 
 # 作为宏传递给 C++ 代码
 add_definitions(-DMY_PROJECT_NAME="${project_name}")
-add_definitions(-DMY_BUILD_TIME="2023-08-08")
+add_definitions(-DMY_BUILD_TIME="2023-11-02")
 add_definitions(-DMY_VARIABLE="${project_version}")
 add_compile_definitions(MY_DEBUG_DETAIL)  # 屏蔽则关闭详细调试日志信息
 #add_compile_definitions(MY_SHIELD_CONFIG_JSON)  # 屏蔽配置文件读写 json
@@ -152,6 +152,56 @@ file(GLOB_RECURSE source_lists LIST_DIRECTORIES false
 source_group(TREE ${src_root_path} FILES ${source_lists})                                   # will be organized according to the actual directory structure, .h.cpp is put together
 include_directories(${PROJECT_SOURCE_DIR}/widgets)  # 修复 Qt Design 使用提升自定义控件后， MinGW 找不到而编译失败
 
+#********************************************** 判断且定义 x64/x86 变量 (get kit architecture bit) ****************************
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+    set(arch_bit "86")
+    set(is_x64bit false)
+elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
+    set(arch_bit "64")
+    set(is_x64bit true)
+endif()
+
+# 定义一些 qt bin 的基础变量
+
+set(qt_binray_dir "${Qt5_DIR}/../../../bin")   # C:/Qt/5.15.2/msvc2019_64/lib/cmake/Qt5/../../../bin
+
+if(UNIX)  # using apt install qt5-devtools*
+    execute_process(COMMAND lsb_release -i OUTPUT_VARIABLE LSB_ID)
+    if (LSB_ID MATCHES "Deepin" OR LSB_ID MATCHES "UOS")
+        set(lupdate_path "/usr/lib/qt5/bin/lupdate")
+        set(lrelease_path "/usr/lib/qt5/bin/lrelease")
+        message("This is a Deepin or UOS system.")
+    else()
+        set(lupdate_path "lupdate")
+        set(lrelease_path "lrelease")
+        message("This is other linux system.")
+    endif()
+else()
+    set(lupdate_path "${qt_binray_dir}/lupdate")
+    set(lrelease_path "${qt_binray_dir}/lrelease")
+
+    if(WIN32)
+        set(windeployqt "${qt_binray_dir}/windeployqt.exe")
+    elseif(APPLE)
+        set(windeployqt "${qt_binray_dir}/macdeployqt")
+    elseif(UNIX)
+        # custom deployqt
+    endif()
+endif()
+
+message("Qt5_DIR:" ${Qt5_DIR})
+message("qt_binray_dir:" ${qt_binray_dir})
+message("windeployqt:" ${windeployqt})
+message("lupdate_path:" ${lupdate_path})
+message("lrelease_path:" ${lrelease_path})
+message("EXECUTABLE_OUTPUT_PATH:" ${EXECUTABLE_OUTPUT_PATH})
+message("CMAKE_BINARY_DIR:" ${CMAKE_BINARY_DIR})
+message("CMAKE_SOURCE_DIR: ${CMAKE_SOURCE_DIR}")
+message("CMAKE_RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+message("CMAKE_RUNTIME_OUTPUT_DIRECTORY: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")         # exe 和 dll 运行的输出路径
+message("CMAKE_LIBRARY_OUTPUT_DIRECTORY: ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")         # 动态链接库（DLL、SO 等）的输出目录(实际不生效)
+message("CMAKE_ARCHIVE_OUTPUT_DIRECTORY： ${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")         # 静态库的输出目录
+
 #***************************************************通用参数的定义 开始**********************************************
 # get kit architecture bit
 if(CMAKE_SIZEOF_VOID_P EQUAL 4)
@@ -162,51 +212,11 @@ elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(build_x64bit true)
 endif()
 
-# 设置变量 qt/ssl/lupdate/lrelease 在不同编译器下的环境和版本下的 path
-# env_qt_version_dir/env_qt_dir/lupdate_path/lrelease_path;  [exe_dir] <->  EXECUTABLE_OUTPUT_PATH | CMAKE_BINARY_DIR
-if(WIN32)
-    set(env_qt_version_dir "C:/Qt/${QT_VERSION}")
-    if(${build_x64bit})
-        set(env_os "Windows(kits 64bit)")
-        if(MSVC)
-            set(env_qt_dir "${env_qt_version_dir}/msvc2019_64")
-        elseif(MINGW)
-            set(env_qt_dir "${env_qt_version_dir}/mingw81_64")
-        endif()
-    else()
-        set(env_os "Windows(kits 86bit)")
-        if(MSVC)
-            set(env_qt_dir "${env_qt_version_dir}/msvc2019")
-        elseif(MINGW)
-            set(env_qt_dir "${env_qt_version_dir}/mingw81_32")
-        endif()
-    endif()
-
-    execute_process(COMMAND cmd.exe "/C" "echo %USERPROFILE%" OUTPUT_VARIABLE HOME_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
-else()
-
-    if(APPLE)
-        set(env_os "MacOS")
-        set(env_qt_version_dir "${HOME_DIR}/Qt/${QT_VERSION}")
-        execute_process(COMMAND bash "-c" "echo $HOME" OUTPUT_VARIABLE HOME_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
-        set(env_qt_dir "${env_qt_version_dir}/clang_64")
-    elseif(UNIX)
-        set(env_os "Unix/Linux")
-
-        set(env_qt_version_dir "opt/Qt/${QT_VERSION}") # ununtu 22.04
-        execute_process(COMMAND bash "-c" "echo $HOME" OUTPUT_VARIABLE HOME_DIR OUTPUT_STRIP_TRAILING_WHITESPACE)
-        set(env_qt_dir "${env_qt_version_dir}/gcc_64")
-    endif()
-endif()
-
 if(APPLE)
     set(exe_dir ${EXECUTABLE_OUTPUT_PATH}/${project_name}.app/Contents/MacOS)
 else()
     set(exe_dir ${EXECUTABLE_OUTPUT_PATH})
 endif()
-
-set(lupdate_path "${env_qt_dir}/bin/lupdate")
-set(lrelease_path "${env_qt_dir}/bin/lrelease")
 
 message("--->architecture_bit:" ${architecture_bit}  "  build_x64bit:" ${build_x64bit}  "  ssl_dir:" ${ssl_dir} "  HOME_DIR:" ${HOME_DIR} "  env_os:" ${env_os})
 message("lupdate_path:" ${lupdate_path})
@@ -345,7 +355,6 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC _PROJECT_VERSION="${PROJECT_VE
 target_compile_definitions(${PROJECT_NAME} PUBLIC _BIT_ARCH=${CMAKE_SIZEOF_VOID_P})          # 4/8
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER=${CMAKE_HOST_SYSTEM_PROCESSOR})  # i386/i686/x86_64/unknown  Win: AMD64
 target_compile_definitions(${PROJECT_NAME} PUBLIC _COMPILER_ID="${CMAKE_CXX_COMPILER_ID}")   # Clang/GCC/MSVC
-target_compile_definitions(${PROJECT_NAME} PUBLIC _VERSION_BUILD_TIME="2023.08.13")
 # build time about version
 
 message("------------BRGIN------------")
@@ -376,7 +385,6 @@ endif()
 
 
 if(APPLE)
-    set(windeployqt "${env_qt_dir}/bin/macdeployqt")
     add_custom_command(TARGET ${project_name} POST_BUILD
         COMMAND "${windeployqt} ${EXECUTABLE_OUTPUT_PATH}/${project_name}.app" -verbose=1
     )
@@ -388,14 +396,11 @@ if(APPLE)
 elseif(UNIX)
 
 elseif(WIN32)
-    set(windeployqt "${env_qt_dir}/bin/windeployqt.exe")
     add_custom_command(TARGET ${project_name} POST_BUILD
         COMMAND "${windeployqt}" "${EXECUTABLE_OUTPUT_PATH}/${project_name}.exe" --no-translations
     )
 endif()
 
-
-message("copy depend COMPILER_ID[${CMAKE_CXX_COMPILER_ID}] ${env_os}: ssl/qt")
 message("--->windeployqt(or mac/linux): ${windeployqt}")
 
 # 添加一个自定义的目标，将编译和自定义打包命令关联起来

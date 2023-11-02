@@ -4,7 +4,7 @@
 <context>
     <name>ColorParaBar</name>
     <message>
-        <location filename="../tool/base/colorparabar.cpp" line="162"/>
+        <location filename="../tool/base/colorparabar.cpp" line="164"/>
         <source>select color</source>
         <translation>选择颜色</translation>
     </message>
@@ -462,11 +462,6 @@
     </message>
     <message>
         <location filename="../preference/prefmanage.ui"/>
-        <source>UI: iCancely</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage.ui"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QQ Group: &lt;a href=&quot;https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&amp;amp;jump_from=webapi&amp;amp;authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;418103279&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -607,52 +602,52 @@ Allowed to run only one instance of the application.</source>
 <context>
     <name>Tray</name>
     <message>
-        <location filename="../screen/tray.cpp" line="90"/>
+        <location filename="../screen/tray.cpp" line="77"/>
         <source>ScreenShot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="91"/>
+        <location filename="../screen/tray.cpp" line="78"/>
         <source>Preference</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="92"/>
+        <location filename="../screen/tray.cpp" line="79"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="121"/>
+        <location filename="../screen/tray.cpp" line="108"/>
         <source>Scrn Capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="123"/>
+        <location filename="../screen/tray.cpp" line="110"/>
         <source>Delay Capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="124"/>
+        <location filename="../screen/tray.cpp" line="111"/>
         <source>Full Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="239"/>
+        <location filename="../screen/tray.cpp" line="219"/>
         <source>Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="239"/>
+        <location filename="../screen/tray.cpp" line="219"/>
         <source>Fail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="240"/>
+        <location filename="../screen/tray.cpp" line="220"/>
         <source>Image saved to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="249"/>
+        <location filename="../screen/tray.cpp" line="229"/>
         <source>Fail ShotKeys</source>
         <translation type="unfinished"></translation>
     </message>

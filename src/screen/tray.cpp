@@ -107,8 +107,8 @@ void Tray::initGlobalHotKeys()
     m_vHotKeys = {
         std::make_tuple(nullptr, DATAMAID->paraValue(thScrnCapture).toString(), tr("Scrn Capture"), CaptureHelper::SST_ScrnCapture),
         //std::make_tuple(nullptr, "", tr("Scrolling Window"), ScrnShotType::SST_ScrollingWindow),
-        std::make_tuple(nullptr, DATAMAID->paraValue(thDelayCapture).toString(), tr("Delay Capture"), CaptureHelper::SST_DelayCapture),
         std::make_tuple(nullptr, DATAMAID->paraValue(thFullScreen).toString(), tr("Full Screen"), CaptureHelper::SST_FullScrnCapture),
+        std::make_tuple(nullptr, DATAMAID->paraValue(thDelayCapture).toString(), tr("Delay Capture"), CaptureHelper::SST_DelayCapture)
 //        std::make_tuple(nullptr, "", tr("Fixd-Size Region"), ScrnShotType::SST_FixdSizeRegion),
 //        std::make_tuple(nullptr, "", tr("Paste"), ScrnShotType::SST_Paste),
 //        std::make_tuple(nullptr, "", tr("Hide/Show all images"), ScrnShotType::SST_HideShowAllImages),
@@ -170,7 +170,7 @@ void Tray::onPreference(bool checked)
     if (!m_prefManage) m_prefManage = new PrefManage();
 
     m_prefManage->show();
-    m_prefManage->resize(680, 360);
+    m_prefManage->resize(800, 450);
 }
 
 void Tray::onKeySequenceChanged(const QKeySequence& keySequence)
