@@ -396,27 +396,27 @@
         <translation>简易且漂亮的跨平台截图贴图的软件。</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="73"/>
+        <location filename="../preference/prefmanage.cpp" line="78"/>
         <source>Flipped</source>
         <translation>心动待至</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="74"/>
+        <location filename="../preference/prefmanage.cpp" line="79"/>
         <source>BalckAndWhite</source>
         <translation>黑白虚线</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="75"/>
+        <location filename="../preference/prefmanage.cpp" line="80"/>
         <source>LightBlue</source>
         <translation>天然蓝</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="250"/>
+        <location filename="../preference/prefmanage.cpp" line="255"/>
         <source>Select a path</source>
         <translation>选择路径</translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="436"/>
+        <location filename="../preference/prefmanage.cpp" line="441"/>
         <source>Select Font</source>
         <translation>选择字体</translation>
     </message>
@@ -534,67 +534,67 @@ Allowed to run only one instance of the application.</source>
 <context>
     <name>SelectBar</name>
     <message>
-        <location filename="../tool/selectbar.cpp" line="32"/>
+        <location filename="../tool/selectbar.cpp" line="31"/>
         <source>Rectangle</source>
         <translation>矩形</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="33"/>
+        <location filename="../tool/selectbar.cpp" line="32"/>
         <source>Ellipse</source>
         <translation>椭圆</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="34"/>
+        <location filename="../tool/selectbar.cpp" line="33"/>
         <source>Arrow</source>
         <translation>箭头</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="35"/>
+        <location filename="../tool/selectbar.cpp" line="34"/>
         <source>CustomPath</source>
         <translation>画笔</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="36"/>
+        <location filename="../tool/selectbar.cpp" line="35"/>
         <source>Mosaic</source>
         <translation>模糊/马赛克</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="37"/>
+        <location filename="../tool/selectbar.cpp" line="36"/>
         <source>Text</source>
         <translation>文本</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="38"/>
+        <location filename="../tool/selectbar.cpp" line="37"/>
         <source>SerialNumber</source>
         <translation>序号</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="40"/>
+        <location filename="../tool/selectbar.cpp" line="39"/>
         <source>Pin</source>
         <translation>贴图</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="41"/>
+        <location filename="../tool/selectbar.cpp" line="40"/>
         <source>Revocation</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="42"/>
+        <location filename="../tool/selectbar.cpp" line="41"/>
         <source>Renewal</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="43"/>
+        <location filename="../tool/selectbar.cpp" line="42"/>
         <source>Save</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="44"/>
+        <location filename="../tool/selectbar.cpp" line="43"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="45"/>
+        <location filename="../tool/selectbar.cpp" line="44"/>
         <source>Finish</source>
         <translation>拷贝/完成</translation>
     </message>
@@ -622,12 +622,12 @@ Allowed to run only one instance of the application.</source>
         <translation>捕捉屏幕</translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="110"/>
+        <location filename="../screen/tray.cpp" line="111"/>
         <source>Delay Capture</source>
         <translation>延时截图</translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="111"/>
+        <location filename="../screen/tray.cpp" line="110"/>
         <source>Full Screen</source>
         <translation>全屏截屏</translation>
     </message>

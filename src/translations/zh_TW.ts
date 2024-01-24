@@ -396,27 +396,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="73"/>
+        <location filename="../preference/prefmanage.cpp" line="78"/>
         <source>Flipped</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="74"/>
+        <location filename="../preference/prefmanage.cpp" line="79"/>
         <source>BalckAndWhite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="75"/>
+        <location filename="../preference/prefmanage.cpp" line="80"/>
         <source>LightBlue</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="250"/>
+        <location filename="../preference/prefmanage.cpp" line="255"/>
         <source>Select a path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.cpp" line="436"/>
+        <location filename="../preference/prefmanage.cpp" line="441"/>
         <source>Select Font</source>
         <translation type="unfinished"></translation>
     </message>
@@ -534,67 +534,67 @@ Allowed to run only one instance of the application.</source>
 <context>
     <name>SelectBar</name>
     <message>
-        <location filename="../tool/selectbar.cpp" line="32"/>
+        <location filename="../tool/selectbar.cpp" line="31"/>
         <source>Rectangle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="33"/>
+        <location filename="../tool/selectbar.cpp" line="32"/>
         <source>Ellipse</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="34"/>
+        <location filename="../tool/selectbar.cpp" line="33"/>
         <source>Arrow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="35"/>
+        <location filename="../tool/selectbar.cpp" line="34"/>
         <source>CustomPath</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="36"/>
+        <location filename="../tool/selectbar.cpp" line="35"/>
         <source>Mosaic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="37"/>
+        <location filename="../tool/selectbar.cpp" line="36"/>
         <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="38"/>
+        <location filename="../tool/selectbar.cpp" line="37"/>
         <source>SerialNumber</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="40"/>
+        <location filename="../tool/selectbar.cpp" line="39"/>
         <source>Pin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="41"/>
+        <location filename="../tool/selectbar.cpp" line="40"/>
         <source>Revocation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="42"/>
+        <location filename="../tool/selectbar.cpp" line="41"/>
         <source>Renewal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="43"/>
+        <location filename="../tool/selectbar.cpp" line="42"/>
         <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="44"/>
+        <location filename="../tool/selectbar.cpp" line="43"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../tool/selectbar.cpp" line="45"/>
+        <location filename="../tool/selectbar.cpp" line="44"/>
         <source>Finish</source>
         <translation type="unfinished"></translation>
     </message>
@@ -622,12 +622,12 @@ Allowed to run only one instance of the application.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="110"/>
+        <location filename="../screen/tray.cpp" line="111"/>
         <source>Delay Capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../screen/tray.cpp" line="111"/>
+        <location filename="../screen/tray.cpp" line="110"/>
         <source>Full Screen</source>
         <translation type="unfinished"></translation>
     </message>

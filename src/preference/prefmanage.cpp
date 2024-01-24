@@ -1,3 +1,8 @@
+// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2021-2024 XMuli
+// SPDX-GitHub: https://github.com/XMuli/flipped
+// SPDX-Author: XMuli <xmulitech@gmail.com>
+
 #include "prefmanage.h"
 #include "qmetaobject.h"
 #include "ui_prefmanage.h"

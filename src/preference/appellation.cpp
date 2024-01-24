@@ -1,8 +1,7 @@
-﻿// SPDX-License-Identifier:
-// SPDX-FileCopyrightText: 2021-2023 XMuli <xmulitech@gmail.com>
-//
-// Source: https://github.com/XMuli/FlippedCode
-
+﻿// SPDX-License-Identifier: MIT
+// SPDX-FileCopyrightText: 2021-2024 XMuli
+// SPDX-GitHub: https://github.com/XMuli/flipped
+// SPDX-Author: XMuli <xmulitech@gmail.com>
 #include "appellation.h"
 
 
