@@ -391,11 +391,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../preference/prefmanage.ui"/>
-        <source>simple and beautiful cross-platform screenshot software.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../preference/prefmanage.cpp" line="78"/>
         <source>Flipped</source>
         <translation type="unfinished"></translation>
@@ -457,11 +452,6 @@
     </message>
     <message>
         <location filename="../preference/prefmanage.ui"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright © 2022-2023 &lt;a href=&quot;https://github.com/XMuli&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;XMuli&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../preference/prefmanage.ui"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QQ Group: &lt;a href=&quot;https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&amp;amp;jump_from=webapi&amp;amp;authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;418103279&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -472,12 +462,27 @@
     </message>
     <message>
         <location filename="../preference/prefmanage.ui"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/XMuli/FLIPPED/blob/master/LICENSE&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:green;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/SunnyScreenshot/FLIPPED&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../preference/prefmanage.ui"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/SunnyScreenshot/FLIPPED&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copyright © 2022-2024 &lt;a href=&quot;https://github.com/XMuli&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;XMuli&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../preference/prefmanage.ui"/>
+        <source>simple and beautiful cross-platform screenshot software. and code open source.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../preference/prefmanage.ui"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://sunny.xmuli.tech&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;Next: Sunny Screenshot&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../preference/prefmanage.ui"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/SunnyScreenshot/FLIPPED/blob/master/LICENSE&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#008000;&quot;&gt;Licenses&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
