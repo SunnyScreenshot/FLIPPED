@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 // SPDX-FileCopyrightText: 2021-2024 XMuli
-// SPDX-GitHub: https://github.com/XMuli/flipped
+// SPDX-GitHub: https://github.com/SunnyScreenshot/FLIPPED
 // SPDX-Author: XMuli <xmulitech@gmail.com>
-
 
 #include "arrowline.h"
 
@@ -11,7 +10,6 @@ ArrowLine::ArrowLine(double lineWidth, const QPointF &p1, const QPointF &p2)
     , m_p1(p1)
     , m_p2(p2)
 {
-
 }
 
 const QPainterPath ArrowLine::arrowLine() const
