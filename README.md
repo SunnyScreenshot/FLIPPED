@@ -1,78 +1,31 @@
 <div align="center">
   <p>
       <h1>
-      <a href="https://github.com/XMuli/Flipped">
-          <img src="snapshot/Flipped.svg"  alt="Flipped" />
+      <a href="https://github.com/SunnyScreenshot/FLIPPED">
+          <img src="snapshot/Flipped.svg"  alt="FLIPPED" />
       </a>
       <br/>
-      Flipped
+      FLIPPED
     </h1>
     <br/>
     <h4>Simple and beautiful cross-platform screenshot software.</h4>
   </p>
-  <p>
-    <a href="https://github.com/XMuli/Flipped/actions/workflows/Windows.yml">
-      <img src="https://img.shields.io/github/workflow/status/XMuli/Flipped/Windows?style=flat&logo=windows" alt="Windows Build Status" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/actions/workflows/MacOS.yml">
-      <img src="https://img.shields.io/github/workflow/status/XMuli/Flipped/MacOS?style=flat&logo=apple" alt="MacOS Build Status" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/actions/workflows/Linux.yml">
-      <img src="https://img.shields.io/github/workflow/status/XMuli/Flipped/Linux?style=flat&logo=linux" alt="GNU/Linux Build Status" />
-    </a>
-    <a href="https://flameshot.org/docs/installation/development-build/">
-      <img src="https://img.shields.io/github/languages/code-size/XMuli/Flipped" alt="code-size" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/releases">
-      <img src="https://img.shields.io/github/releaseFlipped/Flipped.svg" alt="Latest Stable Release" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/releases">
-      <img src="https://img.shields.io/github/downloads/XMuli/Flipped/total" alt="Total Downloads" />
-    </a>
-  <a href="https://github.com/XMuli/Flipped">
-      <img src="https://img.shields.io/github/release/XMuli/Flipped.svg?label=docs" alt="Docs" />
-    </a>
-  </p>
   <p align="right"><br><a href="README.md">English</a> | <a href="README.zh_CN.md">简体中文</a></p>
 </div>
+
 [TOC]
 
 <br>
 
-## linlong-玲珑适配
+> **Next releases:** Recommended for: [Sunny Screenshot](https://sunny.xmuli.tech/), supports OCR for text extraction and image translation.
+>
+> **Development experience:**  [How to develop a screenshot software?](https://sunny.xmuli.tech/article/how_develop_it.html)
 
-#### update: 2023.11.02
+<br>
 
-本次适配都是在 Deepin V23.02  环境下适配成功；
+ps: I hope the source code of this project has reference value for you, and the  <font color=#D0087E size=4 face="幼圆">**⭐Star** </font>of this project will also be rewarded.
 
-```cpp
-// 编译项目的环境
-sudo apt install gcc g++ cmake git tree qtcreator qtbase5-dev qttools5-dev-tools qttools5-dev libqt5x11extras5-dev libqt5svg5-dev libqt5xml5 
-// 适配玲珑包的环境
-sudo apt install linglong-builder
-    
-// 进入源码的根目录下的 tech.xmuli.flipped 文件夹，执行如下适配命令
-ll-builder build
-    
-// Note:，第一次执行安装会很慢，发现和网络有关，linglong 自生会下载很多东西；稍等即可编译成功。但实测发现项目使用 git submodule 引入三方开源库，而 玲珑脚本自生没有处理这这一部分，会导致编译失败。若此原因和项目自生无关。
-    
-
-```
-
-#### Note:
-
-- 整个项目的编译和玲珑适包配是在 Deepin V23.2 中实现，成功编译和运行；若是单独编译，在Windows、MacOS、Linux 下都是成功编译、运行、打包的，成品下载和体验可。若是因参赛需要提供源码，随时可仓库设置 public，或者最新完整源码邮箱发送给评委组，项目属于从零开始写，可以提供commit log。
-  - 官网: [flipped.xmuli.tech](https://flipped.xmuli.tech)
-  - GitHub Release: [https://github.com/XMuli/FlippedPages](https://github.com/XMuli/FlippedPages) | [gitee 镜像](https://gitee.com/XMuli/FlippedPages)
-  - GitHub 源码: [https://github.com/XMuli/Flipped](https://github.com/XMuli/Flipped)    | [gitee 镜像](https://gitee.com/XMuli/Flipped)
-    
-
-REF：
-
-- [https://linglong.dev/guide/ll-builder/build.html](https://linglong.dev/guide/ll-builder/build.html)
-- [https://atomgit.com/linglong](https://atomgit.com/linglong)
-
-
+<br>
 
 ## Features
 

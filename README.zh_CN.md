@@ -1,41 +1,30 @@
 <div align="center">
   <p>
       <h1>
-      <a href="https://github.com/XMuli/Flipped">
+      <a href="https://github.com/SunnyScreenshot/FLIPPED">
           <img src="snapshot/Flipped.svg"  alt="FLIPPED" />
       </a>
       <br/>
       FLIPPED
     </h1>
     <br/>
-    <h4>漂亮且简易的跨平台截图贴图的软件。</h4>
-  </p>
-  <p>
-    <a href="https://github.com/XMuli/Flipped/actions/workflows/Windows.yml">
-      <img src="https://img.shields.io/github/workflow/status/XMuli/Flipped/Windows?style=flat&logo=windows" alt="Windows Build Status" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/actions/workflows/MacOS.yml">
-      <img src="https://img.shields.io/github/workflow/status/XMuli/Flipped/MacOS?style=flat&logo=apple" alt="MacOS Build Status" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/actions/workflows/Linux.yml">
-      <img src="https://img.shields.io/github/workflow/status/XMuli/Flipped/Linux?style=flat&logo=linux" alt="GNU/Linux Build Status" />
-    </a>
-    <a href="https://flameshot.org/docs/installation/development-build/">
-      <img src="https://img.shields.io/github/languages/code-size/XMuli/Flipped" alt="code-size" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/releases">
-      <img src="https://img.shields.io/github/releaseFlipped/Flipped.svg" alt="Latest Stable Release" />
-    </a>
-    <a href="https://github.com/XMuli/Flipped/releases">
-      <img src="https://img.shields.io/github/downloads/XMuli/Flipped/total" alt="Total Downloads" />
-    </a>
-  <a href="https://github.com/XMuli/Flipped">
-      <img src="https://img.shields.io/github/release/XMuli/Flipped.svg?label=docs" alt="Docs" />
-    </a>
+    <h4>漂亮且简易的跨平台截图贴图的软件</h4>
   </p>
   <p align="right"><br><a href="README.md">English</a> | <a href="README.zh_CN.md">简体中文</a></p>
 </div>
+
+
 [TOC]
+
+<br>
+
+> **后续版本：**截图使用推荐：[Sunny Screenshot](https://sunny.xmuli.tech/)， 支持 OCR 提取文字和图片翻译功能。
+>
+> **开发经验：** [如何开发一款截图软件呢？](https://sunny.xmuli.tech/article/how_develop_it.html)
+
+
+
+ps：希望此项目的源码对你有参考价值，该项目的的 <font color=#D0087E size=4 face="幼圆">**⭐Star** </font>也会有收获。
 
 <br>
 
@@ -50,6 +39,10 @@
 - 国际化：英文、简体中文、繁体中文；字体和字号自定义
 
 <br>
+
+旧版本的二进制下载：[old releases](https://github.com/SunnyScreenshot/FlippedPages/releases)
+
+
 
 ## 运行预览
 
@@ -200,7 +193,7 @@
 
 <font color=#D0087E>→ 离线安装包下载 [Releases](https://github.com/XMuli/FlippedPackage/releases) ；</font>
 
-<font color=#D0087E>→ **反馈 BUG/SUGGEST，用户划水交流等，和最新版本安装包获取，在QQ群:[418103279 ](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from=webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu)** </font>
+<font color=#D0087E>→ **反馈 BUG/SUGGEST，技术交流等，和最新 Sunny 版本安装包获取，在QQ群:[418103279 ](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from=webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu)** </font>
 
 <br>
 
