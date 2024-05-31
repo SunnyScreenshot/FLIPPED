@@ -7,27 +7,53 @@ layout: default
 <div align="center">
   <p>
       <h1>
-      <a href="https://github.com/XMuli/FILPPED">
-          <img src="./snapshoot/logo-text.png" width="100%" alt="FILPPED"/>
+      <a href="https://github.com/XMuli/FLIPPED">
+          <img src="snapshot/Flipped.svg"  alt="FLIPPED" />
       </a>
+      <br/>
+      FLIPPED
     </h1>
     <br/>
     <h4>Simple and beautiful screenshot software tool for Windows, MacOS and Linux</h4>
     <h4>简洁且漂亮的截图的软件工具，支持 Windows，MacOS，Linux 平台</h4>
     <h4>簡潔且漂亮的截圖的軟件工具，支持 Windows，MacOS，Linux 平臺</h4>
   </p>
-</div>
-<div align="center">
-  <p align="right"><br><a href="index.md">English</a> | <a href="index.zh_CN.md">简体中文</a></p>
+  <p>
+    <a href="https://github.com/XMuli/FILPPED/releases">
+      <img src="https://img.shields.io/github/languages/code-size/SunnyScreenshot/FLIPPED" alt="code-size" />
+    </a>
+  <a href="https://github.com/XMuli/FILPPED">
+      <img src="https://img.shields.io/github/release/SunnyScreenshot/FLIPPED.svg?label=docs" alt="Docs" />
+    </a>
+  </p>
 </div>
 
+
+
+> Time: 2024-06-01
+> Featured new screenshot project: Sunny, supports screenshot & pinning, OCR text extraction and image translation!
+> FLIPPED has adopted MIT loose agreement, open source all the code, help newcomers to lower the threshold of C++ / Qt, can easily write a screenshot project!
+
+<br>
 
 
 ## Preview
 
-<img src="./snapshoot/1.png" width="100%"/>
+**MACOS:**
 
-<img src="./snapshoot/2.png" width="100%"/>
+<img src="index.zh_CN.assets/MacOS13_Cover.jpg" width="100%"/>
+
+**WINDOWS:**
+
+<img src="index.zh_CN.assets/Windows10_Couer.jpg" width="100%"/>
+
+- **LINUX:**
+
+<img src="index.zh_CN.assets/Ubuntu20.04_Cover.jpg" width="100%"/>
+
+- **Other:**
+
+More snapshoot effects can be → [here](https://github.com/XMuli/FILPPED/tree/master/snapshot) preview
 
 
 
@@ -43,7 +69,7 @@ layout: default
   - 描        述：新手级的截图，适合初学 Qt/C++ 入门者
 - **Ⅱ. 高级之作 FLIPPED**
   - 官       网：[flipped.xmuli.tech](https://flipped.xmuli.tech/)
-  - 项目地址：[FLIPPED](https://github.com/XMuli/FlippedPages)  \|  [镜像](https://gitee.com/XMuli/FlippedPages)
+  - 项目地址：[FLIPPED](https://github.com/SunnyScreenshot/FLIPPED)  \|  [镜像](https://gitee.com/SunnyScreenshot/FLIPPED)
   - 功       能：①贴图和钉图，②多屏截图，延时截图，自定义截图，③智能检测窗口矩形（Windows & Linux），④矩形、椭圆、箭头、画笔、马赛克、文本、序号，⑤撤销、重做（多级）、保存、取消、拷贝到剪切板，⑥截图框样式三套，且主题色提供自定义；屏幕十字线样式自定义，⑦国际化：英文、简体中文、繁体中文；字体和字号自定义，⑧支持设置窗口，托盘，截图区域之间的流畅切换，⑨更多见 README 和 源码
   - 描        述：高级难度，适合已学习 Qt/C++ 数年经验进阶，需同类型软件的代码借鉴，但可探索中独立写一个大的软件。出发于隐私安全，无任何联网功能。
 - **Ⅲ. 商业级别的成熟之作 Sunny (推荐)**
