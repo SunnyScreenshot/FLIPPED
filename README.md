@@ -76,20 +76,20 @@ ps: I hope the source code of this project has reference value for you, and the 
 
 ## Keyboard shortcuts
 
-| Keys                                                         | Description              | Mode  |
-| ------------------------------------------------------------ | ------------------------ | ----- |
-| <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> ( <kbd>A</kbd>, <kbd>S</kbd>, <kbd>W</kbd>, <kbd>D</kbd> ) | Move selection 1px       | Local |
-| <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 1 px  | Local |
-| <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 1 px    | Local |
-| <kbd>Shift</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Move selection 10 px     | Local |
-| <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 10 px | Local |
-| <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 10 px   | Local |
-| <kbd>Shift</kbd> + <kbd>F4</kbd>                             | 快速保存截图             | 局部  |
-| <kbd>Esc</kbd>                                               | 退出                     | 局部  |
-|                                                              |                          |       |
-| <kbd>F6</kbd>                                                | 窗口智能截图             | 全局  |
-| <kbd>F7</kbd>                                                | 延时截图                 | 全局  |
-| <kbd>F8</kbd>                                                | 全屏截图                 | 全局  |
+| Keys                                                         | Description              | Mode   |
+| ------------------------------------------------------------ | ------------------------ | ------ |
+| <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> ( <kbd>A</kbd>, <kbd>S</kbd>, <kbd>W</kbd>, <kbd>D</kbd> ) | Move selection 1px       | Local  |
+| <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 1 px  | Local  |
+| <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 1 px    | Local  |
+| <kbd>Shift</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Move selection 10 px     | Local  |
+| <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Extended selection 10 px | Local  |
+| <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>←</kbd>, <kbd>↓</kbd>, <kbd>↑</kbd>, <kbd>→</kbd> | Shrink selection 10 px   | Local  |
+| <kbd>Shift</kbd> + <kbd>F4</kbd>                             | Quick Save Screenshot    | Local  |
+| <kbd>Esc</kbd>                                               | Exit                     | Local  |
+|                                                              |                          |        |
+| <kbd>F6</kbd>                                                | Window Smart Screenshot  | Global |
+| <kbd>F7</kbd>                                                | Delayed Screenshot       | Global |
+| <kbd>F8</kbd>                                                | Full Screen              | Global |
 
 <br>
 
@@ -167,7 +167,7 @@ ps: I hope the source code of this project has reference value for you, and the 
 
 ## Contributors
 
-If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke.   → [project-flipped](https://github.com/XMuli/FlippedPackage)
+If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke.   → [project-flipped](https://github.com/SunnyScreenshot/FLIPPED)
 
 <br>
 
@@ -183,7 +183,7 @@ If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">yo
 
 Feedback & How to contribute
 
-You are very welcome to join us! You can [open an issue](https://github.com/XMuli/FlippedPackage/issues) ; for any bug, suggestion, feature idea, or to help improve this software. Or help improve the project by submitting a Pull Request.
+You are very welcome to join us! You can [open an issue](https://github.com/SunnyScreenshot/FLIPPED/issues) ; for any bug, suggestion, feature idea, or to help improve this software. Or help improve the project by submitting a Pull Request.
 
 <br>
 
@@ -193,7 +193,7 @@ You can also add  [![alt text](https://img.shields.io/badge/QQ_Groups-418103279-
 
 ## Package Download
 
-<font color=#D0087E> → Offline Installer Download [Releases](https://github.com/XMuli/FlippedPackage/releases); </font>
+<font color=#D0087E> → Offline Installer Download [Releases](https://github.com/SunnyScreenshot/FLIPPED/releases); </font>
 
 <font color=#D0087E>→ **Feedback BUG/SUGGEST, user community, etc., and the latest version of the installer get, in QQ group:[418103279 ](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from= webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu)** </font>
 

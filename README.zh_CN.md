@@ -170,7 +170,7 @@ ps：希望此项目的源码对你有参考价值，该项目的的 <font color
 
 ## 贡献者
 
-若是帮助到了你，或者觉得有用，<font color=#FE7207  size=4 face="幼圆">可以点击该项目的的 <font color=#D0087E size=4 face="幼圆">**⭐Star** </font>和<font color=#D0087E size=4 face="幼圆">**🍴 Fork**</font> 的两个图标，方便抬手之间，表示点个赞，手有余香，</font>其次才是一份冰的肥宅快乐水。→ [project-flipped](https://github.com/XMuli/FlippedPackage)
+若是帮助到了你，或者觉得有用，<font color=#FE7207  size=4 face="幼圆">可以点击该项目的的 <font color=#D0087E size=4 face="幼圆">**⭐Star** </font>和<font color=#D0087E size=4 face="幼圆">**🍴 Fork**</font> 的两个图标，方便抬手之间，表示点个赞，手有余香，</font>其次才是一份冰的肥宅快乐水。
 
 <br>
 
@@ -183,7 +183,7 @@ ps：希望此项目的源码对你有参考价值，该项目的的 <font color
 
 ## 反馈 & 贡献
 
-非常欢迎你的加入！对于此软件有任何缺陷、建议、功能想法、都可 [提一个 Issue](https://github.com/XMuli/FlippedPackage/issues) ；或者帮助此项目的完善，提交一个 Pull Request。
+非常欢迎你的加入！对于此软件有任何缺陷、建议、功能想法、都可 [提一个 Issue](https://github.com/SunnyScreenshot/FLIPPED/issues) ；或者帮助此项目的完善，提交一个 Pull Request。
 
 请遵循 [Contributor Covenant](http://contributor-covenant.org/version/1/3/0/) 行为规范。
 
@@ -191,7 +191,7 @@ ps：希望此项目的源码对你有参考价值，该项目的的 <font color
 
 ## 版本下载
 
-<font color=#D0087E>→ 离线安装包下载 [Releases](https://github.com/XMuli/FlippedPackage/releases) ；</font>
+<font color=#D0087E>→ 离线安装包下载 [Releases](https://github.com/SunnyScreenshot/FLIPPED/releases) ；</font>
 
 <font color=#D0087E>→ **反馈 BUG/SUGGEST，技术交流等，和最新 Sunny 版本安装包获取，在QQ群:[418103279 ](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from=webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu)** </font>
 

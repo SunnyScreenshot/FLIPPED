@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 #pragma parseroption -p
 #define MyAppName "FLIPPED"
-#define MyAppVersion "MSVC-1.3.2"
+#define MyAppVersion "msvc_1.3.2"
 #define MyAppPublisher "Zhang Wengeng"
 #define MyAppURL "https://github.com/SunnyScreenshot/FLIPPED"
 #define MyAppExeName "FLIPPED.exe"
@@ -36,7 +36,7 @@ LicenseFile={#MyBinDir}\resources\licenses\License.md
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline   
 OutputDir={#MyOutputDir}
-OutputBaseFilename={#MyAppName}-Setup-{#MyAppVersion}-{#MyArchitecture}
+OutputBaseFilename={#MyAppName}_Setup_{#MyAppVersion}_{#MyArchitecture}
 SetupIconFile={#MyBinDir}\resources\logo\logo.ico
 Password=
 Compression=lzma
