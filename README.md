@@ -167,7 +167,7 @@ ps: I hope the source code of this project has reference value for you, and the 
 
 ## Contributors
 
-If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke.   → [project-flipped](https://github.com/SunnyScreenshot/FLIPPED)
+If it helps you, or find it useful, <font color=#FE7207  size=4 face="幼圆">you can click on the item's <font color=#D0087E size=4 face="幼圆">**⭐Star** **🍴 Fork** </font> of the two icons, conveniently lift the hand between, said a point of praise the hand,</font> There is a fragrance in your hand；The next best thing is to buy me a cold Coke. 
 
 <br>
 
@@ -188,14 +188,6 @@ You are very welcome to join us! You can [open an issue](https://github.com/Sunn
 <br>
 
 You can also add  [![alt text](https://img.shields.io/badge/QQ_Groups-418103279-brightgreen)](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from=webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu) of the exchange group.
-
-<br>
-
-## Package Download
-
-<font color=#D0087E> → Offline Installer Download [Releases](https://github.com/SunnyScreenshot/FLIPPED/releases); </font>
-
-<font color=#D0087E>→ **Feedback BUG/SUGGEST, user community, etc., and the latest version of the installer get, in QQ group:[418103279 ](https://qm.qq.com/cgi-bin/qm/qr?k=jsD03QzMohGZm0TqYAFh3BvKOpCGlTcT&jump_from= webapi&authKey=DMUwiCQ6ta95PoH8JmtZ+Jz9y7Ozg3yinEsxmm92rNXZRVeMPD7NRgjU+dmUI8Xu)** </font>
 
 <br>
 
