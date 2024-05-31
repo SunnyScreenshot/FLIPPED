@@ -1,4 +1,4 @@
-﻿#include "watemarkplugin.h"
+#include "watemarkplugin.h"
 #include <QLabel>
 
 

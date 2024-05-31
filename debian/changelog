@@ -1,11 +1,13 @@
-flipped (1.2.3) UNRELEASED; urgency=medium
+flipped (1.3.2-1) UNRELEASED; urgency=medium
 
   * fix build Linux and MacOS
   * UI refactor
+  * code open sources https://github.com/SunnyScreenshot/FLIPPED
 
- -- XMuli <xmuli@xmuli-pc>  Sun, 23 Arpil 2023 22:08:13 +0800
+ -- XMuli <xmuli@xmuli-pc>  Fri, 31 May 2024 22:08:13 +0800
 
-flipped (1.1.0) UNRELEASED; urgency=medium
+
+flipped (1.1.0-1) UNRELEASED; urgency=medium
 
   * 重构整个程序和 .ini 交互的逻辑架构，也使用了很多宏；代码清爽了很多
   * 功能：Quick save
@@ -14,13 +16,13 @@ flipped (1.1.0) UNRELEASED; urgency=medium
 
  -- XMuli <xmuli@xmuli-pc>  Sta, 16 Arpil 2023 19:20:13 +0800
 
-flipped (1.0.1) UNRELEASED; urgency=medium
+flipped (1.0.1-1) UNRELEASED; urgency=medium
 
   * 添加开机自启动[Windows]
 
  -- XMuli <xmuli@xmuli-pc>  Sta, 1 Arpil 2023 18:20:13 +0800
 
-flipped (1.0.0) UNRELEASED; urgency=medium
+flipped (1.0.0-1) UNRELEASED; urgency=medium
 
   * 修复诸多缺陷、屏蔽尚未开发好的部分代码
   * 一个较大部分的代码重构、部分架构重新设计
@@ -28,9 +30,9 @@ flipped (1.0.0) UNRELEASED; urgency=medium
 
  -- XMuli <xmuli@xmuli-pc>  Mon, 31 Oct 2022 19:52:18 +0800
  
-picshot (0.4.1) UNRELEASED; urgency=medium
+picshot (0.4.1-1) UNRELEASED; urgency=medium
 
-picshot (0.4.7) UNRELEASED; urgency=medium
+picshot (0.4.7-1) UNRELEASED; urgency=medium
 
   * 重新实现绘画 toolbar 的透明磨砂在跨平台上面实现的效果
   * 修复跨平台（MacOS） 下的编译失败失败，低版本 10.15+、12.0+ 都支持
@@ -38,27 +40,27 @@ picshot (0.4.7) UNRELEASED; urgency=medium
 
  -- XMuli <xmuli@xmuli-pc>  Mon, 31 Oct 2022 19:52:18 +0800
  
-picshot (0.4.1) UNRELEASED; urgency=medium
+picshot (0.4.1-1) UNRELEASED; urgency=medium
 
   * 修复 MacOS 下的构建 dmg 包 CI
   
  -- XMuli <xmulitech@gmail.com>  Sat, 01 Oct 2022 14:17:01 +0800
 
-picshot (0.4) UNRELEASED; urgency=medium
+picshot (0.4-1) UNRELEASED; urgency=medium
 
   * 优化 CMake 构建，创建 Linux 下的 install 命令
   
  -- XMuli <xmulitech@gmail.com>  Fri, 26 Aug 2022 21:23:01 +0800
 
 
-picshot (0.3.2) UNRELEASED; urgency=medium
+picshot (0.3.2-1) UNRELEASED; urgency=medium
 
   * 修复 Linux 构建 *.deb 失败
   * 构建包名使用小写
 
  -- XMuli <xmulitech@gmail.com>  Mon, 15 Aug 2022 23:13:29 +0800
 
-picshot (0.3.1) UNRELEASED; urgency=medium
+picshot (0.3.1-1) UNRELEASED; urgency=medium
 
   * 修复 Linux 和 MacOS 编译失败
   * 修复 MacOS 显示图片区域不正常

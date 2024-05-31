@@ -1,4 +1,4 @@
-﻿#ifndef WATEMARKITEM_H
+#ifndef WATEMARKITEM_H
 #define WATEMARKITEM_H
 
 #include <QWidget>

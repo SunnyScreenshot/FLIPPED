@@ -1,4 +1,4 @@
-﻿#include "watemarkitem.h"
+#include "watemarkitem.h"
 
 WateMarkItem::WateMarkItem()
 {

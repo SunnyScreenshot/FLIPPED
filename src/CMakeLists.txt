@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2024 XMuli
 # SPDX-GitHub: https://github.com/SunnyScreenshot/FLIPPED
 # SPDX-Author: XMuli <xmulitech@gmail.com>
@@ -26,12 +26,12 @@ set(_VERSION ${VERSION})
 
 # 作为宏传递给 C++ 代码
 add_definitions(-DMY_PROJECT_NAME="${project_name}")
-add_definitions(-DMY_BUILD_TIME="2023-11-02")
+add_definitions(-DMY_BUILD_TIME="2024-06-01")
 add_definitions(-DMY_VARIABLE="${project_version}")
 add_compile_definitions(MY_DEBUG_DETAIL)  # 屏蔽则关闭详细调试日志信息
 #add_compile_definitions(MY_SHIELD_CONFIG_JSON)  # 屏蔽配置文件读写 json
 
-set(qt_moduls Widgets Network Multimedia WebSockets Xml Svg)
+set(qt_moduls Widgets Xml Svg)   # Multimedia Network WebSockets
 set(qt_version_moduls)
 foreach(it ${qt_moduls})
     list(APPEND qt_version_moduls Qt${QT_VERSION_MAJOR}::${it})

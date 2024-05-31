@@ -1,4 +1,4 @@
-﻿#ifndef WATEMARKPLUGIN_H
+#ifndef WATEMARKPLUGIN_H
 #define WATEMARKPLUGIN_H
 
 #include <QWidget>
