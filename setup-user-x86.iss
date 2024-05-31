@@ -2,14 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 #pragma parseroption -p
 #define MyAppName "FLIPPED"
-#define MyAppVersion "MSVC-1.3.0-Beta"
-#define MyAppPublisher "XMuli"
-#define MyAppURL "https://github.com/XMuli/FLIPPED"
+#define MyAppVersion "MSVC-1.3.2"
+#define MyAppPublisher "Zhang Wengeng"
+#define MyAppURL "https://github.com/SunnyScreenshot/FLIPPED"
 #define MyAppExeName "FLIPPED.exe"
 #define MyArchitecture "x86"
 #define MySrc "."
 #define MyBinDir "./bin"
-#define MyOutputDir "../Archived/FLIPPED"
+#define MyOutputDir "./"
 
 
 
